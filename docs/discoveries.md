@@ -18,5 +18,4 @@ listed in `plan.md`. Oldest first.
 | 2026-11-16 | `ChangeOverTime` is in hours with factor 1 on a 16-bit register; `temp1` (`D1C`) in the TypeSpec is suspect, as for `FloorDryingTemp` and `RoomThermostatTemp`. | to verify by bus read | A |
 | 2026-11-16 | `50 00` memory read is a list of `<code> <address>` items: high nibble of the code = length - 1, low nibble = area (1 RAM, 2 EEPROM), code `06` sets the address high byte. | service tool telegrams, self-consistent re-read | D |
 | 2026-11-16 | WTC counters at EEPROM `0x01e6`: operating hours (3 bytes), burner hours (2), burner starts (3), low byte first. Operating hours seen to step by one. | service tool telegrams, two reads | D |
-| 2026-11-16 | WTC fault history: 6 records of 8 bytes at EEPROM `0x0202` (code with bit 7 = warning, phase, load, pump PWM, boiler temp, flue gas temp, ionisation x0.1, return temp). | service tool screen, 48 of 48 values | E |
 | 2026-11-16 | Register 13 of the system manager is the de-couple sensor B22, not the boiler flow. The service tool reads the system manager with `09 02`, no CRC. | service tool screen | A |

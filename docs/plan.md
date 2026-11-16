@@ -132,7 +132,12 @@ Lot A is the priority: it is the only one that can be merged without any other c
     matched to the screen. Ready to be written as definitions with an evidence record.
   - Lot A: register 13 is the de-couple sensor B22, not the boiler flow; `SupplyWTCTemp` to be
     renamed (touches the branch behind #717: ask first). Sign of registers 3, 13, 14 still open.
-- Next: evidence records and definitions for the fault history (lot E) and the counters (lot D).
+- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `dce7124`, local, not
+  pushed): `FaultHistoryPointer` and `FaultHistorySlot1..6` for both boilers
+  (`src/wolf/08..bc1.tsp`, new `src/wolf/18..bc2.tsp`, shared models in `wtc_inc.tsp`),
+  evidence in `evidence/bc-fault-history.md`, `scripts/check.sh` clean (159 messages).
+  First use of the `50 00` memory read in the lots: `memr` template with the precomputed CRC.
+- Next: the counters (lot D), once burner hours or starts have an independent figure.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
