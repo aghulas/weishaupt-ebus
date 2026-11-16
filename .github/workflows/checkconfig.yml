@@ -1,0 +1,64 @@
+# Runs `ebusd --checkconfig` on a CSV tree compiled locally by scripts/check.sh.
+# The CSV tree arrives as a base64 tar.gz input, so nothing has to be pushed to the fork.
+name: checkconfig
+run-name: checkconfig ${{ inputs.label }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      csv_tgz_b64:
+        description: base64 of a tar.gz holding the emitted CSV tree (root files and the lot folder)
+        required: true
+      label:
+        description: free text that identifies the run
+        required: false
+        default: ""
+      ebusd_fork:
+        description: repository holding the ebusd release
+        required: false
+        default: aghulas/ebusd
+      ebusd_release:
+        description: ebusd release tag
+        required: false
+        default: v26.1-weishaupt.1
+
+permissions:
+  contents: read
+
+jobs:
+  checkconfig:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    env:
+      CSV_TGZ_B64: ${{ inputs.csv_tgz_b64 }}
+      EBUSD_FORK: ${{ inputs.ebusd_fork }}
+      EBUSD_RELEASE: ${{ inputs.ebusd_release }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Unpack CSV tree
+        run: |
+          mkdir cfg
+          printf '%s' "$CSV_TGZ_B64" | base64 -d | tar xzf - -C cfg
+          find cfg -type f | sort
+
+      - name: Download ebusd
+        run: |
+          gh release download "$EBUSD_RELEASE" -R "$EBUSD_FORK" -p ebusd-amd64 -p sha256sums.txt
+          sha256sum --ignore-missing -c sha256sums.txt
+          chmod +x ebusd-amd64
+
+      - name: ebusd --checkconfig
+        run: |
+          docker run --rm -v "$PWD/ebusd-amd64":/ebusd:ro -v "$PWD/cfg":/cfg:ro debian:trixie-slim \
+            /ebusd --checkconfig --configpath=/cfg > checkconfig.log 2>&1 || status=$?
+          cat checkconfig.log
+          if [ "${status:-0}" -ne 0 ] || grep -qi 'error' checkconfig.log; then exit 1; fi
+
+      - name: Keep the log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkconfig
+          path: checkconfig.log
