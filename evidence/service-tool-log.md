@@ -135,4 +135,196 @@ Addresses in the constants list (EEPROM), from the `.SYC`:
 
 ## Phase 2 — screens
 
-Not started.
+Date: 2026-11-16, 15:47–15:59. Method: `docs/service-tool-phase2-sheet.md`. Snapshots of the
+telegrams grabbed by ebusd before and after each screen; screens read from screenshots. The tool
+sent no write (`50 23`) during the session: every telegram with `QQ=ff` was a `07 04`
+identification, a `09 02` read, a `50 22` read or a `50 00` memory read. No setting was written
+with source `ff` by anything else while the tool was connected.
+
+Telegrams below are `QQ ZZ PBSB data / answer`, with the length bytes left out of the data.
+
+### 15:49 — connection (no screen)
+
+The tool sends one `07 04` identification to `08`, `15`, `18`, `35`, `f5`, `f6`. Not to `50`,
+`51`, `52`, `75`.
+
+### 15:50 — system manager, tab "Process values"
+
+Device: system manager, scanned `SW=6618` (window title `KA 266.18`).
+
+The tool reads this device with `09 02`, data `<register lo> <register hi> 02`, **no CRC byte**.
+The answer is the 16-bit value, low byte first.
+
+| Label on screen | Value | Unit | Telegram | Codec deduced |
+|---|---|---|---|---|
+| Set temperature System | 57,9 | °C | `ff 15 0902 02 00 02 / 43 02` | UIN or SIN, 0.1 |
+| De-couple temperature B22 | 57,6 | °C | `ff 15 0902 0d 00 02 / 40 02` | UIN or SIN, 0.1 |
+| De-couple temperature B24 | 60,8 | °C | `ff 15 0902 40 0a 02 / 60 02` | UIN or SIN, 0.1 |
+| DHW set value | 50,0 | °C | `ff 15 0902 03 00 02 / f4 01` | UIN or SIN, 0.1 |
+| DHW-temperature | 51,7 | °C | `ff 15 0902 0e 00 02 / 04 02` (51,6; polled, next read differs) | UIN or SIN, 0.1 |
+| Control voltage | 0,0 | V | `ff 15 0902 a9 01 02 / 00 00` | value 0 only |
+| Control current | 0,0 | mA | `ff 15 0902 aa 01 02 / 00 00` | value 0 only |
+| H1 (check box) | off | | `ff 15 0902 28 0a 02 / 00 00` | 0 = off |
+| MFA 1 (check box) | on | | `ff 15 0902 f2 fd 02 / 01 00` | 1 = on |
+| MFA 2 (check box) | off | | `ff 15 0902 8e 0a 02 / 00 00` | 0 = off |
+| VA (check box) | off | | `ff 15 0902 f0 fd 02 / 00 00` | 0 = off |
+| Error code | empty | | `ff 15 0902 01 00 02 / 00 00` | 0 = none |
+| Configuration: PWT, DHW KA, Calorifier 1 | list | | `ff 15 0902 10 00 02 / 4c 00` | bit field, bits 2, 3, 6 set; bit-to-text mapping not established |
+| setpoint mod. degree | 1 | % | `ff 15 0902 2c 00 02 / 01 00` | factor 1 |
+| Max. limit opt. operating range | 80 | % | `ff 15 0902 ea fd 02 / 50 00` | factor 1 |
+| Min. limit opt. operating range | 30 | % | `ff 15 0902 eb fd 02 / 1e 00` | factor 1 |
+
+- **Established:** register 13 (`0d 00`) is the de-couple sensor B22, as `DL.Ini` says. It is not
+  the boiler flow. The lot A name `SupplyWTCTemp` is misleading.
+- **Established:** registers 2, 3, 13, 14 and 2624 are in tenths.
+- **Not established:** the sign of registers 3, 13 and 14 (no negative value on screen).
+- Not matched, labels: `Operation mode` = "Automatic" (candidate: `ff 15 0902 12 01 02 / 0b 00`,
+  one value only); `Calorifier temperature top` / `bottom`, both "--", no telegram.
+- Not matched, cascade block (`Type of oper.`, `Nominal rating` 250 kW, `Current rating` 57,5 kW
+  for boiler A, 0,0 kW for boiler B). The tool polls both automats directly:
+  `ff 08 5000 1a 03 b2 01 21 01 25 01 65 01 6a / 00 19 55 02 00 d8` and
+  `ff 18 5000 (same) / 00 00 40 80 00 d8`. By the grammar below this is one byte of area `3` at
+  `b2` and four RAM bytes at `21`, `25`, `65`, `6a`. The first byte (25 on A, 0 on B) may be the
+  load in percent; not proven.
+
+### 15:51 — boiler automat A, tab "Heating specialist"
+
+Device: WTC automat, scanned `SW=1104;HW=0501` (window title `WCM-CPU-R5#A WTC 250 HA 11.0e`).
+The values were read, nothing was edited, `Write` / `Load` / `Save` were not used.
+
+Telegrams (answer without its status byte `00`):
+
+```
+ff 08 5000 df b2 1b             / 50 08 44 00 0c 0a 02 3c 00 28 5c 25
+ff 08 5000 e3 b2 27             / 19 e0 78 78 01 21 17 17 64 32 32 64
+ff 08 5000 f7 b2 33             / 62 25 14 28 19 01 3c 1e 50 0a 17 17
+ff 08 5000 fb b2 3f             / 64 64 03 09 08 0d 21 a1 41 22 a7 19
+ff 08 5000 ab 62 4b 02 44 02 37 / c2 01 15 55 0c 4b b8 | 0d | 19
+```
+
+**Grammar of a `50 00` memory read, established from these telegrams.** After the CRC byte the
+data is a list of items `<code> <address>`:
+
+- high nibble of the code = number of bytes minus one (`b` = 12, `6` = 7, `0` = 1);
+- low nibble of the code = memory area: `1` RAM, `2` EEPROM (the constants list of the `.SYC`);
+- code `06` reads nothing: it sets the high byte of the address for the items that follow.
+
+The answer is a status byte `00` followed by the bytes of all items, in order.
+
+Proof inside the capture: the last telegram re-reads single bytes at `44` and `37`; it returns
+`0d` and `19`, the bytes found at those addresses in the 12-byte blocks (`3f`+5, `33`+4).
+Further proof: every later telegram of the session parses with this grammar and returns the
+number of bytes it predicts.
+
+Consequence: the read already used for `FaultCountW47`, `20 06 01 12 a4`, is "high byte `01`,
+two EEPROM bytes at `a4`", address `0x01a4`. The fork's convention for the encoding byte
+(`0x02` / `0x12` / `0x22`) is the tool's own.
+
+Not matched: the parameters on screen (P10 … P71) to single addresses. The values are in the
+block (`50` = P31 80 °C at `1b`, `08` = P30 8 °C at `1c`, `28` × 100 = P70 4000 h at `24`), but
+several values occur twice. To be matched with the `.SYC` constants list.
+
+### 15:53 and 15:55 — boiler automat A, tab "Statistic"
+
+The tool read the statistics when the tab was opened and again on `Read` (`Reset` not used).
+Both times the same 11 telegrams. **The screen stayed empty** except `I44: Version CPU`,
+`I45: Version CUI`, `I46: Burner operation since last service` (-19752) and
+`with service interval (P70)` (4000). So the counters could not be compared with a displayed value.
+
+```
+ff 08 5000 9c 06 01 72 e6 06 00 02 24 / 5c 54 01 da 4e 5a db 02 | 28      (15:53)
+ff 08 5000 9c 06 01 72 e6 06 00 02 24 / 5d 54 01 da 4e 5a db 02 | 28      (15:55)
+ff 08 5000 e2 06 01 92 96             / 14 00 01 00 01 00 00 00 00 00
+ff 08 5000 d4 06 01 92 a0             / 00 00 00 00 06 00 00 00 01 00
+ff 08 5000 de 06 01 92 aa             / 00 00 00 00 00 00 00 00 00 00
+ff 08 5000 c0 06 01 92 b4             / 00 00 66 00 00 00 00 00 00 00
+ff 08 5000 ca 06 01 92 be             / 00 00 00 00 00 00 00 00 00 00
+ff 08 5000 bc 06 01 92 c8             / 11 00 18 00 00 00 00 00 00 01
+ff 08 5000 a6 06 01 92 d2             / 00 00 06 00 01 00 00 00 dd 00
+ff 08 5000 a8 06 01 92 dc             / 00 04 00 00 bf 05 00 01 00 00
+ff 08 5000 a5 06 03 12 05             / 4d 27
+ff 08 5022 a9 01 00 9a 01             / 00 00 11 04
+```
+
+- **Established:** the tool reads the hour and start counters as one block of 8 EEPROM bytes at
+  `0x01e6`. With the `.SYC` addresses (`EEA_H_PON` `0x01e6`, `EEA_H_BON` `0x01e9`, `EEA_N_ZUE`
+  `0x01eb`, next symbol at `0x01ee`) the block is exactly 3 + 2 + 3 bytes.
+- **Established:** `EEA_H_PON` is an hour counter, low byte first. Its first byte went from `5c`
+  to `5d` between the two reads, the other bytes did not change: 87 132 h, then 87 133 h.
+- **Established:** `with service interval (P70)` 4000 h is the EEPROM byte at `0x24` (`28` = 40)
+  times 100.
+- Consistent, not compared with a display: `EEA_H_BON` = `da 4e` = 20 186 h, `EEA_N_ZUE` =
+  `5a db 02` = 187 226, `EEA_N_PON` (`0x01da`, 3 bytes) = `dd 00 00` = 221. The low bytes agree
+  with the earlier 1-byte reads of the deployed configuration (90 and 216, now 92/93 and 218).
+- The fault counters are read as 2-byte values in the area `0x0196` … `0x01e5`. The one already
+  defined, `FaultCountW47` at `0x01a4`, reads `06 00` here as it does through ebusd.
+- Not matched: `I46` -19752 (no telegram carries it; the `50 22` service-hours read through
+  ebusd returned 430 during the session); `I44` showed 1.0 before `Read` and 11.0e after.
+- Not verified: the split 3 + 2 + 3 against a displayed value; byte order of `EEA_H_BON`,
+  `EEA_N_ZUE`, `EEA_N_PON` (assumed as for `EEA_H_PON`); labels of the counters between `0x0196`
+  and `0x01e5` other than `FaultCountW47`.
+
+### 15:56 — boiler automat A, tab "Error history"
+
+Five telegrams, 10 EEPROM bytes each, `0x0200` … `0x0231`:
+
+```
+ff 08 5000 ec 06 02 92 00 / 31 02 8c 06 2a 64 5e 2f c6 27
+ff 08 5000 e6 06 02 92 0a / 8c 06 1f 39 5e 3d 8d 42 8c 06
+ff 08 5000 f8 06 02 92 14 / 22 3c 5e 3b 93 46 8c 06 2f 48
+ff 08 5000 f2 06 02 92 1e / 5e 42 ad 47 0b 00 27 32 69 42
+ff 08 5000 c4 06 02 92 28 / 00 47 8c 08 2c 64 5e 31 00 28
+```
+
+Layout: 2 bytes at `0x0200` (`31 02`, not decoded), then six records of 8 bytes from `0x0202`.
+The record at `0x0202` is "Error 6" on screen, the one at `0x022a` is "Error 1".
+
+| Byte | Label on screen | Codec deduced |
+|---|---|---|
+| 0 | Error code | bit 7 set = warning (`W`), clear = fault (`F`); bits 0–6 = number, shown as two digits (`8c` = `W1 2`, `0b` = `F1 1`) |
+| 1 | I10: Operating phase | UCH |
+| 2 | I11: Load setting | UCH, % |
+| 3 | I22: Set speed PWM pump | UCH, % |
+| 4 | I30: Boiler temperature | UCH, °C |
+| 5 | I31: Flue gas temperature | UCH, °C |
+| 6 | I32: Ionisation signal | UCH, 0.1 |
+| 7 | I37: Return temperature | UCH, °C |
+
+All 48 values on screen match:
+
+| Screen | Address | Bytes | Code | I10 | I11 | I22 | I30 | I31 | I32 | I37 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Error 1 | `0x022a` | `8c 08 2c 64 5e 31 00 28` | W1 2 | 8 | 44 | 100 | 94 | 49 | 0,0 | 40 |
+| Error 2 | `0x0222` | `0b 00 27 32 69 42 00 47` | F1 1 | 0 | 39 | 50 | 105 | 66 | 0,0 | 71 |
+| Error 3 | `0x021a` | `8c 06 2f 48 5e 42 ad 47` | W1 2 | 6 | 47 | 72 | 94 | 66 | 17,3 | 71 |
+| Error 4 | `0x0212` | `8c 06 22 3c 5e 3b 93 46` | W1 2 | 6 | 34 | 60 | 94 | 59 | 14,7 | 70 |
+| Error 5 | `0x020a` | `8c 06 1f 39 5e 3d 8d 42` | W1 2 | 6 | 31 | 57 | 94 | 61 | 14,1 | 66 |
+| Error 6 | `0x0202` | `8c 06 2a 64 5e 2f c6 27` | W1 2 | 6 | 42 | 100 | 94 | 47 | 19,8 | 39 |
+
+Not verified: whether the six records are a ring (the newest was at the highest address in this
+capture) and what the two bytes at `0x0200` mean; the second automat; temperatures below 0 °C.
+
+### 15:58 — boiler automat A, tab "Process values WTC"
+
+The screen stayed empty and the tool sent no telegram for it. Nothing to match.
+
+### 15:59 — end
+
+Five more `50 00` reads to `08` were grabbed between 15:58:29 and 15:59:19, with no screenshot
+(EEPROM `0x02`–`0x0d`, `0x0e`–`0x18`, `0x1b`–`0x1d`, `0x25`, `0x2d`, `0x2e`, `0x0300`–`0x0304`).
+They are reads by the grammar above, and the bytes at `1b`, `1c`, `1d`, `25`, `2d`, `2e` equal
+those of the 15:51 blocks. Which screen issued them is not known.
+
+After the tool was disconnected, two snapshots 11 s apart showed no new telegram with `QQ=ff`.
+
+### What phase 2 changes
+
+- Lot D: the request format is no longer uncertain. A `50 00` read is a list of
+  `<code> <address>` items; the counters are 3-, 2- and 3-byte values at `0x01e6`, `0x01e9`,
+  `0x01eb`, low byte first for `EEA_H_PON`. Missing for the evidence bar: one independent
+  figure for burner hours or burner starts (boiler display, service record).
+- Lot E: the automat fault history is fully decoded (6 records × 8 bytes at `0x0202`), each
+  field checked against the tool's screen.
+- Lot A: register 13 is the de-couple sensor B22; `SupplyWTCTemp` should be renamed. The tool
+  reads the system manager with `09 02` and no CRC, where lot A uses `50 22` with a CRC; both
+  return the same values.

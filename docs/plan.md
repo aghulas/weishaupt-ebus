@@ -120,7 +120,19 @@ Lot A is the priority: it is the only one that can be merged without any other c
     with it. Open for phase 2: sign of registers 3, 13 and 14, and register 13 labelled "B22"
     (hydraulic separator / plate exchanger secondary), not boiler flow.
   - `Cxe.Ini` confirms the tool sends as `0xff`.
-- Not started: phase 2 (screens). First target is the `50 00` request format that blocks lot D.
+- **Phase 2 done** on 2026-11-16 (one session, five screens), recorded in the same log:
+  - Lot D: the `50 00` request grammar is established from the tool's own telegrams (list of
+    `<code> <address>` items: high nibble = length - 1, low nibble = area, `06` = address high
+    byte). The tool reads the counters as 8 bytes at `0x01e6` (3 + 2 + 3). `EEA_H_PON` seen to
+    step 87 132 -> 87 133 h, low byte first. The tool does not display the counters on firmware
+    11.0e, so burner hours (20 186 h) and starts (187 226) still lack an independent figure.
+    **Lot D is no longer blocked on the format**; it needs that one cross-check, then a scoped
+    lot (counters only, not the whole memory map).
+  - Lot E: automat fault history decoded, 6 records of 8 bytes at `0x0202`, 48 of 48 values
+    matched to the screen. Ready to be written as definitions with an evidence record.
+  - Lot A: register 13 is the de-couple sensor B22, not the boiler flow; `SupplyWTCTemp` to be
+    renamed (touches the branch behind #717: ask first). Sign of registers 3, 13, 14 still open.
+- Next: evidence records and definitions for the fault history (lot E) and the counters (lot D).
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
