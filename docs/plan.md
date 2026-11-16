@@ -37,7 +37,7 @@ Plan accordingly: each lot must be acceptable on its own, and nothing here may d
 
 Before reshaping the pull request, ask on #717 (or issue john30/ebusd#167):
 is a new manufacturer welcome, are smaller lots preferred, where should the CRC decorator live.
-Status: **to draft**, to be reviewed by the repository owner before posting.
+Status: **asked on #717 on 2026-11-16**, waiting for an answer.
 
 ## Lots
 
