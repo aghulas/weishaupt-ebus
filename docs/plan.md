@@ -65,8 +65,13 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - **Shipped so far:** `src/wolf/15..ka.tsp`, 18 read registers evidenced against the live boiler
   (`evidence/ka-reads.md`): KA sensors/status plus the read side of heating/hot-water settings.
   Emitted CSV passes `tsp compile`, `tsp format --check`, and `ebusd --checkconfig` (0 errors).
-- **Still to add to Lot A (bus-proven, no CRC):** passive status messages (`KaStatus`,
-  `WTCStatus`, `WTCPower`, `HcMode`) and time programs as read.
+- **Passive status, first message shipped:** `KaStatus` (boiler status broadcast, PBSB `50 0A`,
+  `src/wolf/wtc_inc.tsp` + `broadcast.tsp`), layout decoded against a live broadcast frame
+  (`evidence/broadcast-kastatus.md`). The passive models could not go in the shared root
+  `src/opdata_inc.tsp` (imported by tem/ochsner/encon too), so they live in a wolf-local include.
+- **Still to add to Lot A (bus-proven, no CRC):** remaining passive status (`WTCStatus` /
+  `WTCPower` boiler→controller, `HcMode` / `FsStatus` heating modules — note the live `ZZ`
+  differs from #717's declared `@zz`, so wire from observed frames), and time programs as read.
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
