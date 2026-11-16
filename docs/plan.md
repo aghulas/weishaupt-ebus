@@ -132,7 +132,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
     matched to the screen. Ready to be written as definitions with an evidence record.
   - Lot A: register 13 is the de-couple sensor B22, not the boiler flow; `SupplyWTCTemp` to be
     renamed (touches the branch behind #717: ask first). Sign of registers 3, 13, 14 still open.
-- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `dce7124`, local, not
+- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `c6ab155`, local, not
   pushed): `FaultHistoryPointer` and `FaultHistorySlot1..6` for both boilers
   (`src/wolf/08..bc1.tsp`, new `src/wolf/18..bc2.tsp`, shared models in `wtc_inc.tsp`),
   evidence in `evidence/bc-fault-history.md`, `scripts/check.sh` clean (159 messages).
@@ -146,7 +146,14 @@ Lot A is the priority: it is the only one that can be merged without any other c
     hours and burner hours; starts and mains-on go in with that caveat or wait.
   - New: the data logger reads live values of the automat from RAM with the same `50 00`
     grammar (4 channels matched on the bus, the rest to be resolved from the channel table).
-- Next: lot D definitions (counters) on a branch from `weishaupt-E`.
+- **Lot D, counters: done** on branch `weishaupt-D` (from `weishaupt-E`, commit `efecacb`,
+  local, not pushed): one message `Counters` per boiler (operating hours, burner hours, burner
+  starts), evidence in `evidence/bc-counters.md`, `scripts/check.sh` clean (161 messages).
+  Scoped to these counters; the raw memory map stays out. Not yet read by ebusd itself.
+- Data logger channel table merged (30 channels of the automat resolved to RAM / XRAM
+  addresses, area `3` = XRAM). Material for a later lot of live automat values.
+- Next: decide the order of the pull requests after #717 (E, then D), and the rename of
+  `SupplyWTCTemp` in lot A.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
