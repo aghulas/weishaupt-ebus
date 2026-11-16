@@ -79,15 +79,15 @@ Lot A is the priority: it is the only one that can be merged without any other c
   (no frame, no cached value; the PBSBs actually seen are 0504/0507/0700/0704/07ff/0902/0903/
   5000/5009/500a/5014/5022/fe01). The heating circuits use `HcMode` (50 14) instead, which is
   already shipped. Left out for lack of evidence (rule 3).
-- **Time programs shipped (read side):** em1 system clock (weekday/date/time) and the weekly
-  circulation program (3 slots × 7 days), `src/wolf/50..em1.tsp`, evidenced against the live
-  clock and program reads (`evidence/em1-clock-program.md`). The shared register-read template
-  was moved to `src/wolf/wtc_inc.tsp` (KA reads unchanged). Note: the deployed ebusd config
-  differs from weishaupt-pr (programs under `em1`, dotted names) — addresses were taken from
-  the running config, not #717.
-- **Still evidenceable here, later:** heating/hot-water weekly programs (other sub-addresses),
-  `PowerDemand` (05 07; check `Opdata_inc.HcOperation` first), passive EM sensor reports
-  (09 02 / 09 03).
+- **Time programs shipped (read side):** em1 system clock (weekday/date/time), weekly
+  circulation program (`sub 1a`) and weekly hot-water program (`sub 17`), 3 slots × 7 days each,
+  `src/wolf/50..em1.tsp`, evidenced against live reads (`evidence/em1-clock-program.md`; the
+  hot-water program showed a real schedule, Mon 09:00→16:00). Shared register-read template
+  moved to `src/wolf/wtc_inc.tsp` (KA reads unchanged). The deployed ebusd config differs from
+  weishaupt-pr (programs under `em1`, dotted names); addresses taken from the running config.
+  No separate heating program exists on this bus (only circulation + hot water).
+- **Still evidenceable here, later:** the same programs on em2/em3 (ZZ 51/52), `PowerDemand`
+  (05 07; check `Opdata_inc.HcOperation` first), passive EM sensor reports (09 02 / 09 03).
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the

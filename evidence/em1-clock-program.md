@@ -7,8 +7,9 @@ ID `<crc> <addr> <sub>` with the precomputed CRC (see [register-crc.md](register
 in `src/wolf/50..em1.tsp`:
 
 - **System clock** (`sub = 01`): weekday, day, month, year, hour, minute, second.
-- **Weekly circulation program** (`sub = 1a`): three switch-time slots per weekday, each a
-  start ("from") and stop ("to") time with an enable flag (model `SwitchTimes`).
+- **Weekly circulation program** (`sub = 1a`) and **weekly hot-water program** (`sub = 17`):
+  three switch-time slots per weekday, each a start ("from") and stop ("to") time with an
+  enable flag (model `SwitchTimes`).
 
 ## How it was established
 
@@ -27,6 +28,11 @@ Weekly program, e.g.:
 | message | addr sub | id | value (ToTime;ToEnabled;FromTime;FromEnabled) |
 |---|---|---|---|
 | CircProgramMon1 | 10 1a | `aa101a` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramMon1 | 10 17 | `a71017` | 16:00; Enabled; 09:00; Enabled |
+| DHWProgramSat1 | 60 17 | `536017` | 00:00; Disabled; 00:00; Disabled |
+
+The hot-water program carries a real schedule (Monday hot water enabled 09:00→16:00), which
+confirms the `SwitchTimes` codec on non-trivial data, not just the disabled sentinel.
 
 The clock reads back the real date and time of the capture (Monday, 16 November '26, minute 46),
 which confirms both the addresses and the codecs. The program slot decodes to the four
