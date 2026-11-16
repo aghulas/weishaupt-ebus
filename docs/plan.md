@@ -16,7 +16,7 @@ Plan accordingly: each lot must be acceptable on its own, and nothing here may d
 | PR | Branch | Head | State |
 |---|---|---|---|
 | john30/ebusd#1825 | `aghulas:crc` | `02f6de0f` | open, no review. 1 commit, 4 files. |
-| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `34b33cd` | open, no review. 3 commits, 19 files, ~11 300 lines. |
+| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `8c62e41` | **retargeted to Lot A on 2026-11-16**: 7 commits, 9 files, 641 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
 
 ## Known gaps of #717 against the upstream guidelines
 
@@ -37,7 +37,10 @@ Plan accordingly: each lot must be acceptable on its own, and nothing here may d
 
 Before reshaping the pull request, ask on #717 (or issue john30/ebusd#167):
 is a new manufacturer welcome, are smaller lots preferred, where should the CRC decorator live.
-Status: **asked on #717 on 2026-11-16**, waiting for an answer.
+Status: asked on #717 on 2026-11-16. Rather than wait, #717 was **retargeted** the same day to
+Lot A, which answers most of it in code: it extends `src/wolf` (no new manufacturer), is a small
+read-only `.tsp`-only change (no `.js`), and needs no CRC decorator (CRC precomputed in the ID).
+The `0x00` finding note (`docs/maintainer-note-crc.md`) is drafted but not posted.
 
 ## Lots
 
