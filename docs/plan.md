@@ -126,8 +126,10 @@ Lot A is the priority: it is the only one that can be merged without any other c
     without a lockfile npm picks 0.79.3, which imports `sanitizePathSegment` from the compiler
     (present only from 1.17). Workaround on `weishaupt-pr`:
     `npm install --no-save @typespec/compiler@1.12.0 @typespec/asset-emitter@0.79.1`
-    (lost on the next plain `npm install`). Worth a note to the maintainer: the upstream config
-    does not compile from a fresh install.
+    (lost on the next plain `npm install`). The upstream config does not compile from a
+    fresh install. Already reported in #727 (point 1) and #674; the root cause (asset-emitter
+    0.79.2/0.79.3 raised their compiler peer to ^1.16/^1.17) was added as a comment on #727 on
+    2026-11-16.
   - Windows: the fork has symlinks (`src/kromschroeder` → `wolf`, `src/vaillant/15.720.tsp`).
     They need Developer Mode and `git config core.symlinks true` before checkout, otherwise they
     become text files and `tsp compile` fails on them.
