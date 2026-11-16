@@ -75,8 +75,14 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - **Passive status, both boilers + heating modules shipped:** `WTCStatus`/`WTCPower` for bc1
   (`QQ 03`) and bc2 (`QQ 13`); `HcMode` room-controller/module exchange for em1/em2/em3
   (`src/wolf/5x..emN.tsp`, `evidence/em-hcmode.md`).
-- **Still to add to Lot A (bus-proven, no CRC):** `FsStatus` (FS room-unit status), and time
-  programs as read.
+- **`FsStatus` (PBSB 50 10) not shippable here:** it does not appear on this installation
+  (no frame, no cached value; the PBSBs actually seen are 0504/0507/0700/0704/07ff/0902/0903/
+  5000/5009/500a/5014/5022/fe01). The heating circuits use `HcMode` (50 14) instead, which is
+  already shipped. Left out for lack of evidence (rule 3).
+- **Still evidenceable here, candidates for Lot A:** `PowerDemand` (50 → 03, PBSB 05 07,
+  controller heat demand to the boiler; check whether the shared `Opdata_inc.HcOperation`
+  already covers it), passive sensor reports on the EM modules (PBSB 09 02 / 09 03), and
+  time programs as read (5022 registers with time fields). Each needs its own bus evidence.
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
