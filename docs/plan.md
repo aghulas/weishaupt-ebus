@@ -98,8 +98,11 @@ Lot A is the priority: it is the only one that can be merged without any other c
   coverage should be its own later lot, not bundled here.
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
-- **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
-  `src/wolf` layout (compile `src/main.tsp`, checkconfig the emitted `wolf/` with root templates).
+- `scripts/check.sh` targets `src/wolf` (set `LOT_DIR` for another folder). It compiles
+  `src/main.tsp` and runs `ebusd --checkconfig` on the emitted root CSV files plus `wolf/`. The
+  last step runs in Docker when available, otherwise in GitHub Actions (workflow
+  `.github/workflows/checkconfig.yml` of this repository): the compiled CSV are sent as a
+  workflow input, so nothing is pushed to the fork.
 
 ## Service tool comparison (2026-11-16)
 
@@ -128,3 +131,12 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - Toolchain: validated with `@ebusd/ebus-typespec` 0.26. Upstream pins `~0.29` with
   `@typespec/compiler ~1.12`, which did not install cleanly with a recent Node.js. Pin a Node.js LTS
   version and commit a lockfile in the fork before lot A.
+  - Cause found (2026-11-16): `ebus-typespec` 0.29 depends on `@typespec/asset-emitter ^0.79.1`;
+    without a lockfile npm picks 0.79.3, which imports `sanitizePathSegment` from the compiler
+    (present only from 1.17). Workaround on `weishaupt-pr`:
+    `npm install --no-save @typespec/compiler@1.12.0 @typespec/asset-emitter@0.79.1`
+    (lost on the next plain `npm install`). Worth a note to the maintainer: the upstream config
+    does not compile from a fresh install.
+  - Windows: the fork has symlinks (`src/kromschroeder` → `wolf`, `src/vaillant/15.720.tsp`).
+    They need Developer Mode and `git config core.symlinks true` before checkout, otherwise they
+    become text files and `tsp compile` fails on them.
