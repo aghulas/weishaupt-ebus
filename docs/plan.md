@@ -72,8 +72,11 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - **Passive status shipped:** `KaStatus` broadcast (`evidence/broadcast-kastatus.md`), and the
   first boiler's directed `WTCStatus` + `WTCPower` (`QQ 03 → ZZ 10`, `src/wolf/10..bc1.tsp`,
   `evidence/bc1-boiler-status.md`). `ZZ` taken from observed frames, not #717's `@zz`.
-- **Still to add to Lot A (bus-proven, no CRC):** second boiler (`QQ 13`), heating-module
-  exchange (`HcMode` / `FsStatus`), and time programs as read.
+- **Passive status, both boilers + heating modules shipped:** `WTCStatus`/`WTCPower` for bc1
+  (`QQ 03`) and bc2 (`QQ 13`); `HcMode` room-controller/module exchange for em1/em2/em3
+  (`src/wolf/5x..emN.tsp`, `evidence/em-hcmode.md`).
+- **Still to add to Lot A (bus-proven, no CRC):** `FsStatus` (FS room-unit status), and time
+  programs as read.
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
