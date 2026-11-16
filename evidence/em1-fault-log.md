@@ -43,3 +43,10 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
   they were 0/1 with no active fault.
 - Boiler operating/burner hours (`EEA_H_PON` / `EEA_H_BON`) are `50 00` EEPROM-memory reads,
   not `50 22`; they belong to the raw memory-map lot, not this one.
+
+## Also in this lot — boiler service hours
+
+`BurnerServiceHours` (the i45 maintenance counter) is a `50 22` read on the boiler itself
+(circuit `bc1`, target 0x08, `src/wolf/08..bc1.tsp`), ID `0abc02` (addr `bc 02`, CRC `0a`,
+which matches the captured frame `0a bc 02`). Read live: **430 h**. Codec `UIN h`.
+`ebusd --checkconfig` clean with the `08..bc1` (ZZ 08) and `10..bc1` (ZZ 10) files side by side.
