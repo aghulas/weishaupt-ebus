@@ -79,10 +79,15 @@ Lot A is the priority: it is the only one that can be merged without any other c
   (no frame, no cached value; the PBSBs actually seen are 0504/0507/0700/0704/07ff/0902/0903/
   5000/5009/500a/5014/5022/fe01). The heating circuits use `HcMode` (50 14) instead, which is
   already shipped. Left out for lack of evidence (rule 3).
-- **Still evidenceable here, candidates for Lot A:** `PowerDemand` (50 → 03, PBSB 05 07,
-  controller heat demand to the boiler; check whether the shared `Opdata_inc.HcOperation`
-  already covers it), passive sensor reports on the EM modules (PBSB 09 02 / 09 03), and
-  time programs as read (5022 registers with time fields). Each needs its own bus evidence.
+- **Time programs shipped (read side):** em1 system clock (weekday/date/time) and the weekly
+  circulation program (3 slots × 7 days), `src/wolf/50..em1.tsp`, evidenced against the live
+  clock and program reads (`evidence/em1-clock-program.md`). The shared register-read template
+  was moved to `src/wolf/wtc_inc.tsp` (KA reads unchanged). Note: the deployed ebusd config
+  differs from weishaupt-pr (programs under `em1`, dotted names) — addresses were taken from
+  the running config, not #717.
+- **Still evidenceable here, later:** heating/hot-water weekly programs (other sub-addresses),
+  `PowerDemand` (05 07; check `Opdata_inc.HcOperation` first), passive EM sensor reports
+  (09 02 / 09 03).
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
