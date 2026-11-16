@@ -101,6 +101,16 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
   `src/wolf` layout (compile `src/main.tsp`, checkconfig the emitted `wolf/` with root templates).
 
+## Service tool comparison (2026-11-16)
+
+- Protocol written: `docs/service-tool-protocol.md` (two seats, read-only rules, log format).
+- Bus side ready: ebusd grabs all telegrams; a baseline snapshot was taken. The tool (`ff`) and
+  ebusd (`31`) do not share an address. Setting writes also use source `ff`: none may be sent
+  while the tool is connected.
+- Not started: phase 1 (installation folder) and phase 2 (screens). First target is the `50 00`
+  read format that blocks lot D.
+- Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
+
 ## Conventions
 
 - Contribution branches: `weishaupt-<lot>` in the fork, rebased on upstream `master`.
