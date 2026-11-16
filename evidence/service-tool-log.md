@@ -328,3 +328,67 @@ After the tool was disconnected, two snapshots 11 s apart showed no new telegram
 - Lot A: register 13 is the de-couple sensor B22; `SupplyWTCTemp` should be renamed. The tool
   reads the system manager with `09 02` and no CRC, where lot A uses `50 22` with a CRC; both
   return the same values.
+
+## Session 2 — data logger channels
+
+Work on files only, no bus. Source: section `[WCM_5]` of `DL.Ini` (30 channels), the one whose
+legends match the data-logger screen of the WTC automat (`WCM-CPU-R5`, firmware 11.0e). Each
+variable name was resolved in `WH11928.SYC`. In that file each list is closed by its title, so the
+five lists are, in order: RAM, Bit, SFR, Konstanten, XRAM.
+
+`Offset` is 0 for every analogue channel. For the binary channels and `F_CODE` it runs from -2 to
+-28 in steps of 2: it only stacks the traces on the chart and says nothing about the data.
+
+| # | Label on screen | Variable | Type | Gain | Mask | `.SYC` list | Address | Read as |
+|---|---|---|---|---|---|---|---|---|
+| 0 | Sup./Mod setpoint | `TVSOLL` | SChar | 1 | | RAM | `0x6e` | RAM `6e` |
+| 1 | Sup. act (NTC) B12 | `TVIST` | SChar | 1 | | RAM | `0x68` | RAM `68` |
+| 2 | RL B13 | `TRLIST` | SChar | 1 | | RAM | `0x62` | RAM `62` |
+| 3 | cWWSollwert | `TWWSOLL_HS` | SChar | 1 | | RAM | `0x6f` | RAM `6f` |
+| 4 | DHW actual B3 | `TWWIST` | SChar | 1 | | RAM | `0x6a` | RAM `6a` |
+| 5 | Flue gas temp. | `TABGAS` | SChar | 1 | | RAM | `0x63` | RAM `63` |
+| 6 | Outdoor temp. | `TAUSSEN` | SChar | 1 | | RAM | `0x6c` | RAM `6c` |
+| 7 | De-couple temp. B11 | `TWEICHEIST` | SChar | 1 | | XRAM | `0xf07c` | zone 3 `7c` |
+| 8 | Speed set | `MODI_NGSOLL` | UChar | 1 | | XRAM | `0xf0de` | zone 3 `de` |
+| 9 | Speed act. | `NGIST` | UChar | 1 | | RAM | `0x77` | RAM `77` |
+| 10 | PWM pump | `PUHZPWM` | UChar | 1 | | RAM | `0xed` | RAM `ed` |
+| 11 | Io actual | `Z_IONDMUEA` | UChar | 0.1 | | XRAM (`Z_IondmueA`) | `0xf0d5` | zone 3 `d5` |
+| 12 | 0-10V N1 | `Ain_0_10V` | UMask | 1 | `0x7f` | XRAM (`AIN_0_10V`) | `0xf077` | zone 3 `77` |
+| 13 | PWM fan | `YPWM` | UChar | 0.4 | | RAM | `0x7e` | RAM `7e` |
+| 14 | .GPS | `GDW` | Bit | | | Bit | `0x38` | RAM `27` bit 0 |
+| 15 | .APS | `LDW` | Bit | | | Bit | `0x39` | RAM `27` bit 1 |
+| 16 | .APS Siphon | `FS_IN_1` | Bit | | | Bit | `0x3a` | RAM `27` bit 2 |
+| 17 | .WPS | `FS_IN_2` | Bit | | | Bit | `0x3b` | RAM `27` bit 3 |
+| 18 | .H1 | `FS_IN_3` | Bit | | | Bit | `0x3c` | RAM `27` bit 4 |
+| 19 | .H2 | `FS_IN_4` | Bit | | | Bit | `0x3d` | RAM `27` bit 5 |
+| 20 | .MFA1 | `PROG_REL_1` | Bit | | | Bit | `0x5c` | RAM `2b` bit 4 |
+| 21 | .MFA2 | `PROG_REL_2` | Bit | | | Bit | `0x5d` | RAM `2b` bit 5 |
+| 22 | VA | `PROG_REL_3` | Bit | | | Bit | `0x5f` | RAM `2b` bit 7 |
+| 23 | Ignition | `ZUEND` | Bit | | | Bit | `0x59` | RAM `2b` bit 1 |
+| 24 | Valve 1 | `V1` | Bit | | | Bit | `0x5a` | RAM `2b` bit 2 |
+| 25 | Valve 2 | `V2` | Bit | | | Bit | `0x5b` | RAM `2b` bit 3 |
+| 26 | Pump | `PUHZ` | Bit | | | Bit | `0x5e` | RAM `2b` bit 6 |
+| 27 | Lockout | `F_CODE` | UChar | 1 | | RAM | `0x65` | RAM `65` |
+| 28 | Sup. act. (eSTB) | `T_ESTB2` | SChar | 1 | | RAM | `0x5e` | RAM `5e` |
+| 29 | Modgrad | `MODULATIONSGRAD` | UChar | 1 | | XRAM | `0xf0b2` | zone 3 `b2` |
+
+All 30 names resolve in `WH11928.SYC`. The table covers every read the tool sent: 14 RAM reads
+(`27`, `2b`, `5e`, `62`, `63`, `65`, `68`, `6a`, `6c`, `6e`, `6f`, `77`, `7e`, `ed`) and 5
+zone `3` reads (`77`, `7c`, `b2`, `d5`, `de`).
+
+- **Zone `3` of a `50 00` read is the XRAM list of the `.SYC`.** The five low bytes read in
+  zone `3` are exactly the five channels whose names exist only in the XRAM list. The whole XRAM
+  list of `WH11928` lies in `0xf000` … `0xf0e9`, so its high byte is always `f0`. This file did not
+  check whether a `06 f0` item precedes these reads.
+- **Bit channels: the tool reads the byte, not the bit.** In the Bit list, `GDW` … `FS_IN_4` are
+  bits `0x38` … `0x3d`, and `ZUEND`, `V1`, `V2`, `PROG_REL_1/2`, `PUHZ`, `PROG_REL_3` are bits
+  `0x59` … `0x5f`. In the bit-addressable layout (byte = `0x20` + bit / 8), those bits fall in
+  bytes `0x27` and `0x2b`. These bytes are the two RAM reads with no analogue channel, and the RAM
+  list names them `EB_0000` (`0x27`) and `AB_0000` (`0x2b`). The bit numbers in the table come from
+  this layout. No bus value has confirmed them yet.
+- `0x5e` is in two lists: `T_ESTB2` in RAM and `PUHZ` in the Bit list. The RAM read `5e` is
+  `T_ESTB2`, because the pump bit is read in byte `2b`.
+- Gains differ between sections of `DL.Ini`. In this section, `NGIST` has gain 1, against 0.5 in
+  `[WCM45]`, `[WCM3]` and `[WTO]`. The speed set is `MODI_NGSOLL` here and `NGSOLL` elsewhere.
+- Confirms the bus match already made: Sup./Mod setpoint = RAM `6e` `TVSOLL`, Speed act. =
+  RAM `77` `NGIST`, PWM pump = RAM `ed` `PUHZPWM`.
