@@ -86,8 +86,13 @@ Lot A is the priority: it is the only one that can be merged without any other c
   moved to `src/wolf/wtc_inc.tsp` (KA reads unchanged). The deployed ebusd config differs from
   weishaupt-pr (programs under `em1`, dotted names); addresses taken from the running config.
   No separate heating program exists on this bus (only circulation + hot water).
-- **Still evidenceable here, later:** the same programs on em2/em3 (ZZ 51/52), `PowerDemand`
-  (05 07; check `Opdata_inc.HcOperation` first), passive EM sensor reports (09 02 / 09 03).
+- **Expansion ceiling reached.** The EM "sensor" messages are not a distinct passive set —
+  they are active `50 22` reads of the same registers already shipped (e.g. DHWTemp, OutsideTemp),
+  just on another circuit. The running config exposes 227+ messages on em1 alone. Going further
+  means either duplicating the clock/programs onto em2/em3 (ZZ 51/52) or adding hundreds more
+  register reads — both work against rule 5 (small, reviewable PRs) and recreate the #717
+  problem. **Recommendation: treat Lot A as complete and scope the PR.** Any mass register
+  coverage should be its own later lot, not bundled here.
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
 - **Caveat:** `scripts/check.sh` is wired to `src/weishaupt`; it needs a variant for the
