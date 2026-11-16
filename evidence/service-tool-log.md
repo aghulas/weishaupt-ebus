@@ -328,3 +328,139 @@ After the tool was disconnected, two snapshots 11 s apart showed no new telegram
 - Lot A: register 13 is the de-couple sensor B22; `SupplyWTCTemp` should be renamed. The tool
   reads the system manager with `09 02` and no CRC, where lot A uses `50 22` with a CRC; both
   return the same values.
+
+## Session 2 — second boiler and data logger
+
+Date: 2026-11-16, 17:11–17:45. Same method. The tool sent no write; nothing else sent as `ff`.
+Every boiler window of the tool opens with an error box of the program itself (access
+violation in the executable, both builds, also in Windows compatibility mode). This is the
+likely reason why some of its screens stay empty although the requests go out and are answered.
+
+### 17:13 — boiler automat B, window opened on tab "Error history"
+
+Device: WTC automat at `18`, scanned `SW=1104;HW=0501` (window title `WCM-CPU-R5#B WTC 250 H 11.0e`).
+
+```
+ff 18 5000 ec 06 02 92 00 / 09 02 24 00 00 00 14 14 00 14
+ff 18 5000 e6 06 02 92 0a / 24 00 00 00 4e 44 00 4e 24 00
+ff 18 5000 f8 06 02 92 14 / 1b 32 49 35 00 42 24 00 1c 32
+ff 18 5000 f2 06 02 92 1e / 4d 3a 00 48 24 00 1c 32 45 33
+ff 18 5000 c4 06 02 92 28 / 00 3d 24 00 00 00 18 14 00 1a
+```
+
+The order on screen was predicted before the screen was opened, from the slots read through
+ebusd and the pointer `0x0209` (last byte of slot 1). The screen showed exactly that:
+
+| Screen | Slot | Code | I10 | I11 | I22 | I30 | I31 | I32 | I37 |
+|---|---|---|---|---|---|---|---|---|---|
+| Error 1 | 1 | F3 6 | 0 | 0 | 0 | 20 | 20 | 0,0 | 20 |
+| Error 2 | 6 | F3 6 | 0 | 0 | 0 | 24 | 20 | 0,0 | 26 |
+| Error 3 | 5 | F3 6 | 0 | 28 | 50 | 69 | 51 | 0,0 | 61 |
+| Error 4 | 4 | F3 6 | 0 | 28 | 50 | 77 | 58 | 0,0 | 72 |
+| Error 5 | 3 | F3 6 | 0 | 27 | 50 | 73 | 53 | 0,0 | 66 |
+| Error 6 | 2 | F3 6 | 0 | 0 | 0 | 78 | 68 | 0,0 | 78 |
+
+- **Established:** the history is a ring. The slot that ends at the pointer is "Error 1"; older
+  entries follow downwards, wrapping from slot 1 to slot 6. Seen with two pointer positions
+  (`0x0231` on A, `0x0209` on B).
+
+The window also read the parameter block when it opened (as on A, so those reads belong to the
+window, not to a tab). EEPROM `0x1b`–`0x4a` is identical on both automats. In `0x4b`–`0x51`
+three bytes differ: `0x4c` = `01` (A) / `02` (B), probably P12 boiler address; `0x4e` = `55` /
+`45`; `0x51` = `b8` / `c8`, probably a checksum.
+
+### 17:14 — boiler automat B, tab "Statistic" (`Read`)
+
+Same 11 requests as on A. The screen again showed only `I44`, `I45`, `I46` (-19659) and P70.
+
+```
+ff 18 5000 9c 06 01 72 e6 06 00 02 24 / ed 43 01 52 4e 09 1f 02 | 28
+ff 18 5000 a5 06 03 12 05             / 4c ca
+ff 18 5000 a6 06 01 92 d2             / 00 00 05 00 03 00 00 00 e2 00
+```
+
+Cross-check of the burner hours (`EEA_H_BON`, 2 bytes at `0x01e9`, low byte first):
+
+| | Automat A | Automat B |
+|---|---|---|
+| `EEA_H_BON` from the bus | `da 4e` = 20 186 | `52 4e` = 20 050 |
+| `I46` shown by the tool | -19 752 | -19 659 |
+| sum | 434 | 391 |
+| `BurnerServiceHours` (`50 22`, read through ebusd) | 430 | 390 |
+
+- **Established:** `EEA_H_BON` is a 2-byte value, low byte first. The tool's `I46` plus this
+  value gives the hours since the last service, which an independent `50 22` read returns in
+  steps of ten. The value for B (390) was predicted from the sum before it was read.
+- The two bytes at `0x0305` (`4d 27` on A, `4c ca` on B), high byte first, are 19 751 and
+  19 658: the bitwise complement of what the tool displays as `I46`, and one less than
+  `EEA_H_BON` minus the sum above. Probably the burner hours stored at the last service; the
+  byte order is the opposite of the counters. Not used in a definition.
+- Automat B: `EEA_H_PON` = `ed 43 01` = 82 925 h, `EEA_N_ZUE` = `09 1f 02` = 139 017,
+  `EEA_N_PON` = `e2 00 00` = 226.
+
+### 17:30 — data logger on boiler automat A
+
+When the logger started, the tool read the counters of A again:
+
+| Counter | 15:53 | 15:55 | 17:30 |
+|---|---|---|---|
+| `EEA_H_PON` (`0x01e6`, 3 bytes) | 87 132 | 87 133 | 87 134 |
+| `EEA_H_BON` (`0x01e9`, 2 bytes) | 20 186 | 20 186 | 20 187 |
+| `EEA_N_ZUE` (`0x01eb`, 3 bytes) | 187 226 | 187 226 | 187 230 |
+
+- **Established:** all three step upwards by their first byte: low byte first. Four more burner
+  starts and one more burner hour in about 95 minutes.
+- Not verified: `EEA_N_ZUE` and `EEA_N_PON` against any displayed figure.
+
+With 20 channels selected (first 20 of the list), the tool polls about every 2 s:
+
+```
+ff 08 5000 a8 01 27 11 62 01 68 01 6a 01 6c / ad | 40 3d | 41 | d8 | 0c
+ff 08 5000 12 03 77 03 7c 03 d5 03 de       / ff | d8 | 00 | 00
+ff 08 5000 fd 11 6e 01 77 01 7e 01 ed       / 00 08 | 00 | 00 | 00
+ff 18 5000 7b 01 27                         / ad
+```
+
+Matched to the chart (values read off the curves, so approximate):
+
+| Channel | Chart | Address | Byte |
+|---|---|---|---|
+| Sup. act (NTC) B12 | about 65 °C | RAM `0x68` | `41` = 65 |
+| RL B13 | about 64 °C | RAM `0x62` | `40` = 64 |
+| Flue gas temp. | 63, falling to 61 °C | RAM `0x63` | `3d` = 61, later `3b` |
+| Outdoor temp. | about 12 °C | RAM `0x6c` | `0c` = 12 |
+
+Channel selection reduced to one channel, then to the ten channels not selected before:
+
+| Selection | Request | Answer | Symbol known to the running ebusd |
+|---|---|---|---|
+| Sup./Mod setpoint | `ff 08 5000 32 01 6e` | `00` | `TVSOLL` |
+| PWM pump | `ff 08 5000 b1 01 ed` | `00` | `PUHZPWM` |
+| Speed act. | `ff 08 5000 2b 01 77` | `00` | `NGIST` |
+| .MFA1, .MFA2, VA, Ignition, Valve 1, Valve 2, Pump, Lockout, Sup. act. (eSTB), Modgrad | `ff 08 5000 16 01 2b 01 5e 01 65 03 b2` | `70 | 42 | 00 | 17` | |
+
+- The three single selections were made one after the other without a snapshot in between and
+  all returned 0 (burner off). Each request is assigned to its channel by the symbol name, not
+  by timing.
+- Ten channels need four reads: the eight on/off channels are bits of one or two bytes.
+  Candidates: `Sup. act. (eSTB)` = RAM `0x5e` (`42` = 66 °C, one degree from B12) and `Modgrad`
+  = area `3` at `b2` (`17` = 23 %, the minimum boiler rating P36; the same byte is in the cascade
+  poll of session 1).
+- Not matched: DHW actual B3, De-couple temp. B11, Speed set, Io actual, 0-10V N1, PWM fan
+  against RAM `0x6a`, `0x7e` and area `3` at `77`, `7c`, `d5`, `de`. Two of these bytes are `d8`
+  (-40 as a signed byte), as expected for the two sensors that are not fitted.
+- Not established: which symbol list area `3` is.
+
+No telegram with `QQ=ff` after 17:45.
+
+### What session 2 changes
+
+- Lot E: the ring order is proven on both automats; the last open point of
+  `evidence/bc-fault-history.md` about the second boiler is closed.
+- Lot D: burner hours have their independent figure, on both automats. Operating hours and
+  burner starts behave as low-byte-first counters. Still without an independent figure: the
+  number of burner starts and the number of mains-on.
+- Later lot: live values of the automat (temperatures, setpoint, fan, pump, inputs and outputs)
+  are RAM reads with the same `50 00` grammar. The channel table of the tool and the symbol
+  table give the addresses; four channels are matched on the bus so far.
+

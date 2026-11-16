@@ -77,8 +77,11 @@ item per slot, a form the tool itself does not use for this screen:
 bc1 returns the same six records as the tool's screen. Its pointer `0x0231` is the last byte of
 slot 6, which the tool shows as "Error 1" (most recent).
 
-**Ring.** On bc2 the pointer is `0x0209`, the last byte of slot 1: the most recent fault is not
-always in slot 6.
+**Ring.** On bc2 the pointer is `0x0209`, the last byte of slot 1. The tool's screen for the
+second boiler, predicted from these reads before it was opened, shows slot 1 as "Error 1", then
+slots 6, 5, 4, 3, 2 as "Error 2" to "Error 6" (`service-tool-log.md`, session 2). So the slot
+ending at the pointer is the most recent, and older entries follow downwards with wrap-around.
+All 48 values of that screen equal the bc2 row above.
 
 Toolchain: `scripts/check.sh` clean (format, compile, `ebusd --checkconfig`, 159 messages).
 
@@ -93,8 +96,6 @@ Two WTC condensing boilers in cascade, automat scanned `MF=Kromschroeder;SW=1104
 
 ## Not verified
 
-- The order of the slots on bc2 against the tool's screen (the tool was opened on the first
-  boiler only). That the slot ending at the pointer is the most recent rests on bc1.
 - The texts of the fault numbers. The tool's statistics screen lists some of them (for example
   `W1 2: STW Excess temperature supply`, `F3 6: Water pressure too low`); no value list is
   shipped.

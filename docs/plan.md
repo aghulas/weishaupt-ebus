@@ -137,7 +137,16 @@ Lot A is the priority: it is the only one that can be merged without any other c
   (`src/wolf/08..bc1.tsp`, new `src/wolf/18..bc2.tsp`, shared models in `wtc_inc.tsp`),
   evidence in `evidence/bc-fault-history.md`, `scripts/check.sh` clean (159 messages).
   First use of the `50 00` memory read in the lots: `memr` template with the precomputed CRC.
-- Next: the counters (lot D), once burner hours or starts have an independent figure.
+- **Session 2 done** on 2026-11-16 (second boiler, data logger), in the same log:
+  - Lot E: ring order of the fault history proven on both automats (screen of the second
+    boiler predicted, then matched 48 of 48).
+  - Lot D: burner hours cross-checked on both automats against the `50 22` service-hours read;
+    operating hours and burner starts seen to count upwards, low byte first. Burner starts and
+    mains-on count still have no independent figure. **Lot D can be written** for operating
+    hours and burner hours; starts and mains-on go in with that caveat or wait.
+  - New: the data logger reads live values of the automat from RAM with the same `50 00`
+    grammar (4 channels matched on the bus, the rest to be resolved from the channel table).
+- Next: lot D definitions (counters) on a branch from `weishaupt-E`.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
