@@ -107,8 +107,17 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - Bus side ready: ebusd grabs all telegrams; a baseline snapshot was taken. The tool (`ff`) and
   ebusd (`31`) do not share an address. Setting writes also use source `ff`: none may be sent
   while the tool is connected.
-- Not started: phase 1 (installation folder) and phase 2 (screens). First target is the `50 00`
-  read format that blocks lot D.
+- **Phase 1 done** (installation folder, no bus), recorded in `evidence/service-tool-log.md`:
+  - The `*.SYC` files are firmware symbol tables (name + address, five lists, no size or codec).
+    The fork's 36 memory maps were generated from them; names and addresses agree.
+  - Lot D: on `WH11928`, `EEA_H_PON` is at most 3 bytes and `EEA_H_BON` at most 2 bytes (address
+    gaps, same spacing in the other firmware families). The deployed 1-byte reads are therefore
+    truncated. Still missing: the `50 00` request bytes sent by the tool (phase 2).
+  - `DL.Ini` lists `50 22` register numbers with type and factor. 7 lot A definitions agree
+    with it. Open for phase 2: sign of registers 3, 13 and 14, and register 13 labelled "B22"
+    (hydraulic separator / plate exchanger secondary), not boiler flow.
+  - `Cxe.Ini` confirms the tool sends as `0xff`.
+- Not started: phase 2 (screens). First target is the `50 00` request format that blocks lot D.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
