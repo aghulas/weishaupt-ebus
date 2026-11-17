@@ -83,6 +83,9 @@ data point on arbitration with room units).
   on the display of a room unit, both copies read before and after. If only the room unit's copy
   is in use, the seven settings lot C writes on `51` have no effect and must be removed or
   flagged.
+- **Languages other than English** (French first): scoped in `docs/i18n.md`, with a prototype on
+  the local branch `weishaupt-i18n-proto` (`79424c2`, not a lot). Six decisions listed there
+  before the implementation starts.
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
   request (rule 8).
 
