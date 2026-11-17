@@ -34,6 +34,7 @@ integration branch and from which the pull requests are opened.
 scripts/setup.sh   # clones the forks under repos/
 scripts/check.sh   # commit hygiene, format check, compile, ebusd --checkconfig
 scripts/integrate.sh   # rebuilds the integration branch from the lots and checks it
+scripts/release.sh 0.1.0   # builds the CSV release archive under out/release/, publishes nothing
 ```
 
 Requires Node.js (LTS major pinned in `.nvmrc`), Docker and the GitHub CLI.
