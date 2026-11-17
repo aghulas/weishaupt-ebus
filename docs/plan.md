@@ -47,9 +47,11 @@ upstream, C, G and H are cut again on lot A.
 
 Integration branch: `weishaupt` `bd35b2c`, the stack A to H, J and L plus the pin commit, on
 the fork since 2026-11-17 (late evening). `scripts/check.sh` on it: clean, **586 messages** in
-English, German and French. The release `weishaupt-0.2.0` is still the tag on `5bf3635`
-(lots A to H as they were, 574 messages, English only): no release holds lot J, the corrected
-comments or the French files yet.
+English, German and French. Released from it on 2026-11-17 as the pre-release
+`weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
+(`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
+after publication: checksums right, 586 messages without error in the official ebusd 26.1.
+`weishaupt-0.2.0` (tag on `5bf3635`, lots A to H as they were, English only) is still online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
