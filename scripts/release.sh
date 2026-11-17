@@ -10,7 +10,6 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="${1:?usage: scripts/release.sh <version>}"
 CFG="${CFG_REPO:-$ROOT/repos/ebusd-configuration}"
-LIB="${TYPESPEC:-$ROOT/repos/ebus-typespec}"
 BRANCH="${INTEGRATION:-weishaupt}"
 EBUSD="${EBUSD_RELEASE:-v26.1-weishaupt.1}"
 NAME="weishaupt-ebusd-config-$VERSION"
@@ -28,7 +27,7 @@ cp "$CSV"/*.csv "$REL/$NAME/"
 cp -r "$CSV/wolf" "$REL/$NAME/kromschroeder"
 sed -e "s|@VERSION@|$VERSION|g" -e "s|@COMMIT@|$(git -C "$CFG" rev-parse --short "$BRANCH")|g" \
     -e "s|@COUNT@|$count|g" -e "s|@EBUSD@|$EBUSD|g" \
-    -e "s|@LIB@|$(node -p "require('$LIB/package.json').version") ($(git -C "$LIB" rev-parse --short HEAD))|g" \
+    -e "s|@LIB@|$(node -p "require('$ROOT/out/integration/node_modules/@ebusd/ebus-typespec/package.json').version")|g" \
     "$ROOT/docs/release-readme.md" >"$REL/$NAME/README.md"
 (cd "$REL/$NAME" && find . -type f ! -name sha256sums.txt | sort | sed 's|^\./||' | xargs shasum -a 256 >sha256sums.txt)
 # Fixed order, owner and dates: the same input gives the same archive.

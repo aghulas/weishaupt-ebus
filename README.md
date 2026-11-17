@@ -21,6 +21,13 @@ The definitions themselves are not here. They are written in TypeSpec in a fork 
 [ebusd-configuration](https://github.com/john30/ebusd-configuration), which carries them on an
 integration branch and from which the pull requests are opened.
 
+## Releases
+
+| Release | Content |
+|---|---|
+| [weishaupt-0.1.0](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-0.1.0) | compiled ebusd CSV of all lots, with a notice on how to use them |
+| [ebus-typespec 0.31.0-weishaupt.1](https://github.com/aghulas/ebus-typespec/releases/tag/v0.31.0-weishaupt.1) | library build with the `@crc` and `@wcrc` decorators, needed to compile the definitions |
+
 ## Open pull requests
 
 | Pull request | Subject |
