@@ -55,9 +55,10 @@ ebusd picks the files from the identification each device answers to the scan.
 - A room unit and its heating module answer the same setting registers with different values;
   which copy the regulation uses is not established. The written settings of `51.w.em2` are the
   copy of the module.
-- The room units answer hot-water and circulation programs as well; they probably do not apply
-  them (the system manager prepares the hot water). Which heating program is active is not
-  defined.
+- The room units answer hot-water and circulation programs as well. On the installation they
+  are stored only: the hot water follows the program of the system manager (`DHWProgram…` of
+  `50.w.em1`). The heating of a circuit follows the program of its room unit; a room unit
+  whose selector reads 11 runs heating program 1. The selector is not defined.
 
 ## Checked with
 

@@ -106,9 +106,12 @@ data point on arbitration with room units).
   switch time where that program differs from program 1 (a Wednesday between 06:00 and 18:00).
 - **`50` and `f6`.** Same program slots and values as the system manager, except `12 01`, which
   changes at every read there. One device with three roles fits; not proven by reads.
-- **Lot H, second commit.** The hot-water and circulation programs of the room units are not
-  the ones applied (the system manager's are). Owner's decision: drop that commit, or say so
-  in the comments and in the release notice.
+- **Lot H, comments (owner's decision of 2026-11-17: keep and comment).** Commit `0784552` on
+  `weishaupt-H` (local, not pushed; the fork still has `1a9f922`) says in the 126 comments that
+  the hot-water and circulation programs are stored in the room unit; `scripts/check.sh` clean,
+  574 messages. The integration branch was rebuilt locally on it (`41f39df`, not pushed; the
+  release `weishaupt-0.2.0` is still `5bf3635`). On the owner's word: push `weishaupt-H` and
+  `weishaupt`, then a release with the changed notice.
 - **Lot F, what was left out**: 23 of the 30 data-logger channels, the output bits (RAM `2b`),
   and `Load` before the flame (reads 23 to 40 while the status says 0 %).
 - **Info values of the service tool** readable through `50 22`; only the hours since last

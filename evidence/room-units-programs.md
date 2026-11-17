@@ -245,3 +245,17 @@ heating module (`50`, `51`, `52`). Two condensing boilers in cascade behind a sy
 - No write definition (`50 23`): the running configuration has one per slot and
   `docs/discoveries.md` (2026-10-30) says the slots accept any master, but no telegram was
   kept.
+
+## Addition of 2026-11-17 (evening)
+
+Three points of "Not verified" were examined the same day by reads around switch times, see
+[modules-programs.md](modules-programs.md):
+
+- The selector value 11 selects heating program 1, sub-byte `14` (the third unit went to
+  setback at 18:00, the other two did not). 12 and 13 remain unproven.
+- The room units do not apply their hot-water program on this installation: the hot-water
+  set value of the system manager follows the manager's own program. The definitions were
+  kept and their comments changed to "stored in the room unit" (commit `0784552` on
+  `weishaupt-H`, comments only, IDs and fields unchanged, 574 messages).
+- The programs of the heating modules, of the system manager and of `f6` were read; nothing
+  was defined for them.
