@@ -112,6 +112,25 @@ checksum of the address alone, polynomial 0x5C, which is the checksum of a read:
 So a read defined with `@wcrc` is valid for an ebusd with or without the run-time checksum;
 the write still needs it.
 
+### 6. Write test on the installation
+
+On 2026-11-17, on the decision of the operator of the installation, service tool disconnected
+(no telegram from `ff` in the capture before the test), the running ebusd (build with the
+run-time checksum) sent, from source `ff` to the system manager `15`:
+
+| Time | Command | Telegram seen (`ff 15 5023`) | Acknowledgement | Read back (`31 15 5022`, `4c 25 00`) |
+|---|---|---|---|---|
+| 17:02:55 | `write -s ff -c ka BlockingTime 2` | `cc 25 00 02 00` | `00` | `02 02 00` = 2 |
+| 17:03:02 | `write -s ff -c ka BlockingTime 1` | `28 25 00 01 00` | `00` | `02 01 00` = 1 |
+
+- Both telegrams are the ones computed beforehand in section 1 for these values (`cc` and `28`).
+- The system manager took the value over: 1 before, 2 after the first write, 1 after the second.
+  The register is left at 1, its value before the test.
+- A first attempt at 17:02 gave no answer from ebusd to the client within 15 s for the write of
+  2; the restoring write of 1 followed and the read gave 1. The count of write telegrams seen
+  by ebusd rose by two during that attempt, so the write of 2 seems to have gone out then as
+  well; its telegram was not looked at before the next one replaced it in the capture.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, all scanning as `MF=Kromschröder`, `ID=W`: system manager
@@ -120,7 +139,8 @@ checksum.
 
 ## Date
 
-Capture 2026-11-16; checksums recomputed and telegrams decoded with the lot on 2026-11-17.
+Capture 2026-11-16; checksums recomputed and telegrams decoded with the lot on 2026-11-17;
+write test on the installation on 2026-11-17.
 
 ## Not verified
 
@@ -129,16 +149,10 @@ Capture 2026-11-16; checksums recomputed and telegrams decoded with the lot on 2
 - Whether the regulators check the checksum of a write. `docs/discoveries.md` (2026-10-30)
   records that the heating modules do not; nothing is recorded for the system manager and the
   room units. A wrong checksum was never sent for this record.
-- The telegram ebusd builds from a definition of the lot was not captured on a bus: decoding of
-  captured telegrams is proven, sending is not (rule 7). Test for the operator, with a test
-  ebusd loaded with the lot, the service tool disconnected and nothing else sending as `ff`:
-  1. `read -f -c ka BlockingTime`: the request on the bus must be `50 22`, data `4c 25 00`.
-  2. `write -s ff -c ka BlockingTime 2`: expected telegram `ff 15 50 23 05 cc 25 00 02 00`,
-     acknowledged; read again, expected 2.
-  3. `write -s ff -c ka BlockingTime 1`: expected `ff 15 50 23 05 28 25 00 01 00`; read
-     again, expected 1 (the value before the test).
-  4. `write -s ff -c ka BlockingTime 31`: ebusd must refuse it (out of range) and send nothing.
-- The telegrams ebusd **sends** with the corrected decorator (below) were not captured either;
-  the operator's test above covers them.
+- The write test below was sent by the ebusd of the installation with its own configuration,
+  not with the files of the lot. The telegrams are the ones the lot is expected to produce, and
+  the lot decodes them; ebusd building them from the files of the lot has not been run on a bus.
+- A value out of range (`write ... BlockingTime 31`) was not tried: with the lot, ebusd must
+  refuse it and send nothing.
 - Multi-register writes: `docs/discoveries.md` records one register per telegram; nothing else
   was tried.
