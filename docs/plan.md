@@ -51,7 +51,7 @@ English, German and French. Released from it on 2026-11-17 as the pre-release
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0` (tag on `5bf3635`, lots A to H as they were, English only) is still online.
+`weishaupt-0.2.0` was deleted from the fork afterwards on the owner's request, with its tag (kept in the local clone).
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -70,7 +70,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt-0.3.0` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. `weishaupt-0.2.0` (lots A to H, English only) is still online. |
+| `aghulas/ebusd-configuration` | `weishaupt-0.3.0` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
