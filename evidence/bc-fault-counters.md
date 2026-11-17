@@ -53,7 +53,9 @@ The names carry the number, not the kind (fault or warning).
 
 Installation and operating instruction, gas condensing boiler WTC-GB 120 … 300-A, document
 83251702, edition 1/2011-02: warning codes on pages 75–76, error codes on pages 77–78, fault
-history on page 74. Meanings below in our own words.
+history on page 74. The later French edition of the same manual (document 83251704, edition
+1/2020-08, alarm codes on pages 90–91, fault codes on pages 92–93) adds W48 and F49. Meanings
+below in our own words.
 
 | No. | Kind in the manual | Meaning | No. | Kind | Meaning |
 |---|---|---|---|---|---|
@@ -66,8 +68,8 @@ history on page 74. Meanings below in our own words.
 | 21 | W, F after 5 failed starts | no flame at burner start | 45 | F | air pressure switch does not switch |
 | 22 | W (F21 after a failed restart) | flame lost during operation | 46 | F | pressure on the flue gas side too high |
 | 23 | F | flame signal without a flame | 47 | W | gas pressure too low |
-| 24 | W | input H2 closed, set as lockout input | 48 | F | run time of the flue gas damper exceeded |
-| 30 | F | limiter sensor defective | 49 | — | not listed |
+| 24 | W | input H2 closed, set as lockout input | 48 | F; in the later edition also W, F after 5 failed tries | run time of the flue gas damper exceeded |
+| 30 | F | limiter sensor defective | 49 | F, later edition only | input H2 closed, set for a condensate lifting unit |
 | 31 | F | flue gas sensor defective | 51 | F | boiler data record error |
 | 32 | F | air pressure switch not at rest | 52 | F | burner data record error |
 | 33 | W | outside sensor defective | 53 | F | supply voltage or frequency out of tolerance |
@@ -75,10 +77,10 @@ history on page 74. Meanings below in our own words.
 | 35 | F | flow sensor defective | 57 | W and F | communication automat / operating unit faulty |
 | 36 | F | water pressure too low | | | |
 
-Count: the manual lists 23 warning codes and 24 error codes, on 43 distinct numbers. 32 of the
-33 counter numbers are among them; number 49 is not. The manual numbers without a counter are
-54 (F, electronic fault) and 80 to 89 (W, communication with other bus devices and the remote
-set-value signal). The fault history stores the same numbers in 7 bits with the kind in bit 7
+Count: the 2011 edition lists 23 warning codes and 24 error codes, on 43 distinct numbers; 32
+of the 33 counter numbers are among them. The 2020 edition adds W48 and F49, so all 33 counter
+numbers are listed. The manual numbers without a counter are 54 (F, electronic fault) and 80 to
+89 (W, communication with other bus devices and the remote set-value signal). The fault history stores the same numbers in 7 bits with the kind in bit 7
 (`bc-fault-history.md`), so one number space serves warnings and faults.
 
 ### Reads on the two boilers
@@ -133,8 +135,8 @@ tool was seen to send (`df b2 1b`, `service-tool-log.md`), so six reads cover th
 | address ↔ number | all 33 | source: symbol name of the firmware table |
 | address ↔ number | 11, 12, 36 | also consistent with the fault history |
 | two bytes, low byte first | all 33 | spacing of the symbols; values of 309 and 2352; same order as the hour counters (`bc-counters.md`) |
-| meaning of the number | 32 of 33 | source: manual of the boiler |
-| meaning of the number | 49 | none; defined with its number only |
+| meaning of the number | 32 of 33 | source: manual of the boiler, both editions |
+| meaning of the number | 49 | source: later edition of the manual only (printed nine years after the first; whether it describes this firmware is not established) |
 | value compared with a displayed figure | none | the tool shows no counter on this firmware |
 
 Toolchain: `CFG_REPO=<worktree of weishaupt-J> scripts/check.sh` clean (format, compile,
@@ -157,13 +159,14 @@ Two WTC condensing boilers in cascade, automat scanned `MF=Kromschroeder;SW=1104
 - **No counter was seen to step.** The observation that would close this: a new entry in the
   fault history of a boiler with the counter of its number one higher than before.
 - **Which event a counter counts** when the manual lists the number both as a warning and as a
-  fault (15, 18, 21, 57): warnings, lockouts or both. Same observation as above, with the kind
+  fault (15, 18, 21, 48, 57): warnings, lockouts or both. Same observation as above, with the kind
   of the new history entry.
 - The second boiler reads 2352 for number 48 (flue gas damper) and 35 for number 43 (fan
-  speed); no other record explains these figures.
-- Number 49: the running configuration of the installation calls it a condensate safety
-  switch and number 33 a fault without text; the source of these labels is not recorded, and
-  for 33 the manual says otherwise. Not used.
+  speed); no other record explains these figures. The later edition of the manual has a
+  warning W48 before the lockout F48, so the figure may count warnings; not established.
+- The running configuration of the installation labels number 49 as a condensate safety
+  switch, which agrees with the later edition of the manual, and number 33 as a fault without
+  text, where the manual has a warning. The source of its labels is not recorded.
 - The log line of the tool for `0x01c8` ends with `00 01` at `0x01d0` (256 low byte first)
   where ebusd reads 1 on the same boiler a day later. The capture itself is not kept; a
   transposition in the log is the likely cause.

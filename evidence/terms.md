@@ -132,6 +132,18 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | percent | pour cent | | provisional; the manuals print the sign only | provisional |
 | fault | défaut | | WTC p. 86; KA p. 31; FS p. 53 | vendor |
 | warning | alarme | | WTC p. 86, 87, 90; FB p. 23 | vendor |
+| fault counters (of the boiler automat) | compteurs de défauts | | provisional; the manuals list the codes, not the counters | provisional |
+| safety temperature limiter (eSTL) | thermostat de sécurité (limiteur) | | WTC p. 89 (i 30), 90, 92 | vendor |
+| flow sensor; return sensor; flue gas sensor; defective | sonde de départ; sonde de retour; sonde de fumées; défectueuse | | WTC p. 90, 92 | vendor |
+| no flame at burner start; flame lost during operation; flame signal without a flame | pas de formation de flamme au démarrage du brûleur; perte de flamme en fonctionnement; flamme parasite | | WTC p. 90, 92 | vendor |
+| air pressure switch; flue gas pressure switch; rest position | pressostat d'air; pressostat fumées; position de repos | | WTC p. 76, 92, 93 | vendor |
+| fan; fan speed not reached; fan standstill check | ventilateur; vitesse du ventilateur non atteinte; contrôle à l'arrêt du ventilateur | | WTC p. 92, 93 | vendor |
+| gas valve leaking; gas pressure too low | multibloc gaz non étanche; pression gaz trop faible | | WTC p. 90, 92 | vendor |
+| water pressure too low | pression installation trop faible | | WTC p. 92 | vendor |
+| flue gas damper, run time exceeded | clapet de fumées, durée d'enclenchement maximale dépassée | | WTC p. 90, 93 | vendor |
+| input H2; lockout input; condensate lifting unit | entrée H2; verrouillage brûleur; dispositif de relevage des condensats | | WTC p. 90, 93 | vendor |
+| data record error (boiler, burner); supply out of tolerance; reset too often | erreur de transmission des données (chaudière, brûleur); alimentation électrique hors tolérances; déverrouillée trop fréquemment | | WTC p. 93 | vendor |
+| automat; operating unit (of the boiler) | électronique chaudière (WCM-CPU); tableau de commande chaudière (WCM-CUI) | | WTC p. 91, 93 | vendor |
 | fault history (boiler) | mémoire de défauts | | WTC p. 45, 88 | vendor |
 | fault log (system manager) | historique des défauts | | KA p. 110 (608); FS p. 53 (P338) | vendor |
 | fault code | code défaut | | KA p. 110; FS p. 53; WTC p. 88 | vendor |
@@ -154,15 +166,15 @@ their own heading; they have no row here and no vendor source.
 
 ## Coverage of `src/fr.yaml`
 
-At `weishaupt-L` `d44fa6f`: 252 comment strings in the files of the lots and `wolf/broadcast`
-(`scripts/i18n-keys.py`), 252 with a key.
+At `weishaupt-L` `2d9c28b`: 291 comment strings in the files of the lots and `wolf/broadcast`
+(`scripts/i18n-keys.py`), 291 with a key.
 
 | Kind | Strings | Vendor terms only | Provisional |
 |---|---|---|---|
-| Written by hand, lots | 96 | 76 | 20 |
+| Written by hand, lots | 135 | 109 | 26 |
 | Patterned (program slots, fault-history slots) | 132 | 84 | 48 |
 | Wolf messages of the broadcast file | 24 | 0 | 24 |
-| All | 252 | 160 | 92 |
+| All | 291 | 193 | 98 |
 
 The 48 provisional patterned strings are the 42 "stored in the room unit" slots and the 6
 fault-history slots.

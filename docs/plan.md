@@ -34,22 +34,21 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `1289f97` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), pushed | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), six memory reads of EEPROM `0x0196`–`0x01d7` per boiler, 12 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (number 49 is not in it). | `weishaupt-J` `437d48c` (1 commit on H), **local only**, not in `STACK` yet | `bc-fault-counters` |
-| L | French translation of the comments: `src/fr.yaml`, 252 keys for the 252 comment strings of the lot files and of `wolf/broadcast` (160 from vendor terms, 92 provisional). No definition; no upstream pull request is cut from it. | `weishaupt-L` `d44fa6f` (4 commits on H), **local only** | `terms` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), six memory reads of EEPROM `0x0196`–`0x01d7` per boiler, 12 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `9e8cdd3` (1 commit on H), **local only** | `bc-fault-counters` |
+| L | French translation of the comments: `src/fr.yaml`, 291 keys for the 291 comment strings of the lot files and of `wolf/broadcast` (193 from vendor terms, 98 provisional). No definition; no upstream pull request is cut from it. | `weishaupt-L` `2d9c28b` (5 commits on J), **local only** | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
 
-The lot letters are historical; the stack order is A, E, D, F, C, G, H, L (`STACK` in
+The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, L (`STACK` in
 `scripts/integrate.sh`). `weishaupt-L` holds the translation files and stays on top: a new lot
-goes below it. `weishaupt-J` (2026-11-17) is on H beside `weishaupt-L` and in neither `STACK` nor the
-integration branch: see "Can be done now". Lot C needs lot B to compile and #1825 to send. For a pull request
+goes below it. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
 Integration branch: on the fork, `weishaupt` `41f39df` (stack up to H plus the pin commit);
 `5bf3635` before, tagged `weishaupt-0.2.0`. In the local clone it was rebuilt with
-`weishaupt-L` on 2026-11-17: `b66a563`, **not pushed**. `scripts/check.sh` on it: clean,
-**574 messages** in English, German and French.
+`weishaupt-J` and `weishaupt-L` on 2026-11-17: `bd35b2c`, **not pushed**. `scripts/check.sh` on
+it: clean, **586 messages** in English, German and French.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -139,14 +138,13 @@ data point on arbitration with room units).
   `weishaupt-0.2.0` is still the tag on `5bf3635`. Next, on the owner's word: a release with
   the changed notice.
 - **Lot J, fault counters (written on 2026-11-17, `evidence/bc-fault-counters.md`).** Local
-  branch `weishaupt-J` `437d48c` on `weishaupt-H`; `scripts/check.sh` on its worktree clean,
-  586 messages. To bring it into the stack: insert `weishaupt-J` in `STACK` between
-  `weishaupt-H` and `weishaupt-L`, rebase `weishaupt-L` onto it and add the French keys of its
-  new comment strings (see "Translations"), then `scripts/integrate.sh`. Not done here
-  because `weishaupt-L` was being worked on. Open on the bus: the six 12-byte reads have not
-  been sent through ebusd (the values come from 2-byte reads of the same addresses); no counter
-  has been seen to step with a new entry of the fault history, which would also say whether a
-  number listed as warning and fault (15, 18, 21, 57) counts warnings, lockouts or both.
+  branch `weishaupt-J` `9e8cdd3`, in `STACK` below `weishaupt-L`, which was rebased onto it and
+  holds the French of its 39 comment strings (`2d9c28b`). Nothing pushed: `weishaupt-J`,
+  `weishaupt-L` and the integration branch wait for the owner's word. Open on the bus: the six
+  12-byte reads have not been sent through ebusd (the values come from 2-byte reads of the same
+  addresses); no counter has been seen to step with a new entry of the fault history, which
+  would also say whether a number listed as warning and fault (15, 18, 21, 48, 57) counts
+  warnings, lockouts or both.
 - **Lot F, what was left out**: 23 of the 30 data-logger channels, the output bits (RAM `2b`),
   and `Load` before the flame (reads 23 to 40 while the status says 0 %).
 - **Info values of the service tool** readable through `50 22`; only the hours since last
