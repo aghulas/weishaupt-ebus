@@ -45,10 +45,11 @@ The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, L (`S
 goes below it. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-Integration branch: on the fork, `weishaupt` `41f39df` (stack up to H plus the pin commit);
-`5bf3635` before, tagged `weishaupt-0.2.0`. In the local clone it was rebuilt with
-`weishaupt-J` and `weishaupt-L` on 2026-11-17: `bd35b2c`, **not pushed**. `scripts/check.sh` on
-it: clean, **586 messages** in English, German and French.
+Integration branch: `weishaupt` `bd35b2c`, the stack A to H, J and L plus the pin commit, on
+the fork since 2026-11-17 (late evening). `scripts/check.sh` on it: clean, **586 messages** in
+English, German and French. The release `weishaupt-0.2.0` is still the tag on `5bf3635`
+(lots A to H as they were, 574 messages, English only): no release holds lot J, the corrected
+comments or the French files yet.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -58,9 +59,10 @@ commit, `66b775e`) and the info code of `BurnerServiceHours` in lot E (one new c
 pull request on them). Then, on the owner's word again: `weishaupt-L` pushed as a new branch
 at `d44fa6f` and the integration branch forced to `b66a563` (`41f39df` before), the pair
 `scripts/check.sh` passed with the stack A to H plus L. On the fork the integration branch
-now holds the two corrections and `src/fr.yaml`; no release was made. The local
-`weishaupt-L` has moved on since (replayed onto `weishaupt-J`): pushing it, lot J or a
-rebuilt integration branch is a new forced push, on the owner's word.
+now holds the two corrections and `src/fr.yaml`; no release was made. Later the same
+evening, on the owner's word: `weishaupt-J` pushed as a new branch (`9e8cdd3`), `weishaupt-L`
+replayed onto it and forced (`2d9c28b`), the integration branch forced to `bd35b2c`; local and
+fork heads compared after the push, equal.
 
 ### Releases online
 
@@ -139,8 +141,8 @@ data point on arbitration with room units).
   the changed notice.
 - **Lot J, fault counters (written on 2026-11-17, `evidence/bc-fault-counters.md`).** Local
   branch `weishaupt-J` `9e8cdd3`, in `STACK` below `weishaupt-L`, which was rebased onto it and
-  holds the French of its 39 comment strings (`2d9c28b`). Nothing pushed: `weishaupt-J`,
-  `weishaupt-L` and the integration branch wait for the owner's word. Open on the bus: the six
+  holds the French of its 39 comment strings (`2d9c28b`). All three pushed to the fork
+  on 2026-11-17 (see "Current state"); no pull request, no release. Open on the bus: the six
   12-byte reads have not been sent through ebusd (the values come from 2-byte reads of the same
   addresses); no counter has been seen to step with a new entry of the fault history, which
   would also say whether a number listed as warning and fault (15, 18, 21, 48, 57) counts
