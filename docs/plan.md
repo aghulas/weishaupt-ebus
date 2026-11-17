@@ -75,14 +75,16 @@ is a new manufacturer welcome, are smaller lots preferred, where should the CRC 
 Status: asked on #717 on 2026-11-16. Rather than wait, #717 was **retargeted** the same day to
 Lot A, which answers most of it in code: it extends `src/wolf` (no new manufacturer), is a small
 read-only `.tsp`-only change (no `.js`), and needs no CRC decorator (CRC precomputed in the ID).
-The `0x00` finding note (`docs/maintainer-note-crc.md`) is drafted but not posted.
+The `0x00` finding note (`docs/maintainer-note-crc.md`) was drafted and is superseded: the
+description of #717 states the finding (section "Register reads carry a precomputed CRC") and
+Lot A already ships the reads the note proposed. It is not to be posted.
 
 ## Lots
 
 | Lot | Content | Depends on | Status |
 |---|---|---|---|
 | A | Read-only definitions: `5022` register reads with the CRC precomputed in the ID, passive status messages, time programs as read. No custom decorator needed at runtime, works with stock ebusd. | nothing | in progress — branch `weishaupt-A`, `src/wolf/15..ka.tsp` (18 evidenced reads) |
-| B | CRC decorator in `ebus-typespec`. | maintainer's answer | **done + proven end-to-end** — fork `aghulas/ebus-typespec`, branch `wcrc-decorator`: `@crc(poly, ...)` (compile-time) and `@wcrc(...)` (runtime placeholder + `[WCRC]` marker), 91 tests pass, build clean (commit `5490298`, not pushed). Demo: installed the fork into the config and rewrote 3 ka reads as `@crc(0x5c, ...)` — the emitted `ka.csv` was **byte-identical** to the literal version and passed `ebusd --checkconfig`, so `@crc` reproduces the hand-computed CRCs end-to-end. Demo reverted (no change to `weishaupt-A`); the config's 0.26 toolchain restored. Still exploratory: `@wcrc` feeds Lot C writes (untestable on hardware, rule 7) and ebusd #1825; a permanent wiring needs the decorator released and the config's toolchain bumped (both the maintainer's call). |
+| B | CRC decorator in `ebus-typespec`. | maintainer's answer | **done + proven end-to-end** — fork `aghulas/ebus-typespec`, branch `wcrc-decorator`: `@crc(poly, ...)` (compile-time) and `@wcrc(...)` (runtime placeholder + `[WCRC]` marker), 91 tests pass, build clean (commit `5490298`, pushed to the fork, no pull request). Demo: installed the fork into the config and rewrote 3 ka reads as `@crc(0x5c, ...)` — the emitted `ka.csv` was **byte-identical** to the literal version and passed `ebusd --checkconfig`, so `@crc` reproduces the hand-computed CRCs end-to-end. Demo reverted (no change to `weishaupt-A`); the config's 0.26 toolchain restored. Still exploratory: `@wcrc` feeds Lot C writes (untestable on hardware, rule 7) and ebusd #1825; a permanent wiring needs the decorator released and the config's toolchain bumped (both the maintainer's call). |
 | C | Writes (`5023`) with runtime CRC and setpoint ranges. | #1825, lot B (both unmerged, no review) | **prepared, pushed to the fork, no pull request** — branch `weishaupt-C` (from `weishaupt-A`, 5 commits, head `e9b176b`): 17 settings read and written, ka (8), em2 (7), fs1 (2). Evidence in `evidence/register-write-crc.md` and `evidence/settings-writes.md`. `scripts/check.sh` clean (167 messages) with the local build of `wcrc-decorator`. Cannot be proposed before #1825 is merged and `@wcrc` is released. See "Lot C" below. |
 | D | Raw memory map (`WH11928`). Separate pull request, or left out. | maintainer's answer | **blocked on evidence** — the `50 00` memory-read format is uncertain. The deployed config reads `EEA_H_PON`=90, `EEA_H_BON`=216 as 1-byte UCH, but #717 models them as 3-byte U3N and uses a different address byte (`22` vs the deployed `02`); the values are also physically impossible (90 h run < 216 h burner < 430 h since service). So the 1-byte reads are truncated/misaligned and cannot be shipped to the evidence bar (rule 3). Establishing the real format needs deeper reverse-engineering and the vendor service tool to cross-check. Left out until then. |
 | E | WTC fault log, service hours. | lot A | **fault log done** on branch `weishaupt-E` (from `weishaupt-A`): 9 read registers `src/wolf/50..em1.tsp` (ErrorId selector + code/type/device/date/time), evidenced on the live boiler (`evidence/em1-fault-log.md`), checkconfig clean. A future PR, to open after #717 merges (depends on its templates). Boiler service hours added too: `BurnerServiceHours` (i45, `50 22` on `bc1` ZZ 08, `src/wolf/08..bc1.tsp`, read live 430 h). Boiler operating hours (`50 00` EEPROM) still belong to the raw memory-map lot. |
@@ -253,7 +255,9 @@ Lot A is the priority: it is the only one that can be merged without any other c
 
 ## Conventions
 
-- Contribution branches: `weishaupt-<lot>` in the fork, rebased on upstream `master`.
+- Contribution branches: `weishaupt-<lot>` in the fork, rebased on upstream `master`. The
+  default branch of `ebus-typespec` is `main`, not `master`: `wcrc-decorator` is rebased on
+  upstream `main`.
 - No mention of AI tools in commits, pull request texts or comments (rule 9 of `AGENTS.md`).
   Both pull request branches were cleaned on 2026-11-16 (messages only, trees unchanged).
   On 2026-11-17 the same was done for the other fork branches (`master` and `weishaupt-wip`
@@ -273,7 +277,9 @@ Lot A is the priority: it is the only one that can be merged without any other c
   a failing case in throwaway clones.
 - Toolchain: validated with `@ebusd/ebus-typespec` 0.26. Checked on 2026-11-17 with the
   upstream pins (0.29, compiler 1.12.0, asset-emitter 0.79.1) in a scratch clone of
-  `weishaupt-D`: the emitted `wolf/` CSV files are identical. Upstream pins `~0.29` with
+  `weishaupt-D`: the emitted `wolf/` CSV files are identical. Checked the same day with the
+  released library (0.31.0, compiler 1.17) in a scratch copy of `weishaupt-F`: 82 CSV files on
+  each side, identical output, so a toolchain bump upstream does not break the lots. Upstream pins `~0.29` with
   `@typespec/compiler ~1.12`, which did not install cleanly with a recent Node.js. Node.js is
   pinned to the LTS major 26 in `.nvmrc` of this repository since 2026-11-17 (`scripts/check.sh`
   warns on another major). Still open: commit a lockfile in the fork (an untracked

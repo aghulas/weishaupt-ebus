@@ -1,7 +1,9 @@
 # Draft — note to the maintainer on the 0x50 register-read CRC
 
-For issue john30/ebusd#167 (or PR #717). Upstream-visible — do not post without go-ahead.
-Keep it factual, no site details.
+Superseded on 2026-11-17, not to be posted: the description of #717 states this finding and
+Lot A ships the reads proposed below. Kept for the record.
+
+Written for issue john30/ebusd#167 (or PR #717).
 
 ---
 
