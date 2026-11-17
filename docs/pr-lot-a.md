@@ -2,7 +2,8 @@
 
 Used on 2026-11-16: john30/ebusd-configuration#717 was retargeted to this content (branch
 `aghulas:weishaupt-pr`, same commits as `weishaupt-A`: 7 commits, 641 insertions, `.tsp` only).
-Kept as the record of the title and body at that date; the text on #717 is the reference.
+Kept as the record of the title and body at that date; the text on #717 is the reference. It
+was edited there on 2026-11-17 (boiler status messages, section "File names").
 
 ---
 
