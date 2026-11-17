@@ -3,7 +3,7 @@
 ## What
 
 Live values of the WTC boiler automat, read from its RAM and XRAM with the memory read
-`PBSB 50 00`, in `src/wolf/08..bc1.tsp` (target `08`), `src/wolf/18..bc2.tsp` (target `18`) and
+`PBSB 50 00`, in `src/wolf/08.w.bc1.tsp` (target `08`), `src/wolf/18.w.bc2.tsp` (target `18`) and
 the shared models `Temperatures` and `Operation` of `src/wolf/wtc_inc.tsp`.
 
 | message | ID | items | answer after the status byte |

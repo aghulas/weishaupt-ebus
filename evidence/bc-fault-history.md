@@ -3,7 +3,7 @@
 ## What
 
 Fault history of the WTC boiler automat, read from its EEPROM with the memory read
-`PBSB 50 00`, in `src/wolf/08..bc1.tsp` (target `08`), `src/wolf/18..bc2.tsp` (target `18`)
+`PBSB 50 00`, in `src/wolf/08.w.bc1.tsp` (target `08`), `src/wolf/18.w.bc2.tsp` (target `18`)
 and the shared models of `src/wolf/wtc_inc.tsp`.
 
 | message | EEPROM | ID | codec |

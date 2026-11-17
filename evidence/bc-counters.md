@@ -3,7 +3,7 @@
 ## What
 
 Counters of the WTC boiler automat, one memory read `PBSB 50 00` of EEPROM `0x01e6`–`0x01ed`,
-in `src/wolf/08..bc1.tsp` (target `08`), `src/wolf/18..bc2.tsp` (target `18`) and the shared
+in `src/wolf/08.w.bc1.tsp` (target `08`), `src/wolf/18.w.bc2.tsp` (target `18`) and the shared
 model `Counters` of `src/wolf/wtc_inc.tsp`.
 
 | message | ID | answer after the status byte |

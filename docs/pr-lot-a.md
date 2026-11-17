@@ -34,8 +34,12 @@ look wrong for the same reason — happy to raise that separately with a capture
 
 - **KA system-manager reads** (circuit `ka`): sensors, status and the read side of the main
   heating / hot-water settings.
-- **Boiler status** broadcast (`KaStatus`) and the directed per-boiler status and burner load
-  (`WTCStatus`, `WTCPower`) for a two-boiler cascade.
+- **Boiler status** broadcast (`KaStatus`) and the per-boiler status and burner load each boiler
+  sends to the cascade master (`Boiler1Status`, `Boiler1Power`, `Boiler2Status`, `Boiler2Power`,
+  in the file of the system manager, since ebusd loads no file for a master address).
+- **File names** carry the identification these devices answer to the scan (`15.w.ka`,
+  `50.w.em1`, ...), so that the existing Wolf files of the folder (`50..mc`) keep being picked
+  for devices with another identification.
 - **Room-controller / heating-module exchange** (`HcMode`) for three modules.
 - **System clock** and the weekly **circulation** and **hot-water** programs (read side), on the
   heating module.

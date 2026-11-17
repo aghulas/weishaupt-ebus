@@ -4,7 +4,7 @@
 
 Read-only registers on heating module #1 (circuit `em1`, target 0x50), `PBSB = 50 22`,
 ID `<crc> <addr> <sub>` with the precomputed CRC (see [register-crc.md](register-crc.md)),
-in `src/wolf/50..em1.tsp`:
+in `src/wolf/50.w.em1.tsp`:
 
 - **System clock** (`sub = 01`): weekday, day, month, year, minute, second (no hour, see below).
 - **Weekly circulation program** (`sub = 1a`) and **weekly hot-water program** (`sub = 17`):
@@ -75,7 +75,7 @@ the reply (length byte dropped):
 | DHWProgramSun3 | 72 17 | `5b7217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
 
 Every request payload seen on the bus is byte for byte the `@ext` triple of the message of the
-same weekday and slot in `src/wolf/50..em1.tsp` (42 of 42, no mismatch). The first byte of
+same weekday and slot in `src/wolf/50.w.em1.tsp` (42 of 42, no mismatch). The first byte of
 each is also what the CRC routine of [register-crc.md](register-crc.md) gives for the address,
 recomputed offline for all 57 `@ext` triples of the file.
 
@@ -96,7 +96,7 @@ TTQ/enable fields. CRCs computed by the verified routine; addresses taken from t
 ebusd definitions, cross-checked against the weishaupt-pr source.
 
 Shared template: the register-read base (`crcr` / `CrcRead`) was moved to `src/wolf/wtc_inc.tsp`
-so `15..ka.tsp` and `50..em1.tsp` share it; the 18 KA reads emit byte-for-byte as before.
+so `15.w.ka.tsp` and `50.w.em1.tsp` share it; the 18 KA reads emit byte-for-byte as before.
 
 Toolchain: `tsp compile`, `tsp format --check`, `ebusd --checkconfig` all clean (0 errors).
 

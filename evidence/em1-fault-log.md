@@ -4,7 +4,7 @@
 
 Read-only fault-log registers on heating module #1 (circuit `em1`, target 0x50), `PBSB 50 22`,
 ID `<crc> <addr> <sub>` with the precomputed CRC (see [register-crc.md](register-crc.md)), in
-`src/wolf/50..em1.tsp`. `ErrorId` selects the entry (0 = most recent); the other fields return
+`src/wolf/50.w.em1.tsp`. `ErrorId` selects the entry (0 = most recent); the other fields return
 that entry's code, source and timestamp.
 
 | message | addr sub | id | codec | live value |
@@ -47,6 +47,6 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
 ## Also in this lot — boiler service hours
 
 `BurnerServiceHours` (the i45 maintenance counter) is a `50 22` read on the boiler itself
-(circuit `bc1`, target 0x08, `src/wolf/08..bc1.tsp`), ID `0abc02` (addr `bc 02`, CRC `0a`,
+(circuit `bc1`, target 0x08, `src/wolf/08.w.bc1.tsp`), ID `0abc02` (addr `bc 02`, CRC `0a`,
 which matches the captured frame `0a bc 02`). Read live: **430 h**. Codec `UIN h`.
-`ebusd --checkconfig` clean with the `08..bc1` (ZZ 08) and `10..bc1` (ZZ 10) files side by side.
+`ebusd --checkconfig` clean.

@@ -9,9 +9,9 @@ boost, min/max flow). Modelled passively as `HcMode` (`src/wolf/wtc_inc.tsp`), w
 
 | circuit | QQ (controller) | ZZ (module) | file |
 |---|---|---|---|
-| em1 | 30 | 50 | `src/wolf/50..em1.tsp` |
-| em2 | 70 | 51 | `src/wolf/51..em2.tsp` |
-| em3 | f0 | 52 | `src/wolf/52..em3.tsp` |
+| em1 | 30 | 50 | `src/wolf/50.w.em1.tsp` |
+| em2 | 70 | 51 | `src/wolf/51.w.em2.tsp` |
+| em3 | f0 | 52 | `src/wolf/52.w.em3.tsp` |
 
 ## How it was established
 

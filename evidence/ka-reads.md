@@ -4,7 +4,7 @@
 
 Read-only registers of the KA system manager (circuit `ka`, default target 0x15), emitted
 as `r` messages with `PBSB = 50 22` and ID `<crc> <addr> <sub>`, the `<crc>` precomputed
-(see [register-crc.md](register-crc.md)). Shipped in `src/wolf/15..ka.tsp`
+(see [register-crc.md](register-crc.md)). Shipped in `src/wolf/15.w.ka.tsp`
 (the `src/kromschroeder` tree is a symlink to `src/wolf`, manufacturer 0x50).
 
 | message | addr sub | id (crc+addr+sub) | codec | live value |

@@ -11,14 +11,14 @@ to the official ebusd configuration; this archive exists so that they can be use
 
 ## Content
 
-- `kromschroeder/` — one file per device address: `08..bc1`, `18..bc2` (boilers), `15..ka`
-  (system manager), `35..fs1` (room unit), `50..em1`, `51..em2`, `52..em3` (heating modules),
+- `kromschroeder/` — one file per device address: `08.w.bc1`, `18.w.bc2` (boilers), `15.w.ka`
+  (system manager), `35.w.fs1` (room unit), `50.w.em1`, `51.w.em2`, `52.w.em3` (heating modules),
   and the broadcast messages. It also holds the Wolf files of the official configuration, which
   share the folder.
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
-@COUNT@ messages. Reads only, except the 17 settings of `15..ka`, `35..fs1` and `51..em2` that are
+@COUNT@ messages. Reads only, except the 17 settings of `15.w.ka`, `35.w.fs1` and `51.w.em2` that are
 read and written.
 
 ## Use
@@ -44,9 +44,9 @@ ebusd picks the files from the identification each device answers to the scan.
 
 - Checked on one installation: two WTC boilers in cascade (automat software 11.04), system
   manager, three heating circuits. Other models and software versions may differ.
-- `10..bc1` and `10..bc2` (status telegrams the boilers send to the cascade master) were not
-  loaded by `--scanconfig` in the test of this archive, as address `10` is a master and is not
-  scanned. The same status is in the broadcast `KaStatus`.
+- The files are named with the identification the devices answer to the scan (`W`), for
+  example `50.w.em1`. A device that answers another identification gets the Wolf file of the
+  same address, if there is one.
 - The write definitions were checked by decoding captured telegrams; ebusd sending them from
   these definitions has not been observed on a bus yet.
 
