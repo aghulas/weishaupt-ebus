@@ -67,6 +67,8 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   posted on 2026-11-17 (reshape, rename, the two questions still open).
 - `weishaupt-E` and `weishaupt-D` were pushed to the ebusd-configuration fork on 2026-11-17 (no
   pull request). `wcrc-decorator` was pushed to the ebus-typespec fork the same day (no pull request).
+- A comment on john30/ebusd-configuration#616 (2026-11-17) points another contributor working on
+  Weishaupt files to #717, to avoid duplicate work. No answer yet.
 
 ## Step 0 — ask the maintainer
 
@@ -173,10 +175,13 @@ Lot A is the priority: it is the only one that can be merged without any other c
   3. #717 (lot A) merged, since lot C sits on it.
   4. The operator's test of the definitions through ebusd (four steps in
      `evidence/register-write-crc.md`).
+- **Decided on 2026-11-17**:
+  - Source address: the definitions set no `@qq`. Most settings are taken from `ff` only, the
+    address of the vendor service tool; ebusd must not take it by default, so the comment
+    `write -s ff` stays and the caller chooses.
+  - `35..fs1.tsp` stays in the lot (two registers, each with its captured write); it is the
+    last commit and can still be dropped alone if the maintainer prefers.
 - **Open questions**, for the owner before proposing:
-  - Source address: most settings are taken from `ff` only. The definitions set no `@qq`; a
-    comment says `write -s ff`. Setting `@qq(0xff)` would make a plain `write` work but takes
-    the address of the vendor service tool by default.
   - Ranges come from the operator's table, which cites the vendor manuals; pages not compared
     for this lot.
   - `maintsp` (`npm run maintsp`) rewrites unrelated lines of `src/main.tsp` on this base; the
