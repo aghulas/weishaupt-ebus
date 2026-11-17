@@ -108,7 +108,7 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | operating hours (counter other than the burner hours) | heures de fonctionnement | | provisional; the manuals have the burner counter only | provisional |
 | hours with mains on | heures sous tension | | provisional | provisional |
 | since the last service; maintenance counter | depuis le dernier entretien; compteur d'entretien | | WTC p. 47 (i 46), p. 77 | vendor |
-| minimum burner blocking time | temps de blocage | | KA p. 18, 86 (537) | vendor |
+| blocking time (before a further boiler of the cascade is switched on) | temps de blocage | | KA p. 18, 86 (537) | vendor |
 | de-couple sensor B22; hydraulic separator | sonde de bouteille casse-pression (B22); bouteille casse-pression | | KA p. 10 to 13, 70, 91; FS p. 9, 66 | vendor |
 | plate exchanger, secondary side (sensor B22) | échangeur à plaques, côté secondaire | | KA p. 14 to 16; SEP p. 10, 31 | vendor |
 | domestic hot water; hot water | ECS (eau chaude sanitaire) | | FS p. 28, 89; KA p. 30; WTC p. 43 | vendor |
@@ -154,7 +154,7 @@ their own heading; they have no row here and no vendor source.
 
 ## Coverage of `src/fr.yaml`
 
-At `weishaupt-L` `4a97839`: 252 comment strings in the files of the lots and `wolf/broadcast`
+At `weishaupt-L` `d44fa6f`: 252 comment strings in the files of the lots and `wolf/broadcast`
 (`scripts/i18n-keys.py`), 252 with a key.
 
 | Kind | Strings | Vendor terms only | Provisional |
@@ -228,8 +228,8 @@ proposal. "Why" says what the manuals lack.
 | [ ] | "circulateur" for the boiler pump, "pompe de circulation ECS" for the circulation | "pompe" (FS), "circulateur de bouclage ECS" (WTC p. 48) |
 | [ ] | "puissance du brûleur" for burner load | "modulation", "degré de modulation" (KA) |
 | [ ] | "écart de température" | "différentiel de température" (KA p. 87, WTC p. 14) |
-| [ ] | `BlockingTime`: "temps de blocage minimal du brûleur", the English comment translated with the manual's words for 537 | "temps de blocage avant enclenchement d'une chaudière supplémentaire", if the comment of lot A is corrected (see Findings) |
-| [ ] | `BurnerServiceHours`: "i45" kept as in the English comment | "i 46" as the manuals print it |
+| [x] | `BlockingTime`: comment of lot A corrected on 2026-11-17, French "temps de blocage avant enclenchement d'une chaudière supplémentaire de la cascade" | was "temps de blocage minimal du brûleur" |
+| [x] | `BurnerServiceHours`: comment of lot E corrected to "i46" on 2026-11-17, French follows | was "i45" |
 
 ### Design choices the brief left open
 
@@ -277,13 +277,17 @@ Findings on content, for the owner:
   system manager by range (0 to 30 min). KA p. 86 describes 537 as the time during which a
   further boiler of the cascade is not switched on, not as a blocking time of the burner; the
   burner's own anti-cycling time is parameter P 34 of the boiler (WTC p. 49, 1 to 15 min).
-  The comment of lot A may name the wrong function. The French keeps "temps de blocage", the
-  manual's words for 537.
+  **Corrected on 2026-11-17 on the owner's word**: the comment now reads "blocking time
+  before a further boiler of the cascade is switched on" (lot A, `66b775e`). From the manual,
+  not from a test.
 - **`BurnerServiceHours`** ("maintenance counter i45"): in both editions of the boiler manual
   the time since the last service is info value i 46, in tens of hours, and i 45 is the
   software version of the control panel (WTC p. 47, WTC-en p. 40). Neither says the counter
   counts burner hours. The comment may carry a wrong code; the manuals are of 2011 and 2020,
-  the automat software on the installation may number differently. The French keeps "i45".
+  the automat software on the installation may number differently, but the vendor service
+  tool on it shows I45 as the version of the control panel and I46 as the burner operation
+  since the last service (`service-tool-log.md`). **Corrected on 2026-11-17 on the owner's
+  word**: the comment says i46 (lot E, `3e9347f`).
 - **`CalorifierSwitchDiff`**: no parameter of KA prints 1 to 20 K. "Calorifier" appears in
   the vendor's English only as an info value (FSU-en p. 11) and once in WTC-en (p. 25), where
   the French edition says "stock tampon". The French uses that word, provisionally; if the

@@ -101,3 +101,12 @@ Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Krom
   above, but no negative reading was taken on the system manager itself.
 - The sign of `HeatDemandTemp` (register 2) is assumed positive (UIN); the vendor register
   list says "UInt × 0.1" for it, and no sentinel answer was seen.
+
+## Note of 2026-11-17 — BlockingTime
+
+The comment of `BlockingTime` was "minimum burner blocking time". Register `25 00` has the unit
+and range (0 to 30 min) of parameter 537 of the system manager, which its installation manual
+(WCM-KA 3.0, document 83258404, page 86) describes as the time during which no further boiler
+of the cascade is switched on; the anti-cycling time of a burner is parameter P 34 of the
+boiler. The comment now says so (lot A). Established from the manual; no test on the
+installation shows what the register does.

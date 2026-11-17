@@ -46,7 +46,7 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
 
 ## Also in this lot — boiler service hours
 
-`BurnerServiceHours` (the i45 maintenance counter) is a `50 22` read on the boiler itself
+`BurnerServiceHours` (the i46 maintenance counter; the comment said i45 until 2026-11-17, the service tool and the boiler manual, document 83251704 page 47, number it i 46) is a `50 22` read on the boiler itself
 (circuit `bc1`, target 0x08, `src/wolf/08.w.bc1.tsp`), ID `0abc02` (addr `bc 02`, CRC `0a`,
 which matches the captured frame `0a bc 02`). Read live: **430 h**. Codec `UIN h`.
 `ebusd --checkconfig` clean.
