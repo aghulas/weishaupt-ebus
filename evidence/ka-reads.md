@@ -11,10 +11,10 @@ as `r` messages with `PBSB = 50 22` and ID `<crc> <addr> <sub>`, the `<crc>` pre
 |---|---|---|---|---|
 | ErrorStatus | 01 00 | `5c0100` | UIN | 0 |
 | HeatDemandTemp | 02 00 | `b80200` | UIN/10 °C | 59.6 |
-| DHWSetValue | 03 00 | `e40300` | UIN/10 °C | 50.0 |
+| DHWSetValue | 03 00 | `e40300` | SIN/10 °C | 50.0 |
 | OutsideTemp | 0c 00 | `740c00` | SIN/10 °C | 11.0 |
-| DeCoupleTemp | 0d 00 | `280d00` | UIN/10 °C | 56.0 |
-| DHWTemp | 0e 00 | `cc0e00` | UIN/10 °C | 51.7 |
+| DeCoupleTemp | 0d 00 | `280d00` | SIN/10 °C | 56.0 |
+| DHWTemp | 0e 00 | `cc0e00` | SIN/10 °C | 51.7 |
 | ConfigStatus | 10 00 | `b01000` | UIN | 76 |
 | OutsideWeightedTemp | 0c 0a | `7e0c0a` | SIN/10 °C | 11.3 |
 | VersionMajor | 99 01 | `459901` | UIN | 266 |
@@ -50,8 +50,8 @@ service tool labels register `0d 00` "De-couple temperature B22" (see
 
 ### Sign of registers 3, 13 and 14
 
-`DHWSetValue` (`03 00`), `DeCoupleTemp` (`0d 00`) and `DHWTemp` (`0e 00`) are shipped as
-unsigned (`temp10`, UIN). No negative reading exists for them: the system manager returned
+`DHWSetValue` (`03 00`), `DeCoupleTemp` (`0d 00`) and `DHWTemp` (`0e 00`) were first shipped
+as unsigned (`temp10`, UIN). No negative reading exists for them: the system manager returned
 `f4 01` (50.0), `54 02` (59.6) and `69 01` (36.1) on 2026-11-17. Three observations made the
 same day point to a signed 16-bit value all the same:
 
@@ -77,9 +77,9 @@ same day point to a signed 16-bit value all the same:
    Its sections for other devices give "UInt" for 3 and 14; the bus answers above come from
    those other devices and are signed values nevertheless.
 
-Conclusion: registers 3, 13 and 14 are signed tenths. The definitions should use the signed
-scalar (`otemp10`, SIN) instead of `temp10`; for the values read so far the decoded figure is
-the same. Not yet changed in the lot (see "Not verified").
+Conclusion: registers 3, 13 and 14 are signed tenths. The definitions use the signed
+scalar (`otemp10`, SIN) since 2026-11-17; for the values read so far the decoded figure is
+the same.
 
 ## Equipment
 
@@ -98,7 +98,6 @@ Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Krom
 - Mixer and calorifier registers decode to the not-available / no-sensor sentinels here
   (no such peripheral on this site); left out pending a site that has them.
 - Registers 3, 13 and 14 (`DHWSetValue`, `DeCoupleTemp`, `DHWTemp`) are signed by the evidence
-  above, but no negative reading was taken on the system manager itself, and the definitions
-  still say `temp10` (UIN) pending the type change.
+  above, but no negative reading was taken on the system manager itself.
 - The sign of `HeatDemandTemp` (register 2) is assumed positive (UIN); the vendor register
   list says "UInt × 0.1" for it, and no sentinel answer was seen.

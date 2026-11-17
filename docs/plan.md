@@ -16,7 +16,7 @@ Plan accordingly: each lot must be acceptable on its own, and nothing here may d
 | PR | Branch | Head | State |
 |---|---|---|---|
 | john30/ebusd#1825 | `aghulas:crc` | `02f6de0f` | open, no review. 1 commit, 4 files. |
-| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `19dc47c` | **retargeted to Lot A on 2026-11-16**: 9 commits, 9 files, 637 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
+| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `a212e73` | **retargeted to Lot A on 2026-11-16**: 10 commits, 9 files, 638 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
 
 ## Gaps of the former #717 (11 300-line version)
 
@@ -56,9 +56,9 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
     needs a capture while the second boiler fires (cold spell or cascade rotation).
   - Sign of KA registers 3, 13, 14: signed, by the "no sensor" answers of the same registers
     on the other devices (`18 fc` = -100.0, `00 80`) and by the vendor register list
-    (`evidence/ka-reads.md`). **Evidence closed; type change pending**: `temp10` to `otemp10`
-    for `DHWSetValue`, `DeCoupleTemp`, `DHWTemp` in `15..ka.tsp`, which touches the branch
-    behind #717 (rule 8: ask first).
+    (`evidence/ka-reads.md`). **Closed**: `DHWSetValue`, `DeCoupleTemp` and `DHWTemp`
+    changed from `temp10` to `otemp10` (commit `a212e73`, pushed to `weishaupt-pr`); lots E and
+    D rebased on it and pushed again, `scripts/check.sh` clean (160 messages).
   - `SystemHour`: no read-only path. The running configuration has the hour at `25 01` for
     writing only, no cached value, and no telegram with that register in the capture. **Open**:
     one manual read by the operator (`50 22`, payload `4d 25 01`, to `ZZ 50`; expected answer
@@ -168,7 +168,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
     matched to the screen. Ready to be written as definitions with an evidence record.
   - Lot A: register 13 is the de-couple sensor B22, not the boiler flow; `SupplyWTCTemp` to be
     renamed (touches the branch behind #717: ask first). Sign of registers 3, 13, 14 still open.
-- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `9a32f30`, pushed to
+- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `2bc03e4`, pushed to
   the fork on 2026-11-17): `FaultHistoryPointer` and `FaultHistorySlot1..6` for both boilers
   (`src/wolf/08..bc1.tsp`, new `src/wolf/18..bc2.tsp`, shared models in `wtc_inc.tsp`),
   evidence in `evidence/bc-fault-history.md`, `scripts/check.sh` clean (159 messages).
@@ -182,7 +182,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
     hours and burner hours; starts and mains-on go in with that caveat or wait.
   - New: the data logger reads live values of the automat from RAM with the same `50 00`
     grammar (4 channels matched on the bus, the rest to be resolved from the channel table).
-- **Lot D, counters: done** on branch `weishaupt-D` (from `weishaupt-E`, commit `3e4d99c`,
+- **Lot D, counters: done** on branch `weishaupt-D` (from `weishaupt-E`, commit `1b33e77`,
   pushed to the fork on 2026-11-17): one message `Counters` per boiler (operating hours, burner hours, burner
   starts), evidence in `evidence/bc-counters.md`, `scripts/check.sh` clean (161 messages).
   Scoped to these counters; the raw memory map stays out. Not yet read by ebusd itself.
