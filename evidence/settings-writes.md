@@ -2,7 +2,7 @@
 
 ## What
 
-Lot C, branch `weishaupt-C` of the ebusd-configuration fork (from `weishaupt-A`). 17 settings,
+Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 17 settings,
 each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the run-time checksum
 (mechanism and checksum in [register-write-crc.md](register-write-crc.md)). The value is
 16 bits, low byte first.
