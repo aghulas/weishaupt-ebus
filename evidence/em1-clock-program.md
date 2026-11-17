@@ -24,16 +24,71 @@ Live bus, ebusd `read` of each message. Clock, read the same session:
 | SystemMinute | 26 01 | `a92601` | 46 |
 | SystemSecond | 27 01 | `f52701` | 22 (read on 2026-11-17) |
 
-Weekly program, e.g.:
+Weekly program, all 42 slots, read one by one on 2026-11-17 (ebusd `read` of each slot, then
+passive capture of the resulting telegrams, master `31` to slave `50`, `PBSB = 50 22`). The
+`id` column is the request payload seen on the bus, the `answer` column the two data bytes of
+the reply (length byte dropped):
 
-| message | addr sub | id | value (ToTime;ToEnabled;FromTime;FromEnabled) |
-|---|---|---|---|
-| CircProgramMon1 | 10 1a | `aa101a` | 00:00; Disabled; 00:00; Disabled |
-| DHWProgramMon1 | 10 17 | `a71017` | 16:00; Enabled; 09:00; Enabled |
-| DHWProgramSat1 | 60 17 | `536017` | 00:00; Disabled; 00:00; Disabled |
+| message | addr sub | id | answer | value (ToTime; ToEnabled; FromTime; FromEnabled) |
+|---|---|---|---|---|
+| CircProgramMon1 | 10 1a | `aa101a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramMon2 | 11 1a | `f6111a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramMon3 | 12 1a | `12121a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramTue1 | 20 1a | `26201a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramTue2 | 21 1a | `7a211a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramTue3 | 22 1a | `9e221a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramWed1 | 30 1a | `96301a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramWed2 | 31 1a | `ca311a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramWed3 | 32 1a | `2e321a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramThu1 | 40 1a | `62401a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramThu2 | 41 1a | `3e411a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramThu3 | 42 1a | `da421a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramFri1 | 50 1a | `d2501a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramFri2 | 51 1a | `8e511a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramFri3 | 52 1a | `6a521a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramSat1 | 60 1a | `5e601a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramSat2 | 61 1a | `02611a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramSat3 | 62 1a | `e6621a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramSun1 | 70 1a | `ee701a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramSun2 | 71 1a | `b2711a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| CircProgramSun3 | 72 1a | `56721a` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramMon1 | 10 17 | `a71017` | `40 24` | 16:00; Enabled; 09:00; Enabled |
+| DHWProgramMon2 | 11 17 | `fb1117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramMon3 | 12 17 | `1f1217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramTue1 | 20 17 | `2b2017` | `40 24` | 16:00; Enabled; 09:00; Enabled |
+| DHWProgramTue2 | 21 17 | `772117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramTue3 | 22 17 | `932217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramWed1 | 30 17 | `9b3017` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramWed2 | 31 17 | `c73117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramWed3 | 32 17 | `233217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramThu1 | 40 17 | `6f4017` | `40 24` | 16:00; Enabled; 09:00; Enabled |
+| DHWProgramThu2 | 41 17 | `334117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramThu3 | 42 17 | `d74217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramFri1 | 50 17 | `df5017` | `40 24` | 16:00; Enabled; 09:00; Enabled |
+| DHWProgramFri2 | 51 17 | `835117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramFri3 | 52 17 | `675217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramSat1 | 60 17 | `536017` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramSat2 | 61 17 | `0f6117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramSat3 | 62 17 | `eb6217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramSun1 | 70 17 | `e37017` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramSun2 | 71 17 | `bf7117` | `80 80` | 00:00; Disabled; 00:00; Disabled |
+| DHWProgramSun3 | 72 17 | `5b7217` | `80 80` | 00:00; Disabled; 00:00; Disabled |
 
-The hot-water program carries a real schedule (Monday hot water enabled 09:00→16:00), which
-confirms the `SwitchTimes` codec on non-trivial data, not just the disabled sentinel.
+Every request payload seen on the bus is byte for byte the `@ext` triple of the message of the
+same weekday and slot in `src/wolf/50..em1.tsp` (42 of 42, no mismatch). The first byte of
+each is also what the CRC routine of [register-crc.md](register-crc.md) gives for the address,
+recomputed offline for all 57 `@ext` triples of the file.
+
+Each answer is two bytes, stop time then start time, each a count of quarter hours in bits 0
+to 6 with bit 7 set when the switch time is disabled: `40 24` is 16:00 and 09:00, both
+enabled; `80 80` is the disabled slot. ebusd decodes the same values with the `SwitchTimes`
+fields.
+
+The hot-water program carries a real schedule in slot 1 of Monday, Tuesday, Thursday and
+Friday (09:00 to 16:00) and nothing on Wednesday, Saturday and Sunday. The enabled days are
+not contiguous, so the weekday is confirmed to sit in the high nibble of the address
+(`1` Monday to `7` Sunday), and the `SwitchTimes` codec is confirmed on non-trivial data, not
+just the disabled sentinel.
 
 The clock reads back the real date and time of the capture (Monday, 16 November '26, minute 46),
 which confirms both the addresses and the codecs. The program slot decodes to the four
@@ -51,17 +106,19 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
 
 ## Date
 
-2026-11-16; `SystemSecond` read on 2026-11-17.
+2026-11-16; `SystemSecond` and the 42 program slots read on 2026-11-17.
 
 ## Not verified
 
-- `SystemHour` (`25 01`, id `4d2501`) was not read: the running configuration has no active
-  read for it, and its address was only inferred from the sequence weekday to second (`21` to
-  `27`). It was removed from the lot on 2026-11-17 and comes back once a read confirms it.
-- Of the 42 program slots, three are recorded here (`CircProgramMon1`, `DHWProgramMon1`,
-  `DHWProgramSat1`). The other addresses follow the same pattern (weekday in the high nibble
-  of the address, slot number minus one in the low nibble) and come from the running definitions.
-- The circulation program was read with all slots disabled; non-trivial switch times were
-  seen in the hot-water program only (one slot).
+- `SystemHour` (`25 01`, id `4d2501`) was not read. It was removed from the lot on 2026-11-17
+  and comes back once a read confirms it. Checked on 2026-11-17: the running configuration
+  defines the hour at `25 01` for writing only (`50 23`, and the passive `09 03` form); it has
+  no `50 22` read for it, no cached value, and no telegram naming `25 01` on heating module #1
+  appears in the passive capture (1870 distinct telegrams). The address is therefore supported
+  by the neighbouring registers (`21` to `24`, `26`, `27`, all read) and by that write
+  definition, not by a bus read. One manual `50 22` read of `4d 25 01` by the operator closes it.
+- The circulation program was read with all 21 slots disabled; non-trivial switch times were
+  seen in the hot-water program only (slot 1 of four weekdays). Slots 2 and 3 were seen
+  disabled only.
 - No heating program was found on this bus (only circulation and hot water).
 - Shipped read-only; the matching writes (`50 23`) belong to a later lot.
