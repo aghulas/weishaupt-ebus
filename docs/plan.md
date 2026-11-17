@@ -34,7 +34,7 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `7d62e60` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `a870515` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `1a9f922` (2 commits on G), pushed | `room-units-programs` |
-| I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`). | lot H | **examined on 2026-11-17, no branch, nothing defined.** All 525 slots read (`evidence/modules-programs.md`). `15`, `50` and `f6` answer identical bytes; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Applied copies, shown by reads around switch times: hot water follows the program of the system manager, which lot A already defines at `50` (42 of 42 slots equal); heating of the third circuit follows the room unit (lot H), and its module does not apply its own programs. So the heating programs of the manager and of the modules are stored but not followed here, and the rest would be a copy of lots A and H. Selector `12 01`: 11 = heating program 1 proven on the room units, 12 and 13 not; left out. Open: which copy the first and second circuit apply (read on a Tuesday between 22:05 and 22:25); a second selector value; `50` / `f6` behave as the system manager on every program slot but not on `12 01`. The lot A record was corrected (heating programs do exist on the bus). For the owner to decide: lot H defines hot-water and circulation programs of the room units that the installation does not apply (its second commit can be dropped alone, or the comments can say so). |
+| I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
 
@@ -96,11 +96,19 @@ data point on arbitration with room units).
 
 ### Can be done now (reads only)
 
-- **Programs on the other devices.** The heating modules, the system manager and a device at
-  `f6` answer the weekly-program registers, heating programs included; `em1-clock-program` says
-  no heating program was found on the bus. To examine, and the record to correct.
-- **Active heating program.** The selector `12 01` reads 11 on the three room units; its value
-  list has no source. A read of the room setpoint when the three programs differ would settle it.
+- **Heating copy of the first and second circuit.** Programs outside the room units were read
+  on 2026-11-17 (`modules-programs`): the third circuit follows its room unit, not its module.
+  For the other two, read room setpoint (`12 00`) and flow setpoint (`04 00`) on a Tuesday
+  between 22:05 and 22:25, when the room units are still in program 1 and the programs of
+  `50` and `51` are over.
+- **Program selector `12 01`.** 11 = heating program 1 is proven on the room units; 12 and 13
+  are not. Needs a room unit its operator has set to another program, then reads around a
+  switch time where that program differs from program 1 (a Wednesday between 06:00 and 18:00).
+- **`50` and `f6`.** Same program slots and values as the system manager, except `12 01`, which
+  changes at every read there. One device with three roles fits; not proven by reads.
+- **Lot H, second commit.** The hot-water and circulation programs of the room units are not
+  the ones applied (the system manager's are). Owner's decision: drop that commit, or say so
+  in the comments and in the release notice.
 - **Lot F, what was left out**: 23 of the 30 data-logger channels, the output bits (RAM `2b`),
   and `Load` before the flame (reads 23 to 40 while the status says 0 %).
 - **Info values of the service tool** readable through `50 22`; only the hours since last
