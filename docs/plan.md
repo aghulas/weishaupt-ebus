@@ -56,8 +56,12 @@ Integration branch: on the fork, `weishaupt` `41f39df` (stack up to H plus the p
 commit, `66b775e`) and the info code of `BurnerServiceHours` in lot E (one new commit,
 `3e9347f`); the lots above were replayed. Pushed the same evening on the owner's word:
 `weishaupt-pr` fast-forward (pull request #717 now has 14 commits), lots E to H forced (no
-pull request on them). Not pushed: `weishaupt-L` and the integration branch, so the fork's
-`weishaupt` (`41f39df`) is still the stack before the two corrections.
+pull request on them). Then, on the owner's word again: `weishaupt-L` pushed as a new branch
+at `d44fa6f` and the integration branch forced to `b66a563` (`41f39df` before), the pair
+`scripts/check.sh` passed with the stack A to H plus L. On the fork the integration branch
+now holds the two corrections and `src/fr.yaml`; no release was made. The local
+`weishaupt-L` has moved on since (replayed onto `weishaupt-J`): pushing it, lot J or a
+rebuilt integration branch is a new forced push, on the owner's word.
 
 ### Releases online
 
