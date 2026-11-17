@@ -13,7 +13,7 @@ as `r` messages with `PBSB = 50 22` and ID `<crc> <addr> <sub>`, the `<crc>` pre
 | HeatDemandTemp | 02 00 | `b80200` | UIN/10 °C | 59.6 |
 | DHWSetValue | 03 00 | `e40300` | UIN/10 °C | 50.0 |
 | OutsideTemp | 0c 00 | `740c00` | SIN/10 °C | 11.0 |
-| SupplyWTCTemp | 0d 00 | `280d00` | UIN/10 °C | 56.0 |
+| DeCoupleTemp | 0d 00 | `280d00` | UIN/10 °C | 56.0 |
 | DHWTemp | 0e 00 | `cc0e00` | UIN/10 °C | 51.7 |
 | ConfigStatus | 10 00 | `b01000` | UIN | 76 |
 | OutsideWeightedTemp | 0c 0a | `7e0c0a` | SIN/10 °C | 11.3 |
@@ -44,6 +44,10 @@ as expected for an unweighted vs time-weighted outside reading.
 Toolchain checks on the emitted CSV: `tsp compile` clean, `tsp format --check` clean,
 `ebusd --checkconfig` clean (0 errors).
 
+`DeCoupleTemp` was first named `SupplyWTCTemp` and described as the boiler flow. The vendor
+service tool labels register `0d 00` "De-couple temperature B22" (see
+[service-tool-log.md](service-tool-log.md)); renamed on 2026-11-17, address and codec unchanged.
+
 ## Equipment
 
 Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Kromschröder`,
@@ -60,5 +64,5 @@ Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Krom
   no response on this site and were left out.
 - Mixer and calorifier registers decode to the not-available / no-sensor sentinels here
   (no such peripheral on this site); left out pending a site that has them.
-- The sign of `HeatDemandTemp`, `DHWSetValue`, `SupplyWTCTemp`, `DHWTemp` is assumed positive
+- The sign of `HeatDemandTemp`, `DHWSetValue`, `DeCoupleTemp`, `DHWTemp` is assumed positive
   (UIN); a site reaching a negative value would be needed to rule out SIN.

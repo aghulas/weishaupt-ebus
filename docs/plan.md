@@ -16,7 +16,7 @@ Plan accordingly: each lot must be acceptable on its own, and nothing here may d
 | PR | Branch | Head | State |
 |---|---|---|---|
 | john30/ebusd#1825 | `aghulas:crc` | `02f6de0f` | open, no review. 1 commit, 4 files. |
-| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `8c62e41` | **retargeted to Lot A on 2026-11-16**: 7 commits, 9 files, 641 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
+| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `83241cc` | **retargeted to Lot A on 2026-11-16**: 8 commits, 9 files, 641 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
 
 ## Gaps of the former #717 (11 300-line version)
 
@@ -39,15 +39,18 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
 
 ## Open items on the lots (audit of 2026-11-17)
 
-- Lot A, in #717: `SupplyWTCTemp` is the de-couple sensor B22, not the boiler flow. Rename
-  pending (touches the branch behind #717: ask first).
+- Lot A, in #717: `SupplyWTCTemp` is the de-couple sensor B22, not the boiler flow. Renamed to
+  `DeCoupleTemp` on 2026-11-17 (commit `83241cc`, pushed to `weishaupt-pr`); `weishaupt-E` and
+  `weishaupt-D` rebased on it and pushed again, `scripts/check.sh` clean (161 messages).
 - Lot A, in #717: `SystemHour` has no bus read (`evidence/em1-clock-program.md`); 3 of the 42
-  program slots are recorded individually.
+  program slots are recorded individually. The running configuration has no active read for
+  the hour and no frame `4d 25 01` was seen on the bus: it needs one manual read by the
+  operator (`50 22`, ID `4d 25 01`, to `ZZ 50`), or the message leaves the lot.
 - Lot A: second boiler status now evidenced (`evidence/bc1-boiler-status.md`, burner off only).
-- The comment of 2026-11-16 on #717 still describes the former version. A short follow-up
-  comment would avoid confusion (upstream-visible: ask first).
+- The comment of 2026-11-16 on #717 describes the former version; a follow-up comment was
+  posted on 2026-11-17 (reshape, rename, the two questions still open).
 - `weishaupt-E` and `weishaupt-D` were pushed to the ebusd-configuration fork on 2026-11-17 (no
-  pull request). `wcrc-decorator` (ebus-typespec fork) still exists only as a local branch.
+  pull request). `wcrc-decorator` was pushed to the ebus-typespec fork the same day (no pull request).
 
 ## Step 0 — ask the maintainer
 
@@ -148,7 +151,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
     matched to the screen. Ready to be written as definitions with an evidence record.
   - Lot A: register 13 is the de-couple sensor B22, not the boiler flow; `SupplyWTCTemp` to be
     renamed (touches the branch behind #717: ask first). Sign of registers 3, 13, 14 still open.
-- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `c6ab155`, pushed to
+- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `6684654`, pushed to
   the fork on 2026-11-17): `FaultHistoryPointer` and `FaultHistorySlot1..6` for both boilers
   (`src/wolf/08..bc1.tsp`, new `src/wolf/18..bc2.tsp`, shared models in `wtc_inc.tsp`),
   evidence in `evidence/bc-fault-history.md`, `scripts/check.sh` clean (159 messages).
@@ -162,14 +165,14 @@ Lot A is the priority: it is the only one that can be merged without any other c
     hours and burner hours; starts and mains-on go in with that caveat or wait.
   - New: the data logger reads live values of the automat from RAM with the same `50 00`
     grammar (4 channels matched on the bus, the rest to be resolved from the channel table).
-- **Lot D, counters: done** on branch `weishaupt-D` (from `weishaupt-E`, commit `efecacb`,
+- **Lot D, counters: done** on branch `weishaupt-D` (from `weishaupt-E`, commit `2175590`,
   pushed to the fork on 2026-11-17): one message `Counters` per boiler (operating hours, burner hours, burner
   starts), evidence in `evidence/bc-counters.md`, `scripts/check.sh` clean (161 messages).
   Scoped to these counters; the raw memory map stays out. Not yet read by ebusd itself.
 - Data logger channel table merged (30 channels of the automat resolved to RAM / XRAM
   addresses, area `3` = XRAM). Material for a later lot of live automat values.
-- Next: decide the order of the pull requests after #717 (E, then D), and the rename of
-  `SupplyWTCTemp` in lot A.
+- Next: decide the order of the pull requests after #717 (E, then D), and settle `SystemHour`
+  in lot A (manual read, or leave it out).
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
@@ -177,6 +180,11 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - Contribution branches: `weishaupt-<lot>` in the fork, rebased on upstream `master`.
 - No mention of AI tools in commits, pull request texts or comments (rule 9 of `AGENTS.md`).
   Both pull request branches were cleaned on 2026-11-16 (messages only, trees unchanged).
+  On 2026-11-17 the same was done for the other fork branches (`master` and `weishaupt-wip`
+  of ebusd-configuration, `weishaupt` and `build-macos` of ebusd, tag `v26.1-weishaupt.1`
+  moved with its branch, release assets unchanged) and the history of this repository was
+  rewritten (commit metadata only, trees unchanged). Older commits stay reachable on GitHub
+  through the force-push events of #717 and #1825.
 - Toolchain: validated with `@ebusd/ebus-typespec` 0.26. Checked on 2026-11-17 with the
   upstream pins (0.29, compiler 1.12.0, asset-emitter 0.79.1) in a scratch clone of
   `weishaupt-D`: the emitted `wolf/` CSV files are identical. Upstream pins `~0.29` with
