@@ -33,7 +33,7 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `3dd8ca8` (2 commits on D), pushed | `bc-live-values` |
 | C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `7d62e60` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `a870515` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
-| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `1a9f922` (2 commits on G), pushed | `room-units-programs` |
+| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `0784552` (3 commits on G), pushed | `room-units-programs` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -42,7 +42,7 @@ The lot letters are historical; the stack order is A, E, D, F, C, G, H (`STACK` 
 `scripts/integrate.sh`). Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-Integration branch: `weishaupt` `5bf3635` (stack plus the pin commit), pushed, tagged
+Integration branch: `weishaupt` `41f39df` (stack plus the pin commit), pushed; `5bf3635` before, tagged
 `weishaupt-0.2.0`. `scripts/check.sh` on it: clean, **574 messages**.
 
 ### Releases online
