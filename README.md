@@ -1,7 +1,8 @@
 # weishaupt-ebus
 
-Workbench for contributing eBUS message definitions of Weishaupt heating systems to the official
-[ebusd](https://github.com/john30/ebusd) project.
+Workbench for eBUS message definitions of Weishaupt heating systems for
+[ebusd](https://github.com/john30/ebusd): they are published from a fork and proposed to the
+official project in parallel.
 
 The definitions cover Weishaupt WTC condensing boilers and their Kromschröder WCM controllers
 (cascade manager, remote controls, heating circuit modules, system controller). They are developed
@@ -9,16 +10,16 @@ and checked on a live installation with two WTC 250 boilers in cascade and three
 
 ## What is here
 
-- `docs/plan.md` — the contribution plan, lot by lot, and the state of each pull request
-- `docs/upstream-checklist.md` — what a change must satisfy before it is proposed upstream
-- `docs/discoveries.md` — findings from the field that are not yet in a contribution branch
+- `docs/plan.md` — the plan, lot by lot: what is in the fork, what is proposed upstream
+- `docs/upstream-checklist.md` — what a change must satisfy before it enters the fork or is proposed upstream
+- `docs/discoveries.md` — findings from the field that are not yet in a lot branch
 - `evidence/` — how each definition was established
 - `scripts/` — setup and checks (commit hygiene, format, compile, `ebusd --checkconfig`)
 - `AGENTS.md` — instructions for coding agents working in this repository
 
 The definitions themselves are not here. They are written in TypeSpec in a fork of
-[ebusd-configuration](https://github.com/john30/ebusd-configuration), from which the pull requests
-are opened.
+[ebusd-configuration](https://github.com/john30/ebusd-configuration), which carries them on an
+integration branch and from which the pull requests are opened.
 
 ## Open pull requests
 

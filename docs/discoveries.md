@@ -1,4 +1,4 @@
-# Discoveries not yet in a contribution branch
+# Discoveries not yet in a lot branch
 
 Add an entry when something is learned on a live bus. Remove it when it has landed in a branch
 listed in `plan.md`. Oldest first.

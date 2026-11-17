@@ -1,4 +1,4 @@
-# Contribution plan
+# Plan
 
 Last updated: 2026-11-17.
 
@@ -9,7 +9,34 @@ Last updated: 2026-11-17.
 - `john30/ebusd-configuration`: last commit on `master` 2026-06-09.
 - No review or comment by the maintainer on #1825 and #717 (checked again on 2026-11-17, 15:00).
 
-Plan accordingly: each lot must be acceptable on its own, and nothing here may depend on a quick merge.
+Plan accordingly: nothing here depends on an answer from upstream (see "Direction").
+
+## Direction (decided on 2026-11-17)
+
+The lots were stacked behind two pull requests without review, and the last outside pull
+requests merged upstream waited from three weeks to five months. The project therefore runs on
+two tracks (`AGENTS.md`, "Goal"):
+
+1. **Fork first.** One integration branch in `aghulas/ebusd-configuration` carries every lot
+   that has its evidence; compiled CSV are published from it as releases, next to the released
+   ebusd build with the run-time checksum (`aghulas/ebusd`, `v26.1-weishaupt.1`). Reads work
+   with a stock ebusd; writes (lot C) need that build until john30/ebusd#1825 is merged.
+2. **Upstream in parallel.** The lot branches stay rebased and ready. #717 and #1825 stay
+   open; further pull requests are opened lot by lot when the maintainer responds, with the
+   owner's word (rule 8).
+
+Next items, fork track, in order:
+
+| # | Item | State |
+|---|---|---|
+| 1 | Integration branch `weishaupt` in the configuration fork, built from `weishaupt-A`, `-E`, `-D`, `-F`, `-C` (C needs `@wcrc`, so the branch pins the library fork until lot B is released upstream). `scripts/check.sh` clean on it. | to do |
+| 2 | A script that rebuilds the integration branch from the lot branches, so that it is never edited by hand. | to do |
+| 3 | First CSV release of the fork (compiled `wolf/` files, checksums, the versions of ebusd and of the library it was checked with, a short "how to use" for `--configpath`). Publishing needs the owner's word. | to do |
+| 4 | Operator's tests on the installation: `SystemHour` read, the two multi-item requests of lot F, the `BlockingTime` write of lot C, second boiler while firing. | to do (operator) |
+| 5 | New findings (`docs/discoveries.md`) enter as lots on the integration branch as soon as they have their evidence, without waiting for the previous lot upstream. | ongoing |
+
+What this costs: the fork becomes a distribution to maintain (releases, following upstream
+version bumps). What it does not change: rules 1 to 4 and 7 to 9.
 
 ## Open pull requests
 
@@ -73,7 +100,7 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   this installation as a data point: 30 forced reads in a row from master `31` to the room
   units `35` and `75` answered, max arbitration time 23 micros. No answer yet.
 
-## Step 0 — ask the maintainer
+## Upstream track — question to the maintainer
 
 Before reshaping the pull request, ask on #717 (or issue john30/ebusd#167):
 is a new manufacturer welcome, are smaller lots preferred, where should the CRC decorator live.
