@@ -27,13 +27,13 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 
 | Lot | Content | Branch, head | Evidence |
 |---|---|---|---|
-| A | Register reads (`50 22`, checksum precomputed in the ID) of the system manager; status broadcast and the status each boiler sends to the cascade master; room unit / module exchange `HcMode`; system clock and the weekly hot-water and circulation programs of `50`. Reads only, stock ebusd. Files `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`, `broadcast`, `wtc_inc`. | `weishaupt-A` `66b775e` (14 commits), **local**: one commit ahead of the fork's `weishaupt-pr` `813ac45` (13 commits), the head of **pull request #717**. | `ka-reads`, `register-crc`, `broadcast-kastatus`, `bc1-boiler-status`, `em-hcmode`, `em1-clock-program` |
-| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`). | `weishaupt-E` `3e9347f` (4 commits on A), local; fork `f089bc1` | `em1-fault-log`, `bc-fault-history` |
-| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `bd1c760` (1 commit on E), local; fork `e8082bc` | `bc-counters` |
-| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `c4bc54c` (2 commits on D), local; fork `3dd8ca8` | `bc-live-values` |
-| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `1289f97` (5 commits on F), local; fork `7d62e60` | `register-write-crc`, `settings-writes` |
-| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), local; fork `a870515` | `room-units-reads`, `heating-modules-reads` |
-| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), local; fork `0784552` | `room-units-programs` |
+| A | Register reads (`50 22`, checksum precomputed in the ID) of the system manager; status broadcast and the status each boiler sends to the cascade master; room unit / module exchange `HcMode`; system clock and the weekly hot-water and circulation programs of `50`. Reads only, stock ebusd. Files `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`, `broadcast`, `wtc_inc`. | `weishaupt-A` `66b775e`, on the fork as `weishaupt-pr` (14 commits). **Pull request #717.** | `ka-reads`, `register-crc`, `broadcast-kastatus`, `bc1-boiler-status`, `em-hcmode`, `em1-clock-program` |
+| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`). | `weishaupt-E` `3e9347f` (4 commits on A), pushed | `em1-fault-log`, `bc-fault-history` |
+| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `bd1c760` (1 commit on E), pushed | `bc-counters` |
+| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `c4bc54c` (2 commits on D), pushed | `bc-live-values` |
+| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `1289f97` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
+| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
+| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), pushed | `room-units-programs` |
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), six memory reads of EEPROM `0x0196`–`0x01d7` per boiler, 12 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (number 49 is not in it). | `weishaupt-J` `437d48c` (1 commit on H), **local only**, not in `STACK` yet | `bc-fault-counters` |
 | L | French translation of the comments: `src/fr.yaml`, 252 keys for the 252 comment strings of the lot files and of `wolf/broadcast` (160 from vendor terms, 92 provisional). No definition; no upstream pull request is cut from it. | `weishaupt-L` `d44fa6f` (4 commits on H), **local only** | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
@@ -51,13 +51,13 @@ Integration branch: on the fork, `weishaupt` `41f39df` (stack up to H plus the p
 `weishaupt-L` on 2026-11-17: `b66a563`, **not pushed**. `scripts/check.sh` on it: clean,
 **574 messages** in English, German and French.
 
-**The local stack is ahead of the fork since 2026-11-17 (evening).** Two comments were
-corrected on the owner's word after the reading of the vendor manuals (`evidence/terms.md`,
-"Findings"): `BlockingTime` in lot A (one new commit, `66b775e`) and the info code of
-`BurnerServiceHours` in lot E (one new commit, `3e9347f`); the lots above were replayed, so
-every lot head differs from the fork's by these two comment lines only. Pushing them is the
-owner's to decide (rule 8): `weishaupt-A` backs pull request #717 through `weishaupt-pr`,
-which was not moved.
+**Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
+(`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
+commit, `66b775e`) and the info code of `BurnerServiceHours` in lot E (one new commit,
+`3e9347f`); the lots above were replayed. Pushed the same evening on the owner's word:
+`weishaupt-pr` fast-forward (pull request #717 now has 14 commits), lots E to H forced (no
+pull request on them). Not pushed: `weishaupt-L` and the integration branch, so the fork's
+`weishaupt` (`41f39df`) is still the stack before the two corrections.
 
 ### Releases online
 
@@ -74,7 +74,7 @@ remain in the local clone.
 
 | Pull request | Head | State on 2026-11-17 |
 |---|---|---|
-| john30/ebusd-configuration#717 (lot A) | `aghulas:weishaupt-pr` `813ac45` | open, mergeable, no review. Only the owner's two comments (2026-11-16, 2026-11-17). Description updated on 2026-11-17 (boiler status messages, section "File names"). |
+| john30/ebusd-configuration#717 (lot A) | `aghulas:weishaupt-pr` `66b775e` (since 2026-11-17 evening: comment of `BlockingTime`; `813ac45` before) | open, mergeable, no review. Only the owner's two comments (2026-11-16, 2026-11-17). Description updated on 2026-11-17 (boiler status messages, section "File names"). |
 | john30/ebusd#1825 (run-time checksum) | `aghulas:crc` `492867d9` | open, mergeable, no review, no comment |
 | john30/ebus-typespec#8 (lot B) | `aghulas:wcrc-decorator` `75c7d58` | opened on 2026-11-17, mergeable, no review, no comment |
 
