@@ -121,4 +121,28 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
   seen in the hot-water program only (slot 1 of four weekdays). Slots 2 and 3 were seen
   disabled only.
 - No heating program was found on this bus (only circulation and hot water).
+  **Corrected on 2026-11-17, see below: this statement is wrong.**
 - Shipped read-only; the matching writes (`50 23`) belong to a later lot.
+
+## Correction of 2026-11-17 — heating programs do exist on this bus
+
+The statement above ("no heating program was found") came from looking only at the two
+sub-bytes this lot defines. It does not hold:
+
+- The device at `50` answers the three heating programs at sub-bytes `14`, `15` and `16`, same
+  address layout and same two-byte slot as the programs of this record. All 63 slots were read
+  on 2026-11-17: program 1 is 06:00 to 22:00 on working days and 07:00 to 23:00 at the
+  weekend; programs 2 and 3 use slots 1 and 2 on working days (06:00 to 08:00, then 16:00 or
+  12:00 to 22:00). Bytes in [modules-programs.md](modules-programs.md).
+- The same sub-bytes are answered by the system manager (`15`), the device at `f6`, the
+  heating modules `51` and `52`, and the three room units (`35`, `75`, `f5`; lot H,
+  [room-units-programs.md](room-units-programs.md)).
+- The 42 hot-water and circulation slots of this record were read again the same day
+  (17:30 to 17:37): unchanged, and identical byte for byte on `15`, `50` and `f6`.
+- What the programs of this record are: the hot-water program is the one the installation
+  applies (hot-water set value of the system manager 50.0 inside the period, 8.0 outside it,
+  see [modules-programs.md](modules-programs.md)). The heating programs at `50` are not in
+  this lot and were not seen to be applied.
+
+The definitions of this lot are not affected: they are the hot-water and circulation
+programs, and both read as recorded.
