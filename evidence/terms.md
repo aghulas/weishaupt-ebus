@@ -167,6 +167,84 @@ At `weishaupt-L` `4a97839`: 252 comment strings in the files of the lots and `wo
 The 48 provisional patterned strings are the 42 "stored in the room unit" slots and the 6
 fault-history slots.
 
+## To validate
+
+Proposals written where the sources did not settle a term or a choice. Each is in `src/fr.yaml`
+or in the scripts as proposed; tick a line when the owner has accepted it, or replace the
+proposal. "Why" says what the manuals lack.
+
+### Comments written by hand
+
+| | English string | French proposal | Why the sources did not settle it | Alternative |
+|---|---|---|---|---|
+| [ ] | requested flow setpoint | consigne de température départ demandée | no manual has a word for "requested"; nearest label "Temp Cons syst" (FS p. 36) | consigne de température du système |
+| [ ] | flow temperature the heating circuit requests from the heat source | température de départ demandée par le circuit de chauffage au générateur de chaleur | same; the boiler manual calls its side "Demande de chaleur maximale" (WTC p. 46) | demande de chaleur du circuit de chauffage (température de départ) |
+| [ ] | maximum flow temperature limit | limite de la température de départ maximale | the manuals have "température de départ maximale" only, no separate limit | température de départ maximale |
+| [ ] | room-controller / heating-module exchange | échange entre commande à distance et module d'extension | device names are the vendor's, the message itself is not described | dialogue commande à distance / module d'extension |
+| [ ] | switching differential of the calorifier | différentiel de commutation du stock tampon | "calorifier" is paired with "stock tampon" in one place only (WTC-en p. 25, WTC p. 30); no parameter has the range of the register | différentiel de commutation du préparateur ECS |
+| [ ] | status byte | octet d'état | not a manual notion | octet de statut |
+| [ ] | boiler status broadcast by the WTC | état de la chaudière diffusé par la WTC | not a manual notion | état de la chaudière émis par la WTC |
+| [ ] | configuration status | état de la configuration | the manuals have "configuration" and "Config …" labels, no status | configuration |
+| [ ] | error status, 0 when no error is pending | état de défaut, 0 en l'absence de défaut | no such value in the manuals; code 00 is a cleared fault there (KA p. 110) | code défaut, 0 en l'absence de défaut |
+| [ ] | firmware version, major part / minor part | version du logiciel, partie majeure / partie mineure | "version du logiciel" is the vendor's; the split is not in the manuals | version du logiciel, numéro majeur / numéro mineur |
+| [ ] | hours with mains on | heures sous tension | the manuals have the burner counter only | heures de mise sous tension |
+| [ ] | operating hours, burner hours and burner starts | heures de fonctionnement, heures brûleur et démarrages brûleur | no counter of operating hours apart from the burner's (WTC p. 47) | heures sous tension, heures brûleur et démarrages brûleur |
+| [ ] | fault number | numéro de défaut | the manual says "Code défaut" and "Code d'alarme"; the field serves both | numéro du code (défaut ou alarme) |
+| [ ] | fault history: address of the last byte written | mémoire de défauts : adresse du dernier octet écrit | internal of the automat, not in the manuals | mémoire de défauts : pointeur d'écriture |
+| [ ] | selected fault-log entry (0 = most recent) | entrée sélectionnée de l'historique des défauts (0 = la plus récente) | the manual says "indication de défaut 01" for an entry (KA p. 110) | indication de défaut sélectionnée (0 = la plus récente) |
+| [ ] | fault code of the selected entry | code défaut de l'entrée sélectionnée | follows the line above | code défaut de l'indication sélectionnée |
+| [ ] | fault type of the selected entry | type de défaut de l'entrée sélectionnée | no "type" of a fault in the manuals | nature du défaut de l'entrée sélectionnée |
+| [ ] | device that raised the selected entry | origine du défaut de l'entrée sélectionnée | "origine" is the vendor's (KA p. 109); "entry" is not | appareil à l'origine de l'entrée sélectionnée |
+| [ ] | percent | pour cent | the manuals print the sign only | pourcentage |
+
+### Patterned comments
+
+| | English pattern | French proposal | Why | Alternative |
+|---|---|---|---|---|
+| [ ] | hot-water program stored in the room unit, `<day>` slot `<n>` (21) | programme ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | "stored" has no vendor wording | programme ECS mémorisé dans la commande à distance, … |
+| [ ] | circulation program stored in the room unit, `<day>` slot `<n>` (21) | programme de circulation ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | same | programme de bouclage ECS … (the boiler manual says "bouclage", WTC p. 60) |
+| [ ] | fault history slot `<n>` (6) | mémoire de défauts, emplacement `<n>` | the display numbers the faults by age (WTC p. 88); a slot is a place in memory | mémoire de défauts, défaut `<n>` |
+| [ ] | slot of a weekly program, all 126 program strings | plage horaire | vendor term of the system manager (KA p. 48, 106) and of the older room unit; the French screens of the WCM-FS 2.0 are not at hand | cycle (FB p. 13, 16); période |
+
+### Wolf messages of the broadcast file (24 strings, no vendor source)
+
+| | English strings | French proposal | Alternative |
+|---|---|---|---|
+| [ ] | room controller target values; room controller operational data; control commands | valeurs de consigne du régulateur d'ambiance; données de fonctionnement du régulateur d'ambiance; commandes de régulation | leave these 24 in English: they are upstream's comments on Wolf devices |
+| [ ] | boiler / hot water target temperature; boiler / hot water effective temperature; return flow temperature | température de consigne de la chaudière / ECS; température réelle de la chaudière / ECS; température de retour | température effective |
+| [ ] | forced performance; expected performance; emission test | puissance forcée; puissance attendue; mesure des émissions | test d'émissions (fonction ramoneur) |
+| [ ] | hot water active; heat active; pump active; buffer 1, 2 active; loading pump active; hot water loading pump active; TBF connected | ECS active; chauffage actif; pompe active; tampon 1, 2 actif; pompe de charge active; pompe de charge ECS active; TBF raccordé | eau chaude active |
+| [ ] | first device with error; error code; reset network state; reset network config; network loss | premier appareil en défaut; code défaut; réinitialisation de l'état du réseau; réinitialisation de la configuration du réseau; perte du réseau | code d'erreur |
+
+### Choices of wording where the vendor's French varies
+
+| | Choice made | Other form in the manuals |
+|---|---|---|
+| [ ] | "ECS" everywhere, never spelled out | "eau chaude sanitaire" (FS p. 89, once) |
+| [ ] | "hors-gel" | "antigel" (labels of FS and KA) |
+| [ ] | "programme de chauffe" | "programme de chauffage" (FS p. 83) |
+| [ ] | "bouteille casse-pression" | "bouteille de découplage" (WTC p. 58) |
+| [ ] | "anti-légionelle" | "anti-légionnelle" (FS) |
+| [ ] | "circulateur" for the boiler pump, "pompe de circulation ECS" for the circulation | "pompe" (FS), "circulateur de bouclage ECS" (WTC p. 48) |
+| [ ] | "puissance du brûleur" for burner load | "modulation", "degré de modulation" (KA) |
+| [ ] | "écart de température" | "différentiel de température" (KA p. 87, WTC p. 14) |
+| [ ] | `BlockingTime`: "temps de blocage minimal du brûleur", the English comment translated with the manual's words for 537 | "temps de blocage avant enclenchement d'une chaudière supplémentaire", if the comment of lot A is corrected (see Findings) |
+| [ ] | `BurnerServiceHours`: "i45" kept as in the English comment | "i 46" as the manuals print it |
+
+### Design choices the brief left open
+
+| | Choice | Why | Alternative |
+|---|---|---|---|
+| [ ] | `weishaupt-L` is the top of `STACK` | one file no lot touches: the stack stays linear and the integration branch holds what the release compiles | apply it after the stack, outside `STACK` |
+| [ ] | no `compile-fr` script in `package.json` | the check and the release pass the file to the emitter; `weishaupt-L` stays one file | add it as the prototype did |
+| [ ] | the 24 Wolf strings of `wolf/broadcast` are translated | the broadcast file of the folder is in one language | keep them in English and count 228 strings |
+| [ ] | the key check counts `wolf/broadcast.csv` with the `NN.w.*` files | the Weishaupt status broadcast lives in that file | lot files only |
+| [ ] | a key that matches nothing fails only for a file the base ref does not have | `fr.yaml` is the fork's; upstream's `de.yaml` has 820 such keys | a list of strict files |
+| [ ] | the check compiles a German tree too | `de.yaml` has 6 keys of the lot strings, the rule is "a file with keys of the lot files" | compile only the fork's own files (shorter check) |
+| [ ] | languages of the release: `RELEASE_LANGS`, default `fr`; no German archive | six coincidental German words are not a translation | one archive per compiled language |
+| [ ] | trial archives named `0.3.0-dev` | not to be taken for a release | none kept |
+| [ ] | value lists (operating phases, on / off) are left in English | they are what `write` and MQTT use; the emitter cannot translate them | a later mechanism; the French names are in WTC p. 46 |
+
 ## Findings: English wording of the lots and of the vendor
 
 Where the lots word a thing differently from the vendor's English manuals. Nothing was changed
