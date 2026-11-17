@@ -29,11 +29,11 @@ Next items, fork track, in order:
 
 | # | Item | State |
 |---|---|---|
-| 1 | Integration branch `weishaupt` in the configuration fork: the top of the stack of lots A, E, D, F, C, plus one commit that pins the library package of the fork. | **done** on 2026-11-17: `720b33c` (24 commits on upstream `master`), pushed. It installs with a plain `npm install` and passes `scripts/check.sh`, 197 messages. |
+| 1 | Integration branch `weishaupt` in the configuration fork: the top of the stack of lots A, E, D, F, C, plus one commit that pins the library package of the fork. | **done** on 2026-11-17: `6af8f6e` (25 commits on upstream `master`), pushed. It installs with a plain `npm install` and passes `scripts/check.sh`, 198 messages. Current lot heads: A `041005d`, E `aced43d`, D `969986c`, F `bd83f61`, C `a9d2c37`. |
 | 2 | A script that rebuilds the integration branch from the lot branches, so that it is never edited by hand. | **done**: `scripts/integrate.sh` checks that the stack is linear, sets `weishaupt` to its top in a separate worktree (`out/integration`), adds the pin commit with fixed dates (same stack, same commit id) and runs `scripts/check.sh` there. |
-| 3 | CSV releases of the fork. | **published** on 2026-11-17 as pre-releases: library package `v0.31.0-weishaupt.1` in `aghulas/ebus-typespec` (branch `weishaupt`, `135a949`); `weishaupt-0.1.0` (tag on `5bacbb7`) and, after the correction of item 6, `weishaupt-0.1.1` (tag on `720b33c`) in `aghulas/ebusd-configuration`, archives made by `scripts/release.sh <version>`, notice from `docs/release-readme.md`. 0.1.1 downloaded again after publication: checksum right, 197 messages in the official ebusd 26.1. Next release: after a change of a lot, `scripts/release.sh <version>`, then tag and release on the owner's word. |
+| 3 | CSV releases of the fork. | **published** on 2026-11-17 as pre-releases: library package `v0.31.0-weishaupt.1` in `aghulas/ebus-typespec` (branch `weishaupt`, `135a949`); `weishaupt-0.1.0` (tag on `5bacbb7`) and, after the correction of item 6, `weishaupt-0.1.1` (tag on `720b33c`) in `aghulas/ebusd-configuration`, archives made by `scripts/release.sh <version>`, notice from `docs/release-readme.md`. 0.1.1 downloaded again after publication: checksum right, 197 messages in the official ebusd 26.1. The integration branch has moved since 0.1.1 (`SystemHour`, 198 messages): not released yet. Next release: after a change of a lot, `scripts/release.sh <version>`, then tag and release on the owner's word. |
 | 4 | Tests on the installation. Done on 2026-11-17 by reads (`hex` command of ebusd, `50 22` and `50 00` only): `SystemHour` read (`02 0f 00` at 15 h), the two multi-item requests of lot F answered by both boilers, second boiler captured while firing. Left: the `BlockingTime` write of lot C, a write, for the operator. | reads done, write to do (operator) |
-| 6 | File names of the lots and the scan. ebusd loads one file per scanned **slave** address, the best match on `ZZ.ident`; with equal matches the longer name wins (`ScanHelper::loadScanConfigFile`). Two defects followed: `10..bc1` / `10..bc2` were never loaded (`10` is a master address), and `50..em1` / `08..bc1` took the place of upstream's `50..mc` / `08..hc` for every Kromschroeder device at those addresses, Wolf included. | **corrected** on 2026-11-17. Lot A, two commits on top (`77e25c8`, `ad46e81`, pushed to the branch of #717): the four status messages are in the file of the system manager as `Boiler1Status`, `Boiler1Power`, `Boiler2Status`, `Boiler2Power` with explicit `@qq` / `@zz(0x10)`; the files carry the identification the devices answer, `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`. Lots E, D, F, C replayed on it with `08.w.bc1`, `18.w.bc2`, `35.w.fs1` named so from the commit that adds them (heads `6a106a6`, `b34a5c3`, `9826b8a`, `0af74ee`, pushed; former heads kept locally as `backup/pre-rename-*`). `scripts/check.sh` clean on each lot (134, 158, 160, 164 messages) and on the integration branch (197). In the ebusd of the check without a bus: a device answering `W` gets the `.w.` file at 08, 15, 18, 35, 50, 51, 52, another identification gets `08..hc` / `50..mc`, and the status telegrams of both boilers decode from `15.w.ka` alone. Not known: what Wolf devices answer as identification; if it were `W` as well, the names would not tell them apart. The description of #717 was updated the same day (messages renamed, a section on the file names). |
+| 6 | File names of the lots and the scan. ebusd loads one file per scanned **slave** address, the best match on `ZZ.ident`; with equal matches the longer name wins (`ScanHelper::loadScanConfigFile`). Two defects followed: `10..bc1` / `10..bc2` were never loaded (`10` is a master address), and `50..em1` / `08..bc1` took the place of upstream's `50..mc` / `08..hc` for every Kromschroeder device at those addresses, Wolf included. | **corrected** on 2026-11-17. Lot A, two commits on top (`77e25c8`, `ad46e81`, pushed to the branch of #717): the four status messages are in the file of the system manager as `Boiler1Status`, `Boiler1Power`, `Boiler2Status`, `Boiler2Power` with explicit `@qq` / `@zz(0x10)`; the files carry the identification the devices answer, `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`. Lots E, D, F, C replayed on it with `08.w.bc1`, `18.w.bc2`, `35.w.fs1` named so from the commit that adds them (pushed; the heads before the renaming, `2bc03e4`, `1b33e77`, `d91dfff`, `f55ad5c`, are kept locally as `backup/pre-rename-*` and under the tag `weishaupt-0.1.0`). `scripts/check.sh` clean on each lot (134, 158, 160, 164 messages) and on the integration branch (197). In the ebusd of the check without a bus: a device answering `W` gets the `.w.` file at 08, 15, 18, 35, 50, 51, 52, another identification gets `08..hc` / `50..mc`, and the status telegrams of both boilers decode from `15.w.ka` alone. Not known: what Wolf devices answer as identification; if it were `W` as well, the names would not tell them apart. The description of #717 was updated the same day (messages renamed, a section on the file names). |
 | 5 | New findings (`docs/discoveries.md`) enter as lots on the integration branch as soon as they have their evidence, without waiting for the previous lot upstream. | ongoing |
 
 What this costs: the fork becomes a distribution to maintain (releases, following upstream
@@ -44,7 +44,7 @@ version bumps). What it does not change: rules 1 to 4 and 7 to 9.
 | PR | Branch | Head | State |
 |---|---|---|---|
 | john30/ebusd#1825 | `aghulas:crc` | `02f6de0f` | open, no review. 1 commit, 4 files. |
-| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `ad46e81` (12 commits, 7 files, 619 lines since the correction of 2026-11-17, see "Direction", item 6; `a212e73` before) | **retargeted to Lot A on 2026-11-16**: 10 commits, 9 files, 638 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
+| john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `041005d` (13 commits, 7 files; `SystemHour` back, and the correction of 2026-11-17, see "Direction", item 6; `a212e73` before) | **retargeted to Lot A on 2026-11-16**: 10 commits, 9 files, 638 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
 
 ## Gaps of the former #717 (11 300-line version)
 
@@ -72,7 +72,7 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   `weishaupt-D` rebased and pushed again after each change, `scripts/check.sh` clean (160
   messages).
 - Lot A, in #717: `SystemHour` had no bus read and was removed on 2026-11-17 (commit `19dc47c`,
-  rule 3). Read on the bus the same day (see below); it can come back.
+  rule 3). Read on the bus the same day (see below) and added again (`041005d`).
 - Lot A, evidence pass of 2026-11-17 (read-only, nothing changed in the fork):
   - Program slots: all 42 read and recorded (`evidence/em1-clock-program.md`). The request
     payloads seen on the bus equal the `@ext` triples of `50..em1.tsp`, 42 of 42; the CRC byte
@@ -89,8 +89,8 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   - `SystemHour`: no read-only path. The running configuration has the hour at `25 01` for
     writing only, no cached value, and no telegram with that register in the capture.
     **Closed** later the same day: read with the `hex` command of ebusd, answer `02 0f 00` at
-    15 h (`evidence/em1-clock-program.md`). To do: bring `SystemHour` back into lot A, which
-    means a push to the branch of #717 (owner's word, rule 8).
+    15 h (`evidence/em1-clock-program.md`). `SystemHour` is back in lot A since the same day
+    (commit `041005d`, pushed to the branch of #717; lots E, D, F, C replayed on it).
 - The comment of 2026-11-16 on #717 describes the former version; a follow-up comment was
   posted on 2026-11-17 (reshape, rename, the two questions still open).
 - `weishaupt-E` and `weishaupt-D` were pushed to the ebusd-configuration fork on 2026-11-17 (no
@@ -287,7 +287,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
   W12 = 6, second boiler F36 = 309). Missing: the source of the table, and one counter seen to
   step together with a new history entry.
 - Next: decide the order of the pull requests after #717 (E, then D, then F; C when #1825 and
-  lot B are in), and bring `SystemHour` back into lot A.
+  lot B are in).
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions

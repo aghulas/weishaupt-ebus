@@ -104,7 +104,8 @@ Toolchain: `tsp compile`, `tsp format --check`, `ebusd --checkconfig` all clean 
 read: the running configuration defines the hour at `25 01` for writing only and no telegram
 naming that register appeared in the passive capture. Read the same day with the `hex` command
 of ebusd (`31 50 5022 03 4d 25 01`): answer `02 0f 00`, 15, at 15:50 local time. The register
-is the hour, UIN, as its neighbours `21` to `24`, `26` and `27`. It can come back into the lot.
+is the hour, UIN, as its neighbours `21` to `24`, `26` and `27`. It is in the lot again since
+that day (`SystemHour`, `@ext(0x4d, 0x25, 0x01)`).
 
 ## Equipment
 
