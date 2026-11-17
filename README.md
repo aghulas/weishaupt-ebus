@@ -25,7 +25,7 @@ are opened.
 | Pull request | Subject |
 |---|---|
 | [john30/ebusd#1825](https://github.com/john30/ebusd/pull/1825) | CRC calculated at runtime for Weishaupt memory and register messages |
-| [john30/ebusd-configuration#717](https://github.com/john30/ebusd-configuration/pull/717) | Weishaupt (Kromschröder WCM) regulator definitions in TypeSpec |
+| [john30/ebusd-configuration#717](https://github.com/john30/ebusd-configuration/pull/717) | Kromschröder/Weishaupt WTC read definitions in `src/wolf` (lot A) |
 
 ## Getting started
 

@@ -1,6 +1,6 @@
 # Contribution plan
 
-Last updated: 2026-11-16.
+Last updated: 2026-11-17.
 
 ## State of upstream
 
@@ -18,20 +18,36 @@ Plan accordingly: each lot must be acceptable on its own, and nothing here may d
 | john30/ebusd#1825 | `aghulas:crc` | `02f6de0f` | open, no review. 1 commit, 4 files. |
 | john30/ebusd-configuration#717 | `aghulas:weishaupt-pr` | `8c62e41` | **retargeted to Lot A on 2026-11-16**: 7 commits, 9 files, 641 lines, `.tsp` only, read-only, stock ebusd. Old 11 300-line version saved on local branch `backup/weishaupt-pr-717-big`. |
 
-## Known gaps of #717 against the upstream guidelines
+## Gaps of the former #717 (11 300-line version)
 
-1. `src/weishaupt/weishaupt.js` and `weishaupt.ts` (decorators `@wcrc`, `@crcext`, `@appendext`) sit in
-   `src/`, which upstream reserves for `.tsp` and i18n YAML files. Decorators belong to the
-   `ebus-typespec` library.
-2. `tsp format --check` reports all 16 files of `src/weishaupt` as needing format.
-3. Lint (`npm run lint`) not run yet: `@typespec/library-linter` was not installed.
-4. Size: one pull request of ~11 300 lines, 6 008 of them in `WH11928.tsp` (raw memory map).
-5. Depends on #1825 for every write.
-6. No German i18n (`de.yaml`). Unknown whether upstream requires it for a new manufacturer.
-7. `ChangeOverTime`, `FloorDryingTemp`, `RoomThermostatTemp` use `temp1` (emitted as `D1C`, one byte)
-   where the registers are 16-bit with factor 1. To be settled by a bus read.
-8. Missing: WTC fault history and fault counters (EEPROM, `5000`), hours since last service
-   (info value read through `5022`).
+The version of #717 that these gaps describe was replaced on 2026-11-16 by Lot A. It survives
+only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
+
+1. Decorator `.js` / `.ts` files under `src/`: gone, Lot A is `.tsp` only. The decorators are
+   Lot B, in the `ebus-typespec` fork.
+2. Format: fixed, `tsp format --check` is clean on `src/wolf`.
+3. Lint: run on 2026-11-17 (`npm run lint`, branch `weishaupt-D`). 7 warnings, all
+   `missing-namespace` on enums of upstream's `src/_templates.tsp`, none in the files of the lots.
+4. Size: fixed, 641 lines in Lot A. The raw memory map is left out.
+5. Dependency on #1825: gone for Lots A, D and E (reads only). Still true for Lot C.
+6. German i18n: no longer a new manufacturer. Still unknown whether new messages in `src/wolf`
+   need `de.yaml` entries.
+7. `ChangeOverTime`, `FloorDryingTemp`, `RoomThermostatTemp` typed `temp1` on 16-bit registers:
+   still open, concerns Lot C content only (not in Lots A, D, E).
+8. Fault history, counters, service hours: done in Lots E and D. Per-code fault counters are
+   still missing.
+
+## Open items on the lots (audit of 2026-11-17)
+
+- Lot A, in #717: `SupplyWTCTemp` is the de-couple sensor B22, not the boiler flow. Rename
+  pending (touches the branch behind #717: ask first).
+- Lot A, in #717: `SystemHour` has no bus read (`evidence/em1-clock-program.md`); 3 of the 42
+  program slots are recorded individually.
+- Lot A: second boiler status now evidenced (`evidence/bc1-boiler-status.md`, burner off only).
+- The comment of 2026-11-16 on #717 still describes the former version. A short follow-up
+  comment would avoid confusion (upstream-visible: ask first).
+- `weishaupt-E`, `weishaupt-D` (ebusd-configuration fork) and `wcrc-decorator` (ebus-typespec
+  fork) exist only as local branches.
 
 ## Step 0 — ask the maintainer
 
@@ -161,7 +177,9 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - Contribution branches: `weishaupt-<lot>` in the fork, rebased on upstream `master`.
 - No mention of AI tools in commits, pull request texts or comments (rule 9 of `AGENTS.md`).
   Both pull request branches were cleaned on 2026-11-16 (messages only, trees unchanged).
-- Toolchain: validated with `@ebusd/ebus-typespec` 0.26. Upstream pins `~0.29` with
+- Toolchain: validated with `@ebusd/ebus-typespec` 0.26. Checked on 2026-11-17 with the
+  upstream pins (0.29, compiler 1.12.0, asset-emitter 0.79.1) in a scratch clone of
+  `weishaupt-D`: the emitted `wolf/` CSV files are identical. Upstream pins `~0.29` with
   `@typespec/compiler ~1.12`, which did not install cleanly with a recent Node.js. Pin a Node.js LTS
   version and commit a lockfile in the fork before lot A.
   - Cause found (2026-11-16): `ebus-typespec` 0.29 depends on `@typespec/asset-emitter ^0.79.1`;

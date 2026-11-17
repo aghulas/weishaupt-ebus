@@ -18,7 +18,7 @@ live in the forks, cloned under `repos/` (not versioned here, see `scripts/setup
 |---|---|---|
 | `aghulas/ebusd-configuration` | `john30/ebusd-configuration` | TypeSpec definitions, `src/weishaupt/` |
 | `aghulas/ebusd` | `john30/ebusd` | runtime CRC for Weishaupt messages |
-| `aghulas/ebus-typespec` (to be forked) | `john30/ebus-typespec` | TypeSpec library: decorators, emitter |
+| `aghulas/ebus-typespec` | `john30/ebus-typespec` | TypeSpec library: decorators, emitter |
 
 The Home Assistant integration (`aghulas/ha-weishaupt`) is a separate project and is out of scope.
 

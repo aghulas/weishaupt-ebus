@@ -1,4 +1,4 @@
-# em1 — system clock and weekly circulation program (read)
+# em1 — system clock and weekly circulation and hot-water programs (read)
 
 ## What
 
@@ -22,6 +22,7 @@ Live bus, ebusd `read` of each message. Clock, read the same session:
 | SystemMonth | 23 01 | `d92301` | November |
 | SystemYear | 24 01 | `112401` | 26 |
 | SystemMinute | 26 01 | `a92601` | 46 |
+| SystemSecond | 27 01 | `f52701` | 22 (read on 2026-11-17) |
 
 Weekly program, e.g.:
 
@@ -50,12 +51,16 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
 
 ## Date
 
-2026-11-16.
+2026-11-16; `SystemSecond` read on 2026-11-17.
 
 ## Not verified
 
-- Only the **circulation** weekly program is shipped; the heating and hot-water weekly programs
-  (other sub-addresses) are not yet included.
-- The programs were read at one point in time, all slots disabled on this site; non-trivial
-  switch times were not observed.
+- `SystemHour` (`25 01`, id `4d2501`) was not read: the running configuration has no active
+  read for it. Its address is taken from the sequence weekday to second (`21` to `27`).
+- Of the 42 program slots, three are recorded here (`CircProgramMon1`, `DHWProgramMon1`,
+  `DHWProgramSat1`). The other addresses follow the same pattern (weekday in the high nibble
+  of the address, slot number minus one in the low nibble) and come from the running definitions.
+- The circulation program was read with all slots disabled; non-trivial switch times were
+  seen in the hot-water program only (one slot).
+- No heating program was found on this bus (only circulation and hot water).
 - Shipped read-only; the matching writes (`50 23`) belong to a later lot.

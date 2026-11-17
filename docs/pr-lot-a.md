@@ -1,11 +1,8 @@
-# Draft — pull request for Lot A
+# Pull request text for Lot A
 
-Target: `john30/ebusd-configuration` ← `aghulas:weishaupt-A` (7 commits, 641 insertions, `.tsp` only).
-Nothing pushed or opened yet — this is the text to review before anything goes upstream.
-
-Open question before opening: PR #717 is still open with the large, decorator-based version.
-This Lot A is the reshaped, stock-ebusd subset. Decide whether to open this as a new PR that
-supersedes #717, or to retarget #717's branch to this content. (Maintainer was asked on #717.)
+Used on 2026-11-16: john30/ebusd-configuration#717 was retargeted to this content (branch
+`aghulas:weishaupt-pr`, same commits as `weishaupt-A`: 7 commits, 641 insertions, `.tsp` only).
+Kept as the record of the title and body at that date; the text on #717 is the reference.
 
 ---
 
