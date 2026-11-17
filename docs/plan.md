@@ -87,6 +87,8 @@ The `0x00` finding note (`docs/maintainer-note-crc.md`) is drafted but not poste
 | D | Raw memory map (`WH11928`). Separate pull request, or left out. | maintainer's answer | **blocked on evidence** — the `50 00` memory-read format is uncertain. The deployed config reads `EEA_H_PON`=90, `EEA_H_BON`=216 as 1-byte UCH, but #717 models them as 3-byte U3N and uses a different address byte (`22` vs the deployed `02`); the values are also physically impossible (90 h run < 216 h burner < 430 h since service). So the 1-byte reads are truncated/misaligned and cannot be shipped to the evidence bar (rule 3). Establishing the real format needs deeper reverse-engineering and the vendor service tool to cross-check. Left out until then. |
 | E | WTC fault log, service hours. | lot A | **fault log done** on branch `weishaupt-E` (from `weishaupt-A`): 9 read registers `src/wolf/50..em1.tsp` (ErrorId selector + code/type/device/date/time), evidenced on the live boiler (`evidence/em1-fault-log.md`), checkconfig clean. A future PR, to open after #717 merges (depends on its templates). Boiler service hours added too: `BurnerServiceHours` (i45, `50 22` on `bc1` ZZ 08, `src/wolf/08..bc1.tsp`, read live 430 h). Boiler operating hours (`50 00` EEPROM) still belong to the raw memory-map lot. |
 
+| F | Live values of the WTC automat read from memory (`50 00`, RAM and XRAM). | lot D (`memr` template) | **done** on branch `weishaupt-F` (from `weishaupt-D`, commits `ab5d76c` and `d91dfff`, local only, not pushed): `Temperatures` (return, flue gas, flow, outside) and `Operation` (load, ionisation, pump speed), one memory read each, for both boilers. Evidence in `evidence/bc-live-values.md`, `scripts/check.sh` clean (164 messages). The two multi-item requests have not been sent by ebusd yet. |
+
 Lot A is the priority: it is the only one that can be merged without any other change upstream.
 
 ### Lot A — findings and direction (2026-11-16)
@@ -188,7 +190,19 @@ Lot A is the priority: it is the only one that can be merged without any other c
   Scoped to these counters; the raw memory map stays out. Not yet read by ebusd itself.
 - Data logger channel table merged (30 channels of the automat resolved to RAM / XRAM
   addresses, area `3` = XRAM). Material for a later lot of live automat values.
-- Next: decide the order of the pull requests after #717 (E, then D), and read `SystemHour`
+- **Lot F, live values: done** on branch `weishaupt-F` (2026-11-17, see the Lots table). 7 of
+  the 30 data-logger channels are in; the others are listed with the reason in
+  `evidence/bc-live-values.md` ("Left out"). To close it: load the lot in a test ebusd and read
+  `Temperatures` and `Operation` once on each boiler; capture a burner start to tell the output
+  bits (RAM `2b`) apart.
+- Per-code fault counters (EEPROM `0x0196`–`0x01d7`, 2 bytes each): looked at on 2026-11-17,
+  **not written**. The running configuration reads 33 of them on both boilers and the tool
+  reads the same area, but no record says where the table "address → fault code" comes from,
+  and the tool's statistics screen stays empty on this firmware, so no count has an independent
+  figure. Consistent with the fault history for three codes only (first boiler F11 = 1 and
+  W12 = 6, second boiler F36 = 309). Missing: the source of the table, and one counter seen to
+  step together with a new history entry.
+- Next: decide the order of the pull requests after #717 (E, then D, then F), and read `SystemHour`
   by hand to bring it back.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
