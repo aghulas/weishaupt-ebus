@@ -46,8 +46,8 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
 - Lot A: second boiler status now evidenced (`evidence/bc1-boiler-status.md`, burner off only).
 - The comment of 2026-11-16 on #717 still describes the former version. A short follow-up
   comment would avoid confusion (upstream-visible: ask first).
-- `weishaupt-E`, `weishaupt-D` (ebusd-configuration fork) and `wcrc-decorator` (ebus-typespec
-  fork) exist only as local branches.
+- `weishaupt-E` and `weishaupt-D` were pushed to the ebusd-configuration fork on 2026-11-17 (no
+  pull request). `wcrc-decorator` (ebus-typespec fork) still exists only as a local branch.
 
 ## Step 0 — ask the maintainer
 
@@ -148,8 +148,8 @@ Lot A is the priority: it is the only one that can be merged without any other c
     matched to the screen. Ready to be written as definitions with an evidence record.
   - Lot A: register 13 is the de-couple sensor B22, not the boiler flow; `SupplyWTCTemp` to be
     renamed (touches the branch behind #717: ask first). Sign of registers 3, 13, 14 still open.
-- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `c6ab155`, local, not
-  pushed): `FaultHistoryPointer` and `FaultHistorySlot1..6` for both boilers
+- **Lot E, automat fault history: done** on branch `weishaupt-E` (commit `c6ab155`, pushed to
+  the fork on 2026-11-17): `FaultHistoryPointer` and `FaultHistorySlot1..6` for both boilers
   (`src/wolf/08..bc1.tsp`, new `src/wolf/18..bc2.tsp`, shared models in `wtc_inc.tsp`),
   evidence in `evidence/bc-fault-history.md`, `scripts/check.sh` clean (159 messages).
   First use of the `50 00` memory read in the lots: `memr` template with the precomputed CRC.
@@ -163,7 +163,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
   - New: the data logger reads live values of the automat from RAM with the same `50 00`
     grammar (4 channels matched on the bus, the rest to be resolved from the channel table).
 - **Lot D, counters: done** on branch `weishaupt-D` (from `weishaupt-E`, commit `efecacb`,
-  local, not pushed): one message `Counters` per boiler (operating hours, burner hours, burner
+  pushed to the fork on 2026-11-17): one message `Counters` per boiler (operating hours, burner hours, burner
   starts), evidence in `evidence/bc-counters.md`, `scripts/check.sh` clean (161 messages).
   Scoped to these counters; the raw memory map stays out. Not yet read by ebusd itself.
 - Data logger channel table merged (30 channels of the automat resolved to RAM / XRAM
