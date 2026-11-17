@@ -34,16 +34,20 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `7d62e60` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `a870515` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `0784552` (3 commits on G), pushed | `room-units-programs` |
+| L | French translation of the comments: `src/fr.yaml`, 252 keys for the 252 comment strings of the lot files and of `wolf/broadcast` (160 from vendor terms, 92 provisional). No definition; no upstream pull request is cut from it. | `weishaupt-L` `4a97839` (3 commits on H), **local only** | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
 
-The lot letters are historical; the stack order is A, E, D, F, C, G, H (`STACK` in
-`scripts/integrate.sh`). Lot C needs lot B to compile and #1825 to send. For a pull request
+The lot letters are historical; the stack order is A, E, D, F, C, G, H, L (`STACK` in
+`scripts/integrate.sh`). `weishaupt-L` holds the translation files and stays on top: a new lot
+goes below it. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-Integration branch: `weishaupt` `41f39df` (stack plus the pin commit), pushed; `5bf3635` before, tagged
-`weishaupt-0.2.0`. `scripts/check.sh` on it: clean, **574 messages**.
+Integration branch: on the fork, `weishaupt` `41f39df` (stack up to H plus the pin commit);
+`5bf3635` before, tagged `weishaupt-0.2.0`. In the local clone it was rebuilt with
+`weishaupt-L` on 2026-11-17: `0494ac5`, **not pushed**. `scripts/check.sh` on it: clean,
+**574 messages** in English, German and French.
 
 ### Releases online
 
@@ -83,9 +87,13 @@ data point on arbitration with room units).
   on the display of a room unit, both copies read before and after. If only the room unit's copy
   is in use, the seven settings lot C writes on `51` have no effect and must be removed or
   flagged.
-- **Languages other than English** (French first): scoped in `docs/i18n.md`, with a prototype on
-  the local branch `weishaupt-i18n-proto` (`79424c2`, not a lot). Six decisions listed there
-  before the implementation starts.
+- **Languages other than English.** French is implemented locally (`docs/i18n.md`, section 7):
+  `src/fr.yaml` on `weishaupt-L`, glossary `evidence/terms.md`, check and release scripts,
+  archives `0.3.0-dev` built under `out/release/` as a trial. For the owner: read the French
+  and the 18 provisional terms; decide the findings on the English wording of the lots
+  (`evidence/terms.md`: `BlockingTime` may be the lock-out of the next boiler, not of the
+  burner; the service counter is i 46 in the manuals, the comment says i45; "calorifier");
+  then give the word to push `weishaupt-L` and the integration branch and to release.
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
   request (rule 8).
 
@@ -144,7 +152,8 @@ data point on arbitration with room units).
   `weishaupt` alone. The integration branch is never edited by hand.
 - **Check.** `scripts/check.sh`: commit hygiene (identity, no tool trailer or name, no site data
   in added lines), file types, format, compile, `ebusd --checkconfig` in Docker with the ebusd
-  release of the fork (checksum verified). `scripts/check.sh hygiene` runs the first step alone.
+  release of the fork (checksum verified), translation files (keys against the comment strings,
+  compile per language, only comments differ, same message count). `scripts/check.sh hygiene` runs the first step alone.
   `CFG_REPO=<absolute path>` checks another worktree. Lots C, G and H compile only with the
   library package of the fork: in a worktree, plain `npm install`, then
   `npm install --no-save` of that package and `@typespec/compiler@1.17.0`; never commit
@@ -159,8 +168,14 @@ data point on arbitration with room units).
   a master address: messages sent to a master go into the file of its slave address with
   explicit `@qq` / `@zz`. Imports in `src/main.tsp` are added by hand, sorted (`npm run maintsp`
   rewrites unrelated lines).
+- **Translations.** A comment changed or added in a lot needs its key in `src/fr.yaml` on
+  `weishaupt-L`: rebase that branch onto the new top of the stack, write the patterned entries
+  again (`scripts/i18n-patterns.py`), add the others from `evidence/terms.md` (a term without a
+  row gets one first), and let `scripts/check.sh` say what is missing or left over. Worktree of
+  the branch: `out/lot-L`.
 - **Release.** `scripts/release.sh <version>` rebuilds and checks the integration branch and
-  makes the archive under `out/release/` with the notice from `docs/release-readme.md`. Then, on
+  makes the archives under `out/release/`, English and one per language of `RELEASE_LANGS`
+  (default `fr`), with the notice from `docs/release-readme.md`. Then, on
   the owner's word: push `weishaupt`, tag `weishaupt-<version>`, release, download it again and
   load it in the official ebusd.
 - **Writes use source `ff`.** Most settings are acknowledged from any master but taken over only
