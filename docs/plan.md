@@ -29,7 +29,7 @@ Next items, fork track, in order:
 
 | # | Item | State |
 |---|---|---|
-| 1 | Integration branch `weishaupt` in the configuration fork: the top of the stack of lots A, E, D, F, C. | **built locally** on 2026-11-17 (`f55ad5c`, 21 commits on upstream `master`), `scripts/check.sh` clean, 197 messages, with the local build of the library fork (`7e85886`). Not pushed. Still to do: pin the library in the branch itself, which needs a published build of the library fork (an installable package; a git reference does not work, the library has no build step on install). |
+| 1 | Integration branch `weishaupt` in the configuration fork: the top of the stack of lots A, E, D, F, C. | **built locally** on 2026-11-17 (`f55ad5c`, 21 commits on upstream `master`), `scripts/check.sh` clean, 197 messages, with the local build of the library fork (`7e85886`). Pushed to the fork the same day. Still to do: pin the library in the branch itself, which needs a published build of the library fork (an installable package; a git reference does not work, the library has no build step on install). |
 | 2 | A script that rebuilds the integration branch from the lot branches, so that it is never edited by hand. | **done**: `scripts/integrate.sh` checks that the stack is linear, sets `weishaupt` to its top in a separate worktree (`out/integration`) and runs `scripts/check.sh` there. |
 | 3 | First CSV release of the fork (compiled `wolf/` files, checksums, the versions of ebusd and of the library it was checked with, a short "how to use" for `--configpath`). Publishing needs the owner's word. | to do |
 | 4 | Tests on the installation. Done on 2026-11-17 by reads (`hex` command of ebusd, `50 22` and `50 00` only): `SystemHour` read (`02 0f 00` at 15 h), the two multi-item requests of lot F answered by both boilers, second boiler captured while firing. Left: the `BlockingTime` write of lot C, a write, for the operator. | reads done, write to do (operator) |
@@ -181,8 +181,8 @@ Lot A is the priority: it is the only one that can be merged without any other c
 - **Branch**: `weishaupt-C`. Restacked on 2026-11-17 on `weishaupt-F` (local head `f55ad5c`), so
   that the lots form one linear stack and the integration branch is its top; the files of the
   lot are unchanged, the two shared files (`wtc_inc.tsp`, `main.tsp`) keep the additions of
-  both sides. The fork still holds the former branch on lot A (`e9b176b`, also kept locally as
-  `backup/weishaupt-C-on-A`); replacing it needs a forced push, no pull request is open on it.
+  both sides. Pushed to the fork the same day (forced, no pull request on it); the former branch on lot A
+  (`e9b176b`) is kept locally as `backup/weishaupt-C-on-A`.
   For a pull request upstream the lot is cut again on lot A. It was first based on lot A because it uses its templates and turns its `BlockingTime` read into a read /
   write setting; it touches none of the files of lots E, D and F except `wtc_inc.tsp` (two
   additions, expect a trivial rebase). Commits:
