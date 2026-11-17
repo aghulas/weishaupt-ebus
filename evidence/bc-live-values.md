@@ -76,7 +76,7 @@ firing at its minimum load, second boiler idle; answers after the status byte `0
 |---|---|---|
 | SupplyTemp | 57 / `72` = 57.0 °C | 52 / `68` = 52.0 °C |
 | OutsideTemp | 15 / `00 0f` = 15.0 °C | -40 / `00 80` = not available |
-| Load | 25 / `19` = 25 % (also `WTCPower` `19`) | 0 / `00` = 0 % |
+| Load | 25 / `19` = 25 % (also `Boiler1Power` `19`) | 0 / `00` = 0 % |
 | Ionisation | 12.7, 12.1 / flame on, phase `06` | 0.0 / flame off, phase `00` |
 | PumpSpeed | 51 / pump on | 0 / pump off |
 | ReturnTemp | 53, 52: below the flow while firing | 53 |

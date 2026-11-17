@@ -5,7 +5,6 @@ listed in `plan.md`. Oldest first.
 
 | Date | Finding | Established by | Target lot |
 |---|---|---|---|
-| 2026-10-30 | Most FS and KA settings are accepted only from source address `ff`; from another master they are acknowledged but ignored. Registers the devices write to each other, and FS time program slots, accept any master. The rule is per register, not per device. | bus test, register by register | C (comment) |
 | 2026-10-30 | The Weishaupt CRC does not depend on the source address. WTC automats require it on reads; EM modules do not check it on writes. | bus test | A, C |
 | 2026-10-30 | Date and time are set only by the standard broadcast `fe 0700`, sent at second 00. | bus test | A (comment) |
 | 2026-11-08 | `HolidayTempLevel` (`3d01`) is a choice (0 = antifreeze, 1 = setback), not a temperature. | bus read and write | C (was in the former #717, now only on `backup/weishaupt-pr-717-big`) |
@@ -14,7 +13,6 @@ listed in `plan.md`. Oldest first.
 | 2026-11-15 | Info values of the service tool readable through `5022`, ID = CRC, register, bank. Hours since last service has landed in lot E; the other info values have not. | bus read, CRC checked offline | not in a lot yet |
 | 2026-11-15 | Burner totals (starts, operating hours) answer `0x8000` (not available) on WTC firmware 11.0e. | bus read, both boilers | E (comment) |
 | 2026-11-16 | `FloorDryingTemp` and `RoomThermostatTemp` were typed `temp1` (`D1C`) on 16-bit registers in the former #717; suspect. (`ChangeOverTime`, same case, has landed in lot C as hours with factor 1, read `32 00` = 50.) | to verify by bus read | not in a lot yet |
-| 2026-11-16 | Register 13 of the system manager is the de-couple sensor B22, not the boiler flow. The service tool reads the system manager with `09 02`, no CRC. | service tool screen | A |
 | 2026-11-17 | In cascade operation the automat's "Sup./Mod setpoint" (RAM `6e`) holds the modulation demand of the cascade manager in percent (2 and 0, as in `05 07`), not a flow setpoint. | bus read, both boilers | F (left out) |
 | 2026-11-17 | Automat RAM `70` reads 13 while firing and 32 when idle: a state, but not the operating phase of the status telegram. Output byte RAM `2b` reads `fd` firing and `80` idle; valves and pump agree with the status telegram, bits not told apart yet. | bus read, both boilers | F (left out) |
 | 2026-11-17 | The de-couple maximum of the system manager (`e6fd`) was last written from `31` as 78.5, acknowledged, and reads 78.0: agrees with the `ff` rule. | passive capture and bus read | C (left out, needs a write from `ff`) |

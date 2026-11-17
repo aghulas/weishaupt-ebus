@@ -14,7 +14,7 @@ and checked on a live installation with two WTC 250 boilers in cascade and three
 - `docs/upstream-checklist.md` — what a change must satisfy before it enters the fork or is proposed upstream
 - `docs/discoveries.md` — findings from the field that are not yet in a lot branch
 - `evidence/` — how each definition was established
-- `scripts/` — setup and checks (commit hygiene, format, compile, `ebusd --checkconfig`)
+- `scripts/` — setup, checks (commit hygiene, format, compile, `ebusd --checkconfig`), integration branch, release archive
 - `AGENTS.md` — instructions for coding agents working in this repository
 
 The definitions themselves are not here. They are written in TypeSpec in a fork of
@@ -34,6 +34,7 @@ integration branch and from which the pull requests are opened.
 |---|---|
 | [john30/ebusd#1825](https://github.com/john30/ebusd/pull/1825) | CRC calculated at runtime for Weishaupt memory and register messages |
 | [john30/ebusd-configuration#717](https://github.com/john30/ebusd-configuration/pull/717) | Kromschröder/Weishaupt WTC read definitions in `src/wolf` (lot A) |
+| [john30/ebus-typespec#8](https://github.com/john30/ebus-typespec/pull/8) | `@crc` and `@wcrc` decorators for message IDs with a leading CRC-8 (lot B) |
 
 ## Getting started
 
@@ -41,7 +42,7 @@ integration branch and from which the pull requests are opened.
 scripts/setup.sh   # clones the forks under repos/
 scripts/check.sh   # commit hygiene, format check, compile, ebusd --checkconfig
 scripts/integrate.sh   # rebuilds the integration branch from the lots and checks it
-scripts/release.sh 0.1.0   # builds the CSV release archive under out/release/, publishes nothing
+scripts/release.sh <version>   # builds the CSV release archive under out/release/, publishes nothing
 ```
 
 Requires Node.js (LTS major pinned in `.nvmrc`), Docker and the GitHub CLI.

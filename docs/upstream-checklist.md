@@ -17,12 +17,18 @@ Taken from `guidelines.md` of `john30/ebusd-configuration` and the style guide o
 - [ ] Shared models reused through the include schema (`union _includes`)
 - [ ] Comments add information; none that only repeats the message or field name
 - [ ] Models not nested too deep in the type graph
-- [ ] `src/main.tsp` regenerated (`npm run maintsp`) when a file is added or removed
+- [ ] `src/main.tsp` lists every file added or removed, imports sorted. Upstream asks for
+      `npm run maintsp`; on the current base it rewrites unrelated lines, so the import is added by
+      hand and the pull request says so if asked
+- [ ] A new file is named `ZZ.<identification>.<circuit>.tsp` with a slave address, so that ebusd
+      loads it for the right devices only and no existing file of the folder is replaced (see
+      `docs/plan.md`, "File names")
 - [ ] An evidence record exists for every new or changed definition
 
 ## Before a pull request
 
-- [ ] Branch rebased on upstream `master`
+- [ ] Branch rebased on upstream `master` (`main` for `ebus-typespec`); a lot stacked on other
+      lots of the fork is cut again on what is merged upstream
 - [ ] One topic, reviewable in one sitting
 - [ ] Does not depend on an unmerged pull request, or says so in its first line
 - [ ] Description states what was verified on a live bus and what was not
