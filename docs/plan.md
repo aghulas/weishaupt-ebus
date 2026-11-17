@@ -57,7 +57,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0` was deleted from the fork afterwards on the owner's request, with its tag (kept in the local clone).
+`weishaupt-0.2.0` and then `weishaupt-0.3.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.1` is the only release online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -76,12 +76,11 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt-0.3.1` (pre-release) | the same definitions as 0.3.0 (English CSV identical); French archive with the wording decided by the owner on 2026-11-18, Wolf messages of the broadcast file in English. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.3.0` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. |
+| `aghulas/ebusd-configuration` | `weishaupt-0.3.1` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums; French archive with the wording decided by the owner on 2026-11-18, Wolf messages of the broadcast file in English. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
-Releases 0.1.0, 0.1.1 and 0.1.2 were deleted from the fork on the owner's request; their tags
+Releases 0.1.0, 0.1.1, 0.1.2, 0.2.0 and 0.3.0 were deleted from the fork on the owner's request; their tags
 remain in the local clone.
 
 ### Open pull requests
