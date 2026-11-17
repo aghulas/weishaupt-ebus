@@ -61,13 +61,12 @@ French archive changes nothing there.
 
 The French terms are those of the vendor's French manuals where they give one (list with
 document number and page: `evidence/terms.md` in https://github.com/aghulas/weishaupt-ebus).
+Where no manual at hand gives a term, the wording was chosen with the operator of the test
+installation; still provisional: @PROVISIONAL@.
 
-Provisional, because no manual at hand gives a term: @PROVISIONAL@.
-
-The comments of the Wolf messages in `kromschroeder/broadcast.csv` are translated without a
-vendor source. The other Wolf files of the folder and the general files keep their English
-comments, except a comment that is word for word one of those translated here (for example
-`temperature`).
+The Wolf messages in `kromschroeder/broadcast.csv`, the other Wolf files of the folder and the
+general files keep their English comments, except a comment that is word for word one of
+those translated here (for example `temperature`).
 
 ## Known limits
 

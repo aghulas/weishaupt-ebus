@@ -63,9 +63,7 @@ def natural(s):
 def entries(tree, lang):
     table = LANGS.get(lang) or sys.exit(f"no phrases for '{lang}' in {os.path.basename(__file__)}")
     k = load_keys_module()
-    strings = set()
-    for f in k.lot_files(tree):
-        strings |= set(k.comments(f))
+    strings = set(k.lot_comments(tree))
     out = []
     for name in [p[1] for p in PATTERNS]:
         group = []

@@ -11,7 +11,9 @@ broadcast.csv and the lot folder (out/csv/@ebusd/ebus-typespec after scripts/che
 The lot files are those named with the identification of the devices, ZZ.w.<circuit>.csv, and
 broadcast.csv, in the lot folder (LOT_DIR, default wolf). The strings are the message comments
 and the field comments of these files, as the emitter looks them up: whole string, exact,
-without the "[WCRC] " marker it puts in front after translation.
+without the "[WCRC] " marker it puts in front after translation. In broadcast.csv only the
+messages of the lots count (LOT_BROADCAST, default KaStatus): the others are the Wolf messages
+of the official configuration, which stay in English.
 
 check prints the coverage (strings with a key, strings without) and the keys of the file that
 match no comment of the whole tree. With --strict, such a key is an error (exit 1): it is a
@@ -29,17 +31,20 @@ import re
 import sys
 
 LOT = os.environ.get("LOT_DIR", "wolf")
+LOT_BROADCAST = set(os.environ.get("LOT_BROADCAST", "KaStatus").split())
 MARKER = "[WCRC] "
 KEY_RE = re.compile(r"""^(?:"((?:[^"\\]|\\.)*)"|'((?:[^']|'')*)'|([^#'"].*?))\s*:(?:\s+(.*))?$""")
 
 
-def comments(path):
-    """Message and field comments of one CSV file, in order."""
+def comments(path, only=None):
+    """Message and field comments of one CSV file, in order; of the named messages if given."""
     out = []
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.reader(f))
     for row in rows[1:]:
         if not row or row[0].startswith(("*", "#")) or len(row) < 9:
+            continue
+        if only is not None and row[3] not in only:
             continue
         cells = [row[4]] + row[15::7]
         for c in cells:
@@ -54,6 +59,14 @@ def comments(path):
 def lot_files(tree):
     files = glob.glob(os.path.join(tree, LOT, "??.w.*.csv"))
     return sorted(files + glob.glob(os.path.join(tree, LOT, "broadcast.csv"))) if files else []
+
+
+def lot_comments(tree):
+    """Comments of the lot files; of broadcast.csv, those of the messages of the lots only."""
+    out = []
+    for f in lot_files(tree):
+        out += comments(f, LOT_BROADCAST if os.path.basename(f) == "broadcast.csv" else None)
+    return out
 
 
 def tree_files(tree):
@@ -137,9 +150,7 @@ def main():
     files = lot_files(tree)
     if not files:
         sys.exit(f"no {LOT}/??.w.*.csv under {tree}")
-    lot = []
-    for f in files:
-        lot += comments(f)
+    lot = lot_comments(tree)
     distinct = sorted(set(lot))
     if args[1] == "list":
         print("\n".join(distinct))
