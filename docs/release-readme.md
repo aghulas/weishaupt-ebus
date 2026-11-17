@@ -25,8 +25,8 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 ## Use
 
 ```sh
-tar xzf weishaupt-ebusd-config-@VERSION@.tar.gz
-ebusd --scanconfig --configpath=/path/to/weishaupt-ebusd-config-@VERSION@ ...
+tar xzf @NAME@.tar.gz
+ebusd --scanconfig --configpath=/path/to/@NAME@ ...
 ```
 
 ebusd picks the files from the identification each device answers to the scan.
@@ -40,6 +40,34 @@ ebusd picks the files from the identification each device answers to the scan.
 - Most settings are acknowledged from any source address but taken over only from `ff`:
   `write -s ff -c ka BlockingTime 2`. `ff` is the address of the vendor's service tool; do not
   write while that tool is connected.
+
+## Languages
+
+The release has one archive per language, with the same files and the same messages:
+
+- `@BASE@.tar.gz`: comments in English;
+- the same name ending in `-fr`: comments in French.
+
+Choose by downloading the archive of the language and giving its folder to `--configpath`.
+With a local configuration path, ebusd loads the files it finds: `--configlang` and the `LANG`
+environment variable do not select anything here. This archive is `@NAME@`.
+
+Only the comments of messages and fields are translated, those `find -v` and the JSON
+definitions show. Message names, field names, circuit names, the entries of value lists (for
+example `BurnerInOperation`) and units are the same in every language: they are what `read`,
+`write`, MQTT topics and automations use, so a configuration made with one archive works with
+the other. With the stock MQTT integration file, Home Assistant shows names, not comments: the
+French archive changes nothing there.
+
+The French terms are those of the vendor's French manuals where they give one (list with
+document number and page: `evidence/terms.md` in https://github.com/aghulas/weishaupt-ebus).
+
+Provisional, because no manual at hand gives a term: @PROVISIONAL@.
+
+The comments of the Wolf messages in `kromschroeder/broadcast.csv` are translated without a
+vendor source. The other Wolf files of the folder and the general files keep their English
+comments, except a comment that is word for word one of those translated here (for example
+`temperature`).
 
 ## Known limits
 

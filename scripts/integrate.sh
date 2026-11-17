@@ -8,6 +8,8 @@
 # The lots are stacked, each on the previous one (STACK, bottom to top). The integration branch
 # is the top of the stack; the script refuses to move it when the stack is not linear, that is
 # when a lot does not contain the lot below it (rebase it first).
+# The top of the stack, weishaupt-L, holds the translation files of the fork (src/fr.yaml) and
+# nothing else: it backs no upstream pull request, and a new lot goes below it.
 #
 # INTEGRATION  name of the integration branch (default: weishaupt)
 # STACK        lot branches, bottom to top
@@ -22,7 +24,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CFG="${CFG_REPO:-$ROOT/repos/ebusd-configuration}"
 BRANCH="${INTEGRATION:-weishaupt}"
-STACK="${STACK:-weishaupt-A weishaupt-E weishaupt-D weishaupt-F weishaupt-C weishaupt-G weishaupt-H}"
+STACK="${STACK:-weishaupt-A weishaupt-E weishaupt-D weishaupt-F weishaupt-C weishaupt-G weishaupt-H weishaupt-L}"
 LIB="${TYPESPEC:-$ROOT/repos/ebus-typespec}"
 PKG="${LIB_PACKAGE:-https://github.com/aghulas/ebus-typespec/releases/download/v0.31.0-weishaupt.1/ebusd-ebus-typespec-0.31.0-weishaupt.1.tgz}"
 COMPILER="${LIB_COMPILER:-~1.17.0}"
