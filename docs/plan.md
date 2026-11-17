@@ -35,7 +35,7 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), pushed | `room-units-programs` |
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), six memory reads of EEPROM `0x0196`–`0x01d7` per boiler, 12 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `9e8cdd3` (1 commit on H), **local only** | `bc-fault-counters` |
-| L | French translation of the comments: `src/fr.yaml`, 291 keys for the 291 comment strings of the lot files and of `wolf/broadcast` (193 from vendor terms, 98 provisional). No definition; no upstream pull request is cut from it. | `weishaupt-L` `2d9c28b` (5 commits on J), **local only** | `terms` |
+| L | French translation of the comments: `src/fr.yaml`, 267 keys for the 267 comment strings of the lots (193 from vendor terms, 68 accepted by the owner, 6 provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `a22b797` (7 commits on J), local: two commits ahead of the fork's `2d9c28b` | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -104,13 +104,16 @@ data point on arbitration with room units).
   on the display of a room unit, both copies read before and after. If only the room unit's copy
   is in use, the seven settings lot C writes on `51` have no effect and must be removed or
   flagged.
-- **Languages other than English.** French is implemented locally (`docs/i18n.md`, section 7):
-  `src/fr.yaml` on `weishaupt-L`, glossary `evidence/terms.md`, check and release scripts,
-  archives `0.3.0-dev` built under `out/release/` as a trial. For the owner: read the French
-  and the 18 provisional terms; decide the findings on the English wording of the lots
-  (`evidence/terms.md`: `BlockingTime` may be the lock-out of the next boiler, not of the
-  burner; the service counter is i 46 in the manuals, the comment says i45; "calorifier");
-  then give the word to push `weishaupt-L` and the integration branch and to release.
+- **Languages other than English.** French is pushed and released: `src/fr.yaml` on
+  `weishaupt-L`, French archive in `weishaupt-0.3.0` (`docs/i18n.md`, sections 7 and 8). The
+  owner's decisions of 2026-11-18 on the wording are applied locally: `weishaupt-L`
+  `a22b797`, two commits ahead of the fork's `2d9c28b` ("code défaut, 0 en l'absence de
+  défaut", "différentiel de température", the 24 Wolf comments of the broadcast file back in
+  English). Checked on the trial integration branch `weishaupt-next` (`b831213`, local):
+  clean, 586 messages. For the owner: the word to push `weishaupt-L`, rebuild and push the
+  integration branch and release 0.3.1; and, still unread in `evidence/terms.md`, the six
+  comments of the fault counters, the spelling "anti-légionelle", the design choices and the
+  findings on the English wording ("calorifier").
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
   request (rule 8).
 

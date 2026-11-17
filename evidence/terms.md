@@ -5,13 +5,16 @@
 Glossary behind the translation files of the configuration fork (`src/fr.yaml`, branch
 `weishaupt-L`): one row per term used in the comments of the lots, not per comment string. A
 comment is translated by putting the terms of its row(s) together; it counts as `vendor` when
-every term has a vendor source, as `provisional` otherwise. Names, value lists and units are not
-translated and have no row.
+every term has a vendor source, as `provisional` when one of its terms is provisional, as
+`owner` otherwise. Names, value lists and units are not translated and have no row.
 
 Status `vendor`: the French term is printed in a French edition of a vendor manual, cited by
-document and page. Status `provisional`: no manual at hand gives a term; ordinary heating or
-computing vocabulary, to be replaced when a source is found (display of a device, another
-manual).
+document and page. Status `owner`: no manual at hand gives a term; the proposal, in ordinary
+heating or computing vocabulary, was read and accepted by the owner of the project, who
+operates the test installation (2026-11-18, section "To validate"). Status `provisional`: no
+manual gives a term and the proposal has not been read; to be replaced or accepted. A term
+found later in a manual or on the display of a device replaces an `owner` or `provisional`
+one.
 
 The German column is filled only where a source in this repository gives the term; no record
 does yet, so it is empty. It is kept for the German entries of the lots (`docs/i18n.md`,
@@ -65,14 +68,14 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | heating circuit | circuit de chauffage | | FS p. 7, 9; KA p. 10 | vendor |
 | heat demand | demande de chaleur | | KA p. 57, 91; WTC p. 16 | vendor |
 | temperature | température | | all manuals | vendor |
-| temperature difference | écart de température | | KA p. 97 (also "différentiel de température", KA p. 87, WTC p. 14) | vendor |
+| temperature difference | différentiel de température | | KA p. 87; WTC p. 14 (also "écart de température", KA p. 97) | vendor |
 | setpoint | consigne; consigne de température | | WTC p. 44, 46; KA p. 30 | vendor |
 | flow temperature | température de départ | | WTC p. 42; FS p. 28; KA p. 43 | vendor |
 | actual (flow temperature) | instantanée | | FS p. 28; WTC p. 55 | vendor |
 | flow setpoint | consigne de température départ | | WTC p. 14, 46 (i 13); FS p. 65, 78 | vendor |
-| requested (flow setpoint, flow temperature) | demandée | | provisional; nearest labels "Temp Cons syst" (FS p. 36), "Demande de chaleur maximale" (WTC p. 46) | provisional |
+| requested (flow setpoint, flow temperature) | demandée | | no vendor term; nearest labels "Temp Cons syst" (FS p. 36), "Demande de chaleur maximale" (WTC p. 46) | owner |
 | maximum, minimum flow temperature | température de départ maximale, minimale | | FS p. 57, 58; WTC p. 49; KA p. 57 | vendor |
-| limit (maximum flow temperature limit) | limite | | provisional; the manuals have no separate term | provisional |
+| limit (maximum flow temperature limit) | limite | | no vendor term; the manuals have no separate term | owner |
 | return temperature | température retour | | WTC p. 47 (i 37) | vendor |
 | flue gas temperature | température des fumées | | WTC p. 21, 90 (i 31) | vendor |
 | boiler temperature | température chaudière | | WTC p. 20; FS p. 59 | vendor |
@@ -92,9 +95,9 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | operating mode | mode de fonctionnement | | FS p. 28; KA p. 29; WTC p. 43 | vendor |
 | operating phase | phase de fonctionnement | | WTC p. 46, 89 (i 10) | vendor |
 | status (of a boiler) | état | | WTC p. 42, 88 | vendor |
-| status byte | octet d'état | | provisional | provisional |
-| broadcast by | diffusé par | | provisional | provisional |
-| exchange (room unit / heating module) | échange | | provisional | provisional |
+| status byte | octet d'état | | no vendor term | owner |
+| broadcast by | diffusé par | | no vendor term | owner |
+| exchange (room unit / heating module) | échange | | no vendor term | owner |
 | burner | brûleur | | WTC p. 14 | vendor |
 | burner load | puissance du brûleur | | WTC p. 14, 46 (i 11), 58 | vendor |
 | current (burner load) | actuelle | | KA p. 109; WTC p. 55 | vendor |
@@ -105,8 +108,8 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | set speed of the PWM pump | consigne de vitesse du circulateur PWM | | WTC p. 89 (i 22), p. 62 (A32); "pompe PWM" FS p. 63 | vendor |
 | burner operating hours | heures de fonctionnement du brûleur | | WTC p. 47 (i 43) | vendor |
 | burner starts | démarrages brûleur | | WTC p. 47 (i 42) | vendor |
-| operating hours (counter other than the burner hours) | heures de fonctionnement | | provisional; the manuals have the burner counter only | provisional |
-| hours with mains on | heures sous tension | | provisional | provisional |
+| operating hours (counter other than the burner hours) | heures de fonctionnement | | no vendor term; the manuals have the burner counter only | owner |
+| hours with mains on | heures sous tension | | no vendor term | owner |
 | since the last service; maintenance counter | depuis le dernier entretien; compteur d'entretien | | WTC p. 47 (i 46), p. 77 | vendor |
 | blocking time (before a further boiler of the cascade is switched on) | temps de blocage | | KA p. 18, 86 (537) | vendor |
 | de-couple sensor B22; hydraulic separator | sonde de bouteille casse-pression (B22); bouteille casse-pression | | KA p. 10 to 13, 70, 91; FS p. 9, 66 | vendor |
@@ -117,7 +120,7 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | hot water operating mode | mode de fonctionnement ECS | | WTC p. 42; KA p. 32 | vendor |
 | hot water exceed temperature | surélévation de température ECS | | KA p. 98 (576); FS p. 87 (P603) | vendor |
 | switching differential | différentiel de commutation | | KA p. 97 (575); FS p. 86 (P602); WTC p. 51 (P 51) | vendor |
-| calorifier | stock tampon | | provisional: paired through WTC-en p. 25 and WTC p. 30 only; KA p. 93 (562) is the nearest parameter | provisional |
+| calorifier | stock tampon | | no sure vendor term: paired through WTC-en p. 25 and WTC p. 30 only; KA p. 93 (562) is the nearest parameter | owner |
 | maximum hot water loading time | temps de charge maximal pour l'ECS | | KA p. 99 (577); FS p. 88 (P604) | vendor |
 | legionella protection; its setpoint | fonction anti-légionelle; consigne de température anti-légionelle | | KA p. 101, 102 (579, 580); FS p. 89, 91 | vendor |
 | circulation pump; circulation | pompe de circulation ECS; circulation ECS | | FS p. 10, 93, 94; KA p. 104 (583) | vendor |
@@ -125,11 +128,11 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | hot-water program | programme ECS | | FS p. 32, 97; KA p. 106 | vendor |
 | circulation program | programme de circulation ECS | | FS p. 95; KA p. 106 | vendor |
 | slot (of a weekly program) | plage horaire | | KA p. 48, 106; FB p. 7, 11 | vendor |
-| stored in the room unit | enregistré dans la commande à distance | | provisional ("stored"); device name FS p. 1 | provisional |
+| stored in the room unit | enregistré dans la commande à distance | | no vendor term ("stored"); device name FS p. 1 | owner |
 | Monday … Sunday | lundi … dimanche | | KA p. 48, 66, 101; FS p. 39, 89; abbreviations FB p. 13 | vendor |
 | day of the week; day of the month; month; year | jour de la semaine; jour du mois; mois; année | | KA p. 48; FB p. 15 | vendor |
 | hour, minute, second; hours, minutes, seconds | heure, minute, seconde; heures, minutes, secondes | | FB p. 15; KA p. 27, 105, 110 | vendor |
-| percent | pour cent | | provisional; the manuals print the sign only | provisional |
+| percent | pour cent | | no vendor term; the manuals print the sign only | owner |
 | fault | défaut | | WTC p. 86; KA p. 31; FS p. 53 | vendor |
 | warning | alarme | | WTC p. 86, 87, 90; FB p. 23 | vendor |
 | fault counters (of the boiler automat) | compteurs de défauts | | provisional; the manuals list the codes, not the counters | provisional |
@@ -148,36 +151,38 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | fault log (system manager) | historique des défauts | | KA p. 110 (608); FS p. 53 (P338) | vendor |
 | fault code | code défaut | | KA p. 110; FS p. 53; WTC p. 88 | vendor |
 | device that raised (a fault) | origine | | KA p. 109, 110; FS p. 53 | vendor |
-| slot (of the fault history) | emplacement | | provisional; the display numbers the faults 1 to 6 by age (WTC p. 88), a slot is a place in memory | provisional |
-| selected entry (of the fault log) | entrée sélectionnée | | provisional; the manual says "indication de défaut 01" (KA p. 110) | provisional |
-| fault number | numéro de défaut | | provisional | provisional |
-| fault type | type de défaut | | provisional | provisional |
-| address of the last byte written | adresse du dernier octet écrit | | provisional | provisional |
-| error status | état de défaut | | provisional | provisional |
+| slot (of the fault history) | emplacement | | no vendor term; the display numbers the faults 1 to 6 by age (WTC p. 88), a slot is a place in memory | owner |
+| selected entry (of the fault log) | entrée sélectionnée | | no vendor term; the manual says "indication de défaut 01" (KA p. 110) | owner |
+| fault number | numéro de défaut | | no vendor term | owner |
+| fault type | type de défaut | | no vendor term | owner |
+| address of the last byte written | adresse du dernier octet écrit | | no vendor term | owner |
+| error status | code défaut | | no vendor term for the value; "code défaut", and code 00 for a cleared fault, KA p. 110 | owner |
 | firmware version | version du logiciel | | KA p. 109 (609); FS p. 52; WTC p. 47 (i 44) | vendor |
-| major part, minor part (of the version) | partie majeure, partie mineure | | provisional | provisional |
+| major part, minor part (of the version) | partie majeure, partie mineure | | no vendor term | owner |
 | configuration | configuration | | KA p. 65; FS p. 36; WTC p. 48 | vendor |
-| configuration status | état de la configuration | | provisional ("status") | provisional |
+| configuration status | état de la configuration | | no vendor term ("status") | owner |
 
 The 24 comments of the Wolf messages that share `wolf/broadcast` with the lots (room controller
 target values and operational data, control commands, network messages) come from the official
-configuration, not from the lots. `src/fr.yaml` translates them with ordinary vocabulary under
-their own heading; they have no row here and no vendor source.
+configuration, not from the lots. They have no row here and no vendor source, and since
+2026-11-18 no entry in `src/fr.yaml`: on the owner's decision they stay in English.
 
 ## Coverage of `src/fr.yaml`
 
-At `weishaupt-L` `2d9c28b`: 291 comment strings in the files of the lots and `wolf/broadcast`
-(`scripts/i18n-keys.py`), 291 with a key.
+At `weishaupt-L` `a22b797`: 291 comment strings in the files of the lots and `wolf/broadcast`,
+267 of them of the lots (`scripts/i18n-keys.py`), all 267 with a key.
 
-| Kind | Strings | Vendor terms only | Provisional |
-|---|---|---|---|
-| Written by hand, lots | 135 | 109 | 26 |
-| Patterned (program slots, fault-history slots) | 132 | 84 | 48 |
-| Wolf messages of the broadcast file | 24 | 0 | 24 |
-| All | 291 | 193 | 98 |
+| Kind | Strings | Vendor terms only | Accepted by the owner | Provisional | Left in English |
+|---|---|---|---|---|---|
+| Written by hand, lots | 135 | 109 | 20 | 6 | |
+| Patterned (program slots, fault-history slots) | 132 | 84 | 48 | | |
+| Wolf messages of the broadcast file | 24 | | | | 24 |
+| All | 291 | 193 | 68 | 6 | 24 |
 
-The 48 provisional patterned strings are the 42 "stored in the room unit" slots and the 6
-fault-history slots.
+The 48 patterned strings accepted by the owner are the 42 "stored in the room unit" slots and
+the 6 fault-history slots. The 6 provisional strings are the comments of the fault counters
+(lot J), written after the list below was made. The Wolf messages are left in English on the
+owner's decision of 2026-11-18; the key check does not expect a key for them.
 
 ## To validate
 
@@ -185,61 +190,60 @@ Proposals written where the sources did not settle a term or a choice. Each is i
 or in the scripts as proposed; tick a line when the owner has accepted it, or replace the
 proposal. "Why" says what the manuals lack.
 
+The owner went through the list on 2026-11-18. A ticked line is accepted as written, or as
+changed where the line says so; an unticked line was not put to the owner.
+
 ### Comments written by hand
 
 | | English string | French proposal | Why the sources did not settle it | Alternative |
 |---|---|---|---|---|
-| [ ] | requested flow setpoint | consigne de température départ demandée | no manual has a word for "requested"; nearest label "Temp Cons syst" (FS p. 36) | consigne de température du système |
-| [ ] | flow temperature the heating circuit requests from the heat source | température de départ demandée par le circuit de chauffage au générateur de chaleur | same; the boiler manual calls its side "Demande de chaleur maximale" (WTC p. 46) | demande de chaleur du circuit de chauffage (température de départ) |
-| [ ] | maximum flow temperature limit | limite de la température de départ maximale | the manuals have "température de départ maximale" only, no separate limit | température de départ maximale |
-| [ ] | room-controller / heating-module exchange | échange entre commande à distance et module d'extension | device names are the vendor's, the message itself is not described | dialogue commande à distance / module d'extension |
-| [ ] | switching differential of the calorifier | différentiel de commutation du stock tampon | "calorifier" is paired with "stock tampon" in one place only (WTC-en p. 25, WTC p. 30); no parameter has the range of the register | différentiel de commutation du préparateur ECS |
-| [ ] | status byte | octet d'état | not a manual notion | octet de statut |
-| [ ] | boiler status broadcast by the WTC | état de la chaudière diffusé par la WTC | not a manual notion | état de la chaudière émis par la WTC |
-| [ ] | configuration status | état de la configuration | the manuals have "configuration" and "Config …" labels, no status | configuration |
-| [ ] | error status, 0 when no error is pending | état de défaut, 0 en l'absence de défaut | no such value in the manuals; code 00 is a cleared fault there (KA p. 110) | code défaut, 0 en l'absence de défaut |
-| [ ] | firmware version, major part / minor part | version du logiciel, partie majeure / partie mineure | "version du logiciel" is the vendor's; the split is not in the manuals | version du logiciel, numéro majeur / numéro mineur |
-| [ ] | hours with mains on | heures sous tension | the manuals have the burner counter only | heures de mise sous tension |
-| [ ] | operating hours, burner hours and burner starts | heures de fonctionnement, heures brûleur et démarrages brûleur | no counter of operating hours apart from the burner's (WTC p. 47) | heures sous tension, heures brûleur et démarrages brûleur |
-| [ ] | fault number | numéro de défaut | the manual says "Code défaut" and "Code d'alarme"; the field serves both | numéro du code (défaut ou alarme) |
-| [ ] | fault history: address of the last byte written | mémoire de défauts : adresse du dernier octet écrit | internal of the automat, not in the manuals | mémoire de défauts : pointeur d'écriture |
-| [ ] | selected fault-log entry (0 = most recent) | entrée sélectionnée de l'historique des défauts (0 = la plus récente) | the manual says "indication de défaut 01" for an entry (KA p. 110) | indication de défaut sélectionnée (0 = la plus récente) |
-| [ ] | fault code of the selected entry | code défaut de l'entrée sélectionnée | follows the line above | code défaut de l'indication sélectionnée |
-| [ ] | fault type of the selected entry | type de défaut de l'entrée sélectionnée | no "type" of a fault in the manuals | nature du défaut de l'entrée sélectionnée |
-| [ ] | device that raised the selected entry | origine du défaut de l'entrée sélectionnée | "origine" is the vendor's (KA p. 109); "entry" is not | appareil à l'origine de l'entrée sélectionnée |
-| [ ] | percent | pour cent | the manuals print the sign only | pourcentage |
+| [x] | requested flow setpoint | consigne de température départ demandée | no manual has a word for "requested"; nearest label "Temp Cons syst" (FS p. 36) | consigne de température du système |
+| [x] | flow temperature the heating circuit requests from the heat source | température de départ demandée par le circuit de chauffage au générateur de chaleur | same; the boiler manual calls its side "Demande de chaleur maximale" (WTC p. 46) | demande de chaleur du circuit de chauffage (température de départ) |
+| [x] | maximum flow temperature limit | limite de la température de départ maximale | the manuals have "température de départ maximale" only, no separate limit | température de départ maximale |
+| [x] | room-controller / heating-module exchange | échange entre commande à distance et module d'extension | device names are the vendor's, the message itself is not described | dialogue commande à distance / module d'extension |
+| [x] | switching differential of the calorifier | différentiel de commutation du stock tampon | "calorifier" is paired with "stock tampon" in one place only (WTC-en p. 25, WTC p. 30); no parameter has the range of the register | différentiel de commutation du préparateur ECS |
+| [x] | status byte | octet d'état | not a manual notion | octet de statut |
+| [x] | boiler status broadcast by the WTC | état de la chaudière diffusé par la WTC | not a manual notion | état de la chaudière émis par la WTC |
+| [x] | configuration status | état de la configuration | the manuals have "configuration" and "Config …" labels, no status | configuration |
+| [x] | error status, 0 when no error is pending | code défaut, 0 en l'absence de défaut (changed by the owner; the proposal was "état de défaut, 0 en l'absence de défaut") | no such value in the manuals; code 00 is a cleared fault there (KA p. 110) | none left |
+| [x] | firmware version, major part / minor part | version du logiciel, partie majeure / partie mineure | "version du logiciel" is the vendor's; the split is not in the manuals | version du logiciel, numéro majeur / numéro mineur |
+| [x] | hours with mains on | heures sous tension | the manuals have the burner counter only | heures de mise sous tension |
+| [x] | operating hours, burner hours and burner starts | heures de fonctionnement, heures brûleur et démarrages brûleur | no counter of operating hours apart from the burner's (WTC p. 47) | heures sous tension, heures brûleur et démarrages brûleur |
+| [x] | fault number | numéro de défaut | the manual says "Code défaut" and "Code d'alarme"; the field serves both | numéro du code (défaut ou alarme) |
+| [x] | fault history: address of the last byte written | mémoire de défauts : adresse du dernier octet écrit | internal of the automat, not in the manuals | mémoire de défauts : pointeur d'écriture |
+| [x] | selected fault-log entry (0 = most recent) | entrée sélectionnée de l'historique des défauts (0 = la plus récente) | the manual says "indication de défaut 01" for an entry (KA p. 110) | indication de défaut sélectionnée (0 = la plus récente) |
+| [x] | fault code of the selected entry | code défaut de l'entrée sélectionnée | follows the line above | code défaut de l'indication sélectionnée |
+| [x] | fault type of the selected entry | type de défaut de l'entrée sélectionnée | no "type" of a fault in the manuals | nature du défaut de l'entrée sélectionnée |
+| [x] | device that raised the selected entry | origine du défaut de l'entrée sélectionnée | "origine" is the vendor's (KA p. 109); "entry" is not | appareil à l'origine de l'entrée sélectionnée |
+| [x] | percent | pour cent | the manuals print the sign only | pourcentage |
 
 ### Patterned comments
 
 | | English pattern | French proposal | Why | Alternative |
 |---|---|---|---|---|
-| [ ] | hot-water program stored in the room unit, `<day>` slot `<n>` (21) | programme ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | "stored" has no vendor wording | programme ECS mémorisé dans la commande à distance, … |
-| [ ] | circulation program stored in the room unit, `<day>` slot `<n>` (21) | programme de circulation ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | same | programme de bouclage ECS … (the boiler manual says "bouclage", WTC p. 60) |
-| [ ] | fault history slot `<n>` (6) | mémoire de défauts, emplacement `<n>` | the display numbers the faults by age (WTC p. 88); a slot is a place in memory | mémoire de défauts, défaut `<n>` |
-| [ ] | slot of a weekly program, all 126 program strings | plage horaire | vendor term of the system manager (KA p. 48, 106) and of the older room unit; the French screens of the WCM-FS 2.0 are not at hand | cycle (FB p. 13, 16); période |
+| [x] | hot-water program stored in the room unit, `<day>` slot `<n>` (21) | programme ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | "stored" has no vendor wording | programme ECS mémorisé dans la commande à distance, … |
+| [x] | circulation program stored in the room unit, `<day>` slot `<n>` (21) | programme de circulation ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | same | programme de bouclage ECS … (the boiler manual says "bouclage", WTC p. 60) |
+| [x] | fault history slot `<n>` (6) | mémoire de défauts, emplacement `<n>` | the display numbers the faults by age (WTC p. 88); a slot is a place in memory | mémoire de défauts, défaut `<n>` |
+| [x] | slot of a weekly program, all 126 program strings | plage horaire | vendor term of the system manager (KA p. 48, 106) and of the older room unit; the French screens of the WCM-FS 2.0 are not at hand | cycle (FB p. 13, 16); période |
 
 ### Wolf messages of the broadcast file (24 strings, no vendor source)
 
-| | English strings | French proposal | Alternative |
-|---|---|---|---|
-| [ ] | room controller target values; room controller operational data; control commands | valeurs de consigne du régulateur d'ambiance; données de fonctionnement du régulateur d'ambiance; commandes de régulation | leave these 24 in English: they are upstream's comments on Wolf devices |
-| [ ] | boiler / hot water target temperature; boiler / hot water effective temperature; return flow temperature | température de consigne de la chaudière / ECS; température réelle de la chaudière / ECS; température de retour | température effective |
-| [ ] | forced performance; expected performance; emission test | puissance forcée; puissance attendue; mesure des émissions | test d'émissions (fonction ramoneur) |
-| [ ] | hot water active; heat active; pump active; buffer 1, 2 active; loading pump active; hot water loading pump active; TBF connected | ECS active; chauffage actif; pompe active; tampon 1, 2 actif; pompe de charge active; pompe de charge ECS active; TBF raccordé | eau chaude active |
-| [ ] | first device with error; error code; reset network state; reset network config; network loss | premier appareil en défaut; code défaut; réinitialisation de l'état du réseau; réinitialisation de la configuration du réseau; perte du réseau | code d'erreur |
+| | English strings | Decision |
+|---|---|---|
+| [x] | the 24 comments of the Wolf messages of `wolf/broadcast` (room controller target values and operational data, control commands, network messages) | left in English (owner, 2026-11-18): the proposals were removed from `src/fr.yaml` (`a22b797`) |
 
 ### Choices of wording where the vendor's French varies
 
 | | Choice made | Other form in the manuals |
 |---|---|---|
-| [ ] | "ECS" everywhere, never spelled out | "eau chaude sanitaire" (FS p. 89, once) |
-| [ ] | "hors-gel" | "antigel" (labels of FS and KA) |
-| [ ] | "programme de chauffe" | "programme de chauffage" (FS p. 83) |
-| [ ] | "bouteille casse-pression" | "bouteille de découplage" (WTC p. 58) |
+| [x] | "ECS" everywhere, never spelled out | "eau chaude sanitaire" (FS p. 89, once) |
+| [x] | "hors-gel" | "antigel" (labels of FS and KA) |
+| [x] | "programme de chauffe" | "programme de chauffage" (FS p. 83) |
+| [x] | "bouteille casse-pression" | "bouteille de découplage" (WTC p. 58) |
 | [ ] | "anti-légionelle" | "anti-légionnelle" (FS) |
-| [ ] | "circulateur" for the boiler pump, "pompe de circulation ECS" for the circulation | "pompe" (FS), "circulateur de bouclage ECS" (WTC p. 48) |
-| [ ] | "puissance du brûleur" for burner load | "modulation", "degré de modulation" (KA) |
-| [ ] | "écart de température" | "différentiel de température" (KA p. 87, WTC p. 14) |
+| [x] | "circulateur" for the boiler pump, "pompe de circulation ECS" for the circulation | "pompe" (FS), "circulateur de bouclage ECS" (WTC p. 48) |
+| [x] | "puissance du brûleur" for burner load | "modulation", "degré de modulation" (KA) |
+| [x] | "différentiel de température" (changed by the owner; the choice was "écart de température") | "écart de température" (KA p. 97) |
 | [x] | `BlockingTime`: comment of lot A corrected on 2026-11-17, French "temps de blocage avant enclenchement d'une chaudière supplémentaire de la cascade" | was "temps de blocage minimal du brûleur" |
 | [x] | `BurnerServiceHours`: comment of lot E corrected to "i46" on 2026-11-17, French follows | was "i45" |
 
@@ -249,8 +253,8 @@ proposal. "Why" says what the manuals lack.
 |---|---|---|---|
 | [ ] | `weishaupt-L` is the top of `STACK` | one file no lot touches: the stack stays linear and the integration branch holds what the release compiles | apply it after the stack, outside `STACK` |
 | [ ] | no `compile-fr` script in `package.json` | the check and the release pass the file to the emitter; `weishaupt-L` stays one file | add it as the prototype did |
-| [ ] | the 24 Wolf strings of `wolf/broadcast` are translated | the broadcast file of the folder is in one language | keep them in English and count 228 strings |
-| [ ] | the key check counts `wolf/broadcast.csv` with the `NN.w.*` files | the Weishaupt status broadcast lives in that file | lot files only |
+| [x] | the 24 Wolf strings of `wolf/broadcast` stay in English (changed by the owner; they had been translated) | they are upstream's comments on Wolf devices, without a vendor source | translate them so that the file is in one language |
+| [ ] | the key check counts, in `wolf/broadcast.csv`, the messages of the lots only (`LOT_BROADCAST`, default `KaStatus`); changed with the line above | the Wolf messages need no key any more | count the whole file and report 24 strings without a key |
 | [ ] | a key that matches nothing fails only for a file the base ref does not have | `fr.yaml` is the fork's; upstream's `de.yaml` has 820 such keys | a list of strict files |
 | [ ] | the check compiles a German tree too | `de.yaml` has 6 keys of the lot strings, the rule is "a file with keys of the lot files" | compile only the fork's own files (shorter check) |
 | [ ] | languages of the release: `RELEASE_LANGS`, default `fr`; no German archive | six coincidental German words are not a translation | one archive per compiled language |
