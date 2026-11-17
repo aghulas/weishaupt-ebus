@@ -48,6 +48,39 @@ Toolchain checks on the emitted CSV: `tsp compile` clean, `tsp format --check` c
 service tool labels register `0d 00` "De-couple temperature B22" (see
 [service-tool-log.md](service-tool-log.md)); renamed on 2026-11-17, address and codec unchanged.
 
+### Sign of registers 3, 13 and 14
+
+`DHWSetValue` (`03 00`), `DeCoupleTemp` (`0d 00`) and `DHWTemp` (`0e 00`) are shipped as
+unsigned (`temp10`, UIN). No negative reading exists for them: the system manager returned
+`f4 01` (50.0), `54 02` (59.6) and `69 01` (36.1) on 2026-11-17. Three observations made the
+same day point to a signed 16-bit value all the same:
+
+1. The same register numbers, read with `50 22` on devices of the same family that do not
+   have the sensor or the setting (passive capture, master `31`, request payload then the two
+   data bytes of the reply):
+
+   | register | request | system manager `15` | heating modules `51`, `52` | room unit `35` |
+   |---|---|---|---|---|
+   | 3 | `e4 03 00` | `f4 01` | `00 80` | `00 80` |
+   | 13 | `28 0d 00` | `54 02` | `00 80` | `00 80` |
+   | 14 | `cc 0e 00` | `69 01` | `18 fc` | `00 00` |
+
+   `18 fc` is 0xfc18: -1000 as a signed value, -100.0 °C, a round figure; 64536 as an unsigned
+   one, 6453.6 °C. `00 80` is 0x8000, the smallest signed 16-bit number and the eBUS
+   replacement value of the signed type (the unsigned one is `ff ff`).
+2. The system manager itself answers `18 fc` on its calorifier registers `76 00` and `78 00`
+   (no calorifier sensor here), and the heating modules `51` and `52` answer `18 fc` on the
+   outside temperature `0c 00`, which is already shipped as signed. The "no sensor" value of a
+   temperature register in this family is therefore -100.0 °C, signed.
+3. The register list of the vendor service tool gives, in its section for the system manager,
+   "SInt × 0.1" for registers 3, 13 and 14 (see [service-tool-log.md](service-tool-log.md)).
+   Its sections for other devices give "UInt" for 3 and 14; the bus answers above come from
+   those other devices and are signed values nevertheless.
+
+Conclusion: registers 3, 13 and 14 are signed tenths. The definitions should use the signed
+scalar (`otemp10`, SIN) instead of `temp10`; for the values read so far the decoded figure is
+the same. Not yet changed in the lot (see "Not verified").
+
 ## Equipment
 
 Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Kromschröder`,
@@ -55,7 +88,7 @@ Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Krom
 
 ## Date
 
-2026-11-16.
+2026-11-16; sign of registers 3, 13 and 14 examined on 2026-11-17.
 
 ## Not verified
 
@@ -64,5 +97,8 @@ Kromschröder WCM/WTC regulators on eBUS; KA system manager scanning as `MF=Krom
   no response on this site and were left out.
 - Mixer and calorifier registers decode to the not-available / no-sensor sentinels here
   (no such peripheral on this site); left out pending a site that has them.
-- The sign of `HeatDemandTemp`, `DHWSetValue`, `DeCoupleTemp`, `DHWTemp` is assumed positive
-  (UIN); a site reaching a negative value would be needed to rule out SIN.
+- Registers 3, 13 and 14 (`DHWSetValue`, `DeCoupleTemp`, `DHWTemp`) are signed by the evidence
+  above, but no negative reading was taken on the system manager itself, and the definitions
+  still say `temp10` (UIN) pending the type change.
+- The sign of `HeatDemandTemp` (register 2) is assumed positive (UIN); the vendor register
+  list says "UInt × 0.1" for it, and no sentinel answer was seen.

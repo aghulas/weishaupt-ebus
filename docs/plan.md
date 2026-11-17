@@ -45,9 +45,24 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   messages).
 - Lot A, in #717: `SystemHour` had no bus read and was removed on 2026-11-17 (commit `19dc47c`,
   rule 3). It comes back with one manual read by the operator (`50 22`, ID `4d 25 01`, to
-  `ZZ 50`). 3 of the 42 program slots are recorded individually
-  (`evidence/em1-clock-program.md`).
-- Lot A: second boiler status now evidenced (`evidence/bc1-boiler-status.md`, burner off only).
+  `ZZ 50`).
+- Lot A, evidence pass of 2026-11-17 (read-only, nothing changed in the fork):
+  - Program slots: all 42 read and recorded (`evidence/em1-clock-program.md`). The request
+    payloads seen on the bus equal the `@ext` triples of `50..em1.tsp`, 42 of 42; the CRC byte
+    of all 57 triples of the file was recomputed, no mismatch. Hot water is enabled on four
+    non-contiguous weekdays, which confirms the weekday nibble. **Closed.**
+  - Second boiler: still seen with the burner off only (`WTCStatus` phase `00`, load 0 %,
+    `WTCPower` unchanged at `21 17 64`). `evidence/bc1-boiler-status.md` unchanged. **Open**:
+    needs a capture while the second boiler fires (cold spell or cascade rotation).
+  - Sign of KA registers 3, 13, 14: signed, by the "no sensor" answers of the same registers
+    on the other devices (`18 fc` = -100.0, `00 80`) and by the vendor register list
+    (`evidence/ka-reads.md`). **Evidence closed; type change pending**: `temp10` to `otemp10`
+    for `DHWSetValue`, `DeCoupleTemp`, `DHWTemp` in `15..ka.tsp`, which touches the branch
+    behind #717 (rule 8: ask first).
+  - `SystemHour`: no read-only path. The running configuration has the hour at `25 01` for
+    writing only, no cached value, and no telegram with that register in the capture. **Open**:
+    one manual read by the operator (`50 22`, payload `4d 25 01`, to `ZZ 50`; expected answer
+    two data bytes, hour low byte first, for example `0b 00` at 11 h).
 - The comment of 2026-11-16 on #717 describes the former version; a follow-up comment was
   posted on 2026-11-17 (reshape, rename, the two questions still open).
 - `weishaupt-E` and `weishaupt-D` were pushed to the ebusd-configuration fork on 2026-11-17 (no
