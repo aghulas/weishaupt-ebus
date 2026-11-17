@@ -55,6 +55,26 @@ Same lengths and the same PBSB pair as the first boiler, so the shared `Status` 
 models apply. The second boiler has no outside sensor of its own: the field carries the
 not-available value.
 
+Seen while firing on 2026-11-17, a few minutes after a start (same passive capture):
+
+```
+WTCPower  05 04 : 19 17 64
+WTCStatus 50 0A : 01 06 7f 62 19 78 ff ff 00 80 00 00 ff
+```
+
+| message | field | bytes | value |
+|---|---|---|---|
+| WTCPower | CurrentLoad / MinLoad / MaxLoad | `19` `17` `64` | 25 % / 23 % / 100 % |
+| WTCStatus | OperatingPhase | `06` | the phase the first boiler shows while firing |
+| WTCStatus | Load | `19` | 25 % |
+| WTCStatus | SupplyTemp (D1C) | `78` | 60.0 °C |
+| WTCStatus | OutsideTemp (D2B) | `00 80` | not available |
+
+Bytes 1 to 4 (`06 7f 62 19`) equal those of the first boiler firing at the same load
+(`01 06 7f 62 19 72 …`). Load and flow agree with the memory reads taken in the same minute
+(25 %, 60 °C, see [bc-live-values.md](bc-live-values.md)). With the burner on, `CurrentLoad`
+of `WTCPower` equals `Load` of `WTCStatus`.
+
 Toolchain: `tsp compile`, `tsp format --check`, `ebusd --checkconfig` all clean (0 errors).
 `ZZ = 10` is taken from the file names `10..bc1` and `10..bc2`, as for the other circuits.
 
@@ -65,13 +85,13 @@ Kromschröder WCM/WTC condensing boilers (both boilers of a two-boiler cascade),
 
 ## Date
 
-2026-11-16 (first boiler), 2026-11-17 (second boiler).
+2026-11-16 (first boiler), 2026-11-17 (second boiler, burner off then firing).
 
 ## Not verified
 
-- Second boiler: seen with the burner off only. `WTCPower` then still reports a current load
-  of 33 % while `WTCStatus` reports 0 %; what `CurrentLoad` means with the burner off is not
-  established.
+- With the burner off, `WTCPower` of the second boiler still reports a current load (33 %)
+  while `WTCStatus` reports 0 %; what `CurrentLoad` means with the burner off is not
+  established. With the burner on the two agree (25 %).
 - `ZZ = 10` is a master address; the directed form is modelled in addition to the broadcast
   `KaStatus`, which carries the same status unambiguously.
 - `MinLoad` / `MaxLoad` were seen only at 23 % / 100 % (one operating point); not swept.

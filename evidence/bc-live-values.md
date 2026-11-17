@@ -92,6 +92,32 @@ firing at its minimum load, second boiler idle; answers after the status byte `0
 - Ionisation is on the scale of the fault history, where the slots written with the burner in
   operation hold 14.1 to 19.8 and the others 0.0.
 
+**The two requests as written**, sent on 2026-11-17 from `31` with the `hex` command of ebusd
+(read-only, `50 00`), to both boilers; answers after the length byte, status byte first:
+
+| Time | Boiler | `40 11 62 01 68 01 6c` | `d1 03 b2 03 d5 01 ed` | State |
+|---|---|---|---|---|
+| 15:50 | `08` | `00 3c 34 3f 0f` = 60, 52, 63, 15 °C | `00 00 00 00` | burner off, pump off |
+| 15:50 | `18` | `00 41 38 42 d8` = 65, 56, 66, -40 | `00 1c 00 32` = 28 %, 0.0, 50 % | pump just started |
+| 15:50 | `18` | `00 31 39 3c d8` = 49, 57, 60, -40 | `00 17 00 32` = 23 %, 0.0, 50 % | 20 s later |
+| 15:50 | `18` | `00 3b 39 38 d8` = 59, 57, 56, -40 | `00 28 00 32` = 40 %, 0.0, 50 % | no flame yet |
+| 15:51 | `18` | `00 38 39 3c d8` = 56, 57, 60, -40 | `00 22 5a 39` = 34 %, 9.0, 57 % | flame on |
+| 15:51 | `18` | `00 37 39 3c d8` | `00 19 53 33` = 25 %, 8.3, 51 % | firing |
+| 15:52 | `18` | `00 38 39 3c d8` | `00 19 5f 33` = 25 %, 9.5, 51 % | firing |
+
+- Both boilers answer the two multi-item requests with one status byte and as many bytes as
+  the model has fields (4 and 3). One request out of 18 failed with a bus error ("wrong symbol
+  received") and succeeded when repeated.
+- Status telegrams of the same minutes: first boiler `01 00 07 00 00 7e ff ff 00 0f …` (flow
+  `7e` = 63.0 °C, outside `00 0f` = 15.0 °C, load 0 %); second boiler firing
+  `01 06 7f 62 19 78 ff ff 00 80 …` (load `19` = 25 %, flow `78` = 60.0 °C, outside not
+  available). Flow, outside temperature and load of the grouped answers equal them.
+- A single-item read of RAM `ed` sent right after each `Operation` request to the second
+  boiler gave `32`, `39`, `32`, `33`, `33` against `32`, `39`, `33`, `33`, `33` in the grouped
+  answers: the last field is the pump byte.
+- The second boiler was seen through a start: ionisation `00` without flame, 8.3 to 9.5 with
+  it; pump 0 before, 50 % and more after.
+
 Toolchain: `scripts/check.sh` clean (hygiene, format, compile, `ebusd --checkconfig`, 164
 messages).
 
@@ -102,14 +128,14 @@ Two WTC condensing boilers in cascade, automat scanned `MF=Kromschroeder;SW=1104
 
 ## Date
 
-2026-11-16 (service tool), 2026-11-17 (reads through ebusd).
+2026-11-16 (service tool), 2026-11-17 (reads through ebusd, single-item then grouped).
 
 ## Not verified
 
-- The two requests as written. ebusd has not sent them: the running configuration holds the
-  seven single-item reads only. A request with several items is what the tool sends, and
-  `Temperatures` is the tool's logger request less two items; the exact lists of this lot have
-  not been on the bus.
+- `Load` before the flame. During the start of the second boiler (pump on, no flame yet) XRAM
+  `b2` read 23 to 40 while the status telegram said 0 %; once firing both said 25 %. The byte
+  seems to hold the load the automat prepares, not only the load of a burning flame. One start
+  observed, not examined further.
 - `ReturnTemp` and `FlueGasTemp` against a displayed figure other than the tool's chart, read
   off its curves.
 - `PumpSpeed` and `Ionisation` against a displayed figure. Their evidence is the tool's channel

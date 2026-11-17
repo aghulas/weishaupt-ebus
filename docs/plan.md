@@ -32,7 +32,7 @@ Next items, fork track, in order:
 | 1 | Integration branch `weishaupt` in the configuration fork, built from `weishaupt-A`, `-E`, `-D`, `-F`, `-C` (C needs `@wcrc`, so the branch pins the library fork until lot B is released upstream). `scripts/check.sh` clean on it. | to do |
 | 2 | A script that rebuilds the integration branch from the lot branches, so that it is never edited by hand. | to do |
 | 3 | First CSV release of the fork (compiled `wolf/` files, checksums, the versions of ebusd and of the library it was checked with, a short "how to use" for `--configpath`). Publishing needs the owner's word. | to do |
-| 4 | Operator's tests on the installation: `SystemHour` read, the two multi-item requests of lot F, the `BlockingTime` write of lot C, second boiler while firing. | to do (operator) |
+| 4 | Tests on the installation. Done on 2026-11-17 by reads (`hex` command of ebusd, `50 22` and `50 00` only): `SystemHour` read (`02 0f 00` at 15 h), the two multi-item requests of lot F answered by both boilers, second boiler captured while firing. Left: the `BlockingTime` write of lot C, a write, for the operator. | reads done, write to do (operator) |
 | 5 | New findings (`docs/discoveries.md`) enter as lots on the integration branch as soon as they have their evidence, without waiting for the previous lot upstream. | ongoing |
 
 What this costs: the fork becomes a distribution to maintain (releases, following upstream
@@ -71,25 +71,25 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   `weishaupt-D` rebased and pushed again after each change, `scripts/check.sh` clean (160
   messages).
 - Lot A, in #717: `SystemHour` had no bus read and was removed on 2026-11-17 (commit `19dc47c`,
-  rule 3). It comes back with one manual read by the operator (`50 22`, ID `4d 25 01`, to
-  `ZZ 50`).
+  rule 3). Read on the bus the same day (see below); it can come back.
 - Lot A, evidence pass of 2026-11-17 (read-only, nothing changed in the fork):
   - Program slots: all 42 read and recorded (`evidence/em1-clock-program.md`). The request
     payloads seen on the bus equal the `@ext` triples of `50..em1.tsp`, 42 of 42; the CRC byte
     of all 57 triples of the file was recomputed, no mismatch. Hot water is enabled on four
     non-contiguous weekdays, which confirms the weekday nibble. **Closed.**
   - Second boiler: still seen with the burner off only (`WTCStatus` phase `00`, load 0 %,
-    `WTCPower` unchanged at `21 17 64`). `evidence/bc1-boiler-status.md` unchanged. **Open**:
-    needs a capture while the second boiler fires (cold spell or cascade rotation).
+    `WTCPower` unchanged at `21 17 64`). **Closed** later the same day: captured while firing
+    (`01 06 7f 62 19 78 …`, `WTCPower` `19 17 64`), see `evidence/bc1-boiler-status.md`.
   - Sign of KA registers 3, 13, 14: signed, by the "no sensor" answers of the same registers
     on the other devices (`18 fc` = -100.0, `00 80`) and by the vendor register list
     (`evidence/ka-reads.md`). **Closed**: `DHWSetValue`, `DeCoupleTemp` and `DHWTemp`
     changed from `temp10` to `otemp10` (commit `a212e73`, pushed to `weishaupt-pr`); lots E and
     D rebased on it and pushed again, `scripts/check.sh` clean (160 messages).
   - `SystemHour`: no read-only path. The running configuration has the hour at `25 01` for
-    writing only, no cached value, and no telegram with that register in the capture. **Open**:
-    one manual read by the operator (`50 22`, payload `4d 25 01`, to `ZZ 50`; expected answer
-    two data bytes, hour low byte first, for example `0b 00` at 11 h).
+    writing only, no cached value, and no telegram with that register in the capture.
+    **Closed** later the same day: read with the `hex` command of ebusd, answer `02 0f 00` at
+    15 h (`evidence/em1-clock-program.md`). To do: bring `SystemHour` back into lot A, which
+    means a push to the branch of #717 (owner's word, rule 8).
 - The comment of 2026-11-16 on #717 describes the former version; a follow-up comment was
   posted on 2026-11-17 (reshape, rename, the two questions still open).
 - `weishaupt-E` and `weishaupt-D` were pushed to the ebusd-configuration fork on 2026-11-17 (no
@@ -121,7 +121,7 @@ Lot A already ships the reads the note proposed. It is not to be posted.
 | D | Raw memory map (`WH11928`). Separate pull request, or left out. | maintainer's answer | **blocked on evidence** — the `50 00` memory-read format is uncertain. The deployed config reads `EEA_H_PON`=90, `EEA_H_BON`=216 as 1-byte UCH, but #717 models them as 3-byte U3N and uses a different address byte (`22` vs the deployed `02`); the values are also physically impossible (90 h run < 216 h burner < 430 h since service). So the 1-byte reads are truncated/misaligned and cannot be shipped to the evidence bar (rule 3). Establishing the real format needs deeper reverse-engineering and the vendor service tool to cross-check. Left out until then. |
 | E | WTC fault log, service hours. | lot A | **fault log done** on branch `weishaupt-E` (from `weishaupt-A`): 9 read registers `src/wolf/50..em1.tsp` (ErrorId selector + code/type/device/date/time), evidenced on the live boiler (`evidence/em1-fault-log.md`), checkconfig clean. A future PR, to open after #717 merges (depends on its templates). Boiler service hours added too: `BurnerServiceHours` (i45, `50 22` on `bc1` ZZ 08, `src/wolf/08..bc1.tsp`, read live 430 h). Boiler operating hours (`50 00` EEPROM) still belong to the raw memory-map lot. |
 
-| F | Live values of the WTC automat read from memory (`50 00`, RAM and XRAM). | lot D (`memr` template) | **done** on branch `weishaupt-F` (from `weishaupt-D`, commits `ab5d76c` and `d91dfff`, pushed to the fork, no pull request): `Temperatures` (return, flue gas, flow, outside) and `Operation` (load, ionisation, pump speed), one memory read each, for both boilers. Evidence in `evidence/bc-live-values.md`, `scripts/check.sh` clean (164 messages). The two multi-item requests have not been sent by ebusd yet. |
+| F | Live values of the WTC automat read from memory (`50 00`, RAM and XRAM). | lot D (`memr` template) | **done** on branch `weishaupt-F` (from `weishaupt-D`, commits `ab5d76c` and `d91dfff`, pushed to the fork, no pull request): `Temperatures` (return, flue gas, flow, outside) and `Operation` (load, ionisation, pump speed), one memory read each, for both boilers. Evidence in `evidence/bc-live-values.md`, `scripts/check.sh` clean (164 messages). The two multi-item requests were sent on 2026-11-17 (`hex` command of ebusd) and answered by both boilers, the second one through a burner start. |
 
 Lot A is the priority: it is the only one that can be merged without any other change upstream.
 
@@ -282,7 +282,7 @@ Lot A is the priority: it is the only one that can be merged without any other c
   W12 = 6, second boiler F36 = 309). Missing: the source of the table, and one counter seen to
   step together with a new history entry.
 - Next: decide the order of the pull requests after #717 (E, then D, then F; C when #1825 and
-  lot B are in), and read `SystemHour` by hand to bring it back.
+  lot B are in), and bring `SystemHour` back into lot A.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions

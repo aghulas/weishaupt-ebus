@@ -100,23 +100,22 @@ so `15..ka.tsp` and `50..em1.tsp` share it; the 18 KA reads emit byte-for-byte a
 
 Toolchain: `tsp compile`, `tsp format --check`, `ebusd --checkconfig` all clean (0 errors).
 
+**`SystemHour`** (`25 01`, id `4d2501`). Removed from the lot on 2026-11-17 for want of a bus
+read: the running configuration defines the hour at `25 01` for writing only and no telegram
+naming that register appeared in the passive capture. Read the same day with the `hex` command
+of ebusd (`31 50 5022 03 4d 25 01`): answer `02 0f 00`, 15, at 15:50 local time. The register
+is the hour, UIN, as its neighbours `21` to `24`, `26` and `27`. It can come back into the lot.
+
 ## Equipment
 
 Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
 
 ## Date
 
-2026-11-16; `SystemSecond` and the 42 program slots read on 2026-11-17.
+2026-11-16; `SystemSecond`, `SystemHour` and the 42 program slots read on 2026-11-17.
 
 ## Not verified
 
-- `SystemHour` (`25 01`, id `4d2501`) was not read. It was removed from the lot on 2026-11-17
-  and comes back once a read confirms it. Checked on 2026-11-17: the running configuration
-  defines the hour at `25 01` for writing only (`50 23`, and the passive `09 03` form); it has
-  no `50 22` read for it, no cached value, and no telegram naming `25 01` on heating module #1
-  appears in the passive capture (1870 distinct telegrams). The address is therefore supported
-  by the neighbouring registers (`21` to `24`, `26`, `27`, all read) and by that write
-  definition, not by a bus read. One manual `50 22` read of `4d 25 01` by the operator closes it.
 - The circulation program was read with all 21 slots disabled; non-trivial switch times were
   seen in the hot-water program only (slot 1 of four weekdays). Slots 2 and 3 were seen
   disabled only.
