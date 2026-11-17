@@ -16,7 +16,7 @@ live in the forks, cloned under `repos/` (not versioned here, see `scripts/setup
 
 | Fork | Upstream | Holds |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `john30/ebusd-configuration` | TypeSpec definitions, `src/weishaupt/` |
+| `aghulas/ebusd-configuration` | `john30/ebusd-configuration` | TypeSpec definitions, `src/wolf/` |
 | `aghulas/ebusd` | `john30/ebusd` | runtime CRC for Weishaupt messages |
 | `aghulas/ebus-typespec` | `john30/ebus-typespec` | TypeSpec library: decorators, emitter |
 
