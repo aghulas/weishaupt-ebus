@@ -15,8 +15,8 @@ address bytes and the two value bytes. The slave acknowledges with `00`.
 
 Because the checksum covers the value, it cannot be written into a definition. In lot C
 (branch `weishaupt-C`) the write template `crcw` (`@write @base(MF, 0x23)`,
-`src/wolf/wtc_inc.tsp`) leaves it to ebusd: the `@wcrc` decorator emits a placeholder byte and
-the marker `[WCRC]` in the comment, and ebusd with the run-time checksum (john30/ebusd#1825)
+`src/wolf/wtc_inc.tsp`) leaves it to ebusd: the `@wcrc` decorator emits the marker `[WCRC]` in the comment and, in place of the
+checksum, the checksum of the address alone, and ebusd with the run-time checksum (john30/ebusd#1825)
 computes the byte when sending and checks it when receiving.
 
 ## How it was established
@@ -87,6 +87,31 @@ have been seen, so this is an indication, not a proof.
 The definitions of the lot set no source address. A comment in each file says which source the
 device takes the value from; the sender chooses it (`write -s ff`).
 
+### 5. The byte emitted in place of the checksum
+
+First version of `@wcrc` (commit `5490298` of the ebus-typespec fork): the byte was `00`, on
+the write line and on the read line of a read / write setting (`50 22`, `00 25 00`). Such a
+read needs the run-time checksum too; on an ebusd without it the request would go out with
+checksum `00`, and `BlockingTime` lost the read it has in lot A.
+
+Since 2026-11-17 (local commit `7e85886`, branch `wcrc-decorator`) the decorator emits the
+checksum of the address alone, polynomial 0x5C, which is the checksum of a read:
+
+- john30/ebusd#1825 does not use the value of that byte: the message key is built with the
+  byte cleared, the comparison of an incoming telegram skips it and checks the computed
+  checksum instead, and the byte is overwritten before sending (`keyId`, `checkId`,
+  `prepareMaster` in `src/lib/ebus/message.cpp` of the branch).
+- Lot C, unchanged, compiled with that build: the 17 read lines carry the checksum of the
+  address, for instance `50 22` / `4c 25 00` for `BlockingTime`, the ID lot A ships; no line
+  carries `00`. `scripts/check.sh` clean, 167 messages. The 91 tests of the library pass.
+- In the ebusd of the check, without a bus, telegrams injected as already seen
+  (`--inject=stop`): `28 25 00 01 00` and `cc 25 00 02 00` decoded as `write ka BlockingTime`
+  1 and 2, `29 25 00 01 00` (wrong checksum) unknown, the read `4c 25 00` / `02 01 00` decoded
+  as `read ka BlockingTime 1`, and a read with `00 25 00` unknown.
+
+So a read defined with `@wcrc` is valid for an ebusd with or without the run-time checksum;
+the write still needs it.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, all scanning as `MF=Kromschröder`, `ID=W`: system manager
@@ -113,11 +138,7 @@ Capture 2026-11-16; checksums recomputed and telegrams decoded with the lot on 2
   3. `write -s ff -c ka BlockingTime 1`: expected `ff 15 50 23 05 28 25 00 01 00`; read
      again, expected 1 (the value before the test).
   4. `write -s ff -c ka BlockingTime 31`: ebusd must refuse it (out of range) and send nothing.
-- With `@wcrc`, the **read** of a setting is emitted with the placeholder too (`50 22`,
-  `00 25 00`), so it needs the run-time checksum as well: on a stock ebusd it would go out with
-  checksum `00`. The reads of lot A carry the precomputed byte and do not have this limit.
-  ebusd#1825 ignores the value of the placeholder, so a decorator that emitted the checksum of
-  the address there (`4c 25 00`) would keep these reads working on a stock ebusd. To raise with
-  lot B.
+- The telegrams ebusd **sends** with the corrected decorator (below) were not captured either;
+  the operator's test above covers them.
 - Multi-register writes: `docs/discoveries.md` records one register per telegram; nothing else
   was tried.

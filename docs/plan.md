@@ -84,7 +84,7 @@ Lot A already ships the reads the note proposed. It is not to be posted.
 | Lot | Content | Depends on | Status |
 |---|---|---|---|
 | A | Read-only definitions: `5022` register reads with the CRC precomputed in the ID, passive status messages, time programs as read. No custom decorator needed at runtime, works with stock ebusd. | nothing | in progress — branch `weishaupt-A`, `src/wolf/15..ka.tsp` (18 evidenced reads) |
-| B | CRC decorator in `ebus-typespec`. | maintainer's answer | **done + proven end-to-end** — fork `aghulas/ebus-typespec`, branch `wcrc-decorator`: `@crc(poly, ...)` (compile-time) and `@wcrc(...)` (runtime placeholder + `[WCRC]` marker), 91 tests pass, build clean (commit `5490298`, pushed to the fork, no pull request). Demo: installed the fork into the config and rewrote 3 ka reads as `@crc(0x5c, ...)` — the emitted `ka.csv` was **byte-identical** to the literal version and passed `ebusd --checkconfig`, so `@crc` reproduces the hand-computed CRCs end-to-end. Demo reverted (no change to `weishaupt-A`); the config's 0.26 toolchain restored. Still exploratory: `@wcrc` feeds Lot C writes (untestable on hardware, rule 7) and ebusd #1825; a permanent wiring needs the decorator released and the config's toolchain bumped (both the maintainer's call). |
+| B | CRC decorator in `ebus-typespec`. | maintainer's answer | **done + proven end-to-end** — fork `aghulas/ebus-typespec`, branch `wcrc-decorator`: `@crc(poly, ...)` (compile-time) and `@wcrc(...)` (`[WCRC]` marker; the byte emitted is the checksum of the address, so a read stays valid without the run-time checksum, see `evidence/register-write-crc.md` section 5), 91 tests pass, build clean. Local commit `7e85886` since 2026-11-17 (amended, one commit); the fork still holds the first version `5490298`, to be force-pushed on the owner's word (no pull request). Demo: installed the fork into the config and rewrote 3 ka reads as `@crc(0x5c, ...)` — the emitted `ka.csv` was **byte-identical** to the literal version and passed `ebusd --checkconfig`, so `@crc` reproduces the hand-computed CRCs end-to-end. Demo reverted (no change to `weishaupt-A`); the config's 0.26 toolchain restored. Still exploratory: `@wcrc` feeds Lot C writes (untestable on hardware, rule 7) and ebusd #1825; a permanent wiring needs the decorator released and the config's toolchain bumped (both the maintainer's call). |
 | C | Writes (`5023`) with runtime CRC and setpoint ranges. | #1825, lot B (both unmerged, no review) | **prepared, pushed to the fork, no pull request** — branch `weishaupt-C` (from `weishaupt-A`, 5 commits, head `e9b176b`): 17 settings read and written, ka (8), em2 (7), fs1 (2). Evidence in `evidence/register-write-crc.md` and `evidence/settings-writes.md`. `scripts/check.sh` clean (167 messages) with the local build of `wcrc-decorator`. Cannot be proposed before #1825 is merged and `@wcrc` is released. See "Lot C" below. |
 | D | Raw memory map (`WH11928`). Separate pull request, or left out. | maintainer's answer | **blocked on evidence** — the `50 00` memory-read format is uncertain. The deployed config reads `EEA_H_PON`=90, `EEA_H_BON`=216 as 1-byte UCH, but #717 models them as 3-byte U3N and uses a different address byte (`22` vs the deployed `02`); the values are also physically impossible (90 h run < 216 h burner < 430 h since service). So the 1-byte reads are truncated/misaligned and cannot be shipped to the evidence bar (rule 3). Establishing the real format needs deeper reverse-engineering and the vendor service tool to cross-check. Left out until then. |
 | E | WTC fault log, service hours. | lot A | **fault log done** on branch `weishaupt-E` (from `weishaupt-A`): 9 read registers `src/wolf/50..em1.tsp` (ErrorId selector + code/type/device/date/time), evidenced on the live boiler (`evidence/em1-fault-log.md`), checkconfig clean. A future PR, to open after #717 merges (depends on its templates). Boiler service hours added too: `BurnerServiceHours` (i45, `50 22` on `bc1` ZZ 08, `src/wolf/08..bc1.tsp`, read live 430 h). Boiler operating hours (`50 00` EEPROM) still belong to the raw memory-map lot. |
@@ -162,7 +162,8 @@ Lot A is the priority: it is the only one that can be merged without any other c
   notes. Nothing was written to the installation for this lot (rule 7).
 - **Toolchain**: the lot compiles only with `@wcrc`. Checked in a separate worktree of the fork
   clone with the local build of `repos/ebus-typespec` (`wcrc-decorator`, 0.31.0, compiler
-  1.17.0) installed with `npm install --no-save`; nothing of that is committed. The clone
+  1.17.0) installed with `npm install --no-save`; nothing of that is committed. Checked again
+  the same day with the corrected `@wcrc` (`7e85886`), lot C unchanged: clean, 167 messages. The clone
   itself was left on `weishaupt-F` with its 0.26 toolchain. To check the branch again: a
   worktree of `weishaupt-C`, the same install, then `CFG_REPO=<worktree> scripts/check.sh`.
 - **Blocks the pull request**, in this order:
@@ -173,10 +174,6 @@ Lot A is the priority: it is the only one that can be merged without any other c
   4. The operator's test of the definitions through ebusd (four steps in
      `evidence/register-write-crc.md`).
 - **Open questions**, for the owner before proposing:
-  - `@wcrc` puts the placeholder on the read line too, so the read of a read / write setting
-    needs the run-time checksum; `BlockingTime` loses its stock-ebusd read of lot A. Fix
-    possible in lot B (emit the checksum of the address as placeholder, #1825 ignores its
-    value). See `docs/discoveries.md`.
   - Source address: most settings are taken from `ff` only. The definitions set no `@qq`; a
     comment says `write -s ff`. Setting `@qq(0xff)` would make a plain `write` work but takes
     the address of the vendor service tool by default.
