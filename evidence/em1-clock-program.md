@@ -6,7 +6,7 @@ Read-only registers on heating module #1 (circuit `em1`, target 0x50), `PBSB = 5
 ID `<crc> <addr> <sub>` with the precomputed CRC (see [register-crc.md](register-crc.md)),
 in `src/wolf/50..em1.tsp`:
 
-- **System clock** (`sub = 01`): weekday, day, month, year, hour, minute, second.
+- **System clock** (`sub = 01`): weekday, day, month, year, minute, second (no hour, see below).
 - **Weekly circulation program** (`sub = 1a`) and **weekly hot-water program** (`sub = 17`):
   three switch-time slots per weekday, each a start ("from") and stop ("to") time with an
   enable flag (model `SwitchTimes`).
@@ -56,7 +56,8 @@ Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
 ## Not verified
 
 - `SystemHour` (`25 01`, id `4d2501`) was not read: the running configuration has no active
-  read for it. Its address is taken from the sequence weekday to second (`21` to `27`).
+  read for it, and its address was only inferred from the sequence weekday to second (`21` to
+  `27`). It was removed from the lot on 2026-11-17 and comes back once a read confirms it.
 - Of the 42 program slots, three are recorded here (`CircProgramMon1`, `DHWProgramMon1`,
   `DHWProgramSat1`). The other addresses follow the same pattern (weekday in the high nibble
   of the address, slot number minus one in the low nibble) and come from the running definitions.
