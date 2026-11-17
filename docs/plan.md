@@ -69,6 +69,9 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
   pull request). `wcrc-decorator` was pushed to the ebus-typespec fork the same day (no pull request).
 - A comment on john30/ebusd-configuration#616 (2026-11-17) points another contributor working on
   Weishaupt files to #717, to avoid duplicate work. No answer yet.
+- A comment on john30/ebusd#1814 (2026-11-17, arbitration lost on a WCM-FS installation) gives
+  this installation as a data point: 30 forced reads in a row from master `31` to the room
+  units `35` and `75` answered, max arbitration time 23 micros. No answer yet.
 
 ## Step 0 — ask the maintainer
 
