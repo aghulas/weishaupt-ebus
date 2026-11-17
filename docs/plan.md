@@ -7,7 +7,7 @@ Last updated: 2026-11-17.
 - `john30/ebusd`: last commit on `master` 2026-03-29. Several pull requests open since October 2026
   without review.
 - `john30/ebusd-configuration`: last commit on `master` 2026-06-09.
-- No review or comment yet on #1825 and #717.
+- No review or comment by the maintainer on #1825 and #717 (checked again on 2026-11-17, 15:00).
 
 Plan accordingly: each lot must be acceptable on its own, and nothing here may depend on a quick merge.
 
@@ -33,7 +33,7 @@ only on the local branch `backup/weishaupt-pr-717-big`. What became of each gap:
 6. German i18n: no longer a new manufacturer. Still unknown whether new messages in `src/wolf`
    need `de.yaml` entries.
 7. `ChangeOverTime`, `FloorDryingTemp`, `RoomThermostatTemp` typed `temp1` on 16-bit registers:
-   still open, concerns Lot C content only (not in Lots A, D, E).
+   closed for `ChangeOverTime` (hours with factor 1, in Lot C); the other two are in no lot.
 8. Fault history, counters, service hours: done in Lots E and D. Per-code fault counters are
    still missing.
 
@@ -83,7 +83,7 @@ The `0x00` finding note (`docs/maintainer-note-crc.md`) is drafted but not poste
 |---|---|---|---|
 | A | Read-only definitions: `5022` register reads with the CRC precomputed in the ID, passive status messages, time programs as read. No custom decorator needed at runtime, works with stock ebusd. | nothing | in progress — branch `weishaupt-A`, `src/wolf/15..ka.tsp` (18 evidenced reads) |
 | B | CRC decorator in `ebus-typespec`. | maintainer's answer | **done + proven end-to-end** — fork `aghulas/ebus-typespec`, branch `wcrc-decorator`: `@crc(poly, ...)` (compile-time) and `@wcrc(...)` (runtime placeholder + `[WCRC]` marker), 91 tests pass, build clean (commit `5490298`, not pushed). Demo: installed the fork into the config and rewrote 3 ka reads as `@crc(0x5c, ...)` — the emitted `ka.csv` was **byte-identical** to the literal version and passed `ebusd --checkconfig`, so `@crc` reproduces the hand-computed CRCs end-to-end. Demo reverted (no change to `weishaupt-A`); the config's 0.26 toolchain restored. Still exploratory: `@wcrc` feeds Lot C writes (untestable on hardware, rule 7) and ebusd #1825; a permanent wiring needs the decorator released and the config's toolchain bumped (both the maintainer's call). |
-| C | Writes (`5023`) with runtime CRC and setpoint ranges. | #1825, lot B | content exists in #717 |
+| C | Writes (`5023`) with runtime CRC and setpoint ranges. | #1825, lot B (both unmerged, no review) | **prepared, not pushed** — local branch `weishaupt-C` (from `weishaupt-A`, 5 commits, head `e9b176b`): 17 settings read and written, ka (8), em2 (7), fs1 (2). Evidence in `evidence/register-write-crc.md` and `evidence/settings-writes.md`. `scripts/check.sh` clean (167 messages) with the local build of `wcrc-decorator`. Cannot be proposed before #1825 is merged and `@wcrc` is released. See "Lot C" below. |
 | D | Raw memory map (`WH11928`). Separate pull request, or left out. | maintainer's answer | **blocked on evidence** — the `50 00` memory-read format is uncertain. The deployed config reads `EEA_H_PON`=90, `EEA_H_BON`=216 as 1-byte UCH, but #717 models them as 3-byte U3N and uses a different address byte (`22` vs the deployed `02`); the values are also physically impossible (90 h run < 216 h burner < 430 h since service). So the 1-byte reads are truncated/misaligned and cannot be shipped to the evidence bar (rule 3). Establishing the real format needs deeper reverse-engineering and the vendor service tool to cross-check. Left out until then. |
 | E | WTC fault log, service hours. | lot A | **fault log done** on branch `weishaupt-E` (from `weishaupt-A`): 9 read registers `src/wolf/50..em1.tsp` (ErrorId selector + code/type/device/date/time), evidenced on the live boiler (`evidence/em1-fault-log.md`), checkconfig clean. A future PR, to open after #717 merges (depends on its templates). Boiler service hours added too: `BurnerServiceHours` (i45, `50 22` on `bc1` ZZ 08, `src/wolf/08..bc1.tsp`, read live 430 h). Boiler operating hours (`50 00` EEPROM) still belong to the raw memory-map lot. |
 
@@ -141,6 +141,51 @@ Lot A is the priority: it is the only one that can be merged without any other c
   last step runs in Docker when available, otherwise in GitHub Actions (workflow
   `.github/workflows/checkconfig.yml` of this repository): the compiled CSV are sent as a
   workflow input, so nothing is pushed to the fork.
+
+## Lot C — writes (prepared on 2026-11-17, local only)
+
+- **Branch**: `weishaupt-C`, local, from `weishaupt-A` (`a212e73`), not pushed, no pull request.
+  Based on lot A because it uses its templates and turns its `BlockingTime` read into a read /
+  write setting; it touches none of the files of lots E, D and F except `wtc_inc.tsp` (two
+  additions, expect a trivial rebase). Commits:
+  - `7b6dda5` write template `crcw` / `CrcSetting` with `@wcrc`, `BlockingTime` (ka)
+  - `2453311` `ChangeOverTime`, `DeCoupleMinTemp`, `CalorifierSwitchDiff` (ka)
+  - `0e2b75b` `DHWSwitchDiff`, `DHWLoadTime`, `LegionellaSetpoint`, `LegionellaCirculationTime` (ka)
+  - `eb13044` seven heating-circuit settings (em2)
+  - `e9b176b` `SwitchOnRuntime`, `FrostProtectionLimitTemp` (fs1, new file `35..fs1.tsp`)
+- **Evidence** (rule 3): for each of the 17 registers, a `50 23` telegram captured passively,
+  its checksum recomputed offline, the acknowledgement, a captured read of the same register
+  with the same value, and the captured telegram decoded by the lot in the ebusd of the check.
+  The change of value itself rests on the operator's write tests of 2026-11-15, by their
+  notes. Nothing was written to the installation for this lot (rule 7).
+- **Toolchain**: the lot compiles only with `@wcrc`. Checked in a separate worktree of the fork
+  clone with the local build of `repos/ebus-typespec` (`wcrc-decorator`, 0.31.0, compiler
+  1.17.0) installed with `npm install --no-save`; nothing of that is committed. The clone
+  itself was left on `weishaupt-F` with its 0.26 toolchain. To check the branch again: a
+  worktree of `weishaupt-C`, the same install, then `CFG_REPO=<worktree> scripts/check.sh`.
+- **Blocks the pull request**, in this order:
+  1. john30/ebusd#1825 merged and in a released ebusd (run-time checksum, marker `[WCRC]`).
+  2. `@crc` / `@wcrc` proposed to john30/ebus-typespec (lot B, no pull request yet), merged
+     and released; then the version pin of ebusd-configuration raised to that release.
+  3. #717 (lot A) merged, since lot C sits on it.
+  4. The operator's test of the definitions through ebusd (four steps in
+     `evidence/register-write-crc.md`).
+- **Open questions**, for the owner before proposing:
+  - `@wcrc` puts the placeholder on the read line too, so the read of a read / write setting
+    needs the run-time checksum; `BlockingTime` loses its stock-ebusd read of lot A. Fix
+    possible in lot B (emit the checksum of the address as placeholder, #1825 ignores its
+    value). See `docs/discoveries.md`.
+  - Source address: most settings are taken from `ff` only. The definitions set no `@qq`; a
+    comment says `write -s ff`. Setting `@qq(0xff)` would make a plain `write` work but takes
+    the address of the vendor service tool by default.
+  - Ranges come from the operator's table, which cites the vendor manuals; pages not compared
+    for this lot.
+  - `maintsp` (`npm run maintsp`) rewrites unrelated lines of `src/main.tsp` on this base; the
+    import of `35..fs1.tsp` was added by hand.
+- **Left out, with what is missing**: table "Left out" of `evidence/settings-writes.md` (the
+  four lot A settings of the system manager without a captured write, `DHWOperationMode`,
+  `DHWExceeded`, `ModulationStatus`, de-couple maximum, regulator P / I, legionella day and
+  circulation, boiler sequence, two room-unit settings, holiday level, program slots).
 
 ## Service tool comparison (2026-11-16)
 
@@ -202,8 +247,8 @@ Lot A is the priority: it is the only one that can be merged without any other c
   figure. Consistent with the fault history for three codes only (first boiler F11 = 1 and
   W12 = 6, second boiler F36 = 309). Missing: the source of the table, and one counter seen to
   step together with a new history entry.
-- Next: decide the order of the pull requests after #717 (E, then D, then F), and read `SystemHour`
-  by hand to bring it back.
+- Next: decide the order of the pull requests after #717 (E, then D, then F; C when #1825 and
+  lot B are in), and read `SystemHour` by hand to bring it back.
 - Notes go to branch `service-tool`, file `evidence/service-tool-log.md`.
 
 ## Conventions
