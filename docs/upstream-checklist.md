@@ -5,7 +5,8 @@ Taken from `guidelines.md` of `john30/ebusd-configuration` and the style guide o
 
 ## Before a commit
 
-- [ ] `scripts/check.sh` is clean: format, compile without diagnostics, `ebusd --checkconfig` without error
+- [ ] `scripts/check.sh` is clean: commit hygiene (identity, no tool trailer, no site data in added
+      lines), format, compile without diagnostics, `ebusd --checkconfig` without error
 - [ ] Declarations and comments in English
 - [ ] `src/` holds only `.tsp` files and i18n YAML files
 - [ ] One top-level namespace for the manufacturer, one unique namespace per circuit, unique message names

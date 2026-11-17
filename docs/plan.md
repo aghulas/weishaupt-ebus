@@ -118,7 +118,8 @@ Lot A is the priority: it is the only one that can be merged without any other c
   coverage should be its own later lot, not bundled here.
 - **To raise with the maintainer (needs approval, upstream-visible):** the existing `src/wolf`
   reads send `0x00` where the device expects a computed CRC — a latent bug, with bus evidence.
-- `scripts/check.sh` targets `src/wolf` (set `LOT_DIR` for another folder). It compiles
+- `scripts/check.sh` targets `src/wolf` (set `LOT_DIR` for another folder). After the commit
+  hygiene step (see Conventions) it compiles
   `src/main.tsp` and runs `ebusd --checkconfig` on the emitted root CSV files plus `wolf/`. The
   last step runs in Docker when available, otherwise in GitHub Actions (workflow
   `.github/workflows/checkconfig.yml` of this repository): the compiled CSV are sent as a
@@ -186,11 +187,23 @@ Lot A is the priority: it is the only one that can be merged without any other c
   moved with its branch, release assets unchanged) and the history of this repository was
   rewritten (commit metadata only, trees unchanged). Older commits stay reachable on GitHub
   through the force-push events of #717 and #1825.
+- `scripts/check.sh`, since 2026-11-17, five steps. Step 1 is commit hygiene (rules 4 and 9): on
+  the lot branch (`upstream/master..HEAD`, or `LOT_BASE`) and on this repository (unpushed
+  commits and the last 20), every commit must carry the expected author and committer identity
+  (`user.name` / `user.email` of the repository, or `EXPECT_NAME` / `EXPECT_EMAIL`) and a
+  message without tool trailer, tool name or session link; the added lines of the lot branch
+  and of the unpushed commits here must hold no private IPv4 address, MAC address, local host
+  name, e-mail address or credential assignment. `scripts/check.sh hygiene` runs that step
+  alone. In local (Docker) mode the ebusd binary, cached or not, is verified against
+  `sha256sums.txt` of its release, as the workflow already did. Each new check was proven with
+  a failing case in throwaway clones.
 - Toolchain: validated with `@ebusd/ebus-typespec` 0.26. Checked on 2026-11-17 with the
   upstream pins (0.29, compiler 1.12.0, asset-emitter 0.79.1) in a scratch clone of
   `weishaupt-D`: the emitted `wolf/` CSV files are identical. Upstream pins `~0.29` with
-  `@typespec/compiler ~1.12`, which did not install cleanly with a recent Node.js. Pin a Node.js LTS
-  version and commit a lockfile in the fork before lot A.
+  `@typespec/compiler ~1.12`, which did not install cleanly with a recent Node.js. Node.js is
+  pinned to the LTS major 26 in `.nvmrc` of this repository since 2026-11-17 (`scripts/check.sh`
+  warns on another major). Still open: commit a lockfile in the fork (an untracked
+  `package-lock.json` sits in the local clone).
   - Cause found (2026-11-16): `ebus-typespec` 0.29 depends on `@typespec/asset-emitter ^0.79.1`;
     without a lockfile npm picks 0.79.3, which imports `sanitizePathSegment` from the compiler
     (present only from 1.17). Workaround on `weishaupt-pr`:

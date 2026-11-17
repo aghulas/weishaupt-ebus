@@ -13,7 +13,7 @@ and checked on a live installation with two WTC 250 boilers in cascade and three
 - `docs/upstream-checklist.md` — what a change must satisfy before it is proposed upstream
 - `docs/discoveries.md` — findings from the field that are not yet in a contribution branch
 - `evidence/` — how each definition was established
-- `scripts/` — setup and checks (format, compile, `ebusd --checkconfig`)
+- `scripts/` — setup and checks (commit hygiene, format, compile, `ebusd --checkconfig`)
 - `AGENTS.md` — instructions for coding agents working in this repository
 
 The definitions themselves are not here. They are written in TypeSpec in a fork of
@@ -31,10 +31,10 @@ are opened.
 
 ```sh
 scripts/setup.sh   # clones the forks under repos/
-scripts/check.sh   # format check, compile, ebusd --checkconfig
+scripts/check.sh   # commit hygiene, format check, compile, ebusd --checkconfig
 ```
 
-Requires Node.js, Docker and the GitHub CLI.
+Requires Node.js (LTS major pinned in `.nvmrc`), Docker and the GitHub CLI.
 
 ## Related
 
