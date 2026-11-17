@@ -12,14 +12,15 @@ to the official ebusd configuration; this archive exists so that they can be use
 ## Content
 
 - `kromschroeder/` — one file per device address: `08.w.bc1`, `18.w.bc2` (boilers), `15.w.ka`
-  (system manager), `35.w.fs1` (room unit), `50.w.em1`, `51.w.em2`, `52.w.em3` (heating modules),
-  and the broadcast messages. It also holds the Wolf files of the official configuration, which
+  (system manager), `35.w.fs1`, `75.w.fs2`, `f5.w.fs3` (room units), `50.w.em1`, `51.w.em2`,
+  `52.w.em3` (heating modules), and the broadcast messages. It also holds the Wolf files of the official configuration, which
   share the folder.
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
 @COUNT@ messages. Reads only, except the 17 settings of `15.w.ka`, `35.w.fs1` and `51.w.em2` that are
-read and written.
+read and written. More than half of the messages are the weekly programs of the room units, one
+message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
 ## Use
 
@@ -47,8 +48,16 @@ ebusd picks the files from the identification each device answers to the scan.
 - The files are named with the identification the devices answer to the scan (`W`), for
   example `50.w.em1`. A device that answers another identification gets the Wolf file of the
   same address, if there is one.
-- The write definitions were checked by decoding captured telegrams; ebusd sending them from
-  these definitions has not been observed on a bus yet.
+- The write definitions were checked by decoding captured telegrams. One write was tested on
+  the installation (`BlockingTime`, 1 to 2 and back, from `ff`): the telegrams were the expected
+  ones and the device took the value. They were built by the ebusd of the installation with its
+  own configuration; ebusd sending from the files of this archive has not been observed yet.
+- A room unit and its heating module answer the same setting registers with different values;
+  which copy the regulation uses is not established. The written settings of `51.w.em2` are the
+  copy of the module.
+- The room units answer hot-water and circulation programs as well; they probably do not apply
+  them (the system manager prepares the hot water). Which heating program is active is not
+  defined.
 
 ## Checked with
 
