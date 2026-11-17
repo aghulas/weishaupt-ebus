@@ -22,7 +22,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CFG="${CFG_REPO:-$ROOT/repos/ebusd-configuration}"
 BRANCH="${INTEGRATION:-weishaupt}"
-STACK="${STACK:-weishaupt-A weishaupt-E weishaupt-D weishaupt-F weishaupt-C weishaupt-G}"
+STACK="${STACK:-weishaupt-A weishaupt-E weishaupt-D weishaupt-F weishaupt-C weishaupt-G weishaupt-H}"
 LIB="${TYPESPEC:-$ROOT/repos/ebus-typespec}"
 PKG="${LIB_PACKAGE:-https://github.com/aghulas/ebus-typespec/releases/download/v0.31.0-weishaupt.1/ebusd-ebus-typespec-0.31.0-weishaupt.1.tgz}"
 COMPILER="${LIB_COMPILER:-~1.17.0}"
