@@ -70,7 +70,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt-0.2.0` (pre-release) | compiled CSV of lots A to H under `kromschroeder/`, notice, checksums. Downloaded again after publication: checksum right, 574 messages without error in the official ebusd 26.1. |
+| `aghulas/ebusd-configuration` | `weishaupt-0.3.0` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. `weishaupt-0.2.0` (lots A to H, English only) is still online. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
@@ -139,8 +139,7 @@ data point on arbitration with room units).
   stored in the room unit; `scripts/check.sh` clean, 574 messages. The integration branch was
   rebuilt on it (`41f39df`). Both pushed to the fork on 2026-11-17 on the owner's word
   (`weishaupt-H` fast-forward, `weishaupt` forced, no pull request on either). The release
-  `weishaupt-0.2.0` is still the tag on `5bf3635`. Next, on the owner's word: a release with
-  the changed notice.
+  Released since in `weishaupt-0.3.0`.
 - **Lot J, fault counters (written on 2026-11-17, `evidence/bc-fault-counters.md`).** Local
   branch `weishaupt-J` `9e8cdd3`, in `STACK` below `weishaupt-L`, which was rebased onto it and
   holds the French of its 39 comment strings (`2d9c28b`). All three pushed to the fork
