@@ -2,10 +2,10 @@
 
 ## What
 
-Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 33 settings
+Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 44 settings
 (17 until 2026-11-18, when the three marked † were added, then the two marked ‡ from the
-telegram log of ebusd, section "Changes in the telegram log", then the eleven of room unit 2
-from the captures on site, section "Captures on site"),
+telegram log of ebusd, section "Changes in the telegram log", then the eleven of room units 2
+and 3 from the captures on site, section "Captures on site"),
 each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the run-time checksum
 (mechanism and checksum in [register-write-crc.md](register-write-crc.md)). The value is
 16 bits, low byte first.
@@ -36,6 +36,7 @@ each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the ru
 | em3 (`52`) | GradientCurve ‡ | `0e 01` | UIN/10 | none (2.5–40.0) | `ff` |
 | fs2 (`75`) | RoomNormalTemp, RoomSetbackTemp, RoomFrostProtectionTemp, GradientCurve, SummerWinterChangeOverTemp, SupplyMaxTemp, SupplyMinTemp, SwitchOnRuntime, FrostProtectionLimitTemp, BoilerMCBoostTemp | as on `fs1` / `em2` | as on `fs1` / `em2` | as on `fs1` / `em2` | `ff` |
 | fs2 | DHWSetpoint | `13 00` | UIN/10, °C | 40–60, step 0.5 | `ff` |
+| fs3 (`f5`) | the eleven settings of `fs2` | as on `fs2` | as on `fs2` | as on `fs2` | `ff` |
 
 "Source" is the source address of the captured write. `BlockingTime` was a read of lot A
 (`4c 25 00`); it is the same register, now read and written.
@@ -221,6 +222,29 @@ installation data, not in this repository.
   it was sent 16 s later. The client's display of the curve lagged one poll behind the bus;
   the bus values above are what counts.
 
+### Batch 2 — room unit 3 (`f5`), 2026-11-18 14:53 to 14:58
+
+| setting | date, time | source | change | read → answer | restore | read → answer |
+|---|---|---|---|---|---|---|
+| fs3 RoomNormalTemp | 2026-11-18 14:53–14:53 | `ff` | `88 05 00 cd 00` | `70 05 00` → `cd 00` | `a8 05 00 d2 00` | `70 05 00` → `d2 00` |
+| fs3 RoomSetbackTemp | 2026-11-18 14:53–14:53 | `ff` | `78 08 00 87 00` | `58 08 00` → `87 00` | `c4 08 00 8c 00` | `58 08 00` → `8c 00` |
+| fs3 RoomFrostProtectionTemp | 2026-11-18 14:54–14:54 | `ff` | `d0 14 0a 4b 00` | `96 14 0a` → `4b 00` | `dc 14 0a 50 00` | `96 14 0a` → `50 00` |
+| fs3 GradientCurve | 2026-11-18 14:54–14:54 | `ff` | `6c 0e 01 cd 00` | `cd 0e 01` → `cd 00` | `4c 0e 01 d2 00` | `cd 0e 01` → `d2 00` |
+| fs3 SummerWinterChangeOverTemp | 2026-11-18 14:55–14:55 | `ff` | `10 16 01 91 00` | `25 16 01` → `91 00` | `d8 16 01 96 00` | `25 16 01` → `96 00` |
+| fs3 SupplyMaxTemp | 2026-11-18 14:55–14:55 | `ff` | `ae 28 00 e9 02` | `64 28 00` → `e9 02` | `66 28 00 ee 02` | `64 28 00` → `ee 02` |
+| fs3 SupplyMinTemp | 2026-11-18 14:55–14:56 | `ff` | `00 2b 01 55 00` | `81 2b 01` → `55 00` | `70 2b 01 50 00` | `81 2b 01` → `50 00` |
+| fs3 SwitchOnRuntime | 2026-11-18 14:56–14:56 | `ff` | `84 10 01 02 00` | `b1 10 01` → `02 00` | `d8 10 01 03 00` | `b1 10 01` → `03 00` |
+| fs3 FrostProtectionLimitTemp | 2026-11-18 14:56–14:57 | `ff` | `e3 be 02 fb ff` | `b2 be 02` → `fb ff` | `a4 be 02 00 00` | `b2 be 02` → `00 00` |
+| fs3 DHWSetpoint | 2026-11-18 14:57–14:57 | `ff` | `bd 13 00 ef 01` | `54 13 00` → `ef 01` | `b1 13 00 f4 01` | `54 13 00` → `f4 01` |
+| fs3 BoilerMCBoostTemp | 2026-11-18 14:57–14:58 | `ff` | `a4 11 01 0f 00` | `ed 11 01` → `0f 00` | `a8 11 01 14 00` | `ed 11 01` → `14 00` |
+
+- 22 writes, all acknowledged `00`, checksum right for all 22 (one telegram carries the byte
+  `aa` escaped as `a9 01` in the raw log, read unescaped); every read after a write gave the
+  written value, each read lying between its change and the restore; every setting ended at
+  its value before the batch. No other write to the room unit in the export.
+- Room unit 3 had the same values as room unit 2 for ten settings; its heating curve was 21.0
+  (20.5 and back).
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, scanning as `MF=Kromschröder`, `ID=W`: system manager at
@@ -303,13 +327,13 @@ where the read is defined today.
 | `ka` | `28 00` flow maximum, `13 00` hot-water setpoint | 2 | read (lot A) | operator's log 2026-10-30: changed from `ff`, read back, restored; no telegram | a captured change |
 | `fs1` | `05 00`, `08 00`, `0e 01`, `16 01`, `28 00`, `2b 01` (read, lot G), `13 00` (no read) | 7 | read or nothing | operator's log 2026-10-30: all of them changed from `ff` (refused from `31`), read back, restored; no telegram | a captured change |
 | `fs2` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01`, `28 00`, `2b 01`, `10 01`, `be 02`, `13 00`, `11 01` | 11 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
-| `fs3` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01`, `28 00`, `2b 01`, `10 01`, `be 02` (read, lot G), `13 00`, `11 01` (no read) | 11 | read or nothing | none: same device type as `fs1` and `fs2` | a captured change |
+| `fs3` | the same eleven | 11 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
 | `em1` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01` (`ff`), `28 00`, `2b 01` (`31`) | 7 | read (lots A, G) | none. `50` is the same device as `15` (see `docs/discoveries.md`) | a captured change, and which of `50` and `15` it changes |
 | `em3` | `05 00`, `08 00`, `14 0a`, `16 01` (`ff`), `28 00`, `2b 01` (`31`) | 6 | read (lot G) | none: same device type as `em2` | a captured change |
 | `ka` | `ea fd` modulation maximum, `eb fd` minimum | 2 | nothing | operator's log 2026-10-30: changed from `ff`, restored; the client cannot write them today (its old definition is a value list) | a read definition, a captured change, the owner's go; range 30 % to 100 %, minimum below maximum (WCM-KA 3.0, 83258404, pages 84 and 85, parameters 535 and 536) |
 | `fs1`–`fs3` | `0f 01` room factor | 3 | nothing | none; the circuits have no room sensor (value not available); the client cannot write it today | a room sensor on the circuit, a captured change, the owner's go |
 
-Total: 33 writable, 33 that one captured change each would prove, 5 that need a decision
+Total: 44 writable, 22 that one captured change each would prove, 5 that need a decision
 before any test.
 
 ### Other writes of the client
@@ -337,7 +361,7 @@ read is kept only as last seen, hence the snapshot after each step.
 | # | Action | Unlocks |
 |---|---|---|
 | 1 | ~~Export of the telegram log~~ — done on 2026-11-18; a new export after any session of writes is the cheapest proof of what was written | 2 (done) |
-| 2 | Captured change of the eleven settings of `fs2` (done 2026-11-18, batch 1) and the same of `fs3` | 11 left (11 done) |
+| 2 | ~~Captured change of the eleven settings of `fs2` and of `fs3`~~ — done 2026-11-18, batches 1 and 2 | 22 (done) |
 | 3 | Captured change of the seven settings of `em1` and the six left on `em3` | 13 (and tells whether `50` and `15` share the register) |
 | 4 | Captured change of the seven settings of `fs1` not yet proven | 7 |
 | 5 | Captured change of `ka` flow maximum and hot-water setpoint | 2 |
@@ -348,6 +372,6 @@ A "captured change" can now be had without snapshots: the client in service send
 export of the telegram log afterwards gives change, read and restore with their dates.
 
 Each change of a room-unit or module setting alters the regulation of its circuit for the
-minute it lasts: an unoccupied period suits. Steps 2 to 5 are 66 writes (33 changes, 33
-restores): about two hours and a quarter within the client's rate limit (one write per register
+minute it lasts: an unoccupied period suits. Steps 3 to 5 are 44 writes (22 changes, 22
+restores): about an hour and a half within the client's rate limit (one write per register
 every 10 s, 30 writes an hour).

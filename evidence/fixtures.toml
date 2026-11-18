@@ -255,6 +255,70 @@ readings = [
   { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
 ]
 
+# settings-writes, on-site batch 2: change and restore of the eleven settings of room unit 3; source ff
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "fs3"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "88 05 00 cd 00", slave = "", expect = { value = 20.5 } },
+  { message = "RoomNormalTemp", master = "a8 05 00 d2 00", slave = "", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "78 08 00 87 00", slave = "", expect = { value = 13.5 } },
+  { message = "RoomSetbackTemp", master = "c4 08 00 8c 00", slave = "", expect = { value = 14.0 } },
+  { message = "RoomFrostProtectionTemp", master = "d0 14 0a 4b 00", slave = "", expect = { value = 7.5 } },
+  { message = "RoomFrostProtectionTemp", master = "dc 14 0a 50 00", slave = "", expect = { value = 8.0 } },
+  { message = "GradientCurve", master = "6c 0e 01 cd 00", slave = "", expect = { value = 20.5 } },
+  { message = "GradientCurve", master = "4c 0e 01 d2 00", slave = "", expect = { value = 21.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "10 16 01 91 00", slave = "", expect = { value = 14.5 } },
+  { message = "SummerWinterChangeOverTemp", master = "d8 16 01 96 00", slave = "", expect = { value = 15.0 } },
+  { message = "SupplyMaxTemp", master = "ae 28 00 e9 02", slave = "", expect = { value = 74.5 } },
+  { message = "SupplyMaxTemp", master = "66 28 00 ee 02", slave = "", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "00 2b 01 55 00", slave = "", expect = { value = 8.5 } },
+  { message = "SupplyMinTemp", master = "70 2b 01 50 00", slave = "", expect = { value = 8.0 } },
+  { message = "SwitchOnRuntime", master = "84 10 01 02 00", slave = "", expect = { value = 2 } },
+  { message = "SwitchOnRuntime", master = "d8 10 01 03 00", slave = "", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "e3 be 02 fb ff", slave = "", expect = { value = -0.5 } },
+  { message = "FrostProtectionLimitTemp", master = "a4 be 02 00 00", slave = "", expect = { value = 0.0 } },
+  { message = "DHWSetpoint", master = "bd 13 00 ef 01", slave = "", expect = { value = 49.5 } },
+  { message = "DHWSetpoint", master = "b1 13 00 f4 01", slave = "", expect = { value = 50.0 } },
+  { message = "BoilerMCBoostTemp", master = "a4 11 01 0f 00", slave = "", expect = { value = 1.5 } },
+  { message = "BoilerMCBoostTemp", master = "a8 11 01 14 00", slave = "", expect = { value = 2.0 } },
+]
+
+# settings-writes, on-site batch 2: the read of each register after the change and after the restore
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "cd 00", expect = { value = 20.5 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "87 00", expect = { value = 13.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "8c 00", expect = { value = 14.0 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "4b 00", expect = { value = 7.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "50 00", expect = { value = 8.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "cd 00", expect = { value = 20.5 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "91 00", expect = { value = 14.5 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "96 00", expect = { value = 15.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "e9 02", expect = { value = 74.5 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "55 00", expect = { value = 8.5 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+  { message = "SwitchOnRuntime", master = "b1 10 01", slave = "02 00", expect = { value = 2 } },
+  { message = "SwitchOnRuntime", master = "b1 10 01", slave = "03 00", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "fb ff", expect = { value = -0.5 } },
+  { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
+  { message = "DHWSetpoint", master = "54 13 00", slave = "ef 01", expect = { value = 49.5 } },
+  { message = "DHWSetpoint", master = "54 13 00", slave = "f4 01", expect = { value = 50.0 } },
+  { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "0f 00", expect = { value = 1.5 } },
+  { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"

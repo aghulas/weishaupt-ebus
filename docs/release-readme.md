@@ -18,8 +18,8 @@ to the official ebusd configuration; this archive exists so that they can be use
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
-@COUNT@ messages. Reads only, except the 33 settings of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `51.w.em2`
-and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
+@COUNT@ messages. Reads only, except the 44 settings of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
+`51.w.em2` and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
 ## Changes since 0.4.3
@@ -111,15 +111,15 @@ those translated here (for example `temperature`).
 - The files are named with the identification the devices answer to the scan (`W`), for
   example `50.w.em1`. A device that answers another identification gets the Wolf file of the
   same address, if there is one.
-- The write definitions were checked by decoding captured telegrams. Each of the 33 settings
+- The write definitions were checked by decoding captured telegrams. Each of the 44 settings
   was seen on the installation changed by one step, read back with the new value and restored;
   the telegrams were the expected ones. They were built by the ebusd of the installation with
   its own configuration or by a client sending raw telegrams; ebusd sending from the files of
   this archive has not been observed yet.
 - A room unit and its heating module answer the same setting registers with different values;
   which copy the regulation uses is not established. The written settings of `51.w.em2` and
-  `52.w.em3` are the copies of the modules, those of `35.w.fs1` and `75.w.fs2` the copies of the
-  room units.
+  `52.w.em3` are the copies of the modules, those of `35.w.fs1`, `75.w.fs2` and `f5.w.fs3` the
+  copies of the room units.
 - The room units answer hot-water and circulation programs as well. On the installation they
   are stored only: the hot water follows the program of the system manager (`DHWProgram…` of
   `50.w.em1`). The heating of a circuit follows the program of its room unit; a room unit
