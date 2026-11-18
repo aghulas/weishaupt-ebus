@@ -31,7 +31,7 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. Hours since last service (`BurnerServiceHours`, i46) now carries the ×10 factor and is defined on both boilers (fix of 2026-11-18). | `weishaupt-E` `9d20b57` (4 commits on A), pushed | `em1-fault-log`, `bc-fault-history`, `bc-counters` |
 | D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `71094a2` (1 commit on E), pushed | `bc-counters` |
 | F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `b0526d3` (2 commits on D), pushed | `bc-live-values` |
-| C | 66 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 12 on the system manager, 7 on its direct circuit `50`, 7 on heating module `51`, 7 on heating module `52`, 11 on each of the room units `35`, `75` and `f5`. The 44 since 0.5.2 come from the captures on site of 2026-11-18 (batches 1 to 7). Three added on 2026-11-18 from the operator's log (`RegulationP`, `RegulationI`, `BoilerMCBoostTemp` of `fs1`; in 0.5.1), two the same day from the telegram log of ebusd (`RoomFrostProtectionTemp` of `fs1`, `GradientCurve` of `em3`). Each one seen changed, read back and restored on the bus. | `weishaupt-C` `c12ba91` (16 commits on F; 49 settings added from the captures on site of 2026-11-18, batches 1 to 7), pushed (0.5.3) | `register-write-crc`, `settings-writes` |
+| C | 66 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 12 on the system manager, 7 on its direct circuit `50`, 7 on heating module `51`, 7 on heating module `52`, 11 on each of the room units `35`, `75` and `f5`. The 44 since 0.5.2 come from the captures on site of 2026-11-18 (batches 1 to 7). Three added on 2026-11-18 from the operator's log (`RegulationP`, `RegulationI`, `BoilerMCBoostTemp` of `fs1`; in 0.5.1), two the same day from the telegram log of ebusd (`RoomFrostProtectionTemp` of `fs1`, `GradientCurve` of `em3`). Each one seen changed, read back and restored on the bus. | `weishaupt-C` `c12ba91` (16 commits on F; 49 settings added from the captures on site of 2026-11-18, batches 1 to 7), pushed (0.5.4) | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. A comment in `50.w.em1` now says `50` is the system manager's own direct circuit (same device as `15`), not a WCM-EM module like `51`/`52`, so its eight reads duplicate `15` (2026-11-18). | `weishaupt-G` `4a5798c` (2 commits on C; the reads of `fs1` frost protection and `em3` curve now in C), `4a5798c` (the reads of the written settings of the room units, `em1`, `em3` now in C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `e6c8f72` (3 commits on G), pushed | `room-units-programs` |
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `f6bae02` (1 commit on H), pushed | `bc-fault-counters` |
@@ -49,6 +49,7 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
+**0.5.4 released (2026-11-18)** from `weishaupt` `970143b`, on the owner's word: lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 66 writable settings: the flow limits of `50.w.em1`, taken from `ff` only (batch 7 on site); the CSV differ from 0.5.3 only in `50.w.em1`. Downloaded again: the four checksums right, 662 messages without error in the official ebusd, both archives. The same day `ha-weishaupt` v0.1.3 was released (latest), which sends these two from `ff`.
 **0.5.3 released (2026-11-18)** from `weishaupt` `e3ed65f`, on the owner's word: the seven lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 64 writable settings (22 in 0.5.2) from the captures on site, five reads added; the CSV differ from 0.5.2 only in `15.w.ka`, `35.w.fs1`, `50.w.em1`, `52.w.em3`, `75.w.fs2` and `f5.w.fs3`, by added lines. The notice was corrected before publication: 0.5.1 and 0.5.2 still listed the changes of 0.5.0. Downloaded again: the four checksums right, 660 messages without error in the official ebusd, both archives.
 **0.5.2 released (2026-11-18)** from `weishaupt` `419821c`: 0.5.1 plus two writable settings proven by the telegram log (`fs1` `RoomFrostProtectionTemp`, `em3` `GradientCurve`), 22 in all; the CSV differ from 0.5.1 only in `35.w.fs1` and `52.w.em3`. Downloaded again: the four checksums right, 613 messages without error in the official ebusd 26.1.
 **0.5.1 released (2026-11-18)** from `weishaupt` `da5a1ef`: 0.5.0 plus three writable settings in lot C (`ka` `RegulationP`, `RegulationI`, `fs1` `BoilerMCBoostTemp`), 20 in all; the CSV differ from 0.5.0 only in `15.w.ka` (+4 lines) and `35.w.fs1` (+2). Downloaded again: the four checksums right, 611 messages without error in the official ebusd 26.1. `weishaupt-0.5.0` stays online beside it.
@@ -106,7 +107,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2` and `weishaupt-0.5.3` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3` and `weishaupt-0.5.4` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -125,6 +126,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.5.4` (pre-release) | as 0.5.3, plus the flow limits of the direct circuit `50`, written from `ff` (66 in all). Downloaded again after publication: checksums right, 662 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.3` (pre-release) | as 0.5.2, plus 42 writable settings proven on site (64 in all) and five reads. Downloaded again after publication: checksums right, 660 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.2` (pre-release) | as 0.5.1, plus two writable settings (22 in all). Downloaded again after publication: checksums right, 613 messages without error in the official ebusd 26.1. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.1` (pre-release) | as 0.5.0, plus three writable settings in lot C (20 in all). Downloaded again after publication: checksums right, 611 messages without error in the official ebusd 26.1. |
@@ -151,17 +153,9 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Release 0.5.4 (prepared locally on 2026-11-18, nothing pushed).** 66 writable settings,
-  the flow limits of `50.w.em1` added (taken from `ff` only). To publish, on the owner's word:
-  force-push `weishaupt-C` `c12ba91`, `-G` `4a5798c`, `-H` `e6c8f72`, `-J` `f6bae02`, `-K` `b5f0bd9`, `-L` `0e6c0bc`,
-  `-M` `27ffd95`; force `weishaupt` to the trial `weishaupt-next` `970143b`; push the workbench `main`;
-  publish `weishaupt-0.5.4` with the five files in `out/release/` (or rerun
-  `scripts/release.sh 0.5.4`). Lot A and `weishaupt-pr` untouched. The client in service must
-  send the flow limits of `em1` from `ff`.
-
+- **Release 0.5.4: done** (2026-11-18, see "Current state").
 - **Release 0.5.3: done** (2026-11-18, see "Current state").
-- **Flow limits of `em1`**: the client in service writes them from `31`, which `50` does not
-  take; a write from `ff` to `50`, captured and restored, is the last numeric setting test.
+- **Flow limits of `em1`: done.** Proven from `ff` on 2026-11-18 (batch 7), in 0.5.4; `ha-weishaupt` v0.1.3 sends them from `ff`.
 
 - **Release 0.5.1: done** (2026-11-18, see "Current state").
 - **Release 0.5.2: done** (2026-11-18, see "Current state"); it is the target of the switch of the installation's ebusd, prepared by the deployment session.
