@@ -28,14 +28,14 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | Lot | Content | Branch, head | Evidence |
 |---|---|---|---|
 | A | Register reads (`50 22`, checksum precomputed in the ID) of the system manager; status broadcast and the status each boiler sends to the cascade master; room unit / module exchange `HcMode`; system clock and the weekly hot-water and circulation programs of `50`. Reads only, stock ebusd. Files `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`, `broadcast`, `wtc_inc`. | `weishaupt-A` `66b775e`, on the fork as `weishaupt-pr` (14 commits). **Pull request #717.** | `ka-reads`, `register-crc`, `broadcast-kastatus`, `bc1-boiler-status`, `em-hcmode`, `em1-clock-program` |
-| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`). | `weishaupt-E` `3e9347f` (4 commits on A), pushed | `em1-fault-log`, `bc-fault-history` |
-| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `bd1c760` (1 commit on E), pushed | `bc-counters` |
-| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `c4bc54c` (2 commits on D), pushed | `bc-live-values` |
-| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `1289f97` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
-| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
-| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), pushed | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte as a field, 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `78ac7af` (1 commit on H), pushed | `bc-fault-counters` |
-| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 76 accepted by the owner, none provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `d5a88bd` (7 commits on J), pushed | `terms` |
+| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. | `weishaupt-E` `20506af` (4 commits on A), local; origin at `3e9347f`, force-push pending | `em1-fault-log`, `bc-fault-history` |
+| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `193e2d5` (1 commit on E), local; origin at `bd1c760`, force-push pending | `bc-counters` |
+| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `d6f797f` (2 commits on D), local; origin at `c4bc54c`, force-push pending | `bc-live-values` |
+| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `0a0c8ae` (5 commits on F), local; origin at `1289f97`, force-push pending | `register-write-crc`, `settings-writes` |
+| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `46fb341` (2 commits on C), local; origin at `de1e38b`, force-push pending | `room-units-reads`, `heating-modules-reads` |
+| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `9976bcc` (3 commits on G), local; origin at `6a46518`, force-push pending | `room-units-programs` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `58345b2` (1 commit on H), local; origin at `78ac7af`, force-push pending | `bc-fault-counters` |
+| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 76 accepted by the owner, none provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `915f5cc` (7 commits on J), local; origin at `d5a88bd`, force-push pending | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -125,6 +125,14 @@ data point on arbitration with room units).
   (accepted 2026-11-18). Still unread by the owner in `evidence/terms.md`: the spelling
   "anti-légionelle", the design choices and the findings on the English wording
   ("calorifier").
+- **Force-push the rebuilt lots and rebuild the release (`FirstByte` on E, D, F).** Done
+  locally on 2026-11-18, nothing pushed. Awaiting the owner's word to force-push `weishaupt-E`
+  `20506af`, `weishaupt-D` `193e2d5`, `weishaupt-F` `d6f797f`, `weishaupt-C` `0a0c8ae`,
+  `weishaupt-G` `46fb341`, `weishaupt-H` `9976bcc`, `weishaupt-J` `58345b2` and `weishaupt-L`
+  `915f5cc` (all eight diverge from origin), then rebuild and force `weishaupt` from the stack
+  and cut a new release. This changes the fields of already-published messages (the memory
+  reads of E, D, F gain a leading `FirstByte` field), so it is a breaking change and needs a
+  version above `0.3.2`.
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
   request (rule 8).
 
@@ -174,12 +182,11 @@ data point on arbitration with room units).
   no lot has a provisional string left. Still open: no counter has been
   seen to step with a new entry of the fault history, which would also say whether a number
   listed as warning and fault (15, 18, 21, 48, 57) counts warnings, lockouts or both.
-- **First answer byte of the memory reads of lots E, D and F.** The shared model `memr`
-  skips it, so an answer without data (seen on 2 of 107 answers of one boiler, see
-  `evidence/bc-fault-counters.md`) decodes as zeros in the fault history, the counters and
-  the live values. Lot J keeps the byte as a field through its own base model. To decide:
-  do the same in E, D and F, which changes the fields of published messages and the open
-  pull request material built on them; and observe how often such answers occur.
+- **First answer byte of the memory reads of lots E, D and F — done 2026-11-18, local.** The
+  field was folded into the shared base model `memr` (`memrf` dropped, lot J re-inherits
+  `memr`), so every memory read of lots E, D, F and J now carries the field `FirstByte` (see
+  the history entry below and `evidence/bc-fault-counters.md`). Still open: observe how often
+  an answer without data occurs over a longer time, and whether the second boiler sends one.
 - **Lot F, what was left out**: 23 of the 30 data-logger channels, the output bits (RAM `2b`),
   and `Load` before the flame (reads 23 to 40 while the status says 0 %).
 - **Info values of the service tool** readable through `50 22`; only the hours since last
@@ -250,6 +257,23 @@ data point on arbitration with room units).
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
 
+- **2026-11-18, first answer byte on lots E, D and F.** On the owner's decision the first byte
+  of every memory read (`50 00`) is now a visible field `FirstByte` (UCH), as lot J already
+  did. The field was folded into the shared base model `memr` (which no message outside E, D,
+  F and J uses): `memrf` was dropped and lot J's fault counters re-inherit `memr`, behaviour
+  identical. The field comment was generalised from the counter-specific "when all counters
+  read 0" to "when the data read 0" and its French updated (`weishaupt-L`); no new provisional
+  string. The change was folded into the commits that own the code — the memr field into lot
+  E's fault-history commit, the `memrf` removal into lot J's commit — and lots D, F, C, G, H,
+  J, L were rebased so the stack stays linear. `scripts/check.sh` clean on E (`20506af`),
+  D (`193e2d5`), F (`d6f797f`) and on the trial integration `weishaupt-next` (`de42c7c`): 588
+  messages in English, German and French, 269 French keys for 269 strings. Compared with the
+  released CSV (`weishaupt` `4c034fc`), the field layout changed only in the 20 memory reads of
+  E, D and F (`ign` → `firstbyte`, both boilers); the 14 fault-counter messages kept their
+  field and only their comment changed; no other message changed and none gained or lost a
+  field. One reading of each of E, D and F confirmed on the live bus read-only (`50 00` hex):
+  `FirstByte` is `00`, the data decode as before. All local; nothing pushed, `weishaupt` and
+  the tags unmoved (see "Needs the owner").
 - **2026-11-17, commit identity.** Every commit of the owner in the four repositories was
   rewritten to the noreply address (metadata only; the tree of every branch and tag compared
   before and after, identical) and pushed again, the branches of #717 and #1825 included;

@@ -244,17 +244,20 @@ each in turn, then the last two again on the first boiler.
   request is the one of the published definitions, and every message built on `memr` (fault
   history, counters, live values, fault counters) skips the byte the same way.
 
-The owner then chose to keep the first byte as a field in the messages of this lot. The
-lot was rewritten the same day (`weishaupt-J` `78ac7af`): the seven requests above, on a base
-model `memrf` whose only field is `FirstByte`. In the compiled CSV each message starts with
-`firstbyte,,UCH,,,,"first answer byte: 0, or the number of bytes asked for when all counters
-read 0"` where the other memory reads have `ign,,IGN:1`. A read of `FaultCounters7` on the
-first boiler gives `0;0;6;1`; the answer without data of 06:06:50 would give `6;0;0;0`.
+The owner then chose to keep the first byte as a field. The lot was first rewritten the same
+day (`weishaupt-J` `78ac7af`): the seven requests above, on a base model `memrf` whose only
+field is `FirstByte`, while the shared model `memr` of the other memory reads was left to skip
+the byte. On 2026-11-18 the owner extended the decision to lots E, D and F, and the field was
+folded into `memr` itself (`memrf` dropped, this lot's reads inherit `memr` again); the
+behaviour of the fault counters is identical. In the compiled CSV each memory read now starts
+with `firstbyte,,UCH,,,,"first answer byte: 0, or the number of bytes asked for when the data
+read 0"` where before only the fault counters did and the others had `ign,,IGN:1`. A read of
+`FaultCounters7` on the first boiler gives `0;0;6;1`; the answer without data of 06:06:50 would
+give `6;0;0;0`.
 
 The name and the comment of the field say what was seen and nothing else: `00` in front of
-the data, the number of bytes asked for in front of zeros. The shared model `memr` is
-unchanged, so the messages of the other lots (fault history, counters, live values) still
-skip the byte and would decode such an answer as zeros.
+the data, the number of bytes asked for in front of zeros. The comment is shared by every
+memory read, so its wording is general ("the data read 0"), not specific to the counters.
 
 ### Level of proof
 
@@ -274,7 +277,10 @@ skip the byte and would decode such an answer as zeros.
 Toolchain, 2026-11-18: `CFG_REPO=<worktree> scripts/check.sh` clean on `weishaupt-J`
 `78ac7af`, on `weishaupt-L` `d5a88bd` and on a trial integration branch (format, compile,
 `ebusd --checkconfig`, 588 messages in English and in French, 269 French keys for 269
-strings).
+strings). Rechecked the same way after the field was folded into `memr` for lots E, D and F:
+`weishaupt-J` `58345b2`, `weishaupt-L` `915f5cc`, trial integration `weishaupt-next` `de42c7c`,
+clean, 588 messages in English, German and French; the field layout changed only in the
+memory reads of lots E, D and F (`ign` → `firstbyte`), no message gained or lost a field.
 
 ## Equipment
 

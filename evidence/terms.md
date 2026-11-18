@@ -170,7 +170,7 @@ configuration, not from the lots. They have no row here and no vendor source, an
 
 ## Coverage of `src/fr.yaml`
 
-At `weishaupt-L` `d5a88bd` (local, 2026-11-18): 293 comment strings in the files of the lots
+At `weishaupt-L` `915f5cc` (local, 2026-11-18): 293 comment strings in the files of the lots
 and `wolf/broadcast`, 269 of them of the lots (`scripts/i18n-keys.py`), all 269 with a key.
 
 | Kind | Strings | Vendor terms only | Accepted by the owner | Provisional | Left in English |
@@ -181,10 +181,13 @@ and `wolf/broadcast`, 269 of them of the lots (`scripts/i18n-keys.py`), all 269 
 | All | 293 | 193 | 76 | 0 | 24 |
 
 The 48 patterned strings accepted by the owner are the 42 "stored in the room unit" slots and
-the 6 fault-history slots. The 8 fault-counter strings of lot J (seven message comments —
-"fault counters, numbers 57 to 51" … — and the comment of the first answer byte), written
-after the list below was first made, were put to the owner on 2026-11-18 and accepted as
-written, so their two terms are now `owner` and no lot has a provisional string left. The
+the 6 fault-history slots. The seven fault-counter message comments of lot J ("fault counters,
+numbers 57 to 51" …) and the first-answer-byte comment, written after the list below was first
+made, were put to the owner on 2026-11-18 and accepted as written, so their terms are now
+`owner` and no lot has a provisional string left. The first-answer-byte comment is no longer
+specific to lot J: on 2026-11-18 the field was folded into the shared base model `memr`, so it
+is one comment carried by every memory read (fault history, counters, live values, fault
+counters), and its wording was generalised from "all counters read 0" to "the data read 0". The
 Wolf messages are left in English on the
 owner's decision of 2026-11-18; the key check does not expect a key for them.
 
@@ -221,7 +224,7 @@ changed where the line says so; an unticked line was not put to the owner.
 | [x] | device that raised the selected entry | origine du défaut de l'entrée sélectionnée | "origine" is the vendor's (KA p. 109); "entry" is not | appareil à l'origine de l'entrée sélectionnée |
 | [x] | percent | pour cent | the manuals print the sign only | pourcentage |
 | [x] | fault counters, numbers `<a>` to `<b>` (the seven lot-J reads) | compteurs de défauts, numéros `<a>` à `<b>` | no vendor term; the manuals list the fault codes, not counters of them | compteurs par code défaut |
-| [x] | first answer byte: 0, or the number of bytes asked for when all counters read 0 | premier octet de la réponse : 0, ou le nombre d'octets demandés quand tous les compteurs sont lus à 0 | not a manual notion | none |
+| [x] | first answer byte: 0, or the number of bytes asked for when the data read 0 | premier octet de la réponse : 0, ou le nombre d'octets demandés quand les données sont lues à 0 | not a manual notion | none |
 
 The two lines above were added after the owner's first pass, once lot J existed, and put to
 the owner on 2026-11-18 as well; both accepted as written.

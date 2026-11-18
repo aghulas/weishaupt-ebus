@@ -16,7 +16,8 @@ and the shared models of `src/wolf/wtc_inc.tsp`.
 | FaultHistorySlot5 | `0x0222` | `7a 06 02 72 22` | slot |
 | FaultHistorySlot6 | `0x022a` | `72 06 02 72 2a` | slot |
 
-The answer starts with a status byte (`00`, ignored). A slot is 8 bytes:
+The answer starts with the first byte (`00` here, kept as the field `FirstByte`, see below).
+A slot is 8 bytes:
 
 | Byte | Field | Codec |
 |---|---|---|
@@ -84,6 +85,15 @@ ending at the pointer is the most recent, and older entries follow downwards wit
 All 48 values of that screen equal the bc2 row above.
 
 Toolchain: `scripts/check.sh` clean (format, compile, `ebusd --checkconfig`, 159 messages).
+
+## First answer byte
+
+On 2026-11-18 the first byte of every memory read (`50 00`) was made a visible field
+`FirstByte` (UCH), folded into the shared base model `memr`, after an answer was seen whose
+first byte was the number of bytes asked for in front of all-zero data (2 of 107 answers of
+one boiler; see [bc-fault-counters.md](bc-fault-counters.md), "first answer byte"). Before that
+the byte was ignored. The field adds no message and does not change the data that follows. Read
+read-only on the live bus the same day: `FirstByte` is `00` and the data decode as before.
 
 ## Equipment
 

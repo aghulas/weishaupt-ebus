@@ -86,11 +86,11 @@ those translated here (for example `temperature`).
   are stored only: the hot water follows the program of the system manager (`DHWProgram…` of
   `50.w.em1`). The heating of a circuit follows the program of its room unit; a room unit
   whose selector reads 11 runs heating program 1. The selector is not defined.
-- The fault counters of a boiler (`FaultCounters1` to `7`) start with the field `firstbyte`.
-  It reads 0 in a normal answer. In 2 of 107 answers of one boiler it read the number of bytes
-  asked for, and every counter of that answer read 0 although the memory held other values:
-  when `firstbyte` is not 0, the counters of that reading are not valid. The other memory reads
-  of the boilers (fault log, operating counters, live values) do not show this byte yet.
+- Every memory read (`50 00`) of the boilers — the fault history, the operating counters, the
+  live values and the fault counters `FaultCounters1` to `7` — starts with the field
+  `firstbyte`. It reads 0 in a normal answer. In 2 of 107 answers of one boiler it read the
+  number of bytes asked for while every value of that answer read 0 although the memory held
+  other values: when `firstbyte` is not 0, the values of that reading are not valid.
 
 ## Checked with
 

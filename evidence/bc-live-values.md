@@ -121,6 +121,15 @@ firing at its minimum load, second boiler idle; answers after the status byte `0
 Toolchain: `scripts/check.sh` clean (hygiene, format, compile, `ebusd --checkconfig`, 164
 messages).
 
+## First answer byte
+
+On 2026-11-18 the first byte of every memory read (`50 00`) was made a visible field
+`FirstByte` (UCH), folded into the shared base model `memr`, after an answer was seen whose
+first byte was the number of bytes asked for in front of all-zero data (2 of 107 answers of
+one boiler; see [bc-fault-counters.md](bc-fault-counters.md), "first answer byte"). Before that
+the byte was ignored. The field adds no message and does not change the data that follows. Read
+read-only on the live bus the same day: `FirstByte` is `00` and the data decode as before.
+
 ## Equipment
 
 Two WTC condensing boilers in cascade, automat scanned `MF=Kromschroeder;SW=1104;HW=0501`
