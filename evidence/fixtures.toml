@@ -359,6 +359,61 @@ readings = [
   { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c8 00", expect = { value = 20.0 } },
 ]
 
+# settings-writes, on-site batch 4: change and restore of five settings of heating module 52; source ff
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em3"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "64 05 00 dc 00", slave = "", expect = { value = 22.0 } },
+  { message = "RoomNormalTemp", master = "d8 05 00 d7 00", slave = "", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "c0 08 00 d2 00", slave = "", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "b0 08 00 d7 00", slave = "", expect = { value = 21.5 } },
+  { message = "RoomFrostProtectionTemp", master = "4c 14 0a 5f 00", slave = "", expect = { value = 9.5 } },
+  { message = "RoomFrostProtectionTemp", master = "7c 14 0a 64 00", slave = "", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "60 16 01 c3 00", slave = "", expect = { value = 19.5 } },
+  { message = "SummerWinterChangeOverTemp", master = "dc 16 01 c8 00", slave = "", expect = { value = 20.0 } },
+]
+
+# settings-writes, on-site batch 4: change and restore of the flow limits of heating module 52; source 31
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em3"
+type = "write"
+qq = "31"
+where = "row"
+readings = [
+  { message = "SupplyMaxTemp", master = "ae 28 00 e9 02", slave = "", expect = { value = 74.5 } },
+  { message = "SupplyMaxTemp", master = "66 28 00 ee 02", slave = "", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "00 2b 01 55 00", slave = "", expect = { value = 8.5 } },
+  { message = "SupplyMinTemp", master = "70 2b 01 50 00", slave = "", expect = { value = 8.0 } },
+]
+
+# settings-writes, on-site batch 4: the read of each register after the change and after the restore
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em3"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "dc 00", expect = { value = 22.0 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "5f 00", expect = { value = 9.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "64 00", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c3 00", expect = { value = 19.5 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c8 00", expect = { value = 20.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "e9 02", expect = { value = 74.5 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "55 00", expect = { value = 8.5 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"
