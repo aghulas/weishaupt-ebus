@@ -18,7 +18,7 @@ to the official ebusd configuration; this archive exists so that they can be use
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
-@COUNT@ messages. Reads only, except the 55 settings of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
+@COUNT@ messages. Reads only, except the 62 settings of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
 `50.w.em1`, `51.w.em2` and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
@@ -111,7 +111,7 @@ those translated here (for example `temperature`).
 - The files are named with the identification the devices answer to the scan (`W`), for
   example `50.w.em1`. A device that answers another identification gets the Wolf file of the
   same address, if there is one.
-- The write definitions were checked by decoding captured telegrams. Each of the 55 settings
+- The write definitions were checked by decoding captured telegrams. Each of the 62 settings
   was seen on the installation changed by one step, read back with the new value and restored;
   the telegrams were the expected ones. They were built by the ebusd of the installation with
   its own configuration or by a client sending raw telegrams; ebusd sending from the files of
