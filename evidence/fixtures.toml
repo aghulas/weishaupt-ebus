@@ -145,6 +145,52 @@ readings = [
   { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
 ]
 
+# settings-writes, telegram log: the change and the restore of two settings, acknowledged; source ff
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "fs1"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "RoomFrostProtectionTemp", master = "ac 14 0a 55 00", slave = "", expect = { value = 8.5 } },
+  { message = "RoomFrostProtectionTemp", master = "dc 14 0a 50 00", slave = "", expect = { value = 8.0 } },
+]
+
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em3"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "GradientCurve", master = "8c 0e 01 69 00", slave = "", expect = { value = 10.5 } },
+  { message = "GradientCurve", master = "a4 0e 01 64 00", slave = "", expect = { value = 10.0 } },
+]
+
+# settings-writes, telegram log: the read of the register after the change and after the restore
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "55 00", expect = { value = 8.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "50 00", expect = { value = 8.0 } },
+]
+
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em3"
+where = "row"
+readings = [
+  { message = "GradientCurve", master = "cd 0e 01", slave = "69 00", expect = { value = 10.5 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "64 00", expect = { value = 10.0 } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"

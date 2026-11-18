@@ -31,13 +31,13 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. Hours since last service (`BurnerServiceHours`, i46) now carries the ×10 factor and is defined on both boilers (fix of 2026-11-18). | `weishaupt-E` `9d20b57` (4 commits on A), pushed | `em1-fault-log`, `bc-fault-history`, `bc-counters` |
 | D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `71094a2` (1 commit on E), pushed | `bc-counters` |
 | F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `b0526d3` (2 commits on D), pushed | `bc-live-values` |
-| C | 20 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 10 on the system manager, 7 on heating module `51`, 3 on room unit `35`. The last three (`RegulationP`, `RegulationI`, `BoilerMCBoostTemp` of `fs1`) added on 2026-11-18. | `weishaupt-C` `b5dab63` (7 commits on F), pushed | `register-write-crc`, `settings-writes` |
-| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. A comment in `50.w.em1` now says `50` is the system manager's own direct circuit (same device as `15`), not a WCM-EM module like `51`/`52`, so its eight reads duplicate `15` (2026-11-18). | `weishaupt-G` `79035b6` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
-| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `fe84c3e` (3 commits on G), pushed | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `74cc624` (1 commit on H), pushed | `bc-fault-counters` |
-| K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `7f0fe1b` (2 commits on J), pushed | `bc-info-values` |
-| L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `0662c4e` (10 commits on K: the French of the three new settings, 2026-11-18), pushed | `terms` |
-| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` `f182fc7` (5 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`, the metadata of the three new settings), pushed | the records the entries name; `service-tool-log` for the polling classes |
+| C | 22 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 10 on the system manager, 7 on heating module `51`, 1 on heating module `52`, 4 on room unit `35`. Three added on 2026-11-18 from the operator's log (`RegulationP`, `RegulationI`, `BoilerMCBoostTemp` of `fs1`; in 0.5.1), two the same day from the telegram log of ebusd (`RoomFrostProtectionTemp` of `fs1`, `GradientCurve` of `em3`). Each of the 22 seen changed, read back and restored on the bus. | `weishaupt-C` `4f8d2ad` (9 commits on F), **local**; fork `b5dab63` (0.5.1) | `register-write-crc`, `settings-writes` |
+| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. A comment in `50.w.em1` now says `50` is the system manager's own direct circuit (same device as `15`), not a WCM-EM module like `51`/`52`, so its eight reads duplicate `15` (2026-11-18). | `weishaupt-G` `34cd419` (2 commits on C; the reads of `fs1` frost protection and `em3` curve now in C), local; fork `79035b6` | `room-units-reads`, `heating-modules-reads` |
+| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `7e297e7` (3 commits on G), local; fork `fe84c3e` | `room-units-programs` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `504eb4c` (1 commit on H), local; fork `74cc624` | `bc-fault-counters` |
+| K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `3c51bff` (2 commits on J), local; fork `7f0fe1b` | `bc-info-values` |
+| L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `23af780` (10 commits on K; no new string for 0.5.2), local; fork `0662c4e` | `terms` |
+| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` (6 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`, the metadata of the three settings of 0.5.1, then of two more with every written setting `change-observed`), `a6d3ea3`, local; fork `f182fc7` | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -148,17 +148,21 @@ data point on arbitration with room units).
 ### Needs the owner
 
 - **Release 0.5.1: done** (2026-11-18, see "Current state").
-- **Telegram log of the ebusd add-on, before 2026-11-25.** It holds every write of the client
-  since 2026-11-08, the changes of the operator's tests of 2026-11-15 included; those entries
-  leave the log (10 days) around 2026-11-25. A read-only export of its `50 23` telegrams and the
-  `50 22` reads that follow them is action 1 of `evidence/settings-writes.md`, "Coverage": for
-  the operator or the deployment session, not the sessions of this repository (rule 7, and no
-  read-only tool reaches the file).
-- **Captured changes of the settings the client writes** (actions 2 to 8 of the same section):
-  46 numeric settings need one change and its restore each, from the client, with a snapshot of
-  `grab result all` around each step; 5 more (modulation limits, room factor) and the choices
-  need the owner's decision first. When the proof procedure of the client 0.1.1 is run, a
-  snapshot around each line adds two of them (`fs1` frost protection, `em3` heating curve).
+- **Release 0.5.2 (prepared locally on 2026-11-18, nothing pushed).** Two more writable
+  settings from the telegram log (`fs1` `RoomFrostProtectionTemp`, `em3` `GradientCurve`),
+  22 in all; `proof = "change-observed"` for all 22 in the metadata. To publish, on the owner's
+  word: force-push `weishaupt-C` to `-M` (heads in the table above), force `weishaupt` to the
+  trial `weishaupt-next` `419821c`, then `scripts/release.sh 0.5.2` and publish. Only messages
+  added, reads unchanged except the `[WCRC]` marker in two comments: 0.5.2. Lot A untouched.
+- **Telegram log: done.** Exported read-only on 2026-11-18 by the deployment session
+  (`out/ebusd-telegram-log-export/`, installation data, not versioned); read into
+  `evidence/settings-writes.md`, "Changes in the telegram log".
+- **Captured changes of the settings the client writes** (actions 2 to 7 of
+  `evidence/settings-writes.md`, "Coverage"): 44 numeric settings need one change and its
+  restore each, sent by the client in service, then an export of the telegram log (no snapshot
+  needed); 5 more (modulation limits, room factor), the choices and the program slots need the
+  owner's decision first. In order of yield: `fs2` + `fs3` (22), `em1` + `em3` (13), `fs1` (7),
+  `ka` flow maximum and hot-water setpoint (2).
 
 - **Release 0.5.0: done** (2026-11-18, see "Current state"). The three new French strings of lot A were read and kept by the owner the same day; the label of burner phase 9 stays provisional.
 - **Number of that release: settled, 0.5.0** (owner, 2026-11-18). A message is renamed, so
@@ -276,8 +280,8 @@ data point on arbitration with room units).
 
 - **Settings left out of lot C** (list in `evidence/settings-writes.md`, "Left out" and
   "Coverage"): each needs a write from source `ff` captured and read back, which is the
-  operator's to do (rule 7). Of the 71 numeric settings the client in service writes, 20 are
-  in lot C, 46 need one captured change each, 5 a decision first; the actions, ordered by what
+  operator's to do (rule 7). Of the 71 numeric settings the client in service writes, 22 are
+  in lot C, 44 need one captured change each, 5 a decision first; the actions, ordered by what
   each unlocks, are in that record.
 - **Writes sent from the files of the lots**: the one write test done (`BlockingTime`, see
   below) was built by the running configuration of the installation, not by lot C.
@@ -383,6 +387,28 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-18, telegram log read; lot C at 22 settings; trial release 0.5.2 (local).**
+  - **Export** of the telegram log of the ebusd add-on (deployment session, read-only): 84
+    `50 23` writes from 2026-11-10 to 2026-11-18, all acknowledged, checksum right for all,
+    29 device / register pairs, 575 reads after them. Matched write by write with the next read
+    of the same register.
+  - **Proven**: each of the 20 settings of 0.5.1 changed, read back and restored (2026-11-15,
+    and 2026-11-17/18 for blocking time, change-over time, hot-water switching difference, flow
+    maximum of `51`); two more, from the proof procedure of the client 0.1.1 on 2026-11-18:
+    `fs1` `RoomFrostProtectionTemp` (8.0 → 8.5 → 8.0) and `em3` `GradientCurve` (10.0 → 10.5
+    → 10.0), both from `ff`. Added to lot C (two commits); their reads leave lot G (two
+    commits amended); metadata `change-observed` for all 22; no new French string.
+  - **Not proven by the log**: writes of the stored value only (legionella day, circulation
+    with legionella, boiler sequence, control variation); de-couple maximum 78.5 not taken from
+    `ff` nor from `31`; the `ff` rule shown with telegrams on `51` (five settings acknowledged
+    and ignored from `31`); `SwitchOnRuntime` above 10 not taken; one program slot of `fs1`
+    written from `31` and taken twice (lot H, no write side).
+  - **Check**: `scripts/check.sh` clean on C (209 messages) and on `weishaupt-next` `419821c`
+    (`INTEGRATION=weishaupt-next scripts/release.sh 0.5.2`): 613 messages in English, German
+    and French, 22 written in the metadata, 579 fixtures decoded by ebusd. CSV against 0.5.1:
+    `35.w.fs1.csv` and `52.w.em3.csv` only, one write line each and the `[WCRC]` marker on the
+    read. Backups `backup/pre052-*`. Nothing pushed.
 
 - **2026-11-18, lot C extended to 20 settings; release 0.5.1.**
   - **Added**: `ka` `RegulationP` (`9f 02`, 10 to 300) and `RegulationI` (`9e 02`, 10 to 200),
