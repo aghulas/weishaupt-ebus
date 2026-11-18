@@ -84,7 +84,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2` and `weishaupt-0.4.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.1` and `weishaupt-0.4.2` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0` and `weishaupt-0.4.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.2` is the only release online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -104,7 +104,6 @@ fork heads compared after the push, equal.
 | Repository | Release | Content |
 |---|---|---|
 | `aghulas/ebusd-configuration` | `weishaupt-0.4.2` (pre-release) | as 0.4.1, plus three boiler information values on both boilers: hydraulic separator temperature i39, software versions i44 and i45. Downloaded again after publication: three assets, checksums right, 605 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.4.1` (pre-release) | as 0.4.0, plus lot K (five boiler information-value `50 22` reads on both boilers), the lot-E fix of `BurnerServiceHours` (×10, both boilers), and a lot-G comment that `50` is the system manager's direct circuit. Downloaded again after publication: three assets, checksums right, 599 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
@@ -304,7 +303,7 @@ date; see 2026-11-17 "Commit identity".
   `weishaupt-L` and `weishaupt` (`f58a45f`) were pushed and `weishaupt-0.4.2` published from
   the main session (two archives and `sha256sums.txt`, rebuilt by `scripts/release.sh 0.4.2`
   just before); downloaded again: checksums right, 605 messages without error in the official
-  ebusd 26.1. `weishaupt-0.4.1` stays online beside it.
+  ebusd 26.1. `weishaupt-0.4.1` was deleted the same day on the owner's request, its tag kept in the local clone.
 - **2026-11-18, release 0.4.1.** Three changes on
   top of 0.4.0, each with evidence:
   - **Lot K (new, `weishaupt-K` `dec3adf`, inserted between J and L).** Five boiler information
