@@ -49,6 +49,7 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
+**0.5.6 released (2026-11-18)** from `weishaupt` `87d7caf`, on the owner's word (« Oui, tout »): lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 778 messages: 5 choices (legionella day, circulation with legionella, holiday level of the three room units), the date and time broadcast, the five programs of `fs1` (105 slots) read and written, on top of the 66 numeric settings. The notice counted 66 written settings and was corrected before publication. Downloaded again: the four checksums right, 778 messages without error in the official ebusd, both archives. The same evening `ha-weishaupt` v0.3.0rc1 was released as a pre-release.
 **0.5.5 released (2026-11-18)** from `weishaupt` `75f943f`, on the owner's word: `weishaupt-M` and `weishaupt` forced with leases (C to L unchanged), five files published as a pre-release. Metadata only: write ranges of the setback setpoint and the curve (12 settings), comfort class for the room and hot-water setpoints on every device; CSV identical to 0.5.4. Downloaded again: the four checksums right, 662 messages without error in the official ebusd, both archives.
 **0.5.4 released (2026-11-18)** from `weishaupt` `970143b`, on the owner's word: lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 66 writable settings: the flow limits of `50.w.em1`, taken from `ff` only (batch 7 on site); the CSV differ from 0.5.3 only in `50.w.em1`. Downloaded again: the four checksums right, 662 messages without error in the official ebusd, both archives. The same day `ha-weishaupt` v0.1.3 was released (latest), which sends these two from `ff`.
 **0.5.3 released (2026-11-18)** from `weishaupt` `e3ed65f`, on the owner's word: the seven lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 64 writable settings (22 in 0.5.2) from the captures on site, five reads added; the CSV differ from 0.5.2 only in `15.w.ka`, `35.w.fs1`, `50.w.em1`, `52.w.em3`, `75.w.fs2` and `f5.w.fs3`, by added lines. The notice was corrected before publication: 0.5.1 and 0.5.2 still listed the changes of 0.5.0. Downloaded again: the four checksums right, 660 messages without error in the official ebusd, both archives.
@@ -108,7 +109,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3`, `weishaupt-0.5.4` and `weishaupt-0.5.5` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3`, `weishaupt-0.5.4` `weishaupt-0.5.5` and `weishaupt-0.5.6` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -127,6 +128,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.5.6` (pre-release) | as 0.5.5, plus 5 choices, the date and time broadcast and the programs of `fs1`, written. Downloaded again after publication: checksums right, 778 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.5` (pre-release) | as 0.5.4 (same CSV); in the metadata, write ranges of 12 settings and a consistent comfort class. Downloaded again after publication: checksums right, 662 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.4` (pre-release) | as 0.5.3, plus the flow limits of the direct circuit `50`, written from `ff` (66 in all). Downloaded again after publication: checksums right, 662 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.3` (pre-release) | as 0.5.2, plus 42 writable settings proven on site (64 in all) and five reads. Downloaded again after publication: checksums right, 660 messages without error in the official ebusd. |
@@ -155,26 +157,10 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Choices, clock and programs of room unit 1 (prepared locally on 2026-11-18, nothing
-  pushed).** From the captures of the evening: 5 choices (legionella day, circulation with
-  legionella, holiday level of the three room units), the date and time broadcast (72 of 72
-  adoptions), the five programs of `fs1` (105 slots). Trial `weishaupt-next` `87d7caf`: 778
-  messages, 177 written. New labels and a new menu of the metadata to accept: value labels
-  Antifreeze / Hors-gel, Setback / Réduit; labels of the new messages; menu "Date and time"
-  of the installation. `fs2` does not keep a program slot: next test, the same slot on `fs3`
-  (`evidence/choice-date-program-writes.md`). To publish as 0.5.6, on the owner's word:
-  force-push `weishaupt-C` `0033290`, `-G` `168ad54`, `-H` `e22d1d8`, `-J` `4af642a`, `-K` `164c30b`, `-L` `45445ea`,
-  `-M` `beda3f3`, `weishaupt` to `87d7caf`, the workbench `main`, then `scripts/release.sh 0.5.6`.
-
-- **Program-slot writes (prepared locally on 2026-11-18, nothing pushed).** Owner's word
-  « Oui, comme proposé »: batch C not done (boiler sequence, circuit type read only); one
-  captured slot per program and device proves its 21 slots; the contract carries write
-  conditions on program slots (`proof: family`, `proof_slot`). Heating program 1 of `fs1`
-  (21 slots) is read and written in lot H. Trial `weishaupt-next` `bd695ac`: 683 messages, 87
-  written. To publish as 0.5.6 later, on the owner's word: force-push `weishaupt-H` `3fe8432`,
-  `-J` `db4c627`, `-K` `67bc8a0`, `-L` `354408c`, `-M` `a988764`, `weishaupt` to `bd695ac`, the workbench `main`,
-  then `scripts/release.sh 0.5.6`. Batches A and E on the bus and the clock export are with
-  the deployment session.
+- **Release 0.5.6: done** (2026-11-18, see "Current state"). Labels and the menu "Date and
+  time" accepted by the owner (« Oui, tout »). Batch C not done (boiler sequence, circuit type
+  read only); one captured slot per program and device proves its 21 slots. `fs2` does not keep
+  a program slot: the same slot on `fs3` is the next test, with the deployment session.
 
 - **Choices, holiday dates, programs, clock (writes of the client 0.1 that the companion lacks).**
   Inventory and proof plan in `evidence/choice-date-program-writes.md` (2026-11-18): proven
