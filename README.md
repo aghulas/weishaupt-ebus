@@ -25,7 +25,7 @@ integration branch and from which the pull requests are opened.
 
 | Release | Content |
 |---|---|
-| [weishaupt-0.4.1](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-0.4.1) | compiled ebusd CSV of all lots, in English and in French, with a notice on how to use them |
+| [weishaupt-0.4.2](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-0.4.2) | compiled ebusd CSV of all lots, in English and in French, with a notice on how to use them |
 | [ebus-typespec 0.31.0-weishaupt.1](https://github.com/aghulas/ebus-typespec/releases/tag/v0.31.0-weishaupt.1) | library build with the `@crc` and `@wcrc` decorators, needed to compile the definitions |
 
 ## Open pull requests

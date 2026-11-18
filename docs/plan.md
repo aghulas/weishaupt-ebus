@@ -35,8 +35,8 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. A comment in `50.w.em1` now says `50` is the system manager's own direct circuit (same device as `15`), not a WCM-EM module like `51`/`52`, so its eight reads duplicate `15` (2026-11-18). | `weishaupt-G` `5c6e592` (2 commits on C), pushed (0.4.1) | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `9778221` (3 commits on G), pushed (0.4.1) | `room-units-programs` |
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `64a0daa` (1 commit on H), pushed (0.4.1) | `bc-fault-counters` |
-| K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `49e484b` (2 commits on J); first commit pushed (0.4.1), second local only (0.4.2) | `bc-info-values` |
-| L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional, but the three 0.4.2 info-value strings not yet ticked by the owner in `terms.md`); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `b4cfa16` (8 commits on K), local only (0.4.2); `935363b` pushed (0.4.1) | `terms` |
+| K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `49e484b` (2 commits on J), pushed (0.4.2) | `bc-info-values` |
+| L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional, but the three 0.4.2 info-value strings not yet ticked by the owner in `terms.md`); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `b4cfa16` (8 commits on K), pushed (0.4.2) | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -46,7 +46,7 @@ The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, L 
 goes below it (lot K was inserted between J and L this way on 2026-11-18). Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-**0.4.1 released (2026-11-18).** On top of 0.4.0: lot K (the
+**0.4.2 released (2026-11-18)** from `weishaupt` `f58a45f` (605 messages): 0.4.1 plus three boiler information values in lot K (see "Decisions and history"). **0.4.1 released (2026-11-18).** On top of 0.4.0: lot K (the
 five boiler information-value `50 22` reads on both boilers), the lot-E fix of `BurnerServiceHours`
 (×10 factor, now on both boilers), and the lot-G comment that `50` is the system manager's own
 direct circuit. The whole stack E→L was rebuilt (new hashes in the table above; A unchanged at
@@ -84,7 +84,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2` and `weishaupt-0.4.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.1` is the only release online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2` and `weishaupt-0.4.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.1` and `weishaupt-0.4.2` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -103,6 +103,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.4.2` (pre-release) | as 0.4.1, plus three boiler information values on both boilers: hydraulic separator temperature i39, software versions i44 and i45. Downloaded again after publication: three assets, checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.4.1` (pre-release) | as 0.4.0, plus lot K (five boiler information-value `50 22` reads on both boilers), the lot-E fix of `BurnerServiceHours` (×10, both boilers), and a lot-G comment that `50` is the system manager's direct circuit. Downloaded again after publication: three assets, checksums right, 599 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
@@ -279,7 +280,7 @@ data point on arbitration with room units).
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
 
-- **2026-11-18, 0.4.2 prepared locally (awaits the owner's word).** Three more boiler
+- **2026-11-18, release 0.4.2.** Three more boiler
   information values read with `50 22`, added to lot K on both boilers (`08`, `18`), each
   confirmed read-only on the live bus and tied to the manual (83251704, menu *Info*, p. 47):
   - **i 39 hydraulic separator temperature** (`86 02`, SIN/10 °C like the other sensor reads);
@@ -297,16 +298,13 @@ date; see 2026-11-17 "Commit identity".
   three new keys (`935363b` → `b4cfa16`, 277 keys for 277 strings, none provisional, the three
   new strings not yet ticked by the owner in `terms.md`). Stack linear; `scripts/check.sh`
   clean on K (`49e484b`), L (`b4cfa16`) and the trial integration `weishaupt-next` (`f58a45f`):
-  **605 messages** (599 before), English = German = French. The local `weishaupt` now points at
-  the 0.4.2 integration `f58a45f`; **origin is unchanged at the 0.4.1 integration `5298e90`**.
-  Archives built by `scripts/release.sh 0.4.2` under `out/release/`
-  (`weishaupt-ebusd-config-0.4.2.tar.gz`
-  `6aead252e5d329cdf7cec06310edb587df38276e4d590f8c5ad2b21f79f2a19a`;
-  `…-0.4.2-fr.tar.gz` `905bcccddd58137c44d7ac53dfe2ab3258df83c528545fa89c028849ebdc5960`),
-  **not published**. CSV diff vs 0.4.1 (English): only `08.w.bc1.csv` and `18.w.bc2.csv` change,
-  each +3 reads (i 39, i 44, i 45); +6 messages, no other message altered (French CSV: same
-  lines, comments only). Nothing pushed, tagged or released; that awaits the owner's word
-  (force-push of `weishaupt-K` and `weishaupt-L`, and the `weishaupt-0.4.2` release).
+  **605 messages** (599 before), English = German = French. CSV diff vs 0.4.1 (English): only `08.w.bc1.csv` and
+  `18.w.bc2.csv` change, each +3 reads (i 39, i 44, i 45); +6 messages, no other message
+  altered (French CSV: same lines, comments only). On the owner's word `weishaupt-K`,
+  `weishaupt-L` and `weishaupt` (`f58a45f`) were pushed and `weishaupt-0.4.2` published from
+  the main session (two archives and `sha256sums.txt`, rebuilt by `scripts/release.sh 0.4.2`
+  just before); downloaded again: checksums right, 605 messages without error in the official
+  ebusd 26.1. `weishaupt-0.4.1` stays online beside it.
 - **2026-11-18, release 0.4.1.** Three changes on
   top of 0.4.0, each with evidence:
   - **Lot K (new, `weishaupt-K` `dec3adf`, inserted between J and L).** Five boiler information
