@@ -27,7 +27,11 @@ check fails (exit 1) when
     not written, or its evidence does not name it;
   - an entry has no evidence record, or names a record that is not under evidence/;
   - a label lacks one of the languages, a menu or a device is unknown, the menus are not a tree;
-  - the sidecar repeats a range the CSV already has.
+  - the sidecar repeats a range the CSV already has;
+  - the status says accepted without the day of the acceptance.
+
+The polling class of a message is the one a record establishes (`poll` on its entry); failing
+that, the default the owner decided for its kind (`[poll_default]`); failing that, none.
 
 EVIDENCE_DIR  folder of the evidence records (default: evidence/ of the workbench)
 """
@@ -189,6 +193,11 @@ def resolve(side, msgs):
     for what in ("menus", "labels"):
         if status.get(what) not in STATUS:
             bad.append(f"status.{what} must be one of {', '.join(STATUS)}")
+    if "accepted" in status.values() and not re.fullmatch(r"\d{4}-\d\d-\d\d", str(status.get("date", ""))):
+        bad.append("status.date: the day of the acceptance, YYYY-MM-DD")
+    for kind, poll in side.get("poll_default", {}).items():
+        if kind not in KINDS or poll not in POLLS:
+            bad.append(f"poll_default.{kind}: a kind and one of {', '.join(POLLS)}")
 
     circuits = {m["circuit"] for m in msgs.values()}
     device_of = {}
@@ -347,7 +356,15 @@ def assemble(side, msgs, resolved, langs):
     for key, m in msgs.items():
         r = resolved[key]
         e = r["e"]
-        poll = "passive" if m["passive"] else e.get("poll")
+        # a record first, then the default the owner decided for the kind, then nothing
+        if m["passive"]:
+            poll, basis = "passive", "passive"
+        elif "poll" in e:
+            poll, basis = e["poll"], "record"
+        elif e["kind"] in side.get("poll_default", {}):
+            poll, basis = side["poll_default"][e["kind"]], "default"
+        else:
+            poll, basis = None, None
         description = {lang: tree[key]["comment"] for lang, tree in langs.items()}
         fields = []
         real = [f for f in m["fields"] if not f["type"].startswith("IGN")]
@@ -380,7 +397,7 @@ def assemble(side, msgs, resolved, langs):
         o = {
             "circuit": m["circuit"], "name": m["name"], "address": m["address"], "device": r["device"],
             "menu": e["menu"], "kind": e["kind"], "label": r["label"], "description": description,
-            "read": m["read"], "passive": m["passive"], "poll": poll, "evidence": e["evidence"],
+            "read": m["read"], "passive": m["passive"], "poll": poll, "poll_basis": basis, "evidence": e["evidence"],
         }
         if e.get("fields"):
             o["compose"] = bool(e.get("compose", False))
@@ -430,7 +447,7 @@ def counts(data):
     for m in data["messages"].values():
         by_kind[m["kind"]] = by_kind.get(m["kind"], 0) + 1
         by_device[m["device"]] = by_device.get(m["device"], 0) + 1
-        p = m["poll"] or "not established"
+        p = f"{m['poll']} ({m['poll_basis']})" if m["poll"] else "none"
         by_poll[p] = by_poll.get(p, 0) + 1
     return by_kind, by_device, by_poll
 

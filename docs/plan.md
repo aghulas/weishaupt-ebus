@@ -37,7 +37,7 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `64a0daa` (1 commit on H), pushed (0.4.1) | `bc-fault-counters` |
 | K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `49e484b` (2 commits on J), pushed (0.4.2) | `bc-info-values` |
 | L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `b4cfa16` (8 commits on K), pushed (0.4.2) | `terms` |
-| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels are **proposed, not yet accepted** by the owner (`out/companion-menu-proposal.md`). | `weishaupt-M` `4d1ce1c` (1 commit on L), pushed | the records the entries name; `service-tool-log` for the polling classes |
+| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` `b9d5359` (2 commits on L); `4d1ce1c` is on the fork, the second commit is **local, to push as a fast-forward** | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -129,12 +129,13 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Companion contract, phase 0 (`weishaupt-M` and the workbench pushed on 2026-11-18, no
-  release yet).** To decide, in this order: (1) the menu trees and short labels, on the proposal
-  `out/companion-menu-proposal.md` (seven questions at its top); once accepted, `status` in
-  the sidecar becomes `accepted`; (2) a release that carries the metadata asset — `0.4.3` was built locally as a trial
-  (`out/release/`, CSV identical to 0.4.2), to be rebuilt by `scripts/release.sh` just before
-  publication.
+- **Release carrying the metadata asset.** The menu trees and labels are accepted
+  (2026-11-18); what remains is to publish. Local and waiting for the owner's word: the
+  second commit of `weishaupt-M` (`b9d5359`, fast-forward of the branch on the fork) and the
+  workbench commit that goes with it; then `scripts/release.sh 0.4.3` once more, push of
+  `weishaupt`, tag `weishaupt-0.4.3`, release with five files: the two archives,
+  `weishaupt-metadata-0.4.3.json`, `weishaupt-fixtures-0.4.3.json`, `sha256sums-0.4.3.txt`
+  (the CSV are those of 0.4.2).
 
 - **GitHub support request** to remove the former commits (see "Commit identity"): text ready in
   `out/github-support-request.md` (not versioned), to send from the owner's account.
@@ -323,6 +324,22 @@ date; see 2026-11-17 "Commit identity".
   translations on the owner's request) and `main` and `v0.1.0` force-pushed from the main
   session at 08:46 UTC, 29 tests passing. Its former commits stay reachable on GitHub by id
   until the purge is asked; the addition to the request is in the cleanup note under `out/`.
+- **2026-11-18, menu trees and labels of the metadata accepted.** The owner accepted the
+  proposal as written, with the recommendation on each of its seven questions. In the sidecar
+  (`weishaupt-M` `b9d5359`, a second commit, so the branch on the fork moves by a
+  fast-forward): `status` says `accepted` with the date, and a table `[poll_default]` gives a
+  polling class by kind to the messages no record classes — live values cyclic, settings,
+  program slots and diagnostics on demand. The metadata file tells the two apart
+  (`poll_basis`: `record` for 45 messages, `default` for 473, `passive` for 8); counters and
+  states have no default, so `BurnerServiceHours` of both boilers stays without a class.
+  Nothing else changed: placements, risk classes (2 comfort, 15 regulation) and labels are
+  those proposed. Left for phase 1, as recommended: French labels of the 43 value-list
+  entries, intervals. The French labels without a vendor source are recorded as `owner`
+  terms in `evidence/terms.md` ("Short labels of the metadata"); the release notice has a
+  section on the three files beside the archives. Trial again,
+  `INTEGRATION=weishaupt-next scripts/release.sh 0.4.3`: `weishaupt-next` `0eb6d16`,
+  `scripts/check.sh` clean in seven steps, 605 messages in English, German and French, CSV of
+  both archives byte-identical to 0.4.2. Local only; local `weishaupt` still `f58a45f`.
 - **2026-11-18, companion contract (phase 0 of the Home Assistant companion).** Pushed the
   same day on the owner's word (`weishaupt-M`, workbench), no release carries the asset yet. The
   owner decided on 2026-11-18 that a generated metadata file is part of every definitions

@@ -285,6 +285,36 @@ the owner on 2026-11-18 as well; both accepted as written.
 | [ ] | trial archives named `0.3.0-dev` | not to be taken for a release | none kept |
 | [ ] | value lists (operating phases, on / off) are left in English | they are what `write` and MQTT use; the emitter cannot translate them | a later mechanism; the French names are in WTC p. 46 |
 
+## Short labels of the metadata
+
+The metadata sidecar of the configuration fork (`metadata/weishaupt.toml`, branch
+`weishaupt-M`) gives every message, field, menu and device a short label in English and
+French. The labels are the terms of the glossary above, shortened to a name. The owner read
+the whole proposal (menu trees and labels) and accepted it as written on 2026-11-18. The
+French terms below have no vendor source and no row above; they are `owner` terms since
+that date.
+
+| English | French | Used for | Why no vendor term |
+|---|---|---|---|
+| Process values | Valeurs instantanées | menu of boiler and system manager | name of a tab of the vendor service tool, which has no French; "instantanée" is the vendor's word for an actual value (FS p. 28) |
+| Statistics | Statistiques | menu of the boiler | tab of the vendor service tool |
+| Boilers of the cascade | Chaudières de la cascade | menu of the system manager | block of a tab of the vendor service tool |
+| Installation | Installation | device that holds the status broadcast | not a device of the vendor |
+| Burner operation | Fonctionnement du brûleur | message `Operation` | name of a memory read, not a vendor notion |
+| Counters | Compteurs | message `Counters` | same |
+| Fault counters, block N | Compteurs de défauts, bloc N | messages `FaultCounters1` to `7` | a block is a group of one read |
+| Fault N counter | Compteur du défaut N | their fields | the manuals list the codes, not counters |
+| Fault history pointer | Mémoire de défauts, pointeur d'écriture | message `FaultHistoryPointer` | internal of the automat |
+| Gas valve 1, 2 | Vanne gaz 1, 2 | status bits | the manual names the gas valve assembly only ("multibloc gaz", WTC p. 92) |
+| Hot water pump | Pompe ECS | status bit | the manual has the circulation pump only |
+| Mixer closing, opening | Vanne mélangeuse, fermeture, ouverture | bits of the room unit / module exchange | not read in a manual |
+| Flame; Burner; Service; Heating | Flamme; Brûleur; Entretien; Chauffage | status bits | vendor words, used alone as the name of a bit |
+| Start, End; Start enabled, End enabled | Début, Fin; Début activé, Fin activée | fields of a program slot | the display shows times, not field names |
+
+Decided at the same time: the labels follow the glossary and not the abbreviations of the
+displays ("Tps blocage", "Lim antigel"); the boiler information values keep their code in
+brackets; value-list entries stay untranslated for now.
+
 ## Findings: English wording of the lots and of the vendor
 
 Where the lots word a thing differently from the vendor's English manuals. Nothing was changed

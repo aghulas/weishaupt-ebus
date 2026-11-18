@@ -50,7 +50,8 @@ definitions    version, commit of the integration branch, messages (528), csv_li
                loaded_by_ebusd (605: with the files of the official configuration that the
                archive also holds, which have no metadata), sidecar_sha256
 languages      ["en", "fr"]
-status         { menus, labels }: "proposed" or "accepted"
+status         { menus, labels }: "proposed" or "accepted", and the date of the acceptance
+               (both accepted by the owner of the project on 2026-11-18)
 devices        <id>: type, label, circuits [{circuit, address, file}]
 menus          <device type>: [{id, parent, label, source}]
 messages       <circuit>/<name>: see below
@@ -82,7 +83,8 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 | `label` | short label, a name for an entity or a table row |
 | `description` | the comment of the CSV, in each language |
 | `read`, `passive` | it has a read line; it is a passive message (never requested) |
-| `poll` | `passive`, `cyclic`, `on_demand`, or `null` when no record establishes one |
+| `poll` | `passive`, `cyclic`, `on_demand`, or `null` |
+| `poll_basis` | `passive`; `record`: the vendor service tool was seen to read it this way; `default`: no record, the class decided for its kind; `null` with `poll` null |
 | `evidence` | records under `evidence/` of this repository |
 | `write` | only on a setting a lot writes, see below |
 | `same_as` | key of a message of the same device that reads the same register |
@@ -109,7 +111,8 @@ value list, raw value to ebusd name), `min`, `max`, `step`, `description`. Field
 - A field matched by a pattern carries `group`, the numbers of its name (`code57` gives
   `{ "n": 57 }`).
 
-Value-list entries have no translated label in schema 1: the ebusd name is all there is.
+Value-list entries have no translated label yet: the ebusd name is all there is. Labels will
+come as one more key per value, without a change of schema.
 
 ### Write conditions
 
@@ -140,10 +143,13 @@ group of 21 messages. An interface shows a group as one object, not one entity p
 
 Where no record establishes a value, the metadata has none; `open` lists the keys.
 
-- **Polling class.** `cyclic` and `on_demand` are set only where the session log of the
-  vendor service tool shows how the tool reads the value: polled while a tab is open, or
-  read once when it is opened. No interval is given anywhere: the load a bus accepts has not
-  been measured. For the other messages the consumer chooses.
+- **Polling class.** With `poll_basis: "record"`, the session log of the vendor service tool
+  shows how the tool reads the value: polled while a tab is open (`cyclic`), or read once
+  when it is opened (`on_demand`). With `"default"`, no record says anything and the class
+  is the one decided for the kind of the message: live values `cyclic`; settings, program
+  slots and diagnostics `on_demand`. Counters and states have no default, which leaves the
+  service-hours counter of the boilers without a class. No interval is given anywhere: the
+  load a bus accepts has not been measured, and choosing intervals is the consumer's.
 - **Range** of two written settings (`em2/RoomSetbackTemp`, `em2/GradientCurve`) and **step**
   of five (these two, and three integer registers whose range has no step).
 - **Linked bounds** (setback below normal, minimum below maximum) are in no record and
