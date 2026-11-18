@@ -84,7 +84,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0` and then `weishaupt-0.3.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.2`, `weishaupt-0.4.0` and `weishaupt-0.4.1` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2` and `weishaupt-0.4.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.1` is the only release online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -104,8 +104,6 @@ fork heads compared after the push, equal.
 | Repository | Release | Content |
 |---|---|---|
 | `aghulas/ebusd-configuration` | `weishaupt-0.4.1` (pre-release) | as 0.4.0, plus lot K (five boiler information-value `50 22` reads on both boilers), the lot-E fix of `BurnerServiceHours` (×10, both boilers), and a lot-G comment that `50` is the system manager's direct circuit. Downloaded again after publication: three assets, checksums right, 599 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.4.0` (pre-release) | as 0.3.2, with the first answer byte of every memory read of lots E, D and F (not only J) kept as the field `FirstByte`; a breaking change to those message fields. Downloaded again after publication: three assets (two archives and `sha256sums.txt`), checksums right, 588 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.3.2` (pre-release) | as 0.3.1, with the fault counters of lot J read in seven items of at most 10 bytes and their first answer byte as a field. Downloaded again after publication: checksums right, 588 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
