@@ -22,27 +22,27 @@ to the official ebusd configuration; this archive exists so that they can be use
 `50.w.em1`, `51.w.em2` and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.4.3
+## Changes since 0.5.2
 
-- **One message is renamed: this breaks whatever names it.** `DHWOperationMode` of the system
-  manager (`15.w.ka`) is now `DHWLoadingPriority`. The register is not an operating mode: it
-  is the parameter the vendor calls "DHW operation", which sets whether a heating circuit is
-  cut while the hot water is loaded (priority), supplied at the same time (parallel) or cut
-  depending on the boiler temperature (sliding). Register, type and value list are the same;
-  only the name and the comments change. A `read -c ka DHWOperationMode`, an MQTT topic
-  `ka/DHWOperationMode` or an automation built on it must take the new name; the metadata
-  file gives the former key in `renamed_from`. Of the three values only 0 (`Priority`) has
-  been read on a device: which of 1 and 2 is `Sliding` and which `Parallel` is not
-  established.
-- **`HcMode` of a heating module without outside sensor now decodes.** Such a module sends
-  -100.0 as outside temperature; up to 0.4.3 that value was outside the range of the field
-  and ebusd gave `ERR: argument value out of valid range` for the whole message (`51.w.em2`,
-  `52.w.em3` on the test installation). The field has no range any more and reads -100.0,
-  which means "no sensor". Nothing changes for a module that has the sensor.
-- **Labels of the value-list entries in the metadata file** (`value_labels`, English and
-  French, for the 38 entries of the seven value lists). The CSV are not concerned: the
-  entries keep their names.
-- No message added or removed, no other field changed.
+- **42 more settings can be written, 64 in all.** Each was seen on the test installation
+  changed by one step, read back with the new value and restored:
+  - `15.w.ka`: `SupplyMaxTemp`, `DHWSetpoint`;
+  - `35.w.fs1`: `DHWSetpoint`, `GradientCurve`, `RoomNormalTemp`, `RoomSetbackTemp`,
+    `SummerWinterChangeOverTemp`, `SupplyMaxTemp`, `SupplyMinTemp`;
+  - `50.w.em1`: `GradientCurve`, `RoomFrostProtectionTemp`, `RoomNormalTemp`,
+    `RoomSetbackTemp`, `SummerWinterChangeOverTemp`;
+  - `52.w.em3`: `RoomFrostProtectionTemp`, `RoomNormalTemp`, `RoomSetbackTemp`,
+    `SummerWinterChangeOverTemp`, `SupplyMaxTemp`, `SupplyMinTemp`;
+  - `75.w.fs2` and `f5.w.fs3`, eleven each: `BoilerMCBoostTemp`, `DHWSetpoint`,
+    `FrostProtectionLimitTemp`, `GradientCurve`, `RoomFrostProtectionTemp`, `RoomNormalTemp`,
+    `RoomSetbackTemp`, `SummerWinterChangeOverTemp`, `SupplyMaxTemp`, `SupplyMinTemp`,
+    `SwitchOnRuntime`.
+- **Five reads added**: `DHWSetpoint` of the three room units, `BoilerMCBoostTemp` of
+  `75.w.fs2` and `f5.w.fs3`.
+- No message renamed or removed; the reads that became writable keep their names and ids.
+- From 0.4.x: 0.5.0 renamed `DHWOperationMode` of `15.w.ka` to `DHWLoadingPriority` (the
+  metadata file gives the former key in `renamed_from`) and made `HcMode` of a heating module
+  without outside sensor decode (-100.0 means no sensor).
 
 ## Other files of the release
 
@@ -75,6 +75,9 @@ ebusd picks the files from the identification each device answers to the scan.
 - Most settings are acknowledged from any source address but taken over only from `ff`:
   `write -s ff -c ka BlockingTime 2`. `ff` is the address of the vendor's service tool; do not
   write while that tool is connected.
+- The flow limits `SupplyMaxTemp` and `SupplyMinTemp` of `50.w.em1` are read only: written from
+  another source than `ff` they are acknowledged but not taken, and a write from `ff` has not
+  been seen yet.
 
 ## Languages
 
