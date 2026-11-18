@@ -56,6 +56,8 @@ readings = [
   { message = "DHWLoadTime", master = "90 80 01 00 00", slave = "", expect = { value = 0 } },
   { message = "LegionellaSetpoint", master = "72 87 05 58 02", slave = "", expect = { value = 60.0 } },
   { message = "LegionellaCirculationTime", master = "46 b1 09 58 02", slave = "", expect = { value = 600 } },
+  { message = "RegulationP", master = "98 9f 02 64 00", slave = "", expect = { value = 100 } },
+  { message = "RegulationI", master = "90 9e 02 64 00", slave = "", expect = { value = 100 } },
 ]
 
 # settings-writes: the captured 50 23 telegram of each setting, acknowledged; source ff
@@ -98,6 +100,7 @@ where = "row"
 readings = [
   { message = "SwitchOnRuntime", master = "d8 10 01 03 00", slave = "", expect = { value = 3 } },
   { message = "FrostProtectionLimitTemp", master = "a4 be 02 00 00", slave = "", expect = { value = 0.0 } },
+  { message = "BoilerMCBoostTemp", master = "a8 11 01 14 00", slave = "", expect = { value = 2.0 } },
 ]
 
 # settings-writes: the 50 22 read of the same register by ebusd, where a single read was captured
@@ -113,6 +116,7 @@ readings = [
   { message = "DHWLoadTime", master = "f1 80 01", slave = "00 00", expect = { value = 0 } },
   { message = "LegionellaSetpoint", master = "3d 87 05", slave = "58 02", expect = { value = 60.0 } },
   { message = "LegionellaCirculationTime", master = "29 b1 09", slave = "58 02", expect = { value = 600 } },
+  { message = "RegulationI", master = "8e 9e 02", slave = "64 00", expect = { value = 100 } },
 ]
 
 # settings-writes: the 50 22 read of the same register by ebusd, where a single read was captured
@@ -138,6 +142,7 @@ where = "row"
 readings = [
   { message = "SwitchOnRuntime", master = "b1 10 01", slave = "03 00", expect = { value = 3 } },
   { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
+  { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
 ]
 
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads

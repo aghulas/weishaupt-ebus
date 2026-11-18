@@ -47,7 +47,8 @@ manual of the WTC-GB (document 83527405, title page read only) and a product bro
 The system-manager settings of lot C were matched to the numbered parameters of KA by range,
 unit and factory value: `BlockingTime` = 537 (0 to 30 min, certain), `DHWSwitchDiff` = 575
 (-10 to -1 K, certain), `DHWLoadTime` = 577 (10 to 180 min, certain), `LegionellaSetpoint` =
-580 (40 to 80 °C; 574 has the same range), `LegionellaCirculationTime` = 583 (3 to 20 min,
+580 (40 to 80 °C; 574 has the same range), `RegulationP` = 539 (10 to 300) and `RegulationI` =
+540 (10 to 200), both certain and added on 2026-11-18, `LegionellaCirculationTime` = 583 (3 to 20 min,
 certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the manual prints
 1 to 400 h, the lot 0 to 250), `DeCoupleMinTemp` = 552 by meaning only (the manual prints 8 to
 78 °C, the lot 0 to 50), `CalorifierSwitchDiff` not matched (no parameter prints 1 to 20 K).
@@ -63,6 +64,7 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | first boiler, second boiler | première chaudière, seconde chaudière | | KA p. 18, 93 | vendor |
 | cascade | cascade | | KA p. 12, 18 | vendor |
 | boiler sequence (of the cascade) | ordre d'enclenchement des chaudières | | KA p. 82 | vendor |
+| power controller (of the cascade); factor 1/P; factor I | régulateur de puissance; facteur 1/P; facteur I | | KA p. 89, 90 (539, 540) | vendor |
 | running time | temps de marche; temps de fonctionnement | | KA p. 81; FS p. 94 | vendor |
 | heat source | générateur de chaleur | | FS p. 46 | vendor |
 | heating circuit | circuit de chauffage | | FS p. 7, 9; KA p. 10 | vendor |
