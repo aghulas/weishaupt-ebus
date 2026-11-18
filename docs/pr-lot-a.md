@@ -61,3 +61,54 @@ and the fault history are intentionally left out of this change.
 - One topic per commit.
 
 <!-- No AI-tool attribution in this text (project rule). -->
+
+---
+
+## Comment prepared on 2026-11-18 — not posted
+
+State: `weishaupt-A` and the local `weishaupt-pr` are at `4cd5a54`, two commits ahead of the
+branch of the pull request on the fork (`66b775e`, 14 commits, no review). Nothing is pushed.
+Pushing `weishaupt-pr` is a fast-forward (no force) and needs the owner's word (rule 8); the
+comment below is to be posted after that push, from the owner's account.
+
+The two changes are **two commits on top**, not amendments of the commits that own the code
+(`0cc3902` for `HcMode`, `f1a1337` for the register reads): the branch moves by a
+fast-forward, the fourteen commit ids already on the pull request stay valid, and each new
+commit message says what was observed, which a fold into the original commits would bury.
+It is also what was done for the three earlier corrections of this branch (`6583b61`,
+`2ce6a8d`, `66b775e`). A reviewer who reads the whole diff sees the corrected state either
+way. If the maintainer prefers a squashed history, the fold is one rebase away.
+
+The description of #717 names neither `DHWOperationMode` nor the field concerned, so it
+needs no change.
+
+### Text of the comment
+
+Two commits added on top; the earlier ones are unchanged.
+
+**`HcMode` with a heating module that has no outside sensor** (`b2e2db7`). Two of the three
+modules here have no outside sensor and send `00 9c` in the outside-temperature field of the
+exchange: -100.0, the value these devices give for a sensor that is not fitted. The field was
+`temp2`, whose range starts at -50, so ebusd refused the whole message for these two modules
+(`ERR: argument value out of valid range`) while the third decoded. The field now uses a
+`D2B` scalar in °C without a range, next to the `otemp10` the register reads already use for
+the same reason. Checked by injecting the three captured exchanges into ebusd without a bus:
+
+```
+70 51 50 14 07 01 00 05 e6 17 08 ff / 09 00 00 00 19 00 9c 04 96 10   outsidetemp=-100.000
+f0 52 50 14 07 03 00 1b b3 17 00 ff / 09 00 01 cd 19 00 9c 02 96 10   outsidetemp=-100.000
+30 50 50 14 07 01 00 06 4d 17 08 ff / 09 00 00 00 80 00 0b 04 a4 10   outsidetemp=11.000
+```
+
+**`DHWOperationMode` renamed `DHWLoadingPriority`** (`4cd5a54`). The register is not an
+operating mode. Its settings (priority, parallel, sliding) are those of the parameter the
+vendor's manual calls "DHW operation", in the chapter on the priority of DHW loading: whether
+a heating circuit is cut while the hot water is loaded. Name and comments follow the manual;
+address, type and value list are unchanged. One caveat, also written as a comment in the
+file: only the value 0 (`Priority`) has been read on a device. The manual lists the settings
+as priority, parallel, sliding; the list has 1 = `Sliding`, 2 = `Parallel`, and no read
+establishes either order. I left the values as they are rather than swap them without
+evidence; the message is read only.
+
+Both pass `tsp format --check`, `tsp compile` and `ebusd --checkconfig`.
+

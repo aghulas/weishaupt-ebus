@@ -32,6 +32,7 @@
 #             state are left out: ebusd's reading of all fields goes into the built file.
 #   error     in place of expect: ebusd refuses this telegram with the definitions as they
 #             are, with this error. A known defect, kept so that it cannot go unnoticed.
+#             No reading carries one since the correction of HcMode (release 0.4.4).
 #   case      what the reading is an example of: first-byte-not-zero, not-available,
 #             no-sensor, refused
 #   note      a remark for the reader of the built file
@@ -166,7 +167,7 @@ readings = [
   { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
   { message = "RoomSetbackTemp", master = "58 08 00", slave = "a0 00", expect = { value = 16.0 } },
   { message = "DHWSetpoint", master = "54 13 00", slave = "f4 01", expect = { value = 50.0 } },
-  { message = "DHWOperationMode", master = "d8 23 00", slave = "00 00", expect = { value = "Priority" } },
+  { message = "DHWLoadingPriority", master = "d8 23 00", slave = "00 00", expect = { value = "Priority" } },
   { message = "SupplyMaxTemp", master = "64 28 00", slave = "34 03", expect = { value = 82.0 } },
   { message = "ModulationStatus", master = "48 2c 00", slave = "08 00", expect = { value = 8 } },
   { message = "DHWExceeded", master = "14 2d 00", slave = "64 00", expect = { value = 10.0 } },
@@ -272,7 +273,7 @@ readings = [
   { message = "HcMode", master = "01 00 06 4d 17 08 ff", slave = "00 00 00 80 00 0b 04 a4 10", expect = { supplyhctemp = "-", outsidetemp = 11.0, boilermcboosttemp = 2.0, supplyhcmaxtemp = 82.0, supplyhcmintemp = 8.0 }, case = "not-available" },
 ]
 
-# em-hcmode, finding of 2026-11-18: ebusd refuses the exchange of the modules without an outside sensor
+# em-hcmode: a module without outside sensor answers -100.0 there (refused by ebusd up to release 0.4.3)
 [[block]]
 evidence = "em-hcmode"
 date = "2026-11-18"
@@ -281,7 +282,7 @@ type = "passive"
 qq = "70"
 where = "row"
 readings = [
-  { message = "HcMode", master = "01 00 05 e6 17 08 ff", slave = "00 00 00 19 00 9c 04 96 10", error = "argument value out of valid range", case = "refused", note = "outside temperature 00 9c (-100.0, no sensor) is outside the range of the field: ebusd refuses the whole telegram" },
+  { message = "HcMode", master = "01 00 05 e6 17 08 ff", slave = "00 00 00 19 00 9c 04 96 10", expect = { supplyhctemp = 25.0, outsidetemp = -100.0, boilermcboosttemp = 2.0, supplyhcmaxtemp = 75.0, supplyhcmintemp = 8.0 }, case = "no-sensor", note = "outside temperature 00 9c: -100.0, the module has no outside sensor" },
 ]
 
 # em-hcmode, the same on the third circuit
@@ -293,7 +294,7 @@ type = "passive"
 qq = "f0"
 where = "row"
 readings = [
-  { message = "HcMode", master = "03 00 1b b3 17 00 ff", slave = "00 01 cd 19 00 9c 02 96 10", error = "argument value out of valid range", case = "refused", note = "outside temperature 00 9c (-100.0, no sensor) is outside the range of the field: ebusd refuses the whole telegram" },
+  { message = "HcMode", master = "03 00 1b b3 17 00 ff", slave = "00 01 cd 19 00 9c 02 96 10", expect = { supplyhctemp = 25.8, outsidetemp = -100.0, boilermcboosttemp = 1.0, supplyhcmaxtemp = 75.0, supplyhcmintemp = 8.0 }, case = "no-sensor", note = "outside temperature 00 9c: -100.0, the module has no outside sensor" },
 ]
 
 # em1-clock-program: the hour, read with the hex command

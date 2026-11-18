@@ -12,7 +12,7 @@ archives:
 
 The CSV says how to read and decode a message. The metadata says what the CSV cannot: which
 device a message belongs to, where it sits in a menu, a short label in English and French,
-what kind of value it is, how the vendor tool polls it, and under which conditions a setting
+a label for each entry of a value list, what kind of value it is, how the vendor tool polls it, and under which conditions a setting
 may be written. Everything the CSV says is copied into the JSON, so that a consumer needs no
 CSV parser; nothing is retyped by hand.
 
@@ -28,7 +28,8 @@ CSV parser; nothing is retyped by hand.
   exist or a pattern does not match the stated number of messages, when a field of a
   multi-field message has no metadata, when a written setting has no write conditions or its
   evidence records do not name it, when a label lacks a language, when a menu or an evidence
-  record does not exist. A renamed, removed or added message therefore stops the check until
+  record does not exist, when an entry of a value list has no label in every language or a
+  label names an entry no value list has. A renamed, removed or added message therefore stops the check until
   the sidecar follows.
 
 ## Keys
@@ -50,13 +51,15 @@ definitions    version, commit of the integration branch, messages (528), csv_li
                loaded_by_ebusd (605: with the files of the official configuration that the
                archive also holds, which have no metadata), sidecar_sha256
 languages      ["en", "fr"]
-status         { menus, labels }: "proposed" or "accepted", and the date of the acceptance
-               (both accepted by the owner of the project on 2026-11-18)
+status         { menus, labels, values }: "proposed" or "accepted", and the date of the
+               acceptance (all three accepted by the owner of the project on 2026-11-18;
+               `values`, the labels of the value-list entries, from release 0.4.4 on)
 devices        <id>: type, label, circuits [{circuit, address, file}]
 menus          <device type>: [{id, parent, label, source}]
 messages       <circuit>/<name>: see below
 groups         [{family, circuit, device, id, label, members}]
-open           { poll, range, step }: keys of the messages that lack one (see "Left empty")
+open           { poll, range, step }: keys of the messages that lack one (see "Left empty");
+               value_labels: names of the value-list entries whose label is provisional
 ```
 
 `label` and `description` are always `{ "en": …, "fr": … }`.
@@ -90,7 +93,7 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 | `same_as` | key of a message of the same device that reads the same register |
 | `family`, `group`, `position` | for a message of a family, see "Families" |
 | `compose` | for a message with several fields, see "Fields" |
-| `renamed_from` | former key, when a release renames a message |
+| `renamed_from` | former key (`<circuit>/<name>`), when a release renames a message. Kept in later releases. First case: `ka/DHWLoadingPriority`, `ka/DHWOperationMode` up to 0.4.3 |
 | `fields` | list, in the order of the telegram |
 
 `kind` on the message is the default for its fields; a field may carry its own.
@@ -98,8 +101,8 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 ### Fields
 
 Each field has `name`, `type` and, when the CSV has them, `divisor`, `unit`, `values` (the
-value list, raw value to ebusd name), `min`, `max`, `step`, `description`. Fields of type
-`IGN` are left out.
+value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, `step`,
+`description`. Fields of type `IGN` are left out.
 
 - A message with one field is one value: its label is the message's.
 - A message with several fields has per field a `label` and a `kind`, or `skip: true` for a
@@ -111,8 +114,32 @@ value list, raw value to ebusd name), `min`, `max`, `step`, `description`. Field
 - A field matched by a pattern carries `group`, the numbers of its name (`code57` gives
   `{ "n": 57 }`).
 
-Value-list entries have no translated label yet: the ebusd name is all there is. Labels will
-come as one more key per value, without a change of schema.
+**Labels of the value-list entries** (from release 0.4.4 on). A field that has `values` also
+has `value_labels`, with the same raw values as keys:
+
+```
+"values":       { "0": "Priority", "1": "Sliding", "2": "Parallel" }
+"value_labels": { "0": { "en": "Priority", "fr": "Priorité" },
+                  "1": { "en": "Sliding",  "fr": "Mobile" },
+                  "2": { "en": "Parallel", "fr": "Parallèle" } }
+```
+
+- The label is only what an interface shows. ebusd returns the name (`Priority`), a write
+  takes the name, an MQTT payload carries the name: a consumer maps name to label for
+  display and never sends a label.
+- Every entry of every value list has a label in each language of the file (the check fails
+  otherwise): 7 lists, 38 entries, 793 fields in release 0.4.4. One name has one label
+  wherever it is used (`on` is "On" / "Marche" on every bit).
+- `open.value_labels` names the entries whose label is provisional because no source says
+  what the entry is (`ForcedVenting` in 0.4.4); such a label may change in a release of the
+  third number.
+- In the sidecar the labels are the table `[values]`, keyed by ebusd name; the weekdays are
+  not repeated there and take their label from `[days]`, which also names the days of the
+  program slots.
+- The on / off list labels outputs well ("Pump: On") and facts badly ("Fault: On"): for the
+  bits that are facts an interface is better served by its own wording per kind of bit.
+- A key added to a field without a change of `schema`: a consumer that ignores unknown keys
+  is not affected.
 
 ### Write conditions
 
@@ -209,7 +236,7 @@ readings     list, see below
 | `expect` | value per field as the evidence record states it, at the precision of the record (a record that says 11.3 agrees with 11.301). Only the fields the record states; `null` is the replacement value |
 | `decoded` | value of every field as ebusd decodes it: a number, the name of a value-list entry or a text (time, hex), `null` for the replacement value (ebusd prints `-`). Field names as in the metadata |
 | `text` | the values as ebusd returns them to `read -c <circuit> <message>`: joined by `;`, in field order |
-| `error` | in place of `expect`, `decoded` and `text`: ebusd refuses this telegram with the definitions of this release and returns this error. A known defect, see below |
+| `error` | in place of `expect`, `decoded` and `text`: ebusd refuses this telegram with the definitions of this release and returns this error. A known defect, see below; none in 0.4.4 |
 | `evidence`, `date` | record under `evidence/` of this repository, day of the capture |
 | `case` | what the reading is an example of, see below |
 | `note` | a remark |
@@ -226,14 +253,15 @@ written). The order of the list has no meaning.
 - `not-available`: a field holds the eBUS replacement value, `null` in `decoded`, `-` in
   `text` (outside temperature of the second boiler in its status, flow temperature of a
   circuit without mixer).
-- `no-sensor`: a temperature reads -40 or -40.0, the value a boiler gives for a sensor that
-  is not fitted. It decodes as a number; nothing in the telegram marks it.
-- `refused` (`em2/HcMode`, `em3/HcMode`): the heating modules without an outside sensor send
-  -100.0 as outside temperature, which lies outside the range the definition gives the field,
-  and ebusd rejects the whole message (`ERR: argument value out of valid range`). Until the
-  definition is corrected these two messages give an error in place of values on such an
-  installation; a single field can still be read (`read -c em2 HcMode supplyhctemp`).
-  `evidence/em-hcmode.md`, finding of 2026-11-18.
+- `no-sensor`: a temperature reads the value the device gives for a sensor that is not
+  fitted: -40 or -40.0 on a boiler, -100.0 on a heating module (`outsidetemp` of
+  `em2/HcMode` and `em3/HcMode`). It decodes as a number; nothing in the telegram marks it.
+- `refused`: ebusd rejects the telegram with the definitions of the release, and the reading
+  carries `error`. No reading of 0.4.4 is in this case. In the fixtures built on 0.4.3 the
+  two `HcMode` readings above were: -100.0 lay outside the range the field then had, and
+  ebusd gave `ERR: argument value out of valid range` for the whole message. Corrected in
+  0.4.4 (`evidence/em-hcmode.md`); with the definitions of 0.4.3 these two messages still
+  give that error on an installation whose module has no outside sensor.
 
 ### What a consumer may rely on
 

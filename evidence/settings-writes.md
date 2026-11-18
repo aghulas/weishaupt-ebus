@@ -123,7 +123,7 @@ Captures 2026-10-29 and 2026-11-16; record written on 2026-11-17.
 | register | what exists | what is missing |
 |---|---|---|
 | ka `RoomNormalTemp` `05 00`, `RoomSetbackTemp` `08 00`, `SupplyMaxTemp` `28 00`, `DHWSetpoint` `13 00` (read in lot A) | read at `15`; the operator's table lists hot-water setpoint and maximum flow as tested on 2026-10-30 | a captured `50 23` to `15`. Test from `ff`, then restore: `99 13 00 f9 01` (50.5) / `b1 13 00 f4 01` (50.0); `64 05 00 dc 00` (22.0) / `d8 05 00 d7 00` (21.5); `fc 08 00 a5 00` (16.5) / `8c 08 00 a0 00` (16.0); `b3 28 00 2f 03` (81.5) / `bf 28 00 34 03` (82.0) |
-| ka `DHWOperationMode` `23 00`, `DHWExceeded` `2d 00` (read in lot A) | read only | any write test; for the mode, a change of mode alters the hot-water priority: operator's decision |
+| ka `DHWLoadingPriority` `23 00` (`DHWOperationMode` until 0.4.3), `DHWExceeded` `2d 00` (read in lot A) | read only | any write test; for the priority, a change alters how the heating circuits are supplied while the hot water is loaded: operator's decision |
 | ka `ModulationStatus` `2c 00` (read in lot A) | read; the vendor register list calls it a setpoint | nothing says it is a setting. No write to try without the vendor's documentation |
 | ka de-couple maximum `e6 fd` | write from `31` acknowledged, value not taken (see register-write-crc.md) | a write from `ff`: `5f e6 fd 11 03` (78.5), then `c7 e6 fd 0c 03` (78.0) |
 | ka `RegulationP` `9f 02`, `RegulationI` `9e 02` | writes captured (`98 9f 02 64 00`, `90 9e 02 64 00`), equal to the stored value; marked as awaiting validation in the operator's table | a write of another value read back, for example `c4 9f 02 65 00` (101) then `98 9f 02 64 00` (100) |

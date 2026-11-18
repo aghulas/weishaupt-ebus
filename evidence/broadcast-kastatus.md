@@ -71,6 +71,10 @@ Kromschröder WCM/WTC condensing boiler on eBUS, scanning as `MF=Kromschröder`.
 - Only `_operatingPhase` values 0x00–0x09 (the normal operating phases) are enumerated; the
   fault/warning codes (0x0B+) the manual lists are not yet in the enum, and no fault state was
   observed on the live bus to confirm them.
+- `ForcedVenting` (0x09) has no source (noted 2026-11-18): the manual of the boiler lists the
+  phases 0 to 8 only (83251704, pages 46 and 89; English edition 83251702, page 39), the value
+  9 was never seen on the bus, and where the name comes from is not recorded. The entry is
+  kept in the list as it is, not established; the phases seen on the bus are 0 and 6.
 - The two bit bytes: only the named flags are interpreted; the `Ukn` bits are left unnamed.
 - The non-broadcast variant of this telegram (boiler master → another master) was also seen on
   the bus but is not shipped here; only the unambiguous broadcast form is.

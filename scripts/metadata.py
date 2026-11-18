@@ -12,9 +12,10 @@ after scripts/check.sh). The messages are those of the lot files, as scripts/i18
 them: ZZ.w.<circuit>.csv and, in broadcast.csv, the messages of LOT_BROADCAST.
 
 The sidecar (metadata/weishaupt.toml on the branch on top of the stack) holds only what the CSV
-does not say: devices, menus, short labels, kind, polling class, write conditions, evidence. An
-entry names a message of one or more circuits, or a pattern with the number of messages it
-must match in each circuit. The format is described in docs/companion-contract.md.
+does not say: devices, menus, short labels, labels of the value-list entries, kind, polling
+class, write conditions, evidence. An entry names a message of one or more circuits, or a
+pattern with the number of messages it must match in each circuit. The format is described in
+docs/companion-contract.md.
 The fixtures file of a release is made by scripts/fixtures.py, which uses read_tree and resolve.
 
 check fails (exit 1) when
@@ -26,6 +27,8 @@ check fails (exit 1) when
     not written, or its evidence does not name it;
   - an entry has no evidence record, or names a record that is not under evidence/;
   - a label lacks one of the languages, a menu or a device is unknown, the menus are not a tree;
+  - an entry of a value list of the lot files has no label in every language, or a label
+    names an entry no value list has, or a weekday is labelled in [values] as well as [days];
   - the sidecar repeats a range the CSV already has;
   - the status says accepted without the day of the acceptance.
 
@@ -167,6 +170,40 @@ def fmt(label, groups, days):
     return out
 
 
+def value_labels(side, msgs):
+    """Labels of the value-list entries, by ebusd name: ({name: {lang: label}}, provisional
+    names, problems). The weekdays come from [days], the same source as the labels of the
+    program slots, with a capital; every other entry from [values]."""
+    bad, labels, provisional = [], {}, []
+    for d in side.get("days", {}).values():
+        if has_langs(d):
+            labels[d["en"]] = {lang: d[lang][:1].upper() + d[lang][1:] for lang in LANGS}
+    from_days = set(labels)
+    for name, v in side.get("values", {}).items():
+        if not has_langs(v):
+            bad.append(f"values.{name}: needs {' and '.join(LANGS)}"); continue
+        extra = set(v) - set(LANGS) - {"provisional"}
+        if extra or not isinstance(v.get("provisional", False), bool):
+            bad.append(f"values.{name}: only {', '.join(LANGS)} and provisional = true")
+        if name in from_days:
+            bad.append(f"values.{name}: a weekday, its label comes from [days]"); continue
+        labels[name] = {lang: v[lang] for lang in LANGS}
+        if v.get("provisional"):
+            provisional.append(name)
+    used = {}
+    for key, m in msgs.items():
+        for f in m["fields"]:
+            for name in f.get("values", {}).values():
+                used.setdefault(name, f"{key}.{f['name']}")
+    for name, where in used.items():
+        if name not in labels:
+            bad.append(f"value-list entry {name} ({where}): no label in [values]")
+    for name in side.get("values", {}):
+        if name not in used:
+            bad.append(f"values.{name}: no value list of the lot files has this entry")
+    return labels, sorted(provisional), bad
+
+
 def group_values(groups, days):
     out = {}
     for k, v in groups.items():
@@ -190,7 +227,7 @@ def resolve(side, msgs):
     status = side.get("status", {})
     if side.get("schema") != SCHEMA:
         bad.append(f"schema is {side.get('schema')}, this script knows {SCHEMA}")
-    for what in ("menus", "labels"):
+    for what in ("menus", "labels", "values"):
         if status.get(what) not in STATUS:
             bad.append(f"status.{what} must be one of {', '.join(STATUS)}")
     if "accepted" in status.values() and not re.fullmatch(r"\d{4}-\d\d-\d\d", str(status.get("date", ""))):
@@ -345,6 +382,7 @@ def resolve(side, msgs):
         for mid in tree:
             if (typ, mid) not in used_menus and mid not in parents:
                 bad.append(f"menus.{typ}.{mid}: no message and no sub-menu")
+    bad += value_labels(side, msgs)[2]
     return resolved, bad
 
 
@@ -352,6 +390,7 @@ def assemble(side, msgs, resolved, langs):
     """The metadata of a release, as a plain structure. langs: {lang: messages of that tree}."""
     days = side.get("days", {})
     fieldsets = side.get("fields", {})
+    vlabels, vprovisional, _ = value_labels(side, msgs)
     out_msgs, groups, open_poll, open_range, open_step = {}, {}, [], [], []
     for key, m in msgs.items():
         r = resolved[key]
@@ -372,6 +411,8 @@ def assemble(side, msgs, resolved, langs):
             if f["type"].startswith("IGN"):
                 continue
             o = {k: f[k] for k in ("name", "type", "divisor", "unit", "values", "min", "max", "step") if k in f}
+            if "values" in f:
+                o["value_labels"] = {raw: vlabels[name] for raw, name in f["values"].items()}
             fdesc = {lang: tree[key]["fields"][i]["comment"] for lang, tree in langs.items()}
             if any(fdesc.values()):
                 o["description"] = fdesc
@@ -438,7 +479,7 @@ def assemble(side, msgs, resolved, langs):
                    for mid, m in tree.items()] for typ, tree in side["menus"].items()}
     return {
         "devices": devices, "menus": menus, "messages": out_msgs, "groups": list(groups.values()),
-        "open": {"poll": open_poll, "range": open_range, "step": open_step},
+        "open": {"poll": open_poll, "range": open_range, "step": open_step, "value_labels": vprovisional},
     }
 
 
@@ -491,7 +532,10 @@ def main():
     st = side["status"]
     print(f"{name}: ok, {len(msgs)} messages ({lines} CSV lines, {written} written) in "
           f"{len(side.get('entry', []))} entries, {len(data['devices'])} devices; "
-          f"menus {st['menus']}, labels {st['labels']}")
+          f"menus {st['menus']}, labels {st['labels']}; "
+          f"{sum(1 for m in data['messages'].values() for f in m['fields'] if 'value_labels' in f)} fields with "
+          f"a value list, labels of the entries {st['values']}"
+          + (f" ({', '.join(data['open']['value_labels'])} provisional)" if data["open"]["value_labels"] else ""))
     if pos[0] == "check":
         return
     if pos[0] == "summary":

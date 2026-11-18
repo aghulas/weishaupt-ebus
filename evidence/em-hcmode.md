@@ -60,7 +60,59 @@ that error; a single field other than the outside temperature can still be read
 (`read -c em2 HcMode supplyhctemp` gives 25.000). The exchange of `50`, whose outside
 temperature is a real value, decodes. On an installation whose module has no outside sensor,
 `em2/HcMode` and `em3/HcMode` therefore give an error in place of their values (checked on
-the CSV of release 0.4.3). Not corrected here: the model belongs to lot A.
+the CSV of release 0.4.3). Corrected in lot A the same day, next section.
+
+## Correction: a type without range for the outside temperature (2026-11-18)
+
+**Why ebusd refused.** The answer part of `HcMode` had `OutsideTemp: temp2`. `temp2` is the
+shared template of the official configuration: `D2B` (signed, one fraction byte) in °C with
+the range -50 to 127 and a step of 0.5, which the compile option `withMinMax` writes into the
+CSV (`-50-127:0.5`). ebusd checks a decoded value against the range of its field and, when
+one field fails, gives the error for the whole message. What the three modules send in that
+field:
+
+| circuit | bytes | as `D2B` | within -50 to 127 |
+|---|---|---|---|
+| em1 (`50`) | `00 0b` | 11.0 | yes |
+| em2 (`51`) | `00 9c` | -100.0 | no |
+| em3 (`52`) | `00 9c` | -100.0 | no |
+
+`00 9c` is not the replacement value of the type (`00 80`, which ebusd prints as `-` and
+which em1 sends as flow temperature): it is an ordinary value of `D2B`, the -100.0 this family
+answers for a temperature whose sensor is not fitted ([ka-reads.md](ka-reads.md): the same
+modules answer `18 fc`, -100.0 in signed tenths, to a register read of the outside
+temperature). No type of ebusd can turn it into "not available"; the definition can only stop
+refusing it.
+
+**The change.** In `src/wolf/wtc_inc.tsp` (lot A) the field has a type of its own,
+`otemp2`: `D2B` in °C without range, the counterpart of `otemp10` that the register reads
+already use for the same reason. The comment of the field says that -100.0 means a module
+without outside sensor. Only this field changes: the other temperatures of the exchange keep
+`temp2` (no value outside its range was seen on them), and so does the status broadcast of
+the boilers. In the compiled CSV the field loses its range and gains the sentence in its
+comment, in the three files `50.w.em1`, `51.w.em2`, `52.w.em3`; name, position and type
+(`D2B`) are the same, so a value read before reads the same.
+
+**Proof.** The three exchanges of the table above ("The three exchanges"), injected into the
+ebusd of `scripts/check.sh` started without a bus and loaded with the lot files compiled from
+the corrected lot A, then read back (`read -v -c <circuit> HcMode`):
+
+| circuit | flow | outside | boost | max | min |
+|---|---|---|---|---|---|
+| em1 | `-` (not available) | 11.000 | 2.0 | 82.0 | 8.0 |
+| em2 | 25.000 | -100.000 | 2.0 | 75.0 | 8.0 |
+| em3 | 25.801 | -100.000 | 1.0 | 75.0 | 8.0 |
+
+em1 reads what it read before the change; em2 and em3, refused before, decode to the values
+the layout gives. The two readings are in [fixtures.toml](fixtures.toml) with their values
+(case `no-sensor`) in place of the error, and step 7 of `scripts/check.sh` decodes them at
+every run.
+
+**What a reader of the value must know.** -100.0 is a number like any other in the telegram:
+an interface has to treat it as "no sensor", as it does for the -40 of a boiler without
+outside sensor. Not established: whether a module with a sensor can send a value below -50
+(the reason no lower bound was put back), and whether the same -100.0 can appear in the
+other temperatures of the exchange.
 
 ## Equipment
 
@@ -68,7 +120,8 @@ Kromschröder WCM-FS heating modules (room units) on eBUS, `MF=Kromschröder`, t
 
 ## Date
 
-2026-11-16.
+2026-11-16; the three exchanges with their source, the finding and the correction on
+2026-11-18.
 
 ## Not verified
 

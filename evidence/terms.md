@@ -118,7 +118,8 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | domestic hot water; hot water | ECS (eau chaude sanitaire) | | FS p. 28, 89; KA p. 30; WTC p. 43 | vendor |
 | domestic hot water sensor B3 | sonde ECS B3 | | KA p. 10; FS p. 9; WTC p. 39 | vendor |
 | hot water setpoint; configured | consigne de température ECS; réglée | | KA p. 28, 30; WTC p. 44 | vendor |
-| hot water operating mode | mode de fonctionnement ECS | | WTC p. 42; KA p. 32 | vendor |
+| priority of the hot water loading (over the heating circuit); parameter "DHW operation" | priorité de la charge ECS; paramètre "Service ECS" | | FS p. 59 (P423, P463), FS-en p. 55; KA p. 99 | vendor |
+| (hot water loading) with priority, in parallel, sliding | prioritaire, en parallèle, mobile | | FS p. 59, FS-en p. 55 | vendor |
 | hot water exceed temperature | surélévation de température ECS | | KA p. 98 (576); FS p. 87 (P603) | vendor |
 | switching differential | différentiel de commutation | | KA p. 97 (575); FS p. 86 (P602); WTC p. 51 (P 51) | vendor |
 | calorifier | stock tampon | | no sure vendor term: paired through WTC-en p. 25 and WTC p. 30 only; KA p. 93 (562) is the nearest parameter | owner |
@@ -194,6 +195,15 @@ is one comment carried by every memory read (fault history, counters, live value
 counters), and its wording was generalised from "all counters read 0" to "the data read 0". The
 Wolf messages are left in English on the
 owner's decision of 2026-11-18; the key check does not expect a key for them.
+
+Since that count: 277 strings and keys with release 0.4.2 (three boiler information values),
+278 with the changes of lot A of 2026-11-18 (release 0.4.4). There the two strings of the
+former `DHWOperationMode` ("hot water operating mode", "domestic hot water operating mode")
+left, and three came: the two comments of `DHWLoadingPriority` (rows "priority of the hot
+water loading" and "with priority, in parallel, sliding") and the comment of the outside
+temperature of `HcMode`, which says that a module without outside sensor answers -100.0
+(rows "outside temperature", "outside sensor", "heating module"). All three are made of
+vendor terms only; none is provisional.
 
 ## To validate
 
@@ -283,7 +293,7 @@ the owner on 2026-11-18 as well; both accepted as written.
 | [ ] | the check compiles a German tree too | `de.yaml` has 6 keys of the lot strings, the rule is "a file with keys of the lot files" | compile only the fork's own files (shorter check) |
 | [ ] | languages of the release: `RELEASE_LANGS`, default `fr`; no German archive | six coincidental German words are not a translation | one archive per compiled language |
 | [ ] | trial archives named `0.3.0-dev` | not to be taken for a release | none kept |
-| [ ] | value lists (operating phases, on / off) are left in English | they are what `write` and MQTT use; the emitter cannot translate them | a later mechanism; the French names are in WTC p. 46 |
+| [ ] | value lists (operating phases, on / off) are left in English in the CSV | they are what `write` and MQTT use; the emitter cannot translate them | since 2026-11-18 the entries have labels in the metadata, section "Labels of the value-list entries" |
 
 ## Short labels of the metadata
 
@@ -313,7 +323,68 @@ that date.
 
 Decided at the same time: the labels follow the glossary and not the abbreviations of the
 displays ("Tps blocage", "Lim antigel"); the boiler information values keep their code in
-brackets; value-list entries stay untranslated for now.
+brackets. Value-list entries stay untranslated in the CSV and have labels in the metadata
+since 2026-11-18 (next section).
+
+## Labels of the value-list entries
+
+The seven value lists of the lot files have 38 entries. The name of an entry (`BurnerOff`,
+`on`) is what ebusd reads, writes and publishes and is not translated; the metadata sidecar
+gives each name a label in English and French (table `[values]` of
+`metadata/weishaupt.toml`; the weekdays from its table `[days]`). The English label is the
+name in readable words, which for the operating phases is the vendor's English (WTC-en
+p. 39). The labels were proposed to the owner of the project on 2026-11-18 and accepted as
+written the same day, with the form recommended for each choice. Status as in the glossary;
+`owner` here carries the date 2026-11-18.
+
+| English label | French label | List (entry) | Source | Status |
+|---|---|---|---|---|
+| Burner off | Brûleur arrêté | operating phase 0 (`BurnerOff`) | WTC p. 46, 89 | vendor |
+| Standby check fan | Contrôle du ventilateur à l'arrêt | operating phase 1 (`StandbyCheckFan`) | WTC p. 46, 89 | vendor |
+| Prepurge speed achieved | Atteindre vitesse de préventilation | operating phase 2 (`PrepurgeSpeedAchieved`) | WTC p. 46, 89, as printed | vendor |
+| Prepurge | Préventilation | operating phase 3 (`Prepurge`) | WTC p. 46, 89 | vendor |
+| Ignition speed achieved | Atteindre vitesse d'allumage | operating phase 4 (`IgnitionSpeedAchieved`) | WTC p. 46, 89, as printed | vendor |
+| Ignition | Allumage | operating phase 5 (`Ignition`) | WTC p. 46, 89 | vendor |
+| Burner in operation | Brûleur en service | operating phase 6 (`BurnerInOperation`) | WTC p. 46, 89 | vendor |
+| Gas valve check | Contrôle vannes gaz | operating phase 7 (`GasValveCheck`) | WTC p. 89 (p. 46 prints a longer form) | vendor |
+| Post purge | Post-ventilation | operating phase 8 (`PostPurge`) | the word is the vendor's (WTC p. 46, 89); the manual prints a two-step phrase, the short form was accepted by the owner | owner |
+| Forced venting | Ventilation forcée | operating phase 9 (`ForcedVenting`) | none: no manual lists a phase 9, no record shows the value or the origin of the name | provisional |
+| Fault | Défaut | fault kind 0 (`fault`) | WTC p. 87 | vendor |
+| Warning | Alarme | fault kind 1 (`warning`) | WTC p. 86 | vendor |
+| Off | Arrêt | on / off 0 (`off`) | KA p. 103; FS p. 47 | vendor |
+| On | Marche | on / off 1 (`on`) | KA p. 103; FS p. 47 | vendor |
+| Priority | Priorité | hot-water loading priority 0 (`Priority`) | FS p. 59; KA p. 99 | vendor |
+| Sliding | Mobile | hot-water loading priority 1 (`Sliding`) | FS p. 59 | vendor |
+| Parallel | Parallèle | hot-water loading priority 2 (`Parallel`) | FS p. 59 (the display abbreviates) | vendor |
+| Enabled | Activé | switch time 0 (`Enabled`) | no vendor word: the display shows dashes for an unused time (KA p. 107) | owner |
+| Disabled | Désactivé | switch time 1 (`Disabled`) | same | owner |
+| Monday | Lundi | weekday 1 (`Monday`) | KA p. 101, 106 | vendor |
+| Tuesday | Mardi | weekday 2 (`Tuesday`) | KA p. 101, 106 | vendor |
+| Wednesday | Mercredi | weekday 3 (`Wednesday`) | KA p. 106, 107 | vendor |
+| Thursday | Jeudi | weekday 4 (`Thursday`) | glossary row "Monday … Sunday" | vendor |
+| Friday | Vendredi | weekday 5 (`Friday`) | KA p. 101; FS p. 39 | vendor |
+| Saturday | Samedi | weekday 6 (`Saturday`) | glossary row "Monday … Sunday" | vendor |
+| Sunday | Dimanche | weekday 7 (`Sunday`) | KA p. 101, 106 | vendor |
+| January | Janvier | month 1 (`January`) | calendar word; the manuals print no month name in full (KA p. 105) | owner |
+| February | Février | month 2 (`February`) | same | owner |
+| March | Mars | month 3 (`March`) | same | owner |
+| April | Avril | month 4 (`April`) | same | owner |
+| May | Mai | month 5 (`May`) | same | owner |
+| June | Juin | month 6 (`June`) | same | owner |
+| July | Juillet | month 7 (`July`) | same | owner |
+| August | Août | month 8 (`August`) | same | owner |
+| September | Septembre | month 9 (`September`) | same | owner |
+| October | Octobre | month 10 (`October`) | same | owner |
+| November | Novembre | month 11 (`November`) | same | owner |
+| December | Décembre | month 12 (`December`) | same | owner |
+
+22 `vendor`, 15 `owner`, 1 `provisional`. The forms chosen where the vendor prints two: the
+short "Contrôle vannes gaz" for phase 7, phases 2 and 4 as printed, "Marche" / "Arrêt" for
+on and off, the months and every label with a capital. The label of `ForcedVenting` stays
+`provisional` until a source says what phase 9 is (the fan running, or air bled from the
+water side); the value itself is kept in the list (finding below). "Marche" / "Arrêt" suit
+the bits that are outputs; an interface should word the bits that are facts (flame, fault,
+service) itself rather than through this label.
 
 ## Findings: English wording of the lots and of the vendor
 
@@ -371,8 +442,22 @@ Findings on content, for the owner:
 - **Fault log entry**: the display numbers the entries from 01, the most recent (KA p. 110);
   the lot's `ErrorId` counts from 0. Not a contradiction, the register is an index.
 - **Operating phases**: the value-list entries of the lots are the vendor's English phase
-  names (WTC-en p. 39); `ForcedVenting` (9) is in neither edition. Value lists are not
-  translated; the French names are in WTC p. 46 if a later mechanism needs them.
+  names (WTC-en p. 39). Value lists are not translated in the CSV; their labels are in the
+  section "Labels of the value-list entries".
+- **`ForcedVenting` (operating phase 9) is carried without a source.** The phase list of the
+  Info menu stops at 8 in both editions (WTC p. 46 and 89, WTC-en p. 39), no record under
+  `evidence/` shows the value 9 on the bus, and the origin of the name is not recorded; the
+  phases seen on the bus are 0 and 6. The entry is kept (a list entry that is never received
+  decodes nothing wrongly, and removing it would retype the field), with this line as its
+  record: not established. Its label is `provisional`.
+- **Hot-water loading priority (was `DHWOperationMode`).** The glossary row "hot water
+  operating mode" (WTC p. 42, KA p. 32: the hot-water mode of the user level) had been
+  applied to register `23 00` of the system manager, which is the parameter "DHW operation"
+  / "Service ECS" of the chapter on the priority of the hot-water loading (FS p. 59, FS-en
+  p. 55). Corrected on the owner's decision of 2026-11-18: the message is
+  `DHWLoadingPriority`, the row is replaced by the two rows on the loading priority, and no
+  comment uses "hot water operating mode" any more. Of its three values only 0 was read;
+  1 and 2 are not established ([ka-reads.md](ka-reads.md), note of 2026-11-18).
 
 ## Not verified
 
@@ -390,4 +475,6 @@ Findings on content, for the owner:
 ## Equipment and date
 
 Manuals of the device types of the test installation: two WTC-GB condensing boilers in
-cascade, system manager WCM-KA, room units WCM-FS and heating modules WCM-EM. 2026-11-17.
+cascade, system manager WCM-KA, room units WCM-FS and heating modules WCM-EM. 2026-11-17;
+labels of the value-list entries and loading priority, 2026-11-18 (FS p. 59 and FS-en p. 55
+read again that day).

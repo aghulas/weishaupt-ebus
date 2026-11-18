@@ -22,15 +22,16 @@ as `r` messages with `PBSB = 50 22` and ID `<crc> <addr> <sub>`, the `<crc>` pre
 | RoomNormalTemp | 05 00 | `700500` | UIN/10 °C | 21.5 |
 | RoomSetbackTemp | 08 00 | `580800` | UIN/10 °C | 16.0 |
 | DHWSetpoint | 13 00 | `541300` | UIN/10 °C | 50.0 |
-| DHWOperationMode | 23 00 | `d82300` | UIN enum | Priority |
+| DHWLoadingPriority | 23 00 | `d82300` | UIN enum | Priority |
 | BlockingTime | 25 00 | `4c2500` | UIN min | 1 |
 | SupplyMaxTemp | 28 00 | `642800` | UIN/10 °C | 82.0 |
 | ModulationStatus | 2c 00 | `482c00` | UIN % | 8 |
 | DHWExceeded | 2d 00 | `142d00` | UIN/10 °C | 10.0 |
 
 The last eight are the **read side of settings that are also writable** (`50 23`); only the read
-is shipped here, the write belongs to a later lot. `DHWOperationMode` decodes its enum
-(0=Priority, 1=Sliding, 2=Parallel) to `Priority`, consistent with the heating-only use here.
+is shipped here, the write belongs to a later lot. `DHWLoadingPriority` (named
+`DHWOperationMode` until release 0.4.3) decodes its enum (0=Priority, 1=Sliding, 2=Parallel)
+to `Priority`; see the note of 2026-11-18 below for what is established about this list.
 
 ## How it was established
 
@@ -128,10 +129,47 @@ ID of the definition; the answer is the two data bytes after the length byte `02
 | RoomNormalTemp | `70 05 00` | `d7 00` | 21.5 |
 | RoomSetbackTemp | `58 08 00` | `a0 00` | 16.0 |
 | DHWSetpoint | `54 13 00` | `f4 01` | 50.0 |
-| DHWOperationMode | `d8 23 00` | `00 00` | Priority |
+| DHWLoadingPriority | `d8 23 00` | `00 00` | Priority |
 | SupplyMaxTemp | `64 28 00` | `34 03` | 82.0 |
 | ModulationStatus | `48 2c 00` | `08 00` | 8 |
 | DHWExceeded | `14 2d 00` | `64 00` | 10.0 |
 
 Eleven of the twelve values are those of 2026-11-16; the heat demand is a live value. These
 readings are transcribed in [fixtures.toml](fixtures.toml).
+
+## Note of 2026-11-18 — DHWLoadingPriority: name, and what is established about its values
+
+**Name.** Register `23 00` was shipped as `DHWOperationMode`, "hot water operating mode". Its
+three settings are those of a parameter of the room unit that the vendor calls "DHW
+operation" ("Service ECS" in French; P423 and P463), described in the chapter on setting the
+priority of DHW loading: manual of the room unit WCM-FS 2.0 and of the heating module
+WCM-EM 2.1, English edition 83277502, page 55, French edition 83277504, page 59. It says
+what happens to a heating circuit while the hot water is loaded. The operating mode of the
+hot water is another thing, a choice of the user level. On the owner's decision of
+2026-11-18 the message is `DHWLoadingPriority` from release 0.4.4 on, and its comments
+follow the manual; address, type and value list are unchanged. The name keeps the `DHW`
+prefix of its neighbours (`DHWSetpoint`, `DHWExceeded`) and takes the words of the chapter
+rather than the name of the parameter, which says nothing of what is set and is close to
+the name it replaces.
+
+**What the three settings mean** (same pages): priority, the heating circuit is cut while the
+hot water is loaded; parallel, both are supplied; sliding, the heating circuit is cut when
+the boiler is less than 10 K above the hot-water temperature and supplied again in parallel
+above 20 K.
+
+**Values.** Established by a read: 0 only. The register answered `00 00` on 2026-11-16 and
+on 2026-11-18 (table above), and the list decodes it to `Priority`. That agrees with the
+manual, which says on the same pages that the direct heating circuit always has the setting
+"priority" and that the parameter is hidden for it: `15` is the system manager, whose own
+circuit is the direct one.
+
+Not established: 1 and 2. The list has 1 = `Sliding`, 2 = `Parallel`; both editions of the
+manual list the settings in the order priority, parallel, sliding. The order on a page does
+not prove the register values, and no record supports the order of the list either: 1 and 2
+may be swapped. The origin of the order in the list is not recorded. The list is left as it
+is, because a swap would be as unproven as what it replaces; a comment in
+`src/wolf/15.w.ka.tsp` says the same. What would settle it: a read of register `23 00` on a
+device whose setting is parallel or sliding (a heating circuit of a room unit, P423 or P463,
+if the register exists there), or after the operator has changed the setting; neither was
+done, and changing a setting is the operator's (rule 7). The message is read only in every
+lot, so no value of the list is ever sent.
