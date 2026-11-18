@@ -57,6 +57,8 @@ KINDS = ("live", "state", "counter", "diagnostic", "setting", "program_slot")
 POLLS = ("cyclic", "on_demand")  # "passive" is derived from the message type
 RISKS = ("comfort", "regulation")  # "structural" settings are never writable
 PROOFS = ("captured", "change-observed")
+# Range of a write the definitions cannot carry (a fractional bound on an integer register).
+WRITE_RANGE = ("min", "max", "step")
 STATUS = ("proposed", "accepted")
 RANGE_RE = re.compile(r"^(-?[\d.]+)-(-?[\d.]+)(?::([\d.]+))?$")
 
@@ -301,6 +303,15 @@ def resolve(side, msgs):
                 bad.append(f"{where}: write.risk must be one of {', '.join(RISKS)}")
             if w.get("proof") not in PROOFS:
                 bad.append(f"{where}: write.proof must be one of {', '.join(PROOFS)}")
+            for k in WRITE_RANGE:
+                if k in w and (isinstance(w[k], bool) or not isinstance(w[k], (int, float))):
+                    bad.append(f"{where}: write.{k} must be a number")
+            if ("min" in w) != ("max" in w):
+                bad.append(f"{where}: write.min and write.max go together")
+            elif "min" in w and not w["min"] < w["max"]:
+                bad.append(f"{where}: write.min must be below write.max")
+            if any(k in w for k in WRITE_RANGE) and not w.get("range_source"):
+                bad.append(f"{where}: write range without write.range_source (record, document and page)")
         fs = e.get("fields")
         if fs is not None and fs not in fieldsets:
             bad.append(f"{where}: field set '{fs}' does not exist"); fs = None
@@ -350,6 +361,9 @@ def resolve(side, msgs):
                     bad.append(f"{key}: passive message, poll must be absent")
                 if any(k in e for k in ("range", "step")) and any("min" in f for f in m["fields"]):
                     bad.append(f"{key}: the CSV already has a range, the metadata must not repeat one")
+                if w is not None and any(k in w for k in WRITE_RANGE) and any(
+                        k in f for f in m["fields"] for k in WRITE_RANGE if k in w):
+                    bad.append(f"{key}: write range repeats a bound the CSV already has")
                 if "same_as" in e and e["same_as"].format(circuit=c, name=m["name"]) not in msgs:
                     bad.append(f"{key}: same_as names a message that does not exist")
                 # fields
@@ -459,10 +473,15 @@ def assemble(side, msgs, resolved, langs):
             w = e["write"]
             o["write"] = {"source": w["source"], "runtime_checksum": m["wcrc"], "risk": w["risk"],
                           "proof": w["proof"], "open": w.get("open", [])}
+            for k in WRITE_RANGE:
+                if k in w:
+                    o["write"][k] = w[k]
+            if "range_source" in w:
+                o["write"]["range_source"] = w["range_source"]
             f0 = fields[0]
-            if "min" not in f0:
+            if "min" not in f0 and "min" not in w:
                 open_range.append(key)
-            if "step" not in f0:
+            if "step" not in f0 and "step" not in w:
                 open_step.append(key)
         o["fields"] = fields
         out_msgs[key] = o

@@ -153,9 +153,15 @@ message without `write` must not be written, whatever its kind.
 | `risk` | `comfort`: may be written directly once writes are enabled. `regulation`: only after a confirmation that shows current value, new value and range. Structural settings are never writable and never appear here |
 | `proof` | `captured`: write telegram captured, acknowledged, and the register read back with the same value. `change-observed`: in addition a change of value was seen on the bus and read back |
 | `open` | questions that may still remove the setting; `copy-in-use`: a room unit and its heating module both answer this register, and which copy the regulation uses is not established |
+| `min`, `max`, `step` | (from 0.5.5) range of the write where the field has none: the definitions cannot carry a fractional bound on an integer register (setback room setpoint 10.0 to 21.5, heating curve 2.5 to 40.0). Never present when the field has them |
+| `range_source` | with `min` / `max` / `step`: the document and page the range comes from |
 
-Range and step are those of the field (`min`, `max`, `step`). Nothing is written while the
-vendor service tool is connected: it uses the same source address.
+Range and step are those of the field (`min`, `max`, `step`), or of the write conditions when
+the field has none. Nothing is written while the vendor service tool is connected: it uses
+the same source address.
+
+Risk class `comfort`: the normal and setback room setpoints and the hot-water setpoint, on
+every device that writes them; every other written setting is `regulation`.
 
 ### Families
 
@@ -177,10 +183,14 @@ Where no record establishes a value, the metadata has none; `open` lists the key
   slots and diagnostics `on_demand`. Counters and states have no default, which leaves the
   service-hours counter of the boilers without a class. No interval is given anywhere: the
   load a bus accepts has not been measured, and choosing intervals is the consumer's.
-- **Range** of two written settings (`em2/RoomSetbackTemp`, `em2/GradientCurve`) and **step**
-  of five (these two, and three integer registers whose range has no step).
-- **Linked bounds** (setback below normal, minimum below maximum) are in no record and
-  therefore not in the metadata.
+- **Step** of the integer registers whose range has no step (`BlockingTime`,
+  `ChangeOverTime`, `RegulationP`, `RegulationI`, `SwitchOnRuntime`): one unit of the
+  register.
+- **Linked bounds**. The user manual of the room unit shows them (the setback setpoint goes up
+  to the normal one, the normal down to the setback one; the flow setpoints likewise), but the
+  metadata has no key for them yet; a consumer applies them itself. Proposed key, not in the
+  file: `write.below` / `write.above`, the name of the message on the same circuit whose
+  current value bounds this one.
 
 ## Compatibility
 

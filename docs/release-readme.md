@@ -22,13 +22,17 @@ to the official ebusd configuration; this archive exists so that they can be use
 `50.w.em1`, `51.w.em2` and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.3
+## Changes since 0.5.4
 
-- **Two more settings can be written, 66 in all**: `SupplyMaxTemp` and `SupplyMinTemp` of
+- **Metadata only; the definitions are those of 0.5.4.** The setback room setpoint and the
+  heating curve of every circuit get a range in their write conditions (10.0 to 21.5 and
+  2.5 to 40.0, step 0.5, from the user manual of the room unit), which the definitions cannot
+  carry. The normal and setback room setpoints and the hot-water setpoint are class `comfort`
+  on every device (before: only on `51.w.em2`).
+- From 0.5.3 to 0.5.4: **two more settings can be written, 66 in all**: `SupplyMaxTemp` and `SupplyMinTemp` of
   `50.w.em1`. They are taken only from `ff` (written from another address they are
   acknowledged and not taken); each was seen on the test installation changed by one step from
-  `ff`, read back with the new value and restored.
-- No message renamed or removed; the two keep their names and ids.
+  `ff`, read back with the new value and restored; no message renamed or removed.
 - From 0.5.2 to 0.5.3: 42 settings became writable (64 in all) and five reads were added
   (`DHWSetpoint` of the three room units, `BoilerMCBoostTemp` of `75.w.fs2` and `f5.w.fs3`).
 - From 0.4.x: 0.5.0 renamed `DHWOperationMode` of `15.w.ka` to `DHWLoadingPriority` (the

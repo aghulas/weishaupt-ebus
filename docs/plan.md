@@ -37,7 +37,7 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `f6bae02` (1 commit on H), pushed | `bc-fault-counters` |
 | K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `b5f0bd9` (2 commits on J), pushed | `bc-info-values` |
 | L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `0e6c0bc` (10 commits on K; no new string since 0.5.1), pushed | `terms` |
-| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` (6 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`, the metadata of the three settings of 0.5.1, then of two more with every written setting `change-observed`, then the eleven of `fs2` and of `fs3`, five of `em1`, six of `em3`, seven more of `fs1`, two of `ka`, the flow limits of `em1`), `27ffd95` (13 commits), pushed | the records the entries name; `service-tool-log` for the polling classes |
+| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` (6 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`, the metadata of the three settings of 0.5.1, then of two more with every written setting `change-observed`, then the eleven of `fs2` and of `fs3`, five of `em1`, six of `em3`, seven more of `fs1`, two of `ka`, the flow limits of `em1`, then the write ranges and comfort classes of 0.5.5), `f12cedf` (14 commits), local; fork `27ffd95` (0.5.4) | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -152,6 +152,15 @@ data point on arbitration with room units).
 ## Open
 
 ### Needs the owner
+
+- **Release 0.5.5 (prepared locally on 2026-11-18, nothing pushed): metadata only.** Write
+  ranges of the setback setpoint and the curve (12 settings), comfort class for the room and
+  hot-water setpoints on every device (14 changed, 16 in all), a key added to the contract
+  (`write.min` / `max` / `step` / `range_source`). CSV identical to 0.5.4. To publish, on the
+  owner's word: force-push `weishaupt-M` `f12cedf` (C to L unchanged since 0.5.4); force
+  `weishaupt` to the trial `weishaupt-next` `75f943f`; push the workbench `main`; publish
+  `weishaupt-0.5.5` with the five files in `out/release/`. Linked bounds: proposed key
+  `write.below` / `write.above` in `docs/companion-contract.md`, not in the file.
 
 - **Release 0.5.4: done** (2026-11-18, see "Current state").
 - **Release 0.5.3: done** (2026-11-18, see "Current state").
@@ -392,6 +401,19 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-18, companion review, metadata part (owner: « je suis d'accord avec tes avis »);
+  trial 0.5.5 (local).** Ranges: setback setpoint 10.0–21.5 and curve 2.5–40.0, step 0.5,
+  checked in the user manual of the WCM-FS 2.0 (83277702, p. 29 and 31); TypeSpec refuses a
+  fractional bound on an integer register, so they are in the write conditions of the
+  metadata (`min`, `max`, `step`, `range_source`), checked by `scripts/metadata.py` (never
+  repeating a bound of the CSV). The manual's bounds are linked (setback up to normal, normal
+  down to setback): no key for them, one proposed in the contract. Risk class: the rule of the
+  companion scoping (room setpoints and hot-water setpoint comfort) applied on every device.
+  Discovery: registers of unused functions answer `0x8000`. Trial
+  `INTEGRATION=weishaupt-next scripts/release.sh 0.5.5`, `weishaupt-next` `75f943f`: seven steps
+  clean, 662 messages, CSV identical to 0.5.4, metadata: 21 messages differ (12 ranges, 14
+  classes), `open.range` empty, `open.step` down to the five integer registers.
 
 - **2026-11-18, batch 7 (flow limits of `em1` from `ff`) and trial release 0.5.4 (local).**
   Flow maximum and minimum of `50` changed and restored from `ff` (16:28 to 16:29, raw

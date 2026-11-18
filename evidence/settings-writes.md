@@ -27,9 +27,9 @@ each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the ru
 | ka | SupplyMaxTemp (batch 6) | `28 00` | UIN/10, °C | 8–82, step 0.5 | `ff` |
 | ka | DHWSetpoint (batch 6) | `13 00` | UIN/10, °C | 40–60, step 0.5 | `ff` |
 | em2 (`51`) | RoomNormalTemp | `05 00` | UIN/10, °C | 16–35, step 0.5 | `ff` |
-| em2 | RoomSetbackTemp | `08 00` | UIN/10, °C | none (10.0–21.5) | `ff` |
+| em2 | RoomSetbackTemp | `08 00` | UIN/10, °C | none in the definition; 10.0–21.5, step 0.5 in the metadata | `ff` |
 | em2 | RoomFrostProtectionTemp | `14 0a` | UIN/10, °C | 4–16, step 0.5 | `ff` |
-| em2 | GradientCurve | `0e 01` | UIN/10 | none (2.5–40.0) | `ff` |
+| em2 | GradientCurve | `0e 01` | UIN/10 | none in the definition; 2.5–40.0, step 0.5 in the metadata | `ff` |
 | em2 | SummerWinterChangeOverTemp | `16 01` | UIN/10, °C | 8–30, step 0.5 | `ff` |
 | em2 | SupplyMaxTemp | `28 00` | UIN/10, °C | 8–82, step 0.5 | `31` |
 | em2 | SupplyMinTemp | `2b 01` | UIN/10, °C | 8–82, step 0.5 | `31` |
@@ -105,6 +105,14 @@ Further points:
 - `FrostProtectionLimitTemp`: the operator's test went 0.0, -0.5, 0.0, hence the signed type.
 - `ChangeOverTime` is a number of hours with factor 1 on a 16-bit register (`32 00` = 50),
   which closes the entry of 2026-11-16 in `docs/discoveries.md` for this register.
+- `RoomSetbackTemp` and `GradientCurve`, every circuit: the definitions carry no range (a
+  fractional bound on an integer register does not compile). Since 0.5.5 the metadata gives
+  10.0 to 21.5 and 2.5 to 40.0, step 0.5, in the write conditions, from the English user
+  manual of the WCM-FS 2.0 (document 83277702, page 29, section 4.7.10, and page 31, section
+  4.7.14), read on 2026-11-18. The setback range shown there ends at the normal setpoint of the
+  screen (21.5, factory value), and the normal range starts at the setback one (16.0): the
+  manual's bounds are linked. The curve range is that of the circuit type "Universal"; other
+  types narrow it (radiator 60: 8.0 to 20.0; radiator 70: 11.0 to 25.0).
 - `RegulationP`, `RegulationI`: ranges 10 to 300 and 10 to 200, factory value 100, from the
   French installation manual of the WCM-KA 3.0 (document 83258404, pages 89 and 90, sections
   6.7.21 and 6.7.22, parameters 539 and 540), read on 2026-11-18. The manual gives no step;
