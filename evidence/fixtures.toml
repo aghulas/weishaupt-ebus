@@ -490,6 +490,34 @@ readings = [
   { message = "DHWSetpoint", master = "54 13 00", slave = "f4 01", expect = { value = 50.0 } },
 ]
 
+# settings-writes, on-site batch 7: change and restore of the flow limits of the direct circuit (50); source ff
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em1"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "SupplyMaxTemp", master = "b3 28 00 2f 03", slave = "", expect = { value = 81.5 } },
+  { message = "SupplyMaxTemp", master = "bf 28 00 34 03", slave = "", expect = { value = 82.0 } },
+  { message = "SupplyMinTemp", master = "00 2b 01 55 00", slave = "", expect = { value = 8.5 } },
+  { message = "SupplyMinTemp", master = "70 2b 01 50 00", slave = "", expect = { value = 8.0 } },
+]
+
+# settings-writes, on-site batch 7: the read at 50 after the change and after the restore
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em1"
+where = "row"
+readings = [
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "2f 03", expect = { value = 81.5 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "34 03", expect = { value = 82.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "55 00", expect = { value = 8.5 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"

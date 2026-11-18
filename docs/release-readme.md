@@ -18,28 +18,19 @@ to the official ebusd configuration; this archive exists so that they can be use
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
-@COUNT@ messages. Reads only, except the 64 settings of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
+@COUNT@ messages. Reads only, except the 66 settings of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
 `50.w.em1`, `51.w.em2` and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.2
+## Changes since 0.5.3
 
-- **42 more settings can be written, 64 in all.** Each was seen on the test installation
-  changed by one step, read back with the new value and restored:
-  - `15.w.ka`: `SupplyMaxTemp`, `DHWSetpoint`;
-  - `35.w.fs1`: `DHWSetpoint`, `GradientCurve`, `RoomNormalTemp`, `RoomSetbackTemp`,
-    `SummerWinterChangeOverTemp`, `SupplyMaxTemp`, `SupplyMinTemp`;
-  - `50.w.em1`: `GradientCurve`, `RoomFrostProtectionTemp`, `RoomNormalTemp`,
-    `RoomSetbackTemp`, `SummerWinterChangeOverTemp`;
-  - `52.w.em3`: `RoomFrostProtectionTemp`, `RoomNormalTemp`, `RoomSetbackTemp`,
-    `SummerWinterChangeOverTemp`, `SupplyMaxTemp`, `SupplyMinTemp`;
-  - `75.w.fs2` and `f5.w.fs3`, eleven each: `BoilerMCBoostTemp`, `DHWSetpoint`,
-    `FrostProtectionLimitTemp`, `GradientCurve`, `RoomFrostProtectionTemp`, `RoomNormalTemp`,
-    `RoomSetbackTemp`, `SummerWinterChangeOverTemp`, `SupplyMaxTemp`, `SupplyMinTemp`,
-    `SwitchOnRuntime`.
-- **Five reads added**: `DHWSetpoint` of the three room units, `BoilerMCBoostTemp` of
-  `75.w.fs2` and `f5.w.fs3`.
-- No message renamed or removed; the reads that became writable keep their names and ids.
+- **Two more settings can be written, 66 in all**: `SupplyMaxTemp` and `SupplyMinTemp` of
+  `50.w.em1`. They are taken only from `ff` (written from another address they are
+  acknowledged and not taken); each was seen on the test installation changed by one step from
+  `ff`, read back with the new value and restored.
+- No message renamed or removed; the two keep their names and ids.
+- From 0.5.2 to 0.5.3: 42 settings became writable (64 in all) and five reads were added
+  (`DHWSetpoint` of the three room units, `BoilerMCBoostTemp` of `75.w.fs2` and `f5.w.fs3`).
 - From 0.4.x: 0.5.0 renamed `DHWOperationMode` of `15.w.ka` to `DHWLoadingPriority` (the
   metadata file gives the former key in `renamed_from`) and made `HcMode` of a heating module
   without outside sensor decode (-100.0 means no sensor).
@@ -74,10 +65,8 @@ ebusd picks the files from the identification each device answers to the scan.
   load but the device does not get a valid checksum: do not use them.
 - Most settings are acknowledged from any source address but taken over only from `ff`:
   `write -s ff -c ka BlockingTime 2`. `ff` is the address of the vendor's service tool; do not
-  write while that tool is connected.
-- The flow limits `SupplyMaxTemp` and `SupplyMinTemp` of `50.w.em1` are read only: written from
-  another source than `ff` they are acknowledged but not taken, and a write from `ff` has not
-  been seen yet.
+  write while that tool is connected. The flow limits of `51.w.em2` and `52.w.em3` are taken
+  from ebusd's own address as well; those of `50.w.em1` only from `ff`.
 
 ## Languages
 
@@ -114,7 +103,7 @@ those translated here (for example `temperature`).
 - The files are named with the identification the devices answer to the scan (`W`), for
   example `50.w.em1`. A device that answers another identification gets the Wolf file of the
   same address, if there is one.
-- The write definitions were checked by decoding captured telegrams. Each of the 64 settings
+- The write definitions were checked by decoding captured telegrams. Each of the 66 settings
   was seen on the installation changed by one step, read back with the new value and restored;
   the telegrams were the expected ones. They were built by the ebusd of the installation with
   its own configuration or by a client sending raw telegrams; ebusd sending from the files of
