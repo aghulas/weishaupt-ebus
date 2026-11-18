@@ -6,11 +6,11 @@ Lot K, branch `weishaupt-K` of the ebusd-configuration fork (on `weishaupt-J`, b
 translation branch `weishaupt-L`). The WTC-GB boiler automats answer register reads
 (`PBSB = 50 22`, ID `<crc> <addr> <sub>`, the `<crc>` precomputed — see
 [register-crc.md](register-crc.md)) that carry the same "information values" the WTC display
-shows as `i` codes (menu *Info*, manual 83251704, pages 46–47). Five temperatures that can be
+shows as `i` codes (menu *Info*, manual 83251704, pages 46–47). Eight information values that can be
 read with the burner idle are defined on both boilers (slave `08` = bc1, `18` = bc2), in
 `src/wolf/08.w.bc1.tsp`, `src/wolf/18.w.bc2.tsp` and the shared models of
-`src/wolf/wtc_inc.tsp`. The value is 16 bits, low byte first, signed tenths (`SIN`/10 °C); a
-missing sensor answers `0xfe70` = −40.0.
+`src/wolf/wtc_inc.tsp`. A temperature value is 16 bits, low byte first, signed tenths
+(`SIN`/10 °C); a missing sensor answers `0xfe70` = −40.0.
 
 | i (manual) | meaning | addr sub | request | codec | model |
 |---|---|---|---|---|---|
@@ -19,11 +19,27 @@ missing sensor answers `0xfe70` = −40.0.
 | i 31 | flue gas temperature | `45 01` | `09 45 01` | SIN/10 °C | `FlueGasTemp` |
 | i 33 | outside temperature | `0c 00` | `74 0c 00` | SIN/10 °C | `OutsideTemp` (shared, lot A) |
 | i 34 | domestic hot water temperature | `0e 00` | `cc 0e 00` | SIN/10 °C | `DHWTemp` |
+| i 39 | hydraulic separator temperature | `86 02` | `66 86 02` | SIN/10 °C | `HydraulicSeparatorTemp` |
+| i 44 | WCM-CPU software version | `99 01` | `45 99 01` | HEX, 2 bytes | `SoftwareVersionCPU` |
+| i 45 | WCM-CUI software version | `9a 01` | `a1 9a 01` | HEX, 2 bytes | `SoftwareVersionCUI` |
 
-`i 33` reuses the top-level `OutsideTemp` already shared since lot A; the other four are new
-shared models. Register `0d 00` is the system manager's de-couple sensor B22 in lot A, and the
-boiler's flow sensor here: the `50 22` register space is generic and the sensor wired to a
-register differs by device. The comment on each read cites the `i` code.
+The first five (i 35 … i 34) were added in release 0.4.1; the last three (i 39, i 44, i 45) in
+the 0.4.1-successor. `i 33` reuses the top-level `OutsideTemp` already shared since lot A; the
+other temperature models are new shared models in `wtc_inc`. Register `0d 00` is the system
+manager's de-couple sensor B22 in lot A, and the boiler's flow sensor here: the `50 22`
+register space is generic and the sensor wired to a register differs by device. The comment on
+each read cites the `i` code.
+
+The two version registers answer the two bytes `11 04`, which is exactly the software version
+the bus scan reports for the boiler automat (`SW=1104`, bytes `0x11 0x04`). They are kept as
+those raw bytes (`HEX`, two bytes, displayed `11 04`), the way the scan shows them, rather than
+as a decimal `UIN` (which would print 1041 and not match the scan). The same two register
+addresses are read as `UIN` on the system manager in lot A (`VersionMajor` / `VersionMinor`),
+where they carry different values that are not the scan version; on the boilers they equal the
+scan `SW`. The register ↔ `i`-code pairing (`99 01` = i 44 WCM-CPU, `9a 01` = i 45 WCM-CUI)
+follows the order of the two version registers (lot A) and of the two version `i` codes
+(manual); both registers read the same `11 04` on this installation, so the two cannot be told
+apart by value here.
 
 ## Live confirmation (read-only, 2026-11-18)
 
@@ -45,6 +61,19 @@ independent morning read on 2026-11-18, boilers idle, gave lower temperatures
 (flow 52/54, return 49/52, flue 42/43, outside 11.0/−40.0), decoding the same way: two reads
 on two occasions.
 
+The three values added to the lot for the 0.4.1-successor were read the same way on both
+boilers, read-only, each twice (burner idle):
+
+| i | bc1 (`08`) request → answer → value | bc2 (`18`) request → answer → value |
+|---|---|---|
+| i 39 hydraulic separator | `66 86 02` → `02 70 fe` → −40.0 (no sensor) | `66 86 02` → `02 70 fe` → −40.0 (no sensor) |
+| i 44 WCM-CPU version | `45 99 01` → `02 11 04` → `11 04` | `45 99 01` → `02 11 04` → `11 04` |
+| i 45 WCM-CUI version | `a1 9a 01` → `02 11 04` → `11 04` | `a1 9a 01` → `02 11 04` → `11 04` |
+
+Neither boiler has a hydraulic-separator sensor on this installation (−40.0 at `86 02`); the
+message is defined so the read exists where the sensor is fitted, as i 33 / i 34 are. Both
+version registers read `11 04` on both boilers, matching the scanned `SW=1104`.
+
 ## How it was established
 
 1. **Register space.** A full sweep of `50 22` on `08`, sub = `00`, `01`, `02`, `03`,
@@ -62,7 +91,12 @@ on two occasions.
    and outside on `08`, confirming each register ↔ sensor pairing and the SIN/10 codec.
 4. **Manual meanings.** Document 83251704 (WTC-GB 120 … 300-A, 1/2020-08), menu *Info*
    (pages 46–47): i 35 "T° départ", i 37 "Température retour", i 31 "T° fumées", i 33
-   "Température extérieure", i 34 "Température ECS".
+   "Température extérieure", i 34 "Température ECS" (p. 46); i 39 "T° bouteille" (hydraulic
+   separator, p. 47); i 44 "Version du logiciel WCM-CPU", i 45 "Version du logiciel WCM-CUI"
+   (p. 47). The vendor service tool on this installation showed the same two version values as
+   "I44: Version CPU" and "I45: Version CUI" (`service-tool-log.md`). The boiler automat is the
+   WCM-CPU: its software version equals the scanned `SW=1104`, so `99 01` = i 44 and, in the
+   same register and `i`-code order, `9a 01` = i 45.
 
 ## What is left out
 
@@ -78,6 +112,10 @@ on two occasions.
   and could not be told from the many zero/`0x8000` registers; the eSTB register `5e 01`
   answers `0x8000`; i 42 (≈ 187000 / 139000 starts) does not fit a 16-bit register. These need
   a capture while a boiler is firing, which only the operator can arrange.
+- **Register `27 02`** answers a per-boiler number (731 on `08`, 543 on `18`) that steps
+  independently and is stable across reads. No `i` code of the *Info* menu matches it: the only
+  Info counters are i 42 (burner starts, × 1000) and i 43 (burner hours, × 100), and neither
+  figure fits 731 / 543. Left out; recorded as a finding (see "Not verified").
 
 ## Relation to lot E (i 46)
 
@@ -105,5 +143,14 @@ cascade under a WCM system manager (`15`). Read-only; no write was sent (rule 7)
   automat's own RAM and against each other.
 - Sign of the temperatures: taken from `otemp10` (SIN/10) and the `0xfe70` = −40.0
   "no sensor" answer; no genuine negative reading was seen on a fitted sensor.
-- Other populated sub-02 registers were not identified (a per-boiler counter at `27`, a
-  temperature with no sensor at `86`); sub-01 holds parameters and setpoints, not read here.
+- i 39 reads −40.0 (no sensor) on both boilers: the hydraulic-separator meaning is from the
+  manual, not from a live figure on a fitted sensor. The message is defined so the read exists
+  where the sensor is present, as i 33 / i 34 already are.
+- i 44 / i 45: both version registers read the same `11 04` here, so which register is the
+  WCM-CPU version and which the WCM-CUI version is taken from the register order (lot A) and
+  the `i`-code order (manual), not proven by distinct values. The `11 04` equals the scanned
+  `SW=1104` of the WCM-CPU; the WCM-CUI version was not read separately from the scan.
+- **Register `27 02`** (731 on `08`, 543 on `18`): a per-boiler number, stable and stepping on
+  its own, not matched to any *Info* `i` code (the Info counters i 42 and i 43 do not fit it).
+  Left out of the lot; a finding for a later session with the service tool. Other sub-01
+  registers hold parameters and setpoints and were not read here.
