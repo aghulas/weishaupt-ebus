@@ -45,8 +45,16 @@ The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, L (`S
 goes below it. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-Integration branch: `weishaupt` `b831213`, the stack A to H, J and L plus the pin commit, on
-the fork since 2026-11-18 (forced from `bd35b2c` on the owner's word, with `weishaupt-L`
+Integration branch: `weishaupt` `4c034fc`, the stack A to H, J and L plus the pin commit, on
+the fork since 2026-11-18 (forced from `b831213` on the owner's word, with `weishaupt-J`
+forced to `78ac7af` and `weishaupt-L` to `d5a88bd`). `scripts/check.sh` on it: clean,
+**588 messages** in English, German and French. Released from it on 2026-11-18 as the
+pre-release `weishaupt-0.3.2` (tag on `4c034fc`), made by `scripts/release.sh 0.3.2`: lot J
+as seven reads of at most 10 bytes with the first answer byte as a field, and a line on that
+field in the notice. Both archives downloaded again after publication: checksums right, 588
+messages without error in the official ebusd 26.1. `weishaupt-0.3.1` (tag on `b831213`, 586
+messages, lot J as six 12-byte reads, of which an all-zero answer is lost most of the time)
+is still online beside it. Before that, `b831213` was the integration branch since 2026-11-18 (forced from `bd35b2c` on the owner's word, with `weishaupt-L`
 fast-forward to `a22b797`). `scripts/check.sh` on it: clean, **586 messages** in English,
 German and French. Released from it on 2026-11-18 as the pre-release `weishaupt-0.3.1` (tag
 on `b831213`), made by `scripts/release.sh 0.3.1`: the French archive has the wording the
@@ -57,7 +65,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0` and then `weishaupt-0.3.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.1` is the only release online.
+`weishaupt-0.2.0` and then `weishaupt-0.3.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.1` and `weishaupt-0.3.2` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -76,6 +84,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.3.2` (pre-release) | as 0.3.1, with the fault counters of lot J read in seven items of at most 10 bytes and their first answer byte as a field. Downloaded again after publication: checksums right, 588 messages without error in the official ebusd 26.1. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.3.1` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums; French archive with the wording decided by the owner on 2026-11-18, Wolf messages of the broadcast file in English. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
@@ -157,13 +166,10 @@ data point on arbitration with room units).
   most 10 bytes, as the vendor tool does, sent as written the same morning: all answered on
   both boilers, all-zero blocks included. Second finding: 2 of 107 answers of the first boiler
   have the number of bytes asked for as first byte and all data at zero. On the owner's
-  decision the lot keeps that byte as a field (`FirstByte`). **Done locally on 2026-11-18,
-  nothing pushed:** `weishaupt-J` `78ac7af` (amended), `weishaupt-L` `d5a88bd` (rebased, 269
-  keys), trial integration `weishaupt-next` `4c034fc`; `scripts/check.sh` clean on the three,
-  588 messages in English and French. **Waiting for the owner's word:** force-push of
-  `weishaupt-J` and `weishaupt-L`, rebuild and force-push of `weishaupt` (still `b831213`,
-  the tag `weishaupt-0.3.1`), and a release after 0.3.1, which carries the 12-byte messages
-  without the field. The eight French strings of the lot outside the fault texts (seven
+  decision the lot keeps that byte as a field (`FirstByte`). **Pushed and released on 2026-11-18, on the
+  owner's word:** `weishaupt-J` `78ac7af` (amended) and `weishaupt-L` `d5a88bd` (rebased, 269
+  keys) forced, `weishaupt` rebuilt and forced to `4c034fc`; `scripts/check.sh` clean, 588
+  messages in English and French; release `weishaupt-0.3.2` made from it. The eight French strings of the lot outside the fault texts (seven
   message comments, first answer byte) are provisional. Still open: no counter has been
   seen to step with a new entry of the fault history, which would also say whether a number
   listed as warning and fault (15, 18, 21, 48, 57) counts warnings, lockouts or both.
