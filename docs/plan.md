@@ -293,8 +293,8 @@ date; see 2026-11-17 "Commit identity".
     follows the register order (lot A) and the `i`-code order (manual).
 
   Left out as a finding: the per-boiler counter at `27 02` (731 / 543), which matches no
-  *Info* `i` code (`evidence/bc-info-values.md`). Lot K `dec3adf` → `49e484b` (second commit,
-  local only); `weishaupt-L` rebased onto it and its info-value French commit amended with the
+  *Info* `i` code (`evidence/bc-info-values.md`). Lot K `dec3adf` → `49e484b` (second
+  commit); `weishaupt-L` rebased onto it and its info-value French commit amended with the
   three new keys (`935363b` → `b4cfa16`, 277 keys for 277 strings, none provisional, the three
   new strings not yet ticked by the owner in `terms.md`). Stack linear; `scripts/check.sh`
   clean on K (`49e484b`), L (`b4cfa16`) and the trial integration `weishaupt-next` (`f58a45f`):
