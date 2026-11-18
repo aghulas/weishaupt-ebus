@@ -34,8 +34,8 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `1289f97` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), pushed | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), six memory reads of EEPROM `0x0196`–`0x01d7` per boiler, 12 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `9e8cdd3` (1 commit on H), **local only** | `bc-fault-counters` |
-| L | French translation of the comments: `src/fr.yaml`, 267 keys for the 267 comment strings of the lots (193 from vendor terms, 68 accepted by the owner, 6 provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `a22b797` (7 commits on J), pushed | `terms` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte as a field, 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `78ac7af` (1 commit on H), **local**; the fork has the first version `9e8cdd3` (six reads of 12 bytes) | `bc-fault-counters` |
+| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 68 accepted by the owner, 8 provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `d5a88bd` (7 commits on J), **local**; the fork has `a22b797` | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -153,19 +153,26 @@ data point on arbitration with room units).
   at every attempt, with the values of the 2-byte reads. `FaultCounters4` of the first boiler,
   whose six counters are zero, was answered 3 times out of 12: a 12-byte answer of zero bytes
   only is lost most of the time (6 answered of 20 over three addresses), 10 bytes of zeros
-  never (19 answered of 19). The owner chose to cut the area in seven reads of at
-  most 10 bytes, as the vendor tool does (table in the evidence record). The seven requests
-  were sent as written the same morning: all answered on both boilers (5 to 25 times each,
-  all-zero blocks included), values equal to the 2-byte reads. **Fork not changed yet**,
-  because of a second finding: 2 of 107 answers of the first boiler have the number of bytes
-  asked for as first byte and all data at zero, which the models decode as counters at zero
-  (they skip that byte). It concerns every `memr` message of lots E, D, F and J. **To decide
-  by the owner:** rewrite `weishaupt-J` with the 10-byte cut alone, or together with a first
-  byte made visible as a field. Either way: `weishaupt-J` and `weishaupt-L` rewritten
-  (force-push), integration branch rebuilt, seven message comments and their French instead
-  of six, and a release after 0.3.1, which carries the 12-byte messages. Still open: no counter has been
+  never (19 answered of 19). The owner chose seven reads of at
+  most 10 bytes, as the vendor tool does, sent as written the same morning: all answered on
+  both boilers, all-zero blocks included. Second finding: 2 of 107 answers of the first boiler
+  have the number of bytes asked for as first byte and all data at zero. On the owner's
+  decision the lot keeps that byte as a field (`FirstByte`). **Done locally on 2026-11-18,
+  nothing pushed:** `weishaupt-J` `78ac7af` (amended), `weishaupt-L` `d5a88bd` (rebased, 269
+  keys), trial integration `weishaupt-next` `4c034fc`; `scripts/check.sh` clean on the three,
+  588 messages in English and French. **Waiting for the owner's word:** force-push of
+  `weishaupt-J` and `weishaupt-L`, rebuild and force-push of `weishaupt` (still `b831213`,
+  the tag `weishaupt-0.3.1`), and a release after 0.3.1, which carries the 12-byte messages
+  without the field. The eight French strings of the lot outside the fault texts (seven
+  message comments, first answer byte) are provisional. Still open: no counter has been
   seen to step with a new entry of the fault history, which would also say whether a number
   listed as warning and fault (15, 18, 21, 48, 57) counts warnings, lockouts or both.
+- **First answer byte of the memory reads of lots E, D and F.** The shared model `memr`
+  skips it, so an answer without data (seen on 2 of 107 answers of one boiler, see
+  `evidence/bc-fault-counters.md`) decodes as zeros in the fault history, the counters and
+  the live values. Lot J keeps the byte as a field through its own base model. To decide:
+  do the same in E, D and F, which changes the fields of published messages and the open
+  pull request material built on them; and observe how often such answers occur.
 - **Lot F, what was left out**: 23 of the 30 data-logger channels, the output bits (RAM `2b`),
   and `Load` before the flame (reads 23 to 40 while the status says 0 %).
 - **Info values of the service tool** readable through `50 22`; only the hours since last

@@ -4,19 +4,23 @@
 
 One counter per fault number, kept by the WTC boiler automat in its EEPROM, read with the
 memory read `PBSB 50 00` in `src/wolf/08.w.bc1.tsp` (target `08`), `src/wolf/18.w.bc2.tsp`
-(target `18`) and the shared models `FaultCounters1` to `FaultCounters6` of
+(target `18`) and the shared models `FaultCounters1` to `FaultCounters7` of
 `src/wolf/wtc_inc.tsp`. Lot J, branch `weishaupt-J`.
 
-| message | EEPROM | ID | fields (UIN, low byte first) |
+| message | EEPROM | ID | fields |
 |---|---|---|---|
-| FaultCounters1 | `0x0196`, 12 bytes | `de 06 01 b2 96` | Code57, Code55, Code53, Code52, Code51, Code49 |
-| FaultCounters2 | `0x01a2`, 12 bytes | `ea 06 01 b2 a2` | Code48, Code47, Code46, Code45, Code44, Code43 |
-| FaultCounters3 | `0x01ae`, 12 bytes | `e6 06 01 b2 ae` | Code41, Code39, Code38, Code37, Code36, Code35 |
-| FaultCounters4 | `0x01ba`, 12 bytes | `f2 06 01 b2 ba` | Code34, Code33, Code32, Code31, Code30, Code24 |
-| FaultCounters5 | `0x01c6`, 12 bytes | `8e 06 01 b2 c6` | Code23, Code22, Code21, Code18, Code16, Code15 |
-| FaultCounters6 | `0x01d2`, 6 bytes | `2e 06 01 52 d2` | Code14, Code12, Code11 |
+| FaultCounters1 | `0x0196`, 10 bytes | `e2 06 01 92 96` | FirstByte, Code57, Code55, Code53, Code52, Code51 |
+| FaultCounters2 | `0x01a0`, 10 bytes | `d4 06 01 92 a0` | FirstByte, Code49, Code48, Code47, Code46, Code45 |
+| FaultCounters3 | `0x01aa`, 10 bytes | `de 06 01 92 aa` | FirstByte, Code44, Code43, Code41, Code39, Code38 |
+| FaultCounters4 | `0x01b4`, 10 bytes | `c0 06 01 92 b4` | FirstByte, Code37, Code36, Code35, Code34, Code33 |
+| FaultCounters5 | `0x01be`, 10 bytes | `ca 06 01 92 be` | FirstByte, Code32, Code31, Code30, Code24, Code23 |
+| FaultCounters6 | `0x01c8`, 10 bytes | `bc 06 01 92 c8` | FirstByte, Code22, Code21, Code18, Code16, Code15 |
+| FaultCounters7 | `0x01d2`, 6 bytes | `2e 06 01 52 d2` | FirstByte, Code14, Code12, Code11 |
 
-33 counters per boiler, 12 messages in all.
+`FirstByte` is UCH, the counters are UIN (low byte first). 33 counters per boiler, 14 messages
+in all. The first version of the lot (`9e8cdd3`, in release 0.3.1) had six reads of 12 bytes
+with the first byte skipped; why it was changed is in "The six requests as written" and "The
+seven 10-byte requests" below.
 
 ## How it was established
 
@@ -124,9 +128,10 @@ both boilers) reads 6 on both; numbers 21 and 22 (flame) are of the same order o
 the 33 counters are zero on both boilers.
 
 **IDs.** The CRC-8 of [register-crc.md](register-crc.md) reproduces the first byte of the
-seven requests of the tool for this area and of `20 06 01 12 a4`; the six IDs of the
-definitions were computed with it. The item length of 12 bytes (code `b2`) is the longest the
-tool was seen to send (`df b2 1b`, `service-tool-log.md`), so six reads cover the 66 bytes.
+seven requests of the tool for this area and of `20 06 01 12 a4`; the IDs of the definitions
+were computed with it. The first version used items of 12 bytes (code `b2`), the longest the
+tool was seen to send (`df b2 1b`, `service-tool-log.md`); the lot now uses the 10 bytes
+(code `92`) the tool sends for this area.
 
 ### The six requests as written, 2026-11-18
 
@@ -181,11 +186,11 @@ counters (numbers 35 to 23) are all zero, plus the non-zero `FaultCounters3` in 
   checksum byte that needs escaping (computed, `46` for the answer).
 - The vendor tool reads this area in items of 10 bytes (`e2 06 01 92 96` …), never 12.
 
-Consequence: five of the six messages are confirmed as written on the values present. A
-12-byte message whose six counters are all zero, which is the normal state of a boiler
-without faults, is not read reliably on this installation. Proposed change, accepted by the
-owner on 2026-11-18 and **not yet made** (see the next section): seven reads of at most 10 bytes per boiler, on the boundaries of the vendor tool, the last one
-unchanged:
+Consequence: five of the six messages are confirmed as written on the values present. A 12-byte
+message whose six counters are all zero, which is the normal state of a boiler without faults,
+is not read reliably on this installation. Change accepted by the owner on 2026-11-18 and made
+the same day (see the next section): seven reads of at most 10 bytes per boiler, on the
+boundaries of the vendor tool, the last one unchanged:
 
 | Message | ID | Counters |
 |---|---|---|
@@ -198,9 +203,8 @@ unchanged:
 | FaultCounters7 | `2e 06 01 52 d2` | 14, 12, 11 |
 
 The first ID is the one the tool sends; the others are computed with the CRC-8 of
-[register-crc.md](register-crc.md) and were sent in the next section. The six
-message comments ("fault counters, numbers 57 to 49" …) and their French would change with
-the boundaries.
+[register-crc.md](register-crc.md) and were sent in the next section. The message comments
+("fault counters, numbers 57 to 51" …) and their French follow the boundaries.
 
 ### The seven 10-byte requests, 2026-11-18
 
@@ -240,9 +244,17 @@ each in turn, then the last two again on the first boiler.
   request is the one of the published definitions, and every message built on `memr` (fault
   history, counters, live values, fault counters) skips the byte the same way.
 
-The definitions were not changed after this finding: whether the first byte must become a
-field, so that a reader can tell an answer without data, is a decision to take before
-`weishaupt-J` is rewritten, or the lot would be rewritten twice.
+The owner then chose to keep the first byte as a field in the messages of this lot. The
+lot was rewritten the same day (`weishaupt-J` `78ac7af`): the seven requests above, on a base
+model `memrf` whose only field is `FirstByte`. In the compiled CSV each message starts with
+`firstbyte,,UCH,,,,"first answer byte: 0, or the number of bytes asked for when all counters
+read 0"` where the other memory reads have `ign,,IGN:1`. A read of `FaultCounters7` on the
+first boiler gives `0;0;6;1`; the answer without data of 06:06:50 would give `6;0;0;0`.
+
+The name and the comment of the field say what was seen and nothing else: `00` in front of
+the data, the number of bytes asked for in front of zeros. The shared model `memr` is
+unchanged, so the messages of the other lots (fault history, counters, live values) still
+skip the byte and would decode such an answer as zeros.
 
 ### Level of proof
 
@@ -254,11 +266,15 @@ field, so that a reader can tell an answer without data, is a decision to take b
 | meaning of the number | 32 of 33 | source: manual of the boiler, both editions |
 | meaning of the number | 49 | source: later edition of the manual only (printed nine years after the first; whether it describes this firmware is not established) |
 | value compared with a displayed figure | none | the tool shows no counter on this firmware |
-| grouped request answered as written | 11 of the 12 messages | answered at every attempt, values equal to the two-byte reads |
-| grouped request answered as written | `FaultCounters4`, first boiler (all zero) | answered 3 times out of 12 |
+| 12-byte request of the first version answered | 11 of the 12 messages | answered at every attempt, values equal to the two-byte reads |
+| 12-byte request of the first version answered | `FaultCounters4`, first boiler (all zero) | answered 3 times out of 12 |
+| 10-byte request of the lot answered as written | all 14 messages | answered at every attempt (5 to 25), values equal to the two-byte reads |
+| first byte | 157 of 159 answers | `00`; the two others are the number of bytes asked for, with no data |
 
-Toolchain: `CFG_REPO=<worktree of weishaupt-J> scripts/check.sh` clean (format, compile,
-`ebusd --checkconfig`, 586 messages, translations).
+Toolchain, 2026-11-18: `CFG_REPO=<worktree> scripts/check.sh` clean on `weishaupt-J`
+`78ac7af`, on `weishaupt-L` `d5a88bd` and on a trial integration branch (format, compile,
+`ebusd --checkconfig`, 588 messages in English and in French, 269 French keys for 269
+strings).
 
 ## Equipment
 

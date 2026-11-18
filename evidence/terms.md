@@ -136,6 +136,7 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | fault | défaut | | WTC p. 86; KA p. 31; FS p. 53 | vendor |
 | warning | alarme | | WTC p. 86, 87, 90; FB p. 23 | vendor |
 | fault counters (of the boiler automat) | compteurs de défauts | | provisional; the manuals list the codes, not the counters | provisional |
+| first answer byte (of a memory read); number of bytes asked for | premier octet de la réponse; nombre d'octets demandés | | provisional; not a manual notion | provisional |
 | safety temperature limiter (eSTL) | thermostat de sécurité (limiteur) | | WTC p. 89 (i 30), 90, 92 | vendor |
 | flow sensor; return sensor; flue gas sensor; defective | sonde de départ; sonde de retour; sonde de fumées; défectueuse | | WTC p. 90, 92 | vendor |
 | no flame at burner start; flame lost during operation; flame signal without a flame | pas de formation de flamme au démarrage du brûleur; perte de flamme en fonctionnement; flamme parasite | | WTC p. 90, 92 | vendor |
@@ -169,19 +170,21 @@ configuration, not from the lots. They have no row here and no vendor source, an
 
 ## Coverage of `src/fr.yaml`
 
-At `weishaupt-L` `a22b797`: 291 comment strings in the files of the lots and `wolf/broadcast`,
-267 of them of the lots (`scripts/i18n-keys.py`), all 267 with a key.
+At `weishaupt-L` `d5a88bd` (local, 2026-11-18): 293 comment strings in the files of the lots
+and `wolf/broadcast`, 269 of them of the lots (`scripts/i18n-keys.py`), all 269 with a key.
 
 | Kind | Strings | Vendor terms only | Accepted by the owner | Provisional | Left in English |
 |---|---|---|---|---|---|
-| Written by hand, lots | 135 | 109 | 20 | 6 | |
+| Written by hand, lots | 137 | 109 | 20 | 8 | |
 | Patterned (program slots, fault-history slots) | 132 | 84 | 48 | | |
 | Wolf messages of the broadcast file | 24 | | | | 24 |
-| All | 291 | 193 | 68 | 6 | 24 |
+| All | 293 | 193 | 68 | 8 | 24 |
 
 The 48 patterned strings accepted by the owner are the 42 "stored in the room unit" slots and
-the 6 fault-history slots. The 6 provisional strings are the comments of the fault counters
-(lot J), written after the list below was made. The Wolf messages are left in English on the
+the 6 fault-history slots. The 8 provisional strings are those of the fault counters
+(lot J), written after the list below was made: the seven message comments ("fault counters,
+numbers 57 to 51" …, six before the lot was cut in 10-byte reads) and the comment of the
+first answer byte. The Wolf messages are left in English on the
 owner's decision of 2026-11-18; the key check does not expect a key for them.
 
 ## To validate
