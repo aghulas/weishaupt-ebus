@@ -135,6 +135,22 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
+- **Release carrying the complete fixtures file.** Built locally on 2026-11-18 as a trial
+  (`INTEGRATION=weishaupt-next scripts/release.sh 0.4.4`): CSV byte-identical to 0.4.3, metadata
+  identical but for the version, `weishaupt-fixtures-0.4.4.json` in schema 2 with 566 readings
+  of all 528 messages. Nothing pushed, nothing published; the workbench commits of that day
+  are local. Needs the owner's word: push of the workbench, then the release (0.4.4 proposed:
+  no definition changes, the fixtures file has its own schema number).
+- **`em2/HcMode` and `em3/HcMode` are refused by ebusd** (finding of 2026-11-18,
+  `evidence/em-hcmode.md`): the modules `51` and `52` have no outside sensor and send -100.0
+  as outside temperature in the exchange with their room unit; the field has the range of its
+  type (-50 to 127 °C, written by `withMinMax`) and ebusd rejects the whole message. With
+  the definitions of the lots, these two messages give an error on this installation, not a
+  value. The fix (a wider range or
+  none on that field, or a type whose replacement value fits) is in the shared model of
+  lot A, behind pull request #717: the owner's decision, then a replay of the stack. The two
+  fixtures carry `error` until then, and the check fails the day ebusd decodes them.
+
 - **Release carrying the metadata asset: done.** `weishaupt-0.4.3` was published on
   2026-11-18 on the owner's word (see "Current state"). Nothing waits here for the contract;
   the next step of the companion is its phase 1, in `aghulas/ha-weishaupt`.
@@ -251,7 +267,8 @@ data point on arbitration with room units).
   release of the fork (checksum verified), translation files (keys against the comment strings,
   compile per language, only comments differ, same message count), metadata (every message of
   the lot files against the sidecar; skipped on a branch below `weishaupt-M`, required on the
-  integration branch). `scripts/check.sh hygiene` runs the first step alone.
+  integration branch), fixtures in the same step (every reading of `evidence/fixtures.toml`
+  against its record, and decoded by the ebusd of the check: `scripts/fixtures.py`). `scripts/check.sh hygiene` runs the first step alone.
   `CFG_REPO=<absolute path>` checks another worktree. Lots C, G and H compile only with the
   library package of the fork: in a worktree, plain `npm install`, then
   `npm install --no-save` of that package and `@typespec/compiler@1.17.0`; never commit
@@ -278,6 +295,14 @@ data point on arbitration with room units).
   missing or left over. A setting is marked written only when a lot writes it and an evidence
   record names it; a polling class, a range or a step that no record establishes stays empty.
   Format of the generated file: `docs/companion-contract.md`.
+- **Fixtures.** `evidence/fixtures.toml` is a transcription of telegrams the evidence records
+  hold, never a source: a telegram goes into its record first (how, when, on which device),
+  with request and answer on one table row, then into the file with the name of the record
+  and the day. A message added to a lot gets a reading the same way; `scripts/fixtures.py
+  check` lists the messages without one. A reading that stops decoding to its value is a
+  finding about the record or the definition: the number is not adjusted. A telegram ebusd
+  refuses is kept with `error`, as a known defect. The fixtures file has its own `schema`
+  number (2); adding readings does not change it.
 - **Versions (definitions and companion).** Names are the interface: an entity of the
   companion is identified by circuit, message and field.
   1. Until 1.0 the **second** number of a definitions release changes for a breaking change:
@@ -298,7 +323,8 @@ data point on arbitration with room units).
 - **Release.** `scripts/release.sh <version>` rebuilds and checks the integration branch and
   makes the archives under `out/release/`, English and one per language of `RELEASE_LANGS`
   (default `fr`), with the notice from `docs/release-readme.md`, then the metadata file, the
-  fixtures file (`evidence/fixtures.toml`) and `sha256sums-<version>.txt` for all of them.
+  fixtures file (`evidence/fixtures.toml`, each reading decoded by ebusd on the CSV of the
+  archives) and `sha256sums-<version>.txt` for all of them.
   Then, on
   the owner's word: push `weishaupt`, tag `weishaupt-<version>`, release, download it again and
   load it in the official ebusd.
@@ -319,6 +345,53 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-18, fixtures for every message, verified by ebusd.** Local only: workbench
+  commits, no change in the forks, nothing pushed or published.
+  - **Before**: 17 readings of 17 settings (3 % of the 528 messages), checked by a decoder of
+    the script for 16-bit registers. The records held a request and an answer for 483
+    messages (91 %): all 357 program slots of the room units and the 42 of `50`, the register
+    reads of the room units and modules, the fault counters, live values and information
+    values of both boilers, the settings, the status telegrams. 45 messages had a value in
+    their record but no bytes in the form ebusd sends: 12 registers of the system manager,
+    6 of the clock and the 9 of the fault log of `50`, the counters and the fault history of
+    both boilers (16, read so far only through the multi-item requests of the vendor tool),
+    and the exchange `HcMode` of the modules `51` and `52`.
+  - **Read on the bus, read-only, once each** (2026-11-18, 10:26 to 10:28, `hex` command,
+    `50 22` and `50 00` only, IDs taken from the compiled CSV, three seconds apart): those 43
+    registers, all answered at the first attempt, no repeat. The two `HcMode` exchanges and a
+    status broadcast with its source address come from the passive capture of the same
+    minute (nothing sent). Each reading was written into its record first: `ka-reads`,
+    `em1-clock-program`, `em1-fault-log`, `bc-counters`, `bc-fault-history`, `em-hcmode`,
+    `broadcast-kastatus`. They agree with the earlier values (same fault-log entry, same
+    fault history on both boilers; operating hours of the first boiler 41 higher than 41
+    hours before).
+  - **After**: `evidence/fixtures.toml` (schema 2), 566 readings of 528 messages out of 528:
+    535 reads, 17 writes, 14 passive telegrams. By kind: program slots 357, settings 65,
+    live values 44, diagnostics 37, counters 18, states 7. By device: boilers 26 and 26,
+    system manager 96 (`ka` 29, `em1` 67), modules 11 and 11, room units 119 each,
+    broadcast 1. Awkward cases included: the two answers without data of lot J (first byte
+    6 and 10), replacement values in passive telegrams, sensors not fitted (-40), memory
+    reads of both boilers, a boiler idle and firing.
+  - **Verification** (`scripts/fixtures.py`, in step 7 of `scripts/check.sh` and in
+    `scripts/release.sh`): ebusd itself decodes each telegram. The build of the check is
+    started without a bus on the lot files, each telegram injected (`--inject=stop`) and read
+    back from the cache; ebusd names the message and gives every field. The former decoder
+    of the script remains only as a fallback where no ebusd can run
+    (`CHECKCONFIG=actions`), and says so. Tried on nine altered copies of the source (a
+    value, a byte, a name, a day, an ID): each one fails.
+  - **One discrepancy**: `em2/HcMode` and `em3/HcMode`, refused by ebusd (see "Needs the
+    owner"). No other reading disagrees with its record. One transcription error of the day
+    (a load typed 27 for `1c`) was caught by the check before the commit.
+  - **Left without a reading of its kind**: no `50 22` read of a defined message answers the
+    replacement value `00 80` on this installation (such registers were left out of the
+    lots), so the fixtures show it in passive telegrams only; no reading of a boiler in
+    lockout, of a negative temperature on a fitted sensor, or of a status broadcast with the
+    burner on. Each needs the installation in that state.
+  - **Trial**: `INTEGRATION=weishaupt-next scripts/release.sh 0.4.4`, `weishaupt-next`
+    `0eb6d16`, `scripts/check.sh` clean in seven steps, 605 messages in English, German and
+    French; CSV of both archives identical to 0.4.3 (only the notice differs: one sentence
+    on the fixtures file), metadata identical but for the version.
 
 - **2026-11-18, companion repository cleaned.** `aghulas/ha-weishaupt`, the separate
   Home Assistant project, had its history rewritten on the owner's decision (identity, tool

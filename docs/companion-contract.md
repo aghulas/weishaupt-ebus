@@ -7,7 +7,7 @@ archives:
 | Asset | Content |
 |---|---|
 | `weishaupt-metadata-<version>.json` | this document |
-| `weishaupt-fixtures-<version>.json` | readings from the evidence records, as test data (last section) |
+| `weishaupt-fixtures-<version>.json` | telegrams from the evidence records and the values ebusd decodes them to, as test data (last section) |
 | `sha256sums-<version>.txt` | checksums of the archives and of the two files |
 
 The CSV says how to read and decode a message. The metadata says what the CSV cannot: which
@@ -165,9 +165,87 @@ ebusd cannot tell which release it runs.
 
 ## Fixtures
 
-`weishaupt-fixtures-<version>.json`: `readings`, each with `circuit`, `message`, the bytes
-captured on the bus (`read`: ID of the `50 22` request, `answer`: its data bytes, `write`:
-data of the `50 23` telegram) and `expect`, the decoded value per field, with the evidence
-record it was transcribed from. The generator checks each reading against that record and
-against the definition. Schema 1 holds the 17 settings of `evidence/settings-writes.md`; the
-other records are not transcribed yet (source: `evidence/fixtures.toml`).
+`weishaupt-fixtures-<version>.json` holds telegrams captured on the bus of the test
+installation, for every message of the definitions, with the values they decode to. Two
+uses: test data for a consumer that has no boiler (a simulated ebusd can answer from it), and
+a regression test of the definitions (a recorded answer must keep decoding to the recorded
+value).
+
+### Where it comes from
+
+- **Source**: `evidence/fixtures.toml` of this repository. A transcription: every reading
+  names the evidence record that holds its telegram and the day of the capture. Nothing is
+  invented or completed; a telegram is written into its record first.
+- **Check**: `scripts/fixtures.py check`, in step 7 of `scripts/check.sh`. It fails when a
+  reading names a message that does not exist, carries bytes or a day its record does not
+  have, has a request that is not the one of the definition, or no longer decodes to the
+  recorded value.
+- **Decoding is ebusd's.** The ebusd release the check uses is started without a bus, loaded
+  with the compiled lot files only, and fed each telegram (`--inject=stop`); it says which
+  message it takes the telegram for and what every field reads (`read -v`, and
+  `find -w -d -v` for a write). `decoded` and `text` are its output, not a computation of the
+  generator. A release is built only with this verification (`verified.by` is `ebusd`).
+
+### Structure (schema 2)
+
+```
+schema       2
+definitions  version, commit, messages (528)
+verified     { by: "ebusd", release: the ebusd build, loaded: "lot files only, no scan" }
+coverage     messages, covered, readings, by_kind and by_device ({messages, covered}),
+             not_covered [keys], refused_by_ebusd [keys]
+readings     list, see below
+```
+
+| Key | Meaning |
+|---|---|
+| `circuit`, `message` | key of the message, as in the metadata |
+| `device` | device id of the metadata (`boiler1`, `manager`, …) |
+| `type` | `read`: a `50 22` register read or a `50 00` memory read, request and answer. `write`: a captured `50 23` telegram, acknowledged. `passive`: a telegram between other devices |
+| `qq`, `zz`, `pbsb` | source address, target address, command; `zz` says which boiler or device the telegram was captured on |
+| `master` | data bytes the source sent, after the length byte. For a read this is the ID of the definition, that is the request exactly as ebusd sends it; for a write: checksum, address, value |
+| `slave` | data bytes of the answer, after the length byte; `""` for an acknowledged write; absent when the target is a master or the telegram a broadcast |
+| `telegram` | the same as one string in the form ebusd takes with `--inject` and prints in its log: `QQZZPBSBNN<master>/NN<slave>` |
+| `expect` | value per field as the evidence record states it, at the precision of the record (a record that says 11.3 agrees with 11.301). Only the fields the record states; `null` is the replacement value |
+| `decoded` | value of every field as ebusd decodes it: a number, the name of a value-list entry or a text (time, hex), `null` for the replacement value (ebusd prints `-`). Field names as in the metadata |
+| `text` | the values as ebusd returns them to `read -c <circuit> <message>`: joined by `;`, in field order |
+| `error` | in place of `expect`, `decoded` and `text`: ebusd refuses this telegram with the definitions of this release and returns this error. A known defect, see below |
+| `evidence`, `date` | record under `evidence/` of this repository, day of the capture |
+| `case` | what the reading is an example of, see below |
+| `note` | a remark |
+
+Several readings may name the same message (a boiler idle and firing, a setting read and
+written). The order of the list has no meaning.
+
+### Cases a consumer must handle
+
+- `first-byte-not-zero` (two readings of the fault counters of the first boiler): the answer
+  of a memory read came without data, its first byte being the number of bytes asked for.
+  `firstbyte` is not 0 and the counters read 0 although they are not. The reading must be
+  discarded (`guard` in the metadata).
+- `not-available`: a field holds the eBUS replacement value, `null` in `decoded`, `-` in
+  `text` (outside temperature of the second boiler in its status, flow temperature of a
+  circuit without mixer).
+- `no-sensor`: a temperature reads -40 or -40.0, the value a boiler gives for a sensor that
+  is not fitted. It decodes as a number; nothing in the telegram marks it.
+- `refused` (`em2/HcMode`, `em3/HcMode`): the heating modules without an outside sensor send
+  -100.0 as outside temperature, which lies outside the range the definition gives the field,
+  and ebusd rejects the whole message (`ERR: argument value out of valid range`). Until the
+  definition is corrected these two messages give an error in place of values on such an
+  installation; a single field can still be read (`read -c em2 HcMode supplyhctemp`).
+  `evidence/em-hcmode.md`, finding of 2026-11-18.
+
+### What a consumer may rely on
+
+- Every reading was decoded by the named ebusd build from the CSV of the same release, and
+  `expect` agreed with it. `telegram` injected into that ebusd gives `text`.
+- Keys and field names are those of the metadata of the same release; `coverage` says which
+  messages have a reading (`not_covered` is empty in 0.4.4: 528 of 528).
+- The bytes are real captures of one installation: two boilers in cascade, a system manager,
+  two heating modules, three room units. They show what these devices answered on the day
+  given, not what another installation holds, and not the whole range of a value.
+- Not to rely on: the number of readings per message, their order, the values of `note`.
+  New readings are added without a change of schema; `schema` changes when a key is renamed,
+  removed or changes meaning. Schema 1 (release 0.4.3 only) had one entry per setting with
+  the keys `read`, `answer`, `write`: now `master` and `slave` of two readings of type `read`
+  and `write`.

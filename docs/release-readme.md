@@ -31,8 +31,8 @@ https://github.com/aghulas/weishaupt-ebus).
 - `weishaupt-metadata-@VERSION@.json` — for every message of the Weishaupt files: its device,
   menu, short label in English and French, kind of value, polling class and, for a setting,
   the conditions of a write.
-- `weishaupt-fixtures-@VERSION@.json` — readings captured on a bus (request, answer, decoded
-  value), as test data.
+- `weishaupt-fixtures-@VERSION@.json` — for every message, telegrams captured on a bus
+  (request, answer) with the values ebusd decodes them to, as test data.
 - `sha256sums-@VERSION@.txt` — checksums of the archives and of these two files.
 
 ## Use
