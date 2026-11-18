@@ -32,7 +32,7 @@
 #             state are left out: ebusd's reading of all fields goes into the built file.
 #   error     in place of expect: ebusd refuses this telegram with the definitions as they
 #             are, with this error. A known defect, kept so that it cannot go unnoticed.
-#             No reading carries one since the correction of HcMode (release 0.4.4).
+#             No reading carries one since the correction of HcMode (release 0.5.0).
 #   case      what the reading is an example of: first-byte-not-zero, not-available,
 #             no-sensor, refused
 #   note      a remark for the reader of the built file

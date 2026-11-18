@@ -146,7 +146,7 @@ priority of DHW loading: manual of the room unit WCM-FS 2.0 and of the heating m
 WCM-EM 2.1, English edition 83277502, page 55, French edition 83277504, page 59. It says
 what happens to a heating circuit while the hot water is loaded. The operating mode of the
 hot water is another thing, a choice of the user level. On the owner's decision of
-2026-11-18 the message is `DHWLoadingPriority` from release 0.4.4 on, and its comments
+2026-11-18 the message is `DHWLoadingPriority` from release 0.5.0 on, and its comments
 follow the manual; address, type and value list are unchanged. The name keeps the `DHW`
 prefix of its neighbours (`DHWSetpoint`, `DHWExceeded`) and takes the words of the chapter
 rather than the name of the parameter, which says nothing of what is set and is close to

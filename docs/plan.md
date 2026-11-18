@@ -49,7 +49,7 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-**0.4.4 prepared locally (2026-11-18), nothing pushed.** The three decisions of the owner of
+**0.5.0 prepared locally (2026-11-18), nothing pushed.** The three decisions of the owner of
 that day are applied (see "Decisions and history"): `HcMode` decodes for a module without
 outside sensor, `DHWOperationMode` is `DHWLoadingPriority`, the 38 value-list entries have
 labels in the metadata. Lot A has two more commits and every lot above it was replayed (new
@@ -145,8 +145,8 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Release 0.4.4: push and publish.** Prepared locally on 2026-11-18, trial files under
-  `out/release/` (`INTEGRATION=weishaupt-next scripts/release.sh 0.4.4`). Needs the owner's
+- **Release 0.5.0: push and publish.** Prepared locally on 2026-11-18, trial files under
+  `out/release/` (`INTEGRATION=weishaupt-next scripts/release.sh 0.5.0`). Needs the owner's
   word, in this order:
   1. **The branch behind pull request #717, separately**: `weishaupt-pr` `66b775e` →
      `4cd5a54`, a fast-forward of two commits (no force), then the comment of
@@ -154,18 +154,16 @@ data point on arbitration with room units).
   2. The lot branches of the fork, all forced (rebuilt on the new lot A; no pull request on
      any of them): `weishaupt-A` (not on the fork yet under this name: `weishaupt-pr` is its
      copy), `weishaupt-E`, `-D`, `-F`, `-C`, `-G`, `-H`, `-J`, `-K`, `-L`, `-M`.
-  3. `scripts/release.sh 0.4.4` (moves `weishaupt` to `24b03d7`, the same commit as the
-     trial: same stack, same pin), then `weishaupt` forced, tag `weishaupt-0.4.4`, release
-     with the five files of `sha256sums-0.4.4.txt`, download and load in the official ebusd.
-  4. The workbench `main`: one commit ahead of `origin/main` (`a9ccf05`), the records and
+  3. `scripts/release.sh 0.5.0` (moves `weishaupt` to `24b03d7`, the same commit as the
+     trial: same stack, same pin), then `weishaupt` forced, tag `weishaupt-0.5.0`, release
+     with the four files `sha256sums-0.5.0.txt` lists and that file, download and load in
+     the official ebusd.
+  4. The workbench `main`: two commits ahead of `origin/main` (`a9ccf05`), the records and
      documents of this release.
-- **Number of that release: 0.4.4 or 0.5.0?** The rule below ("Versions") gives a renamed
-  message the second number, which makes this release 0.5.0. It was prepared as 0.4.4 as
-  asked; the notice and the metadata (`renamed_from`) say plainly that one message is
-  renamed. With 0.4.4 a consumer that accepts ">= 0.4.3, < 0.5" meets a rename inside its
-  range and must rely on `renamed_from`; with 0.5.0 the rule holds as written. Only the
-  version string differs (`scripts/release.sh 0.5.0` builds the same content). The owner
-  decides; the rule now says what applies in either case.
+- **Number of that release: settled, 0.5.0** (owner, 2026-11-18). A message is renamed, so
+  the second number changes, as the rule below says. It was first built as 0.4.4 on the
+  wording of the task; the content is the same. A consumer that accepts ">= 0.4.3, < 0.5"
+  does not take this release without a look at `renamed_from`.
 - **Values 1 and 2 of `DHWLoadingPriority`.** Only 0 (`Priority`) was read. The manual lists
   priority, parallel, sliding; the list has 1 = `Sliding`, 2 = `Parallel`; neither order is
   established (`evidence/ka-reads.md`, note of 2026-11-18). Settling it needs the register
@@ -339,13 +337,13 @@ data point on arbitration with room units).
      `FirstByte` was in 0.4.0), or the `schema` number of the metadata raised. The **third**
      changes for a compatible one: messages or trailing fields added, comments, translations,
      labels, menus, metadata values, a range widened or removed (values that were refused
-     decode, as `HcMode` in 0.4.4). A rename changes what ebusd publishes (`read`, MQTT
-     topic, entity key) and is always treated as breaking, whatever number the release gets:
+     decode, as `HcMode` in 0.5.0). A rename changes what ebusd publishes (`read`, MQTT
+     topic, entity key) and is the plainest breaking change:
      the entry carries `renamed_from` with the former key in the sidecar and keeps it in
      later releases, the notice of the release names the old and the new name and the reason
      under "Changes since", and the companion contract lists it. First case:
-     `ka/DHWOperationMode` → `ka/DHWLoadingPriority` (prepared on 2026-11-18 as 0.4.4; by
-     this rule 0.5.0, see "Needs the owner").
+     `ka/DHWOperationMode` → `ka/DHWLoadingPriority` (release 0.5.0, prepared on
+     2026-11-18).
   2. The metadata has its own `schema` number (1), raised only when its structure changes.
      While `status` says `proposed`, menu ids and labels may still change without notice;
      the keys never do outside a breaking release.
@@ -382,7 +380,7 @@ data point on arbitration with room units).
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
 
-- **2026-11-18, three decisions of the owner applied; release 0.4.4 prepared.** Local only:
+- **2026-11-18, three decisions of the owner applied; release 0.5.0 prepared.** Local only:
   nothing pushed, nothing published.
   - **`HcMode` (lot A, `b2e2db7`).** ebusd refused `em2/HcMode` and `em3/HcMode` because the
     field `OutsideTemp` of the answer had the type `temp2` (`D2B`, range -50 to 127 written
@@ -418,8 +416,9 @@ date; see 2026-11-17 "Commit identity".
     1 `provisional`). Count corrected in `docs/i18n.md`: 7 lists and 38 entries of the
     lots, not 8 and 43 (the eighth is a Wolf list); the "43" of the two entries below is
     that older count.
-  - **Trial**: `INTEGRATION=weishaupt-next scripts/release.sh 0.4.4`, `weishaupt-next`
-    `24b03d7`, seven steps clean, 605 messages in English, German and French (528 of the
+  - **Trial**: `INTEGRATION=weishaupt-next scripts/release.sh 0.5.0` (first built as 0.4.4,
+    then again under the number the owner chose: a rename takes the second number),
+    `weishaupt-next` `24b03d7`, seven steps clean, 605 messages in English, German and French (528 of the
     lots, 545 CSV lines), 566 readings decoded by ebusd. **CSV against 0.4.3**: four lines
     in four files, in both archives — `15.w.ka.csv`, the line of the renamed message (name,
     message comment, field comment); `50.w.em1.csv`, `51.w.em2.csv`, `52.w.em3.csv`, the

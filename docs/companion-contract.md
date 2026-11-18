@@ -53,7 +53,7 @@ definitions    version, commit of the integration branch, messages (528), csv_li
 languages      ["en", "fr"]
 status         { menus, labels, values }: "proposed" or "accepted", and the date of the
                acceptance (all three accepted by the owner of the project on 2026-11-18;
-               `values`, the labels of the value-list entries, from release 0.4.4 on)
+               `values`, the labels of the value-list entries, from release 0.5.0 on)
 devices        <id>: type, label, circuits [{circuit, address, file}]
 menus          <device type>: [{id, parent, label, source}]
 messages       <circuit>/<name>: see below
@@ -114,7 +114,7 @@ value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, 
 - A field matched by a pattern carries `group`, the numbers of its name (`code57` gives
   `{ "n": 57 }`).
 
-**Labels of the value-list entries** (from release 0.4.4 on). A field that has `values` also
+**Labels of the value-list entries** (from release 0.5.0 on). A field that has `values` also
 has `value_labels`, with the same raw values as keys:
 
 ```
@@ -128,10 +128,10 @@ has `value_labels`, with the same raw values as keys:
   takes the name, an MQTT payload carries the name: a consumer maps name to label for
   display and never sends a label.
 - Every entry of every value list has a label in each language of the file (the check fails
-  otherwise): 7 lists, 38 entries, 793 fields in release 0.4.4. One name has one label
+  otherwise): 7 lists, 38 entries, 793 fields in release 0.5.0. One name has one label
   wherever it is used (`on` is "On" / "Marche" on every bit).
 - `open.value_labels` names the entries whose label is provisional because no source says
-  what the entry is (`ForcedVenting` in 0.4.4); such a label may change in a release of the
+  what the entry is (`ForcedVenting` in 0.5.0); such a label may change in a release of the
   third number.
 - In the sidecar the labels are the table `[values]`, keyed by ebusd name; the weekdays are
   not repeated there and take their label from `[days]`, which also names the days of the
@@ -236,7 +236,7 @@ readings     list, see below
 | `expect` | value per field as the evidence record states it, at the precision of the record (a record that says 11.3 agrees with 11.301). Only the fields the record states; `null` is the replacement value |
 | `decoded` | value of every field as ebusd decodes it: a number, the name of a value-list entry or a text (time, hex), `null` for the replacement value (ebusd prints `-`). Field names as in the metadata |
 | `text` | the values as ebusd returns them to `read -c <circuit> <message>`: joined by `;`, in field order |
-| `error` | in place of `expect`, `decoded` and `text`: ebusd refuses this telegram with the definitions of this release and returns this error. A known defect, see below; none in 0.4.4 |
+| `error` | in place of `expect`, `decoded` and `text`: ebusd refuses this telegram with the definitions of this release and returns this error. A known defect, see below; none in 0.5.0 |
 | `evidence`, `date` | record under `evidence/` of this repository, day of the capture |
 | `case` | what the reading is an example of, see below |
 | `note` | a remark |
@@ -257,10 +257,10 @@ written). The order of the list has no meaning.
   fitted: -40 or -40.0 on a boiler, -100.0 on a heating module (`outsidetemp` of
   `em2/HcMode` and `em3/HcMode`). It decodes as a number; nothing in the telegram marks it.
 - `refused`: ebusd rejects the telegram with the definitions of the release, and the reading
-  carries `error`. No reading of 0.4.4 is in this case. In the fixtures built on 0.4.3 the
+  carries `error`. No reading of 0.5.0 is in this case. In the fixtures built on 0.4.3 the
   two `HcMode` readings above were: -100.0 lay outside the range the field then had, and
   ebusd gave `ERR: argument value out of valid range` for the whole message. Corrected in
-  0.4.4 (`evidence/em-hcmode.md`); with the definitions of 0.4.3 these two messages still
+  0.5.0 (`evidence/em-hcmode.md`); with the definitions of 0.4.3 these two messages still
   give that error on an installation whose module has no outside sensor.
 
 ### What a consumer may rely on
@@ -268,7 +268,7 @@ written). The order of the list has no meaning.
 - Every reading was decoded by the named ebusd build from the CSV of the same release, and
   `expect` agreed with it. `telegram` injected into that ebusd gives `text`.
 - Keys and field names are those of the metadata of the same release; `coverage` says which
-  messages have a reading (`not_covered` is empty in 0.4.4: 528 of 528).
+  messages have a reading (`not_covered` is empty in 0.5.0: 528 of 528).
 - The bytes are real captures of one installation: two boilers in cascade, a system manager,
   two heating modules, three room units. They show what these devices answered on the day
   given, not what another installation holds, and not the whole range of a value.

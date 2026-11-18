@@ -197,7 +197,7 @@ Wolf messages are left in English on the
 owner's decision of 2026-11-18; the key check does not expect a key for them.
 
 Since that count: 277 strings and keys with release 0.4.2 (three boiler information values),
-278 with the changes of lot A of 2026-11-18 (release 0.4.4). There the two strings of the
+278 with the changes of lot A of 2026-11-18 (release 0.5.0). There the two strings of the
 former `DHWOperationMode` ("hot water operating mode", "domestic hot water operating mode")
 left, and three came: the two comments of `DHWLoadingPriority` (rows "priority of the hot
 water loading" and "with priority, in parallel, sliding") and the comment of the outside
