@@ -70,10 +70,10 @@ Toolchain: `scripts/check.sh` clean on the commit, 259 messages (238 before).
 
 ## Equipment
 
-Kromschröder WCM regulators on eBUS, scanning as `MF=Kromschröder`, `ID=W`: heating modules
-at `51` and `52` (SW=7203), each with a mixed heating circuit and a WCM-FS room unit
-(SW=2726); a device at `50` with the software version of the system manager (SW=6618) and no
-mixed circuit. System manager at `15` (SW=6618), two condensing boilers in cascade.
+Kromschröder WCM regulators on eBUS, scanning as `MF=Kromschröder`, `ID=W`: two WCM-EM heating
+modules at `51` and `52` (SW=7203), each with a mixed heating circuit and a WCM-FS room unit
+(SW=2726); the system manager at `15` (SW=6618), which also answers at `50` for its own direct
+heating circuit (same software version, no mixed circuit). Two condensing boilers in cascade.
 
 ## Date
 
@@ -85,9 +85,12 @@ mixed circuit. System manager at `15` (SW=6618), two condensing boilers in casca
   (rule 7): that `50` and `52` take a write on these registers is not known and not defined.
 - `50` and `15` have the same software version and gave the same answer on every register
   read on both (the seven settings, heat demand, outside temperature, boost offset,
-  configuration status 76; the weighted outside temperature 13.3 and 13.4 a minute apart). They are probably one device answering at two addresses; the
-  scan does not say so. If they are, the `em1` settings are a second view of the system
-  manager's registers.
+  configuration status 76; the weighted outside temperature 13.3 and 13.4 a minute apart).
+  **Confirmed by the owner on 2026-11-18**: the installation has exactly two WCM-EM heating
+  modules, at `51` and `52`. Address `50` is therefore not a third add-on module but the system
+  manager's own direct heating circuit — the same device as `15` — answering at a second
+  address. The eight `em1` register reads are a second view of the system manager's registers
+  and duplicate `15`'s values; the block comment in `50.w.em1.tsp` (lot G) now says so.
 - The setting registers of a module and of its room unit hold different values (see
   [room-units-reads.md](room-units-reads.md)); which copy the regulation uses was not
   established.

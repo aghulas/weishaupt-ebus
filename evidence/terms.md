@@ -111,6 +111,7 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | operating hours (counter other than the burner hours) | heures de fonctionnement | | no vendor term; the manuals have the burner counter only | owner |
 | hours with mains on | heures sous tension | | no vendor term | owner |
 | since the last service; maintenance counter | depuis le dernier entretien; compteur d'entretien | | WTC p. 47 (i 46), p. 77 | vendor |
+| info value (the WTC Info-menu values, i codes) | valeur d'information | | the menu is "Info" and its values "valeurs de l'installation (i)" (WTC p. 46); the per-value wording "valeur d'information iNN" was not read in a manual and awaits the owner | provisional |
 | blocking time (before a further boiler of the cascade is switched on) | temps de blocage | | KA p. 18, 86 (537) | vendor |
 | de-couple sensor B22; hydraulic separator | sonde de bouteille casse-pression (B22); bouteille casse-pression | | KA p. 10 to 13, 70, 91; FS p. 9, 66 | vendor |
 | plate exchanger, secondary side (sensor B22) | échangeur à plaques, côté secondaire | | KA p. 14 to 16; SEP p. 10, 31 | vendor |
@@ -170,21 +171,23 @@ configuration, not from the lots. They have no row here and no vendor source, an
 
 ## Coverage of `src/fr.yaml`
 
-At `weishaupt-L` `915f5cc` (local, 2026-11-18): 293 comment strings in the files of the lots
-and `wolf/broadcast`, 269 of them of the lots (`scripts/i18n-keys.py`), all 269 with a key.
+At `weishaupt-L` (local, 2026-11-18, after lot K): 298 comment strings in the files of the lots
+and `wolf/broadcast`, 274 of them of the lots (`scripts/i18n-keys.py`), all 274 with a key.
 
 | Kind | Strings | Vendor terms only | Accepted by the owner | Provisional | Left in English |
 |---|---|---|---|---|---|
-| Written by hand, lots | 137 | 109 | 28 | 0 | |
+| Written by hand, lots | 142 | 109 | 28 | 5 | |
 | Patterned (program slots, fault-history slots) | 132 | 84 | 48 | | |
 | Wolf messages of the broadcast file | 24 | | | | 24 |
-| All | 293 | 193 | 76 | 0 | 24 |
+| All | 298 | 193 | 76 | 5 | 24 |
 
 The 48 patterned strings accepted by the owner are the 42 "stored in the room unit" slots and
 the 6 fault-history slots. The seven fault-counter message comments of lot J ("fault counters,
 numbers 57 to 51" …) and the first-answer-byte comment, written after the list below was first
 made, were put to the owner on 2026-11-18 and accepted as written, so their terms are now
-`owner` and no lot has a provisional string left. The first-answer-byte comment is no longer
+`owner`. Lot K (the five boiler information-value reads, added 2026-11-18) brings five
+provisional strings back: each pairs a vendor temperature term with the provisional
+"valeur d'information iNN" wording, not yet read by the owner. The first-answer-byte comment is no longer
 specific to lot J: on 2026-11-18 the field was folded into the shared base model `memr`, so it
 is one comment carried by every memory read (fault history, counters, live values, fault
 counters), and its wording was generalised from "all counters read 0" to "the data read 0". The
@@ -209,6 +212,11 @@ changed where the line says so; an unticked line was not put to the owner.
 | [x] | maximum flow temperature limit | limite de la température de départ maximale | the manuals have "température de départ maximale" only, no separate limit | température de départ maximale |
 | [x] | room-controller / heating-module exchange | échange entre commande à distance et module d'extension | device names are the vendor's, the message itself is not described | dialogue commande à distance / module d'extension |
 | [x] | switching differential of the calorifier | différentiel de commutation du stock tampon | "calorifier" is paired with "stock tampon" in one place only (WTC-en p. 25, WTC p. 30); no parameter has the range of the register | différentiel de commutation du préparateur ECS |
+| [ ] | flow temperature (info value i35) | température de départ (valeur d'information i35) | the Info menu (WTC p. 46) shows "T° départ"; "valeur d'information" for an "i" value was not read in a manual | température de départ (i35) |
+| [ ] | return temperature (info value i37) | température retour (valeur d'information i37) | the Info menu (WTC p. 47) shows "Température retour"; same wording question as i35 | température retour (i37) |
+| [ ] | flue gas temperature (info value i31) | température des fumées (valeur d'information i31) | the Info menu (WTC p. 46) shows "T° fumées"; same wording question as i35 | température des fumées (i31) |
+| [ ] | outside temperature (info value i33) | température extérieure (valeur d'information i33) | the Info menu (WTC p. 46) shows "Température extérieure"; same wording question as i35 | température extérieure (i33) |
+| [ ] | domestic hot water temperature (info value i34) | température ECS (valeur d'information i34) | the Info menu (WTC p. 46) shows "Température ECS"; same wording question as i35 | température ECS (i34) |
 | [x] | status byte | octet d'état | not a manual notion | octet de statut |
 | [x] | boiler status broadcast by the WTC | état de la chaudière diffusé par la WTC | not a manual notion | état de la chaudière émis par la WTC |
 | [x] | configuration status | état de la configuration | the manuals have "configuration" and "Config …" labels, no status | configuration |

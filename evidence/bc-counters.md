@@ -61,6 +61,15 @@ ebusd in steps of ten:
 
 The second boiler's 390 was predicted from the sum before it was read.
 
+**Scale correction (2026-11-18, lot E).** `BurnerServiceHours` is register `bc 02`, in units of
+ten hours (manual 83251704 p. 47: i 46 "Délai écoulé depuis le dernier entretien, h x 10").
+Lot E first read it with a plain `UIN` and no factor, so ebusd reported 44 and 39 instead of
+440 and 390 h — the message was 10× low in the 0.3.2 and 0.4.0 releases. Lot E now applies a
+factor of 10 (ebusd divisor −10). The read was confirmed read-only on the live bus on
+2026-11-18: `08` answers `02 2c 00` (`0x2c` = 44 → 440 h), `18` answers `02 27 00` (`0x27` =
+39 → 390 h). The second boiler had no `BurnerServiceHours` message before; lot E now defines it
+on both boilers.
+
 Toolchain: `scripts/check.sh` clean (format, compile, `ebusd --checkconfig`, 161 messages).
 
 ## First answer byte
