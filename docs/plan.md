@@ -93,7 +93,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0` and `weishaupt-0.4.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.2` and `weishaupt-0.4.3` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1` and `weishaupt-0.4.2` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.3` is the only release online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -113,7 +113,6 @@ fork heads compared after the push, equal.
 | Repository | Release | Content |
 |---|---|---|
 | `aghulas/ebusd-configuration` | `weishaupt-0.4.3` (pre-release) | the CSV of 0.4.2 unchanged, plus the metadata asset for the Home Assistant companion (`weishaupt-metadata-0.4.3.json`, format in `docs/companion-contract.md`), a fixtures file and the checksums. Downloaded again after publication: checksums right, 605 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.4.2` (pre-release) | as 0.4.1, plus three boiler information values on both boilers: hydraulic separator temperature i39, software versions i44 and i45. Downloaded again after publication: three assets, checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
