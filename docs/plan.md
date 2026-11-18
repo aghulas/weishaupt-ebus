@@ -49,7 +49,7 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-**0.5.0 released (2026-11-18)** from `weishaupt` `24b03d7`, on the owner's word: the two commits of lot A pushed to `weishaupt-pr` (fast-forward) with a comment on #717, the ten lot branches forced, five files published. Downloaded again: the four checksums right, 605 messages without error in the official ebusd 26.1; the compiled CSV differ from 0.4.3 only in `15.w.ka` (the renamed message) and in the `HcMode` line of the three module files. `weishaupt-0.4.3` stays online beside it. The three decisions of the owner of
+**0.5.0 released (2026-11-18)** from `weishaupt` `24b03d7`, on the owner's word: the two commits of lot A pushed to `weishaupt-pr` (fast-forward) with a comment on #717, the ten lot branches forced, five files published. Downloaded again: the four checksums right, 605 messages without error in the official ebusd 26.1; the compiled CSV differ from 0.4.3 only in `15.w.ka` (the renamed message) and in the `HcMode` line of the three module files. `weishaupt-0.4.3` was deleted the same day on the owner's request, its tag kept in the local clone. The three decisions of the owner of
 that day are applied (see "Decisions and history"): `HcMode` decodes for a module without
 outside sensor, `DHWOperationMode` is `DHWLoadingPriority`, the 38 value-list entries have
 labels in the metadata. Lot A has two more commits and every lot above it was replayed (new
@@ -103,7 +103,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1` and `weishaupt-0.4.2` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.3` and `weishaupt-0.5.0` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0` is the only release online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -123,7 +123,6 @@ fork heads compared after the push, equal.
 | Repository | Release | Content |
 |---|---|---|
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.0` (pre-release) | `HcMode` decodes for a heating module without an outside sensor; `DHWOperationMode` renamed `DHWLoadingPriority` (breaking); labels of the value-list entries in the metadata file; fixtures for every message (schema 2). Downloaded again after publication: checksums right, 605 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.4.3` (pre-release) | the CSV of 0.4.2 unchanged, plus the metadata asset for the Home Assistant companion (`weishaupt-metadata-0.4.3.json`, format in `docs/companion-contract.md`), a fixtures file and the checksums. Downloaded again after publication: checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
