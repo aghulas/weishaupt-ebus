@@ -155,6 +155,14 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
+- **Choices, holiday dates, programs, clock (writes of the client 0.1 that the companion lacks).**
+  Inventory and proof plan in `evidence/choice-date-program-writes.md` (2026-11-18): proven
+  0 of 16 choices, 0 of 6 dates, 1 program slot of 357, clock not yet (5 numeric settings the
+  client cannot write: none proven). Batches A to F with their telegrams, risks first. For the
+  owner: (1) batch C (boiler sequence, circuit type) at all, and when; (2) whether one captured
+  slot per program and device stands for its 21 slots; (3) write conditions for program slots
+  in the contract (today only `setting` can carry them). Nothing defined yet.
+
 - **Release 0.5.5: done** (2026-11-18, see "Current state"). Linked bounds: proposed key
   `write.below` / `write.above` in `docs/companion-contract.md`, not in the file yet.
 - **Release 0.5.4: done** (2026-11-18, see "Current state").
@@ -396,6 +404,13 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-18, writes beyond the numeric settings: inventory and proof plan** (owner: « c'est
+  parti pour 1 et 2 », item 2). Read only: the client's tables, the snapshots, the telegram-log
+  exports. The choices were only ever written with their stored value; no holiday date write is
+  in the log; one program slot of `fs1` was changed twice from `31` and read back; the clock
+  broadcast of `31` is captured but its adoption by `f1` is not. Plan of 50 telegram pairs in
+  six batches (`evidence/choice-date-program-writes.md`). No definition changed, nothing sent.
 
 - **2026-11-18, companion review, metadata part (owner: « je suis d'accord avec tes avis »);
   trial 0.5.5 (local).** Ranges: setback setpoint 10.0–21.5 and curve 2.5–40.0, step 0.5,
