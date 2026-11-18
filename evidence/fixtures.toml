@@ -1,165 +1,1018 @@
-# Readings transcribed from the evidence records, as test fixtures for anything that decodes or
-# shows these messages. Telegram bytes and decoded values only; nothing site-specific.
+# Fixtures: telegrams the evidence records hold, with the value each decodes to.
 #
-# Each reading cites the record it was copied from; scripts/metadata.py fixtures checks that the
-# bytes are in that record, that the read ID and the written register are those of the
-# definition, and that the two value bytes decode to `expect`. It writes the JSON file that
-# scripts/release.sh puts beside the archives.
+# A transcription, nothing else. Every reading names the record it was copied from (evidence)
+# and the day of the capture (date), and carries the bytes as the record has them. No reading
+# is invented, completed or "typical"; a register nobody recorded has no reading here until it
+# is read and the reading is written into its record first.
 #
-# read    ID bytes of the 50 22 request (checksum, address), when the record has a single read
-# answer  the two data bytes answered
-# write   data of the captured 50 23 telegram: checksum, address, value
-# expect  decoded value per field
+# scripts/fixtures.py check (step 7 of scripts/check.sh) verifies each reading: the message
+# exists, the bytes and the day are in the record, the request is the one of the definition,
+# and ebusd itself, loaded with the compiled lot files and fed with the telegram, takes it for
+# this message and decodes it to `expect`. scripts/fixtures.py build writes the fixtures file
+# of a release (format: docs/companion-contract.md, "Fixtures").
 #
-# So far: the 17 settings of evidence/settings-writes.md (table "write seen / read seen /
-# decoded"). The other records quote their telegrams in prose or in tables of their own; they
-# are not transcribed yet.
+# A block gives what its readings share:
+#   evidence  record under evidence/, without .md
+#   date      day of the capture
+#   circuit   circuit of the messages (last part of the CSV file name; broadcast)
+#   type      read (default): 50 22 register read or 50 00 memory read, request and answer
+#             write: captured 50 23 telegram, acknowledged
+#             passive: telegram between other devices, seen by ebusd
+#   qq        source address of the telegram (default 31, ebusd, for a read)
+#   where     row: request and answer stand on one line of the record (a table row)
+#             text (default): each stands somewhere in the record
+# A reading:
+#   message   name of the message
+#   master    data bytes the source sent, after the length byte: for a read the ID of the
+#             definition (checksum, address); for a write checksum, address, value
+#   slave     data bytes of the answer, after the length byte; "" for an acknowledged write;
+#             absent when the target is a master or the telegram a broadcast
+#   expect    value per field, as the record states it, at the precision of the record;
+#             "-" is the replacement value (not available). Fields the record does not
+#             state are left out: ebusd's reading of all fields goes into the built file.
+#   error     in place of expect: ebusd refuses this telegram with the definitions as they
+#             are, with this error. A known defect, kept so that it cannot go unnoticed.
+#   case      what the reading is an example of: first-byte-not-zero, not-available,
+#             no-sensor, refused
+#   note      a remark for the reader of the built file
 
-[[reading]]
-circuit = "ka"
-message = "BlockingTime"
-read = "4c 25 00"
-answer = "01 00"
-write = "28 25 00 01 00"
-expect = { value = 1 }
+schema = 2
+
+# settings-writes: the captured 50 23 telegram of each setting, acknowledged; source ff
+[[block]]
 evidence = "settings-writes"
-
-[[reading]]
+date = "2026-11-16"
 circuit = "ka"
-message = "ChangeOverTime"
-read = "3d ec fd"
-answer = "32 00"
-write = "d4 ec fd 32 00"
-expect = { value = 50 }
-evidence = "settings-writes"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "BlockingTime", master = "28 25 00 01 00", slave = "", expect = { value = 1 } },
+  { message = "ChangeOverTime", master = "d4 ec fd 32 00", slave = "", expect = { value = 50 } },
+  { message = "DeCoupleMinTemp", master = "70 e7 fd 50 00", slave = "", expect = { value = 8.0 } },
+  { message = "CalorifierSwitchDiff", master = "0c e2 fd 14 00", slave = "", expect = { value = 2.0 } },
+  { message = "DHWSwitchDiff", master = "bf 40 01 ce ff", slave = "", expect = { value = -5.0 } },
+  { message = "DHWLoadTime", master = "90 80 01 00 00", slave = "", expect = { value = 0 } },
+  { message = "LegionellaSetpoint", master = "72 87 05 58 02", slave = "", expect = { value = 60.0 } },
+  { message = "LegionellaCirculationTime", master = "46 b1 09 58 02", slave = "", expect = { value = 600 } },
+]
 
-[[reading]]
-circuit = "ka"
-message = "DeCoupleMinTemp"
-answer = "50 00"
-write = "70 e7 fd 50 00"
-expect = { value = 8.0 }
+# settings-writes: the captured 50 23 telegram of each setting, acknowledged; source ff
+[[block]]
 evidence = "settings-writes"
-
-[[reading]]
-circuit = "ka"
-message = "CalorifierSwitchDiff"
-read = "f1 e2 fd"
-answer = "14 00"
-write = "0c e2 fd 14 00"
-expect = { value = 2.0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "ka"
-message = "DHWSwitchDiff"
-answer = "ce ff"
-write = "bf 40 01 ce ff"
-expect = { value = -5.0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "ka"
-message = "DHWLoadTime"
-read = "f1 80 01"
-answer = "00 00"
-write = "90 80 01 00 00"
-expect = { value = 0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "ka"
-message = "LegionellaSetpoint"
-read = "3d 87 05"
-answer = "58 02"
-write = "72 87 05 58 02"
-expect = { value = 60.0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "ka"
-message = "LegionellaCirculationTime"
-read = "29 b1 09"
-answer = "58 02"
-write = "46 b1 09 58 02"
-expect = { value = 600 }
-evidence = "settings-writes"
-
-[[reading]]
+date = "2026-11-16"
 circuit = "em2"
-message = "RoomNormalTemp"
-answer = "d7 00"
-write = "d8 05 00 d7 00"
-expect = { value = 21.5 }
-evidence = "settings-writes"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "d8 05 00 d7 00", slave = "", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "b0 08 00 d7 00", slave = "", expect = { value = 21.5 } },
+  { message = "RoomFrostProtectionTemp", master = "7c 14 0a 64 00", slave = "", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "a4 0e 01 64 00", slave = "", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "dc 16 01 c8 00", slave = "", expect = { value = 20.0 } },
+]
 
-[[reading]]
+# settings-writes: the captured 50 23 telegram of each setting, acknowledged; source 31
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-16"
 circuit = "em2"
-message = "RoomSetbackTemp"
-read = "58 08 00"
-answer = "d7 00"
-write = "b0 08 00 d7 00"
-expect = { value = 21.5 }
-evidence = "settings-writes"
+type = "write"
+qq = "31"
+where = "row"
+readings = [
+  { message = "SupplyMaxTemp", master = "66 28 00 ee 02", slave = "", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "70 2b 01 50 00", slave = "", expect = { value = 8.0 } },
+]
 
-[[reading]]
-circuit = "em2"
-message = "RoomFrostProtectionTemp"
-read = "96 14 0a"
-answer = "64 00"
-write = "7c 14 0a 64 00"
-expect = { value = 10.0 }
+# settings-writes: the captured 50 23 telegram of each setting, acknowledged; source ff
+[[block]]
 evidence = "settings-writes"
-
-[[reading]]
-circuit = "em2"
-message = "GradientCurve"
-read = "cd 0e 01"
-answer = "64 00"
-write = "a4 0e 01 64 00"
-expect = { value = 10.0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "em2"
-message = "SummerWinterChangeOverTemp"
-answer = "c8 00"
-write = "dc 16 01 c8 00"
-expect = { value = 20.0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "em2"
-message = "SupplyMaxTemp"
-read = "64 28 00"
-answer = "ee 02"
-write = "66 28 00 ee 02"
-expect = { value = 75.0 }
-evidence = "settings-writes"
-
-[[reading]]
-circuit = "em2"
-message = "SupplyMinTemp"
-read = "81 2b 01"
-answer = "50 00"
-write = "70 2b 01 50 00"
-expect = { value = 8.0 }
-evidence = "settings-writes"
-
-[[reading]]
+date = "2026-11-16"
 circuit = "fs1"
-message = "SwitchOnRuntime"
-read = "b1 10 01"
-answer = "03 00"
-write = "d8 10 01 03 00"
-expect = { value = 3 }
-evidence = "settings-writes"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "SwitchOnRuntime", master = "d8 10 01 03 00", slave = "", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "a4 be 02 00 00", slave = "", expect = { value = 0.0 } },
+]
 
-[[reading]]
-circuit = "fs1"
-message = "FrostProtectionLimitTemp"
-read = "b2 be 02"
-answer = "00 00"
-write = "a4 be 02 00 00"
-expect = { value = 0.0 }
+# settings-writes: the 50 22 read of the same register by ebusd, where a single read was captured
+[[block]]
 evidence = "settings-writes"
+date = "2026-11-16"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "BlockingTime", master = "4c 25 00", slave = "01 00", expect = { value = 1 } },
+  { message = "ChangeOverTime", master = "3d ec fd", slave = "32 00", expect = { value = 50 } },
+  { message = "CalorifierSwitchDiff", master = "f1 e2 fd", slave = "14 00", expect = { value = 2.0 } },
+  { message = "DHWLoadTime", master = "f1 80 01", slave = "00 00", expect = { value = 0 } },
+  { message = "LegionellaSetpoint", master = "3d 87 05", slave = "58 02", expect = { value = 60.0 } },
+  { message = "LegionellaCirculationTime", master = "29 b1 09", slave = "58 02", expect = { value = 600 } },
+]
+
+# settings-writes: the 50 22 read of the same register by ebusd, where a single read was captured
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-16"
+circuit = "em2"
+where = "row"
+readings = [
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "64 00", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "64 00", expect = { value = 10.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+]
+
+# settings-writes: the 50 22 read of the same register by ebusd, where a single read was captured
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-16"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "SwitchOnRuntime", master = "b1 10 01", slave = "03 00", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
+]
+
+# ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
+[[block]]
+evidence = "ka-reads"
+date = "2026-11-17"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "DHWSetValue", master = "e4 03 00", slave = "f4 01", expect = { value = 50.0 } },
+  { message = "DeCoupleTemp", master = "28 0d 00", slave = "54 02", expect = { value = 59.6 } },
+  { message = "DHWTemp", master = "cc 0e 00", slave = "69 01", expect = { value = 36.1 } },
+]
+
+# ka-reads: the twelve registers read once for their bytes
+[[block]]
+evidence = "ka-reads"
+date = "2026-11-18"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "ErrorStatus", master = "5c 01 00", slave = "00 00", expect = { value = 0 } },
+  { message = "HeatDemandTemp", master = "b8 02 00", slave = "65 01", expect = { value = 35.7 } },
+  { message = "ConfigStatus", master = "b0 10 00", slave = "4c 00", expect = { value = 76 } },
+  { message = "VersionMajor", master = "45 99 01", slave = "0a 01", expect = { value = 266 } },
+  { message = "VersionMinor", master = "a1 9a 01", slave = "12 00", expect = { value = 18 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "a0 00", expect = { value = 16.0 } },
+  { message = "DHWSetpoint", master = "54 13 00", slave = "f4 01", expect = { value = 50.0 } },
+  { message = "DHWOperationMode", master = "d8 23 00", slave = "00 00", expect = { value = "Priority" } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "34 03", expect = { value = 82.0 } },
+  { message = "ModulationStatus", master = "48 2c 00", slave = "08 00", expect = { value = 8 } },
+  { message = "DHWExceeded", master = "14 2d 00", slave = "64 00", expect = { value = 10.0 } },
+]
+
+# room-units-reads, point 4: the system manager answered the outside registers in the same minutes
+[[block]]
+evidence = "room-units-reads"
+date = "2026-11-17"
+circuit = "ka"
+where = "text"
+readings = [
+  { message = "OutsideTemp", master = "74 0c 00", slave = "96 00", expect = { value = 15.0 } },
+  { message = "OutsideWeightedTemp", master = "7e 0c 0a", slave = "86 00", expect = { value = 13.4 } },
+]
+
+# bc1-boiler-status: first boiler to the cascade master, burner in operation
+[[block]]
+evidence = "bc1-boiler-status"
+date = "2026-11-16"
+circuit = "ka"
+type = "passive"
+qq = "03"
+where = "text"
+readings = [
+  { message = "Boiler1Power", master = "36 17 64", expect = { currentload = 54, minload = 23, maxload = 100 } },
+  { message = "Boiler1Status", master = "01 06 7f 62 33 7c ff ff 00 0b 4d 0b ff", expect = { operatingphase = "BurnerInOperation", outsidetemp = 11.0, outsideweightedtemp = 11.3 } },
+]
+
+# bc1-boiler-status: second boiler, burner off then firing; it has no outside sensor
+[[block]]
+evidence = "bc1-boiler-status"
+date = "2026-11-17"
+circuit = "ka"
+type = "passive"
+qq = "13"
+where = "text"
+readings = [
+  { message = "Boiler2Power", master = "21 17 64", expect = { currentload = 33, minload = 23, maxload = 100 } },
+  { message = "Boiler2Status", master = "01 00 07 00 00 80 ff ff 00 80 00 00 08", expect = { operatingphase = "BurnerOff", load = 0, supplytemp = 64.0, outsidetemp = "-" }, case = "not-available" },
+  { message = "Boiler2Power", master = "19 17 64", expect = { currentload = 25, minload = 23, maxload = 100 } },
+  { message = "Boiler2Status", master = "01 06 7f 62 19 78 ff ff 00 80 00 00 ff", expect = { operatingphase = "BurnerInOperation", load = 25, supplytemp = 60.0, outsidetemp = "-" }, case = "not-available" },
+]
+
+# bc-live-values: status telegrams of the minute of the memory reads
+[[block]]
+evidence = "bc-live-values"
+date = "2026-11-17"
+circuit = "ka"
+type = "passive"
+qq = "03"
+where = "text"
+readings = [
+  { message = "Boiler1Status", master = "01 06 7f 62 19 72 ff ff 00 0f b3 0c ff", expect = { load = 25, supplytemp = 57.0, outsidetemp = 15.0 } },
+  { message = "Boiler1Power", master = "19 17 64", expect = { currentload = 25 } },
+]
+
+# bc-live-values: the same for the second boiler, idle
+[[block]]
+evidence = "bc-live-values"
+date = "2026-11-17"
+circuit = "ka"
+type = "passive"
+qq = "13"
+where = "text"
+readings = [
+  { message = "Boiler2Status", master = "01 00 07 00 00 68 ff ff 00 80 00 00 08", expect = { load = 0, supplytemp = 52.0, outsidetemp = "-" }, case = "not-available" },
+]
+
+# broadcast-kastatus: the capture that kept the source address
+[[block]]
+evidence = "broadcast-kastatus"
+date = "2026-11-18"
+circuit = "broadcast"
+type = "passive"
+qq = "f1"
+where = "text"
+readings = [
+  { message = "KaStatus", master = "01 00 40 00 ff 50 ff 33 00 0b cd 0c 24", expect = { operatingphase = "BurnerOff", load = "-", supplytemp = 40.0, dhwtemp = 25.5, outsidetemp = 11.0, outsideweightedtemp = 12.8, supplysettemp = 36 }, case = "not-available" },
+]
+
+# em-hcmode: exchange of the first circuit; no flow sensor on this device
+[[block]]
+evidence = "em-hcmode"
+date = "2026-11-16"
+circuit = "em1"
+type = "passive"
+qq = "30"
+where = "text"
+readings = [
+  { message = "HcMode", master = "01 00 31 4d 1b 08 ff", slave = "00 00 00 80 00 0b 04 a4 10", expect = { supplyhctemp = "-", outsidetemp = 11.0 }, case = "not-available" },
+]
+
+# em-hcmode: capture with the source of each exchange
+[[block]]
+evidence = "em-hcmode"
+date = "2026-11-18"
+circuit = "em1"
+type = "passive"
+qq = "30"
+where = "row"
+readings = [
+  { message = "HcMode", master = "01 00 06 4d 17 08 ff", slave = "00 00 00 80 00 0b 04 a4 10", expect = { supplyhctemp = "-", outsidetemp = 11.0, boilermcboosttemp = 2.0, supplyhcmaxtemp = 82.0, supplyhcmintemp = 8.0 }, case = "not-available" },
+]
+
+# em-hcmode, finding of 2026-11-18: ebusd refuses the exchange of the modules without an outside sensor
+[[block]]
+evidence = "em-hcmode"
+date = "2026-11-18"
+circuit = "em2"
+type = "passive"
+qq = "70"
+where = "row"
+readings = [
+  { message = "HcMode", master = "01 00 05 e6 17 08 ff", slave = "00 00 00 19 00 9c 04 96 10", error = "argument value out of valid range", case = "refused", note = "outside temperature 00 9c (-100.0, no sensor) is outside the range of the field: ebusd refuses the whole telegram" },
+]
+
+# em-hcmode, the same on the third circuit
+[[block]]
+evidence = "em-hcmode"
+date = "2026-11-18"
+circuit = "em3"
+type = "passive"
+qq = "f0"
+where = "row"
+readings = [
+  { message = "HcMode", master = "03 00 1b b3 17 00 ff", slave = "00 01 cd 19 00 9c 02 96 10", error = "argument value out of valid range", case = "refused", note = "outside temperature 00 9c (-100.0, no sensor) is outside the range of the field: ebusd refuses the whole telegram" },
+]
+
+# em1-clock-program: the hour, read with the hex command
+[[block]]
+evidence = "em1-clock-program"
+date = "2026-11-17"
+circuit = "em1"
+where = "text"
+readings = [
+  { message = "SystemHour", master = "4d 25 01", slave = "0f 00", expect = { value = 15 } },
+]
+
+# em1-clock-program: the other clock registers, read once for their bytes
+[[block]]
+evidence = "em1-clock-program"
+date = "2026-11-18"
+circuit = "em1"
+where = "row"
+readings = [
+  { message = "SystemWeekday", master = "61 21 01", slave = "03 00", expect = { value = "Wednesday" } },
+  { message = "SystemDay", master = "85 22 01", slave = "12 00", expect = { value = 18 } },
+  { message = "SystemMonth", master = "d9 23 01", slave = "0b 00", expect = { value = "November" } },
+  { message = "SystemYear", master = "11 24 01", slave = "1a 00", expect = { value = 26 } },
+  { message = "SystemMinute", master = "a9 26 01", slave = "1a 00", expect = { value = 26 } },
+  { message = "SystemSecond", master = "f5 27 01", slave = "3b 00", expect = { value = 59 } },
+]
+
+# em1-clock-program: the 42 slots of the hot-water and circulation programs
+[[block]]
+evidence = "em1-clock-program"
+date = "2026-11-17"
+circuit = "em1"
+where = "row"
+readings = [
+  { message = "CircProgramMon1", master = "aa 10 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramMon2", master = "f6 11 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramMon3", master = "12 12 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramTue1", master = "26 20 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramTue2", master = "7a 21 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramTue3", master = "9e 22 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramWed1", master = "96 30 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramWed2", master = "ca 31 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramWed3", master = "2e 32 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramThu1", master = "62 40 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramThu2", master = "3e 41 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramThu3", master = "da 42 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramFri1", master = "d2 50 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramFri2", master = "8e 51 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramFri3", master = "6a 52 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramSat1", master = "5e 60 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramSat2", master = "02 61 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramSat3", master = "e6 62 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramSun1", master = "ee 70 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramSun2", master = "b2 71 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "CircProgramSun3", master = "56 72 1a", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon1", master = "a7 10 17", slave = "40 24", expect = { totime = "16:00", toenabled = "Enabled", fromtime = "09:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramMon2", master = "fb 11 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon3", master = "1f 12 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue1", master = "2b 20 17", slave = "40 24", expect = { totime = "16:00", toenabled = "Enabled", fromtime = "09:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramTue2", master = "77 21 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue3", master = "93 22 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed1", master = "9b 30 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed2", master = "c7 31 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed3", master = "23 32 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu1", master = "6f 40 17", slave = "40 24", expect = { totime = "16:00", toenabled = "Enabled", fromtime = "09:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramThu2", master = "33 41 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu3", master = "d7 42 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri1", master = "df 50 17", slave = "40 24", expect = { totime = "16:00", toenabled = "Enabled", fromtime = "09:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramFri2", master = "83 51 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri3", master = "67 52 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat1", master = "53 60 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat2", master = "0f 61 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat3", master = "eb 62 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun1", master = "e3 70 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun2", master = "bf 71 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun3", master = "5b 72 17", slave = "80 80", expect = { totime = "00:00", toenabled = "Disabled", fromtime = "00:00", fromenabled = "Disabled" } },
+]
+
+# em1-fault-log: the nine registers of the most recent entry
+[[block]]
+evidence = "em1-fault-log"
+date = "2026-11-18"
+circuit = "em1"
+where = "row"
+readings = [
+  { message = "ErrorId", master = "ab 9a 0b", slave = "00 00", expect = { value = 0 } },
+  { message = "ErrorCode", master = "f7 9b 0b", slave = "00 00", expect = { value = 0 } },
+  { message = "ErrorType", master = "3f 9c 0b", slave = "0a 00", expect = { value = 10 } },
+  { message = "ErrorDevice", master = "63 9d 0b", slave = "01 00", expect = { value = 1 } },
+  { message = "ErrorMinute", master = "db 9f 0b", slave = "1e 00", expect = { value = 30 } },
+  { message = "ErrorHour", master = "c7 a0 0b", slave = "03 00", expect = { value = 3 } },
+  { message = "ErrorDay", master = "9b a1 0b", slave = "07 00", expect = { value = 7 } },
+  { message = "ErrorMonth", master = "7f a2 0b", slave = "0b 00", expect = { value = "November" } },
+  { message = "ErrorYear", master = "23 a3 0b", slave = "1a 00", expect = { value = 26 } },
+]
+
+# heating-modules-reads: each register read once on each module
+[[block]]
+evidence = "heating-modules-reads"
+date = "2026-11-17"
+circuit = "em1"
+where = "row"
+readings = [
+  { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "a0 00", expect = { value = 16.0 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "64 00", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "64 00", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c8 00", expect = { value = 20.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "34 03", expect = { value = 82.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+]
+
+# heating-modules-reads: each register read once on each module
+[[block]]
+evidence = "heating-modules-reads"
+date = "2026-11-17"
+circuit = "em2"
+where = "row"
+readings = [
+  { message = "SupplyHCSetTemp", master = "2c 04 00", slave = "ae 01", expect = { value = 43.0 } },
+  { message = "SupplyHCTemp", master = "90 0f 00", slave = "ac 01", expect = { value = 42.8 } },
+  { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "64 00", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "64 00", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c8 00", expect = { value = 20.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+]
+
+# heating-modules-reads: each register read once on each module
+[[block]]
+evidence = "heating-modules-reads"
+date = "2026-11-17"
+circuit = "em3"
+where = "row"
+readings = [
+  { message = "SupplyHCSetTemp", master = "2c 04 00", slave = "ae 01", expect = { value = 43.0 } },
+  { message = "SupplyHCTemp", master = "90 0f 00", slave = "aa 01", expect = { value = 42.6 } },
+  { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "0a 00", expect = { value = 1.0 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "64 00", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "64 00", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c8 00", expect = { value = 20.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+]
+
+# room-units-reads: the fourteen registers of each room unit
+[[block]]
+evidence = "room-units-reads"
+date = "2026-11-17"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "HeatDemandTemp", master = "b8 02 00", slave = "a7 01", expect = { value = 42.3 } },
+  { message = "SupplyHCSetTemp", master = "2c 04 00", slave = "a7 01", expect = { value = 42.3 } },
+  { message = "OutsideTemp", master = "74 0c 00", slave = "96 00", expect = { value = 15.0 } },
+  { message = "OutsideWeightedTemp", master = "7e 0c 0a", slave = "86 00", expect = { value = 13.4 } },
+  { message = "RoomTemp", master = "ec 11 00", slave = "1a 01", expect = { value = 28.2 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "8c 00", expect = { value = 14.0 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "50 00", expect = { value = 8.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "be 00", expect = { value = 19.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "96 00", expect = { value = 15.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+  { message = "SwitchOnRuntime", master = "b1 10 01", slave = "03 00", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
+]
+
+# room-units-reads: the fourteen registers of each room unit
+[[block]]
+evidence = "room-units-reads"
+date = "2026-11-17"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "HeatDemandTemp", master = "b8 02 00", slave = "c2 01", expect = { value = 45.0 } },
+  { message = "SupplyHCSetTemp", master = "2c 04 00", slave = "ae 01", expect = { value = 43.0 } },
+  { message = "OutsideTemp", master = "74 0c 00", slave = "96 00", expect = { value = 15.0 } },
+  { message = "OutsideWeightedTemp", master = "7e 0c 0a", slave = "86 00", expect = { value = 13.4 } },
+  { message = "RoomTemp", master = "ec 11 00", slave = "1a 01", expect = { value = 28.2 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "8c 00", expect = { value = 14.0 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "50 00", expect = { value = 8.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "c8 00", expect = { value = 20.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "96 00", expect = { value = 15.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+  { message = "SwitchOnRuntime", master = "b1 10 01", slave = "03 00", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
+]
+
+# room-units-reads: the fourteen registers of each room unit
+[[block]]
+evidence = "room-units-reads"
+date = "2026-11-17"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "HeatDemandTemp", master = "b8 02 00", slave = "ca 01", expect = { value = 45.8 } },
+  { message = "SupplyHCSetTemp", master = "2c 04 00", slave = "b6 01", expect = { value = 43.8 } },
+  { message = "OutsideTemp", master = "74 0c 00", slave = "96 00", expect = { value = 15.0 } },
+  { message = "OutsideWeightedTemp", master = "7e 0c 0a", slave = "86 00", expect = { value = 13.4 } },
+  { message = "RoomTemp", master = "ec 11 00", slave = "1c 01", expect = { value = 28.4 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "8c 00", expect = { value = 14.0 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "50 00", expect = { value = 8.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "96 00", expect = { value = 15.0 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "ee 02", expect = { value = 75.0 } },
+  { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
+  { message = "SwitchOnRuntime", master = "b1 10 01", slave = "03 00", expect = { value = 3 } },
+  { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
+]
+
+# room-units-programs: the 105 slots of the five weekly programs
+[[block]]
+evidence = "room-units-programs"
+date = "2026-11-17"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "HCProgram1Mon1", master = "a4 10 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Mon2", master = "f8 11 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Mon3", master = "1c 12 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Tue1", master = "28 20 14", slave = "5a 1a", expect = { totime = "22:30", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Tue2", master = "74 21 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Tue3", master = "90 22 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed1", master = "98 30 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed2", master = "c4 31 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed3", master = "20 32 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Thu1", master = "6c 40 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Thu2", master = "30 41 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Thu3", master = "d4 42 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Fri1", master = "dc 50 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Fri2", master = "80 51 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Fri3", master = "64 52 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat1", master = "50 60 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat2", master = "0c 61 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat3", master = "e8 62 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun1", master = "e0 70 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun2", master = "bc 71 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun3", master = "58 72 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Mon1", master = "a5 10 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Mon2", master = "f9 11 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Mon3", master = "1d 12 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Tue1", master = "29 20 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Tue2", master = "75 21 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Tue3", master = "91 22 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Wed1", master = "99 30 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Wed2", master = "c5 31 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Wed3", master = "21 32 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Thu1", master = "6d 40 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Thu2", master = "31 41 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Thu3", master = "d5 42 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Fri1", master = "dd 50 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Fri2", master = "81 51 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Fri3", master = "65 52 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sat1", master = "51 60 15", slave = "30 1c", expect = { totime = "12:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Sat2", master = "0d 61 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sat3", master = "e9 62 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun1", master = "e1 70 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun2", master = "bd 71 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun3", master = "59 72 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Mon1", master = "a6 10 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Mon2", master = "fa 11 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Mon3", master = "1e 12 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Tue1", master = "2a 20 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Tue2", master = "76 21 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Tue3", master = "92 22 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Wed1", master = "9a 30 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Wed2", master = "c6 31 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Wed3", master = "22 32 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Thu1", master = "6e 40 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Thu2", master = "32 41 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Thu3", master = "d6 42 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Fri1", master = "de 50 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Fri2", master = "82 51 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Fri3", master = "66 52 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat1", master = "52 60 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat2", master = "0e 61 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat3", master = "ea 62 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun1", master = "e2 70 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun2", master = "be 71 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun3", master = "5a 72 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon1", master = "a7 10 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramMon2", master = "fb 11 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon3", master = "1f 12 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue1", master = "2b 20 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramTue2", master = "77 21 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue3", master = "93 22 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed1", master = "9b 30 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramWed2", master = "c7 31 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed3", master = "23 32 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu1", master = "6f 40 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramThu2", master = "33 41 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu3", master = "d7 42 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri1", master = "df 50 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramFri2", master = "83 51 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri3", master = "67 52 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat1", master = "53 60 17", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSat2", master = "0f 61 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat3", master = "eb 62 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun1", master = "e3 70 17", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSun2", master = "bf 71 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun3", master = "5b 72 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "CircProgramMon1", master = "aa 10 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramMon2", master = "f6 11 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramMon3", master = "12 12 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue1", master = "26 20 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue2", master = "7a 21 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue3", master = "9e 22 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed1", master = "96 30 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed2", master = "ca 31 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed3", master = "2e 32 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu1", master = "62 40 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu2", master = "3e 41 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu3", master = "da 42 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri1", master = "d2 50 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri2", master = "8e 51 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri3", master = "6a 52 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat1", master = "5e 60 1a", slave = "20 1c", expect = { totime = "08:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat2", master = "02 61 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat3", master = "e6 62 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun1", master = "ee 70 1a", slave = "20 1c", expect = { totime = "08:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun2", master = "b2 71 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun3", master = "56 72 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+]
+
+# room-units-programs: the 105 slots of the five weekly programs
+[[block]]
+evidence = "room-units-programs"
+date = "2026-11-17"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "HCProgram1Mon1", master = "a4 10 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Mon2", master = "f8 11 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Mon3", master = "1c 12 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Tue1", master = "28 20 14", slave = "5a 1a", expect = { totime = "22:30", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Tue2", master = "74 21 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Tue3", master = "90 22 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed1", master = "98 30 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed2", master = "c4 31 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed3", master = "20 32 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Thu1", master = "6c 40 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Thu2", master = "30 41 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Thu3", master = "d4 42 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Fri1", master = "dc 50 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Fri2", master = "80 51 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Fri3", master = "64 52 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat1", master = "50 60 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat2", master = "0c 61 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat3", master = "e8 62 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun1", master = "e0 70 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun2", master = "bc 71 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun3", master = "58 72 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Mon1", master = "a5 10 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Mon2", master = "f9 11 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Mon3", master = "1d 12 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Tue1", master = "29 20 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Tue2", master = "75 21 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Tue3", master = "91 22 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Wed1", master = "99 30 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Wed2", master = "c5 31 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Wed3", master = "21 32 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Thu1", master = "6d 40 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Thu2", master = "31 41 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Thu3", master = "d5 42 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Fri1", master = "dd 50 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Fri2", master = "81 51 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Fri3", master = "65 52 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sat1", master = "51 60 15", slave = "30 1c", expect = { totime = "12:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Sat2", master = "0d 61 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sat3", master = "e9 62 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun1", master = "e1 70 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun2", master = "bd 71 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun3", master = "59 72 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Mon1", master = "a6 10 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Mon2", master = "fa 11 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Mon3", master = "1e 12 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Tue1", master = "2a 20 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Tue2", master = "76 21 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Tue3", master = "92 22 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Wed1", master = "9a 30 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Wed2", master = "c6 31 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Wed3", master = "22 32 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Thu1", master = "6e 40 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Thu2", master = "32 41 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Thu3", master = "d6 42 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Fri1", master = "de 50 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Fri2", master = "82 51 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Fri3", master = "66 52 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat1", master = "52 60 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat2", master = "0e 61 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat3", master = "ea 62 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun1", master = "e2 70 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun2", master = "be 71 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun3", master = "5a 72 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon1", master = "a7 10 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramMon2", master = "fb 11 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon3", master = "1f 12 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue1", master = "2b 20 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramTue2", master = "77 21 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue3", master = "93 22 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed1", master = "9b 30 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramWed2", master = "c7 31 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed3", master = "23 32 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu1", master = "6f 40 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramThu2", master = "33 41 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu3", master = "d7 42 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri1", master = "df 50 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramFri2", master = "83 51 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri3", master = "67 52 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat1", master = "53 60 17", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSat2", master = "0f 61 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat3", master = "eb 62 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun1", master = "e3 70 17", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSun2", master = "bf 71 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun3", master = "5b 72 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "CircProgramMon1", master = "aa 10 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramMon2", master = "f6 11 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramMon3", master = "12 12 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue1", master = "26 20 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue2", master = "7a 21 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue3", master = "9e 22 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed1", master = "96 30 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed2", master = "ca 31 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed3", master = "2e 32 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu1", master = "62 40 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu2", master = "3e 41 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu3", master = "da 42 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri1", master = "d2 50 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri2", master = "8e 51 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri3", master = "6a 52 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat1", master = "5e 60 1a", slave = "20 1c", expect = { totime = "08:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat2", master = "02 61 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat3", master = "e6 62 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun1", master = "ee 70 1a", slave = "20 1c", expect = { totime = "08:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun2", master = "b2 71 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun3", master = "56 72 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+]
+
+# room-units-programs: the 105 slots of the five weekly programs
+[[block]]
+evidence = "room-units-programs"
+date = "2026-11-17"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "HCProgram1Mon1", master = "a4 10 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Mon2", master = "f8 11 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Mon3", master = "1c 12 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Tue1", master = "28 20 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Tue2", master = "74 21 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Tue3", master = "90 22 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed1", master = "98 30 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed2", master = "c4 31 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Wed3", master = "20 32 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Thu1", master = "6c 40 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Thu2", master = "30 41 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Thu3", master = "d4 42 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Fri1", master = "dc 50 14", slave = "48 1a", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram1Fri2", master = "80 51 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Fri3", master = "64 52 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat1", master = "50 60 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat2", master = "0c 61 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sat3", master = "e8 62 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun1", master = "e0 70 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun2", master = "bc 71 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram1Sun3", master = "58 72 14", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Mon1", master = "a5 10 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Mon2", master = "f9 11 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Mon3", master = "1d 12 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Tue1", master = "29 20 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Tue2", master = "75 21 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Tue3", master = "91 22 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Wed1", master = "99 30 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Wed2", master = "c5 31 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Wed3", master = "21 32 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Thu1", master = "6d 40 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Thu2", master = "31 41 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Thu3", master = "d5 42 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Fri1", master = "dd 50 15", slave = "48 18", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Fri2", master = "81 51 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Fri3", master = "65 52 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sat1", master = "51 60 15", slave = "3c 1a", expect = { totime = "15:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+  { message = "HCProgram2Sat2", master = "0d 61 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sat3", master = "e9 62 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun1", master = "e1 70 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun2", master = "bd 71 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun3", master = "59 72 15", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Mon1", master = "a6 10 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Mon2", master = "fa 11 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Mon3", master = "1e 12 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Tue1", master = "2a 20 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Tue2", master = "76 21 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Tue3", master = "92 22 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Wed1", master = "9a 30 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Wed2", master = "c6 31 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Wed3", master = "22 32 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Thu1", master = "6e 40 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Thu2", master = "32 41 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Thu3", master = "d6 42 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Fri1", master = "de 50 16", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Fri2", master = "82 51 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Fri3", master = "66 52 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat1", master = "52 60 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat2", master = "0e 61 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sat3", master = "ea 62 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun1", master = "e2 70 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun2", master = "be 71 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun3", master = "5a 72 16", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon1", master = "a7 10 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramMon2", master = "fb 11 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramMon3", master = "1f 12 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue1", master = "2b 20 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramTue2", master = "77 21 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramTue3", master = "93 22 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed1", master = "9b 30 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramWed2", master = "c7 31 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramWed3", master = "23 32 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu1", master = "6f 40 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramThu2", master = "33 41 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramThu3", master = "d7 42 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri1", master = "df 50 17", slave = "54 14", expect = { totime = "21:00", toenabled = "Enabled", fromtime = "05:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramFri2", master = "83 51 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramFri3", master = "67 52 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat1", master = "53 60 17", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSat2", master = "0f 61 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSat3", master = "eb 62 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun1", master = "e3 70 17", slave = "58 18", expect = { totime = "22:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSun2", master = "bf 71 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun3", master = "5b 72 17", slave = "80 80", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "CircProgramMon1", master = "aa 10 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramMon2", master = "f6 11 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramMon3", master = "12 12 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue1", master = "26 20 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue2", master = "7a 21 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramTue3", master = "9e 22 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed1", master = "96 30 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed2", master = "ca 31 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramWed3", master = "2e 32 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu1", master = "62 40 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu2", master = "3e 41 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramThu3", master = "da 42 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri1", master = "d2 50 1a", slave = "1c 18", expect = { totime = "07:00", toenabled = "Enabled", fromtime = "06:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri2", master = "8e 51 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramFri3", master = "6a 52 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat1", master = "5e 60 1a", slave = "20 1c", expect = { totime = "08:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat2", master = "02 61 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSat3", master = "e6 62 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun1", master = "ee 70 1a", slave = "20 1c", expect = { totime = "08:00", toenabled = "Enabled", fromtime = "07:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun2", master = "b2 71 1a", slave = "34 2c", expect = { totime = "13:00", toenabled = "Enabled", fromtime = "11:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun3", master = "56 72 1a", slave = "4c 44", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+]
+
+# bc-live-values, the two requests as written: first boiler, burner off, pump off
+[[block]]
+evidence = "bc-live-values"
+date = "2026-11-17"
+circuit = "bc1"
+where = "text"
+readings = [
+  { message = "Temperatures", master = "40 11 62 01 68 01 6c", slave = "00 3c 34 3f 0f", expect = { firstbyte = 0, returntemp = 60, fluegastemp = 52, supplytemp = 63, outsidetemp = 15 } },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 00 00 00", expect = { firstbyte = 0, pumpspeed = 0 } },
+]
+
+# bc-live-values: second boiler through a start; it has no outside sensor (-40)
+[[block]]
+evidence = "bc-live-values"
+date = "2026-11-17"
+circuit = "bc2"
+where = "text"
+readings = [
+  { message = "Temperatures", master = "40 11 62 01 68 01 6c", slave = "00 41 38 42 d8", expect = { firstbyte = 0, returntemp = 65, fluegastemp = 56, supplytemp = 66, outsidetemp = -40 }, case = "no-sensor" },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 1c 00 32", expect = { firstbyte = 0, load = 28, ionisation = 0.0, pumpspeed = 50 } },
+  { message = "Temperatures", master = "40 11 62 01 68 01 6c", slave = "00 31 39 3c d8", expect = { firstbyte = 0, returntemp = 49, fluegastemp = 57, supplytemp = 60, outsidetemp = -40 }, case = "no-sensor" },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 17 00 32", expect = { firstbyte = 0, load = 23, ionisation = 0.0, pumpspeed = 50 } },
+  { message = "Temperatures", master = "40 11 62 01 68 01 6c", slave = "00 3b 39 38 d8", expect = { firstbyte = 0, returntemp = 59, fluegastemp = 57, supplytemp = 56, outsidetemp = -40 }, case = "no-sensor" },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 28 00 32", expect = { firstbyte = 0, load = 40, ionisation = 0.0, pumpspeed = 50 } },
+  { message = "Temperatures", master = "40 11 62 01 68 01 6c", slave = "00 38 39 3c d8", expect = { firstbyte = 0, returntemp = 56, fluegastemp = 57, supplytemp = 60, outsidetemp = -40 }, case = "no-sensor" },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 22 5a 39", expect = { firstbyte = 0, load = 34, ionisation = 9.0, pumpspeed = 57 } },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 19 53 33", expect = { firstbyte = 0, load = 25, ionisation = 8.3, pumpspeed = 51 } },
+  { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 19 5f 33", expect = { firstbyte = 0, load = 25, ionisation = 9.5, pumpspeed = 51 } },
+]
+
+# bc-fault-counters: the seven requests as written
+[[block]]
+evidence = "bc-fault-counters"
+date = "2026-11-18"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "FaultCounters1", master = "e2 06 01 92 96", slave = "00 14 00 01 00 01 00 00 00 00 00", expect = { firstbyte = 0, code57 = 20, code55 = 1, code53 = 1, code52 = 0, code51 = 0 } },
+  { message = "FaultCounters2", master = "d4 06 01 92 a0", slave = "00 00 00 00 00 06 00 00 00 01 00", expect = { firstbyte = 0, code49 = 0, code48 = 0, code47 = 6, code46 = 0, code45 = 1 } },
+  { message = "FaultCounters3", master = "de 06 01 92 aa", slave = "00 00 00 00 00 00 00 00 00 00 00", expect = { firstbyte = 0, code44 = 0, code43 = 0, code41 = 0, code39 = 0, code38 = 0 } },
+  { message = "FaultCounters4", master = "c0 06 01 92 b4", slave = "00 00 00 66 00 00 00 00 00 00 00", expect = { firstbyte = 0, code37 = 0, code36 = 102, code35 = 0, code34 = 0, code33 = 0 } },
+  { message = "FaultCounters5", master = "ca 06 01 92 be", slave = "00 00 00 00 00 00 00 00 00 00 00", expect = { firstbyte = 0, code32 = 0, code31 = 0, code30 = 0, code24 = 0, code23 = 0 } },
+  { message = "FaultCounters6", master = "bc 06 01 92 c8", slave = "00 11 00 18 00 00 00 00 00 01 00", expect = { firstbyte = 0, code22 = 17, code21 = 24, code18 = 0, code16 = 0, code15 = 1 } },
+  { message = "FaultCounters7", master = "2e 06 01 52 d2", slave = "00 00 00 06 00 01 00", expect = { firstbyte = 0, code14 = 0, code12 = 6, code11 = 1 } },
+]
+
+# bc-fault-counters: the seven requests as written
+[[block]]
+evidence = "bc-fault-counters"
+date = "2026-11-18"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "FaultCounters1", master = "e2 06 01 92 96", slave = "00 0b 00 00 00 03 00 00 00 00 00", expect = { firstbyte = 0, code57 = 11, code55 = 0, code53 = 3, code52 = 0, code51 = 0 } },
+  { message = "FaultCounters2", master = "d4 06 01 92 a0", slave = "00 00 00 30 09 06 00 00 00 00 00", expect = { firstbyte = 0, code49 = 0, code48 = 2352, code47 = 6, code46 = 0, code45 = 0 } },
+  { message = "FaultCounters3", master = "de 06 01 92 aa", slave = "00 00 00 23 00 00 00 00 00 00 00", expect = { firstbyte = 0, code44 = 0, code43 = 35, code41 = 0, code39 = 0, code38 = 0 } },
+  { message = "FaultCounters4", master = "c0 06 01 92 b4", slave = "00 00 00 35 01 00 00 00 00 00 00", expect = { firstbyte = 0, code37 = 0, code36 = 309, code35 = 0, code34 = 0, code33 = 0 } },
+  { message = "FaultCounters5", master = "ca 06 01 92 be", slave = "00 00 00 00 00 01 00 00 00 00 00", expect = { firstbyte = 0, code32 = 0, code31 = 0, code30 = 1, code24 = 0, code23 = 0 } },
+  { message = "FaultCounters6", master = "bc 06 01 92 c8", slave = "00 0e 00 13 00 03 00 00 00 00 00", expect = { firstbyte = 0, code22 = 14, code21 = 19, code18 = 3, code16 = 0, code15 = 0 } },
+  { message = "FaultCounters7", master = "2e 06 01 52 d2", slave = "00 00 00 05 00 03 00", expect = { firstbyte = 0, code14 = 0, code12 = 5, code11 = 3 } },
+]
+
+# bc-fault-counters: the two answers without data, first byte = number of bytes asked for
+[[block]]
+evidence = "bc-fault-counters"
+date = "2026-11-18"
+circuit = "bc1"
+where = "text"
+readings = [
+  { message = "FaultCounters7", master = "2e 06 01 52 d2", slave = "06 00 00 00 00 00 00", expect = { firstbyte = 6, code14 = 0, code12 = 0, code11 = 0 }, case = "first-byte-not-zero", note = "the counters are 0, 6 and 1: a reading whose first byte is not 0 must be discarded" },
+  { message = "FaultCounters6", master = "bc 06 01 92 c8", slave = "0a 00 00 00 00 00 00 00 00 00 00", expect = { firstbyte = 10, code22 = 0, code21 = 0, code18 = 0, code16 = 0, code15 = 0 }, case = "first-byte-not-zero", note = "the counters are 17, 24, 0, 0 and 1: a reading whose first byte is not 0 must be discarded" },
+]
+
+# bc-info-values: the eight information values, burner idle; -40.0 where no sensor is fitted
+[[block]]
+evidence = "bc-info-values"
+date = "2026-11-18"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "SupplyTemp", master = "28 0d 00", slave = "f4 01", expect = { value = 50.0 } },
+  { message = "ReturnTemp", master = "24 16 00", slave = "3a 02", expect = { value = 57.0 } },
+  { message = "FlueGasTemp", master = "09 45 01", slave = "86 01", expect = { value = 39.0 } },
+  { message = "OutsideTemp", master = "74 0c 00", slave = "6e 00", expect = { value = 11.0 } },
+  { message = "DHWTemp", master = "cc 0e 00", slave = "70 fe", expect = { value = -40.0 }, case = "no-sensor" },
+  { message = "HydraulicSeparatorTemp", master = "66 86 02", slave = "70 fe", expect = { value = -40.0 }, case = "no-sensor" },
+  { message = "SoftwareVersionCPU", master = "45 99 01", slave = "11 04", expect = { value = "11 04" } },
+  { message = "SoftwareVersionCUI", master = "a1 9a 01", slave = "11 04", expect = { value = "11 04" } },
+]
+
+# bc-info-values: the eight information values, burner idle; -40.0 where no sensor is fitted
+[[block]]
+evidence = "bc-info-values"
+date = "2026-11-18"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "SupplyTemp", master = "28 0d 00", slave = "4e 02", expect = { value = 59.0 } },
+  { message = "ReturnTemp", master = "24 16 00", slave = "4e 02", expect = { value = 59.0 } },
+  { message = "FlueGasTemp", master = "09 45 01", slave = "30 02", expect = { value = 56.0 } },
+  { message = "OutsideTemp", master = "74 0c 00", slave = "70 fe", expect = { value = -40.0 }, case = "no-sensor" },
+  { message = "DHWTemp", master = "cc 0e 00", slave = "70 fe", expect = { value = -40.0 }, case = "no-sensor" },
+  { message = "HydraulicSeparatorTemp", master = "66 86 02", slave = "70 fe", expect = { value = -40.0 }, case = "no-sensor" },
+  { message = "SoftwareVersionCPU", master = "45 99 01", slave = "11 04", expect = { value = "11 04" } },
+  { message = "SoftwareVersionCUI", master = "a1 9a 01", slave = "11 04", expect = { value = "11 04" } },
+]
+
+# bc-counters: the counters as written, and the hours since the last service
+[[block]]
+evidence = "bc-counters"
+date = "2026-11-18"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "Counters", master = "26 06 01 72 e6", slave = "00 87 54 01 e4 4e 89 db 02", expect = { firstbyte = 0, operatinghours = 87175, burnerhours = 20196, burnerstarts = 187273 } },
+  { message = "BurnerServiceHours", master = "0a bc 02", slave = "2c 00", expect = { value = 440 } },
+]
+
+# bc-counters: the counters as written, and the hours since the last service
+[[block]]
+evidence = "bc-counters"
+date = "2026-11-18"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "Counters", master = "26 06 01 72 e6", slave = "00 16 44 01 56 4e 27 1f 02", expect = { firstbyte = 0, operatinghours = 82966, burnerhours = 20054, burnerstarts = 139047 } },
+  { message = "BurnerServiceHours", master = "0a bc 02", slave = "27 00", expect = { value = 390 } },
+]
+
+# bc-fault-history: pointer and six slots as written
+[[block]]
+evidence = "bc-fault-history"
+date = "2026-11-18"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "FaultHistoryPointer", master = "1c 06 02 12 00", slave = "00 31 02", expect = { firstbyte = 0, value = 561 } },
+  { message = "FaultHistorySlot1", master = "5a 06 02 72 02", slave = "00 8c 06 2a 64 5e 2f c6 27", expect = { firstbyte = 0, number = 12, kind = "warning", operatingphase = "BurnerInOperation", load = 42, pumpspeed = 100, boilertemp = 94, fluegastemp = 47, ionisation = 19.8, returntemp = 39 } },
+  { message = "FaultHistorySlot2", master = "52 06 02 72 0a", slave = "00 8c 06 1f 39 5e 3d 8d 42", expect = { firstbyte = 0, number = 12, kind = "warning", operatingphase = "BurnerInOperation", load = 31, pumpspeed = 57, boilertemp = 94, fluegastemp = 61, ionisation = 14.1, returntemp = 66 } },
+  { message = "FaultHistorySlot3", master = "4a 06 02 72 12", slave = "00 8c 06 22 3c 5e 3b 93 46", expect = { firstbyte = 0, number = 12, kind = "warning", operatingphase = "BurnerInOperation", load = 34, pumpspeed = 60, boilertemp = 94, fluegastemp = 59, ionisation = 14.7, returntemp = 70 } },
+  { message = "FaultHistorySlot4", master = "42 06 02 72 1a", slave = "00 8c 06 2f 48 5e 42 ad 47", expect = { firstbyte = 0, number = 12, kind = "warning", operatingphase = "BurnerInOperation", load = 47, pumpspeed = 72, boilertemp = 94, fluegastemp = 66, ionisation = 17.3, returntemp = 71 } },
+  { message = "FaultHistorySlot5", master = "7a 06 02 72 22", slave = "00 0b 00 27 32 69 42 00 47", expect = { firstbyte = 0, number = 11, kind = "fault", operatingphase = "BurnerOff", load = 39, pumpspeed = 50, boilertemp = 105, fluegastemp = 66, ionisation = 0.0, returntemp = 71 } },
+  { message = "FaultHistorySlot6", master = "72 06 02 72 2a", slave = "00 8c 08 2c 64 5e 31 00 28", expect = { firstbyte = 0, number = 12, kind = "warning", operatingphase = "PostPurge", load = 44, pumpspeed = 100, boilertemp = 94, fluegastemp = 49, ionisation = 0.0, returntemp = 40 } },
+]
+
+# bc-fault-history: pointer and six slots as written
+[[block]]
+evidence = "bc-fault-history"
+date = "2026-11-18"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "FaultHistoryPointer", master = "1c 06 02 12 00", slave = "00 09 02", expect = { firstbyte = 0, value = 521 } },
+  { message = "FaultHistorySlot1", master = "5a 06 02 72 02", slave = "00 24 00 00 00 14 14 00 14", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 0, pumpspeed = 0, boilertemp = 20, fluegastemp = 20, ionisation = 0.0, returntemp = 20 } },
+  { message = "FaultHistorySlot2", master = "52 06 02 72 0a", slave = "00 24 00 00 00 4e 44 00 4e", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 0, pumpspeed = 0, boilertemp = 78, fluegastemp = 68, ionisation = 0.0, returntemp = 78 } },
+  { message = "FaultHistorySlot3", master = "4a 06 02 72 12", slave = "00 24 00 1b 32 49 35 00 42", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 27, pumpspeed = 50, boilertemp = 73, fluegastemp = 53, ionisation = 0.0, returntemp = 66 } },
+  { message = "FaultHistorySlot4", master = "42 06 02 72 1a", slave = "00 24 00 1c 32 4d 3a 00 48", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 28, pumpspeed = 50, boilertemp = 77, fluegastemp = 58, ionisation = 0.0, returntemp = 72 } },
+  { message = "FaultHistorySlot5", master = "7a 06 02 72 22", slave = "00 24 00 1c 32 45 33 00 3d", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 28, pumpspeed = 50, boilertemp = 69, fluegastemp = 51, ionisation = 0.0, returntemp = 61 } },
+  { message = "FaultHistorySlot6", master = "72 06 02 72 2a", slave = "00 24 00 00 00 18 14 00 1a", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 0, pumpspeed = 0, boilertemp = 24, fluegastemp = 20, ionisation = 0.0, returntemp = 26 } },
+]

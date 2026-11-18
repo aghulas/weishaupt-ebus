@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Checks the Weishaupt TypeSpec definitions: commit hygiene, format, compile, ebusd --checkconfig,
-# translation files, metadata.
+# translation files, metadata and fixtures.
 # Runs every step, then reports. Exit code 0 only if all steps pass.
 #
 #   scripts/check.sh           all steps
@@ -28,6 +28,13 @@
 # conditions and an evidence record that names it. The file lives on the branch on top of the
 # stack; a lot branch below it has none and the step says so. METADATA=required (set by
 # scripts/integrate.sh) makes a missing file a failure.
+#
+# Fixtures (step 7, same condition): every reading of evidence/fixtures.toml, a telegram an
+# evidence record holds, is checked against its record and decoded by the ebusd of step 5 loaded
+# with the lot files just compiled (scripts/fixtures.py check). The step fails when a reading
+# names a message that does not exist or no longer decodes to the recorded value. With
+# CHECKCONFIG=actions there is no local ebusd: the structure is checked, single registers are
+# decoded by the script, and the output says the readings were not decoded by ebusd.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -223,12 +230,17 @@ for y in src/??.yaml; do
 done
 [ "$found" -eq 1 ] || echo "ok (no translation file)"
 
-echo "== 7/7 metadata"
+echo "== 7/7 metadata and fixtures"
 if [ -f metadata/weishaupt.toml ]; then
   python3 "$ROOT/scripts/metadata.py" check metadata/weishaupt.toml "$csv" || fail=1
+  case "$(uname -m)" in arm64|aarch64) farch=aarch64 ;; *) farch=amd64 ;; esac
+  # local: the binary step 5 downloaded and verified; a missing one is a failure
+  python3 "$ROOT/scripts/fixtures.py" check "$ROOT/evidence/fixtures.toml" "$csv" \
+    --sidecar metadata/weishaupt.toml --ebusd "$OUT/ebusd-$RELEASE-$farch" --release "$RELEASE" \
+    $([ "$mode" = local ] && echo --require-ebusd) || fail=1
 elif [ "${METADATA:-}" = required ]; then
   echo "FAIL: no metadata/weishaupt.toml on this branch"; fail=1
-else echo "ok (no metadata file on this branch)"; fi
+else echo "ok (no metadata file on this branch: metadata and fixtures not checked)"; fi
 
 [ "$fail" -eq 0 ] && echo "ALL CHECKS PASSED" || echo "CHECKS FAILED"
 exit "$fail"

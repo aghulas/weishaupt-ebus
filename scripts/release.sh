@@ -11,7 +11,8 @@
 # Beside the archives: weishaupt-metadata-<version>.json, generated from metadata/weishaupt.toml
 # of the integration branch and the compiled CSV of every language (scripts/metadata.py, format
 # in docs/companion-contract.md); weishaupt-fixtures-<version>.json, the readings of
-# evidence/fixtures.toml; sha256sums-<version>.txt, the checksums of all of them.
+# evidence/fixtures.toml, each decoded by ebusd on the same CSV (scripts/fixtures.py);
+# sha256sums-<version>.txt, the checksums of all of them.
 #
 # RELEASE_LANGS  languages with an archive of their own (default: fr; empty: English only)
 set -euo pipefail
@@ -72,8 +73,10 @@ SIDE="$ROOT/out/integration/metadata/weishaupt.toml"
 python3 "$ROOT/scripts/metadata.py" build "$SIDE" "$ROOT/out/csv/@ebusd/ebus-typespec" \
   "$REL/weishaupt-metadata-$VERSION.json" --version "$VERSION" --commit "$commit" --loaded "$count" \
   ${langargs[@]+"${langargs[@]}"}
-python3 "$ROOT/scripts/metadata.py" fixtures "$ROOT/evidence/fixtures.toml" "$SIDE" \
-  "$ROOT/out/csv/@ebusd/ebus-typespec" "$REL/weishaupt-fixtures-$VERSION.json" --version "$VERSION"
+case "$(uname -m)" in arm64|aarch64) arch=aarch64 ;; *) arch=amd64 ;; esac
+python3 "$ROOT/scripts/fixtures.py" build "$ROOT/evidence/fixtures.toml" \
+  "$ROOT/out/csv/@ebusd/ebus-typespec" "$REL/weishaupt-fixtures-$VERSION.json" --version "$VERSION" \
+  --commit "$commit" --sidecar "$SIDE" --ebusd "$ROOT/out/ebusd-$EBUSD-$arch" --release "$EBUSD"
 assets="$assets weishaupt-metadata-$VERSION.json weishaupt-fixtures-$VERSION.json"
 # shellcheck disable=SC2086
 (cd "$REL" && shasum -a 256 $assets >"sha256sums-$VERSION.txt" && cat "sha256sums-$VERSION.txt")

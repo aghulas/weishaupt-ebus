@@ -6,8 +6,6 @@ the metadata file of a release from both.
   scripts/metadata.py build <sidecar.toml> <english csv tree> <out.json>
                             --version V --commit C [--loaded N] [--lang fr=<csv tree>]...
   scripts/metadata.py summary <sidecar.toml> <english csv tree>
-  scripts/metadata.py fixtures <fixtures.toml> <sidecar.toml> <english csv tree> <out.json>
-                            --version V     (readings of evidence/fixtures.toml, checked)
 
 <english csv tree> is the folder a compile without translations wrote (out/csv/@ebusd/ebus-typespec
 after scripts/check.sh). The messages are those of the lot files, as scripts/i18n-keys.py finds
@@ -17,6 +15,7 @@ The sidecar (metadata/weishaupt.toml on the branch on top of the stack) holds on
 does not say: devices, menus, short labels, kind, polling class, write conditions, evidence. An
 entry names a message of one or more circuits, or a pattern with the number of messages it
 must match in each circuit. The format is described in docs/companion-contract.md.
+The fixtures file of a release is made by scripts/fixtures.py, which uses read_tree and resolve.
 
 check fails (exit 1) when
   - a message of the lot files has no entry, or more than one;
@@ -119,6 +118,7 @@ def read_tree(tree):
                 "circuit": circuit, "address": address, "file": base[:-4], "name": row[3],
                 "comment": comment, "fields": fields, "read": False, "write": False,
                 "passive": False, "wcrc": False, "ids": {},
+                "qq": row[5].lower(), "zz": (row[6] or address).lower(),
             })
             msg["ids"][kind] = row[7] + row[8]
             shape = [(f["name"], f["type"]) for f in fields]
@@ -462,86 +462,10 @@ def args_of(argv):
     return pos, opt
 
 
-def decode16(hexbytes, field):
-    """Value of a 16-bit register field (UIN or SIN, low byte first) from two hex bytes."""
-    lo, hi = (int(x, 16) for x in hexbytes.split())
-    v = lo | hi << 8
-    if field["type"] == "SIN" and v >= 0x8000:
-        v -= 0x10000
-    d = field.get("divisor", 1)
-    return v / d if d > 0 else v * -d
-
-
-def fixtures(pos, opt):
-    """Golden readings transcribed from the evidence records (evidence/fixtures.toml), checked
-    against the record they cite and against the definitions, written as one JSON file.
-    A reading: circuit, message, evidence, expect = {field = value}, and the bytes captured:
-    `read` (ID of the 50 22 request) with `answer` (data bytes), and / or `write` (data of the
-    50 23 telegram: checksum, address, value)."""
-    fx, tree, out = load(pos[1]), pos[3], pos[4]
-    msgs, _, _ = read_tree(tree)
-    hexre = re.compile(r"([0-9a-f]{2})( [0-9a-f]{2})*")
-    bad, items = [], []
-    for n, r in enumerate(fx.get("reading", []), 1):
-        key = f"{r.get('circuit')}/{r.get('message')}"
-        where = f"reading {n} ({key})"
-        if key not in msgs:
-            bad.append(f"{where}: no such message in the lot files"); continue
-        m = msgs[key]
-        expect = r.get("expect") or {}
-        if not expect or not r.get("evidence") or not (r.get("answer") or r.get("write")):
-            bad.append(f"{where}: needs expect, evidence and answer or write"); continue
-        for k in ("read", "answer", "write"):
-            if k in r and not hexre.fullmatch(r[k]):
-                bad.append(f"{where}: {k} is not a list of hex bytes")
-        p = os.path.join(EVIDENCE, r["evidence"] + ".md")
-        if not os.path.exists(p):
-            bad.append(f"{where}: evidence record '{r['evidence']}' not found"); continue
-        with open(p, encoding="utf-8") as f:
-            text = re.sub(r"\s+", " ", re.sub(r"[`|]", " ", f.read()))
-        for k in ("read", "answer", "write"):
-            if k in r and r[k] not in text:
-                bad.append(f"{where}: the {k} bytes are not in evidence/{r['evidence']}.md")
-        rid = m["ids"].get("r", "")
-        if "read" in r and "5022" + r["read"].replace(" ", "") != rid:
-            bad.append(f"{where}: read is not the ID of the definition ({rid[4:]})")
-        if "write" in r:
-            wb = r["write"].split()
-            if "w" not in m["ids"]:
-                bad.append(f"{where}: the lot does not write this message")
-            elif "".join(wb[1:3]) != m["ids"]["w"][6:10]:
-                bad.append(f"{where}: write is not to the register of the definition")
-        fields = {f["name"]: f for f in m["fields"]}
-        for name, want in expect.items():
-            f = fields.get(name)
-            if f is None:
-                bad.append(f"{where}: field {name} is not in the message"); continue
-            if len(fields) == 1 and f["type"] in ("UIN", "SIN"):
-                for k, raw in (("answer", r.get("answer")), ("write", " ".join(r.get("write", "").split()[3:5]))):
-                    if raw and len(raw.split()) == 2 and decode16(raw, f) != want:
-                        bad.append(f"{where}: {k} decodes to {decode16(raw, f)}, expect says {want}")
-        items.append({k: r[k] for k in ("circuit", "message", "read", "answer", "write", "expect", "evidence") if k in r})
-    if bad:
-        print(f"fixtures: FAIL, {len(bad)} problems")
-        for b in bad:
-            print(f"  {b}")
-        sys.exit(1)
-    doc = {"schema": SCHEMA, "definitions": {"version": opt["version"][0]}, "readings": items}
-    with open(out, "w", encoding="utf-8") as f:
-        json.dump(doc, f, ensure_ascii=False, indent=1)
-        f.write("\n")
-    covered = len({(i["circuit"], i["message"]) for i in items})
-    print(f"fixtures: {os.path.relpath(out, ROOT)}, {len(items)} readings of {covered} messages")
-
-
 def main():
     pos, opt = args_of(sys.argv[1:])
-    if len(pos) < 3 or pos[0] not in ("check", "build", "summary", "fixtures"):
+    if len(pos) < 3 or pos[0] not in ("check", "build", "summary"):
         sys.exit(__doc__)
-    if pos[0] == "fixtures":
-        if len(pos) < 5 or "version" not in opt:
-            sys.exit(__doc__)
-        return fixtures(pos, opt)
     side = load(pos[1])
     msgs, lines, problems = read_tree(pos[2])
     resolved, bad = resolve(side, msgs)
