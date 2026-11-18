@@ -203,7 +203,8 @@ left, and three came: the two comments of `DHWLoadingPriority` (rows "priority o
 water loading" and "with priority, in parallel, sliding") and the comment of the outside
 temperature of `HcMode`, which says that a module without outside sensor answers -100.0
 (rows "outside temperature", "outside sensor", "heating module"). All three are made of
-vendor terms only; none is provisional.
+vendor terms only; none is provisional. The owner read the three as published and kept them
+on 2026-11-18.
 
 ## To validate
 

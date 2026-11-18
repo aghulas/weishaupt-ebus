@@ -146,7 +146,7 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Release 0.5.0: done** (2026-11-18, see "Current state"). To read when convenient: the three new French strings of lot A, and the label of burner phase 9, still provisional.
+- **Release 0.5.0: done** (2026-11-18, see "Current state"). The three new French strings of lot A were read and kept by the owner the same day; the label of burner phase 9 stays provisional.
 - **Number of that release: settled, 0.5.0** (owner, 2026-11-18). A message is renamed, so
   the second number changes, as the rule below says. It was first built as 0.4.4 on the
   wording of the task; the content is the same. A consumer that accepts ">= 0.4.3, < 0.5"
