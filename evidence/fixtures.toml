@@ -1,0 +1,165 @@
+# Readings transcribed from the evidence records, as test fixtures for anything that decodes or
+# shows these messages. Telegram bytes and decoded values only; nothing site-specific.
+#
+# Each reading cites the record it was copied from; scripts/metadata.py fixtures checks that the
+# bytes are in that record, that the read ID and the written register are those of the
+# definition, and that the two value bytes decode to `expect`. It writes the JSON file that
+# scripts/release.sh puts beside the archives.
+#
+# read    ID bytes of the 50 22 request (checksum, address), when the record has a single read
+# answer  the two data bytes answered
+# write   data of the captured 50 23 telegram: checksum, address, value
+# expect  decoded value per field
+#
+# So far: the 17 settings of evidence/settings-writes.md (table "write seen / read seen /
+# decoded"). The other records quote their telegrams in prose or in tables of their own; they
+# are not transcribed yet.
+
+[[reading]]
+circuit = "ka"
+message = "BlockingTime"
+read = "4c 25 00"
+answer = "01 00"
+write = "28 25 00 01 00"
+expect = { value = 1 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "ChangeOverTime"
+read = "3d ec fd"
+answer = "32 00"
+write = "d4 ec fd 32 00"
+expect = { value = 50 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "DeCoupleMinTemp"
+answer = "50 00"
+write = "70 e7 fd 50 00"
+expect = { value = 8.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "CalorifierSwitchDiff"
+read = "f1 e2 fd"
+answer = "14 00"
+write = "0c e2 fd 14 00"
+expect = { value = 2.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "DHWSwitchDiff"
+answer = "ce ff"
+write = "bf 40 01 ce ff"
+expect = { value = -5.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "DHWLoadTime"
+read = "f1 80 01"
+answer = "00 00"
+write = "90 80 01 00 00"
+expect = { value = 0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "LegionellaSetpoint"
+read = "3d 87 05"
+answer = "58 02"
+write = "72 87 05 58 02"
+expect = { value = 60.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "ka"
+message = "LegionellaCirculationTime"
+read = "29 b1 09"
+answer = "58 02"
+write = "46 b1 09 58 02"
+expect = { value = 600 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "RoomNormalTemp"
+answer = "d7 00"
+write = "d8 05 00 d7 00"
+expect = { value = 21.5 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "RoomSetbackTemp"
+read = "58 08 00"
+answer = "d7 00"
+write = "b0 08 00 d7 00"
+expect = { value = 21.5 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "RoomFrostProtectionTemp"
+read = "96 14 0a"
+answer = "64 00"
+write = "7c 14 0a 64 00"
+expect = { value = 10.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "GradientCurve"
+read = "cd 0e 01"
+answer = "64 00"
+write = "a4 0e 01 64 00"
+expect = { value = 10.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "SummerWinterChangeOverTemp"
+answer = "c8 00"
+write = "dc 16 01 c8 00"
+expect = { value = 20.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "SupplyMaxTemp"
+read = "64 28 00"
+answer = "ee 02"
+write = "66 28 00 ee 02"
+expect = { value = 75.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "em2"
+message = "SupplyMinTemp"
+read = "81 2b 01"
+answer = "50 00"
+write = "70 2b 01 50 00"
+expect = { value = 8.0 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "fs1"
+message = "SwitchOnRuntime"
+read = "b1 10 01"
+answer = "03 00"
+write = "d8 10 01 03 00"
+expect = { value = 3 }
+evidence = "settings-writes"
+
+[[reading]]
+circuit = "fs1"
+message = "FrostProtectionLimitTemp"
+read = "b2 be 02"
+answer = "00 00"
+write = "a4 be 02 00 00"
+expect = { value = 0.0 }
+evidence = "settings-writes"

@@ -37,13 +37,16 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `64a0daa` (1 commit on H), pushed (0.4.1) | `bc-fault-counters` |
 | K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `49e484b` (2 commits on J), pushed (0.4.2) | `bc-info-values` |
 | L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `b4cfa16` (8 commits on K), pushed (0.4.2) | `terms` |
+| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels are **proposed, not yet accepted** by the owner (`out/companion-menu-proposal.md`). | `weishaupt-M` `4d1ce1c` (1 commit on L), **local, not pushed** | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
 
-The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, L (`STACK` in
-`scripts/integrate.sh`). `weishaupt-L` holds the translation files and stays on top: a new lot
-goes below it (lot K was inserted between J and L this way on 2026-11-18). Lot C needs lot B to compile and #1825 to send. For a pull request
+The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, L, M (`STACK` in
+`scripts/integrate.sh`). `weishaupt-L` (translation files) and `weishaupt-M` (metadata sidecar)
+hold no definition and stay on top, in this order: a new lot goes below them (lot K was
+inserted between J and L this way on 2026-11-18), then L and M are rebased and the sidecar
+gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
 **0.4.2 released (2026-11-18)** from `weishaupt` `f58a45f` (605 messages): 0.4.1 plus three boiler information values in lot K (see "Decisions and history"). **0.4.1 released (2026-11-18).** On top of 0.4.0: lot K (the
@@ -125,6 +128,14 @@ data point on arbitration with room units).
 ## Open
 
 ### Needs the owner
+
+- **Companion contract, phase 0 (prepared locally on 2026-11-18, nothing pushed).** To decide,
+  in this order: (1) the menu trees and short labels, on the proposal
+  `out/companion-menu-proposal.md` (seven questions at its top); once accepted, `status` in
+  the sidecar becomes `accepted`; (2) pushing `weishaupt-M` and the workbench commits;
+  (3) a release that carries the metadata asset — `0.4.3` was built locally as a trial
+  (`out/release/`, CSV identical to 0.4.2), to be rebuilt by `scripts/release.sh` just before
+  publication.
 
 - **GitHub support request** to remove the former commits (see "Commit identity"): text ready in
   `out/github-support-request.md` (not versioned), to send from the owner's account.
@@ -236,7 +247,9 @@ data point on arbitration with room units).
 - **Check.** `scripts/check.sh`: commit hygiene (identity, no tool trailer or name, no site data
   in added lines), file types, format, compile, `ebusd --checkconfig` in Docker with the ebusd
   release of the fork (checksum verified), translation files (keys against the comment strings,
-  compile per language, only comments differ, same message count). `scripts/check.sh hygiene` runs the first step alone.
+  compile per language, only comments differ, same message count), metadata (every message of
+  the lot files against the sidecar; skipped on a branch below `weishaupt-M`, required on the
+  integration branch). `scripts/check.sh hygiene` runs the first step alone.
   `CFG_REPO=<absolute path>` checks another worktree. Lots C, G and H compile only with the
   library package of the fork: in a worktree, plain `npm install`, then
   `npm install --no-save` of that package and `@typespec/compiler@1.17.0`; never commit
@@ -256,9 +269,35 @@ data point on arbitration with room units).
   again (`scripts/i18n-patterns.py`), add the others from `evidence/terms.md` (a term without a
   row gets one first), and let `scripts/check.sh` say what is missing or left over. Worktree of
   the branch: `out/lot-L`.
+- **Metadata.** What a user interface needs beyond the CSV is in `metadata/weishaupt.toml` on
+  `weishaupt-M` (worktree `out/lot-M`), never in the lots and never in this repository. A
+  message added, renamed or removed in a lot needs its entry there: rebase `weishaupt-M` onto
+  the new top, and let step 7 of `scripts/check.sh` (`scripts/metadata.py check`) say what is
+  missing or left over. A setting is marked written only when a lot writes it and an evidence
+  record names it; a polling class, a range or a step that no record establishes stays empty.
+  Format of the generated file: `docs/companion-contract.md`.
+- **Versions (definitions and companion).** Names are the interface: an entity of the
+  companion is identified by circuit, message and field.
+  1. Until 1.0 the **second** number of a definitions release changes for a breaking change:
+     a message or a field renamed, removed, retyped, or a field inserted before others (as
+     `FirstByte` was in 0.4.0), or the `schema` number of the metadata raised. The **third**
+     changes for a compatible one: messages or trailing fields added, comments, translations,
+     labels, menus, metadata values. A rename carries `renamed_from` in the sidecar.
+  2. The metadata has its own `schema` number (1), raised only when its structure changes.
+     While `status` says `proposed`, menu ids and labels may still change without notice;
+     the keys never do outside a breaking release.
+  3. Every release from 0.4.3 on carries `weishaupt-metadata-<version>.json`, generated from
+     the same commit as the archives. A release without it is not complete.
+  4. A companion release has its own numbers. It names the definitions release it embeds and
+     the range it accepts (for example `>= 0.4.3, < 0.5`) in its README and its diagnostics;
+     a new definitions release does not force a companion release.
+  5. At run time the companion never trusts the range alone: it compares, message by
+     message, with what ebusd loaded, since ebusd cannot tell which release it runs.
 - **Release.** `scripts/release.sh <version>` rebuilds and checks the integration branch and
   makes the archives under `out/release/`, English and one per language of `RELEASE_LANGS`
-  (default `fr`), with the notice from `docs/release-readme.md`. Then, on
+  (default `fr`), with the notice from `docs/release-readme.md`, then the metadata file, the
+  fixtures file (`evidence/fixtures.toml`) and `sha256sums-<version>.txt` for all of them.
+  Then, on
   the owner's word: push `weishaupt`, tag `weishaupt-<version>`, release, download it again and
   load it in the official ebusd.
 - **Writes use source `ff`.** Most settings are acknowledged from any master but taken over only
@@ -278,6 +317,44 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-18, companion contract (phase 0 of the Home Assistant companion), local.** The
+  owner decided on 2026-11-18 that a generated metadata file is part of every definitions
+  release and that its source lives on a branch on top of the stack. Built:
+  - **Sidecar** `metadata/weishaupt.toml` on the new branch `weishaupt-M` (`4d1ce1c`, one
+    commit on `weishaupt-L`), in `STACK`. TOML: read by the standard library of Python, with
+    comments, and a repeated key is a parse error. An entry is keyed by circuit and message
+    name, or by a pattern with the number of messages it must match per circuit; 107 entries
+    cover the 528 messages of the lot files (545 CSV lines: the 17 written settings have a
+    read and a write line; ebusd counts 605 with the files of the official configuration
+    the archive also holds, which have no metadata).
+  - **Generator and check** `scripts/metadata.py`, step 7 of `scripts/check.sh`;
+    `scripts/release.sh` writes `weishaupt-metadata-<version>.json`,
+    `weishaupt-fixtures-<version>.json` and `sha256sums-<version>.txt` beside the archives.
+  - **Content.** By kind: 357 program slots, 65 settings, 44 live values, 37 diagnostics,
+    18 counters, 7 states. Written: the 17 settings of lot C, each with the source address of
+    the captured write (`ff` for 15, `31` for the two flow limits of `51`), a risk class
+    (2 comfort, 15 regulation), a level of proof (`change-observed` for `BlockingTime`,
+    `captured` for the others) and, on the seven of `51`, the open question of which copy
+    the regulation uses.
+  - **Left empty for lack of a record.** Polling class of 475 messages (set for 53: 8
+    passive, 11 polled and 34 read on demand by the vendor tool, `service-tool-log`); no
+    interval anywhere; range of `RoomSetbackTemp` and `GradientCurve` of `51`; step of these
+    two and of `BlockingTime`, `ChangeOverTime`, `SwitchOnRuntime`; linked bounds; French
+    labels of the 43 value-list entries.
+  - **Menu trees and labels**: proposal in `out/companion-menu-proposal.md` (not versioned),
+    from the menus of the three vendor manuals and the tabs of the vendor tool; marked
+    `proposed` in the sidecar until the owner accepts them.
+  - **Fixtures** (`evidence/fixtures.toml`): the 17 settings of `settings-writes`, each with
+    its read ID, answer, write telegram and decoded value, checked against the record and
+    the definition. The other records quote telegrams in prose; transcribing them is one
+    reading per record, and checking the decoded values of multi-field messages needs an
+    ebusd that decodes an injected answer, not prototyped yet.
+  - **Trial.** `INTEGRATION=weishaupt-next scripts/release.sh 0.4.3`: stack linear,
+    `weishaupt-next` `5442f91`, `scripts/check.sh` clean in seven steps, 605 messages in
+    English, German and French; the CSV files of both archives are byte-identical to 0.4.2
+    (`diff -r`, notice apart). Local `weishaupt` still at `f58a45f`; nothing pushed, nothing
+    published.
 
 - **2026-11-18, release 0.4.2.** Three more boiler
   information values read with `50 22`, added to lot K on both boilers (`08`, `18`), each

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Checks the Weishaupt TypeSpec definitions: commit hygiene, format, compile, ebusd --checkconfig,
-# translation files.
+# translation files, metadata.
 # Runs every step, then reports. Exit code 0 only if all steps pass.
 #
 #   scripts/check.sh           all steps
@@ -21,6 +21,13 @@
 # fork's own: a key that matches no comment fails. A file with keys of the lot files is compiled
 # to out/csv.<lang>, compared with the English CSV (only comments may differ) and loaded with
 # --checkconfig (same message count).
+#
+# Metadata (step 7): metadata/weishaupt.toml, the sidecar the metadata file of a release is
+# generated from, is compared with the compiled CSV (scripts/metadata.py check): every message
+# of the lot files has an entry, every entry a message, every written setting its write
+# conditions and an evidence record that names it. The file lives on the branch on top of the
+# stack; a lot branch below it has none and the step says so. METADATA=required (set by
+# scripts/integrate.sh) makes a missing file a failure.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -137,7 +144,7 @@ want=$(tr -d 'v \r\n' <"$ROOT/.nvmrc" 2>/dev/null | cut -d. -f1)
 have=$(node -v 2>/dev/null | tr -d v | cut -d. -f1)
 [ -z "$want" ] || [ "$have" = "$want" ] || echo "WARN: Node.js ${have:-not found}, .nvmrc pins major $want"
 
-echo "== 1/6 commit hygiene (AGENTS.md rules 4 and 9)"
+echo "== 1/7 commit hygiene (AGENTS.md rules 4 and 9)"
 base="${LOT_BASE:-}"
 if [ -z "$base" ]; then
   up=$(git remote -v | awk '$2 ~ /john30\// {print $1; exit}')
@@ -161,15 +168,15 @@ if [ "$only" = hygiene ]; then
   exit "$fail"
 fi
 
-echo "== 2/6 src/$LOT holds only .tsp and .yaml"
+echo "== 2/7 src/$LOT holds only .tsp and .yaml"
 extra=$(find "src/$LOT/" -type f ! -name '*.tsp' ! -name '*.yaml')
 if [ -n "$extra" ]; then echo "FAIL:"; echo "$extra"; fail=1; else echo "ok"; fi
 
-echo "== 3/6 format"
+echo "== 3/7 format"
 if npx tsp format --check "src/$LOT/*.tsp" >"$OUT/format.log" 2>&1; then echo "ok"
 else echo "FAIL: $(grep -oE '[0-9]+ need format' "$OUT/format.log" | head -1), see out/format.log (fix: npx tsp format \"src/$LOT/*.tsp\"; on Windows check core.autocrlf=false first)"; fail=1; fi
 
-echo "== 4/6 compile"
+echo "== 4/7 compile"
 rm -rf "$OUT/csv"
 if npx tsp compile src/main.tsp --emit @ebusd/ebus-typespec \
      --option @ebusd/ebus-typespec.withMinMax=true --output-dir "$OUT/csv" >"$OUT/compile.log" 2>&1 \
@@ -179,14 +186,14 @@ else echo "FAIL: see out/compile.log"; tail -5 "$OUT/compile.log"; fail=1; fi
 csv="$OUT/csv/@ebusd/ebus-typespec"
 mode="${CHECKCONFIG:-}"
 [ -n "$mode" ] || { docker info >/dev/null 2>&1 && mode=local || mode=actions; }
-echo "== 5/6 ebusd --checkconfig ($FORK $RELEASE, $mode)"
+echo "== 5/7 ebusd --checkconfig ($FORK $RELEASE, $mode)"
 count=""
 if checkconfig "$csv" checkconfig; then
   count=$(grep -o 'found messages: [0-9]*' "$OUT/checkconfig.log" | tail -1)
   echo "${count:-ok}"
 else echo "FAIL: see out/checkconfig.log"; tail -5 "$OUT/checkconfig.log" 2>/dev/null; fail=1; fi
 
-echo "== 6/6 translations"
+echo "== 6/7 translations"
 rm -rf "$OUT"/csv.?? "$OUT"/cfg.?? "$OUT"/checkconfig.??.log
 found=0
 for y in src/??.yaml; do
@@ -215,6 +222,13 @@ for y in src/??.yaml; do
   else echo "$lang: FAIL: see out/checkconfig.$lang.log"; tail -5 "$OUT/checkconfig.$lang.log" 2>/dev/null; fail=1; fi
 done
 [ "$found" -eq 1 ] || echo "ok (no translation file)"
+
+echo "== 7/7 metadata"
+if [ -f metadata/weishaupt.toml ]; then
+  python3 "$ROOT/scripts/metadata.py" check metadata/weishaupt.toml "$csv" || fail=1
+elif [ "${METADATA:-}" = required ]; then
+  echo "FAIL: no metadata/weishaupt.toml on this branch"; fail=1
+else echo "ok (no metadata file on this branch)"; fi
 
 [ "$fail" -eq 0 ] && echo "ALL CHECKS PASSED" || echo "CHECKS FAILED"
 exit "$fail"

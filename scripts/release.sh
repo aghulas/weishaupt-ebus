@@ -8,6 +8,11 @@
 # weishaupt-ebusd-config-<version>, and one more per language, ...-<version>-<lang>, with the same
 # layout and the comments translated by src/<lang>.yaml of the integration branch.
 #
+# Beside the archives: weishaupt-metadata-<version>.json, generated from metadata/weishaupt.toml
+# of the integration branch and the compiled CSV of every language (scripts/metadata.py, format
+# in docs/companion-contract.md); weishaupt-fixtures-<version>.json, the readings of
+# evidence/fixtures.toml; sha256sums-<version>.txt, the checksums of all of them.
+#
 # RELEASE_LANGS  languages with an archive of their own (default: fr; empty: English only)
 set -euo pipefail
 
@@ -51,9 +56,25 @@ archive() {
 }
 
 archive "$NAME" "$ROOT/out/csv/@ebusd/ebus-typespec"
+assets="$NAME.tar.gz"
+langargs=()
 for lang in $LANGS; do
   # check.sh compiled it, compared it with English and loaded it: its lines are in the log.
   grep -q "^$lang: found messages: $count, as in English\$" "$ROOT/out/integrate.log" \
     || { echo "$lang: not compiled and checked by scripts/check.sh (no src/$lang.yaml on $BRANCH?): no archive"; exit 1; }
   archive "$NAME-$lang" "$ROOT/out/csv.$lang/@ebusd/ebus-typespec"
+  assets="$assets $NAME-$lang.tar.gz"
+  langargs+=(--lang "$lang=$ROOT/out/csv.$lang/@ebusd/ebus-typespec")
 done
+
+# Metadata and fixtures of the release, from the same compile as the archives.
+SIDE="$ROOT/out/integration/metadata/weishaupt.toml"
+python3 "$ROOT/scripts/metadata.py" build "$SIDE" "$ROOT/out/csv/@ebusd/ebus-typespec" \
+  "$REL/weishaupt-metadata-$VERSION.json" --version "$VERSION" --commit "$commit" --loaded "$count" \
+  ${langargs[@]+"${langargs[@]}"}
+python3 "$ROOT/scripts/metadata.py" fixtures "$ROOT/evidence/fixtures.toml" "$SIDE" \
+  "$ROOT/out/csv/@ebusd/ebus-typespec" "$REL/weishaupt-fixtures-$VERSION.json" --version "$VERSION"
+assets="$assets weishaupt-metadata-$VERSION.json weishaupt-fixtures-$VERSION.json"
+# shellcheck disable=SC2086
+(cd "$REL" && shasum -a 256 $assets >"sha256sums-$VERSION.txt" && cat "sha256sums-$VERSION.txt")
+echo "assets: out/release/sha256sums-$VERSION.txt lists them, not published"

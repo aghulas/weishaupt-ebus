@@ -31,6 +31,9 @@ live in the forks, cloned under `repos/` (not versioned here, see `scripts/setup
 | `aghulas/ebus-typespec` | `john30/ebus-typespec` | TypeSpec library: decorators, emitter |
 
 The Home Assistant integration (`aghulas/ha-weishaupt`) is a separate project and is out of scope.
+What it needs from here is one generated file per release, the metadata asset: its source is
+`metadata/weishaupt.toml` on the top branch of the configuration fork, its format is in
+`docs/companion-contract.md`, and rules 3 and 4 apply to it as to a definition.
 
 ## Rules
 

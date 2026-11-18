@@ -16,3 +16,7 @@ Rules:
 - Raw telegrams are welcome; trim them to what proves the point.
 - Nothing site-specific: no names, addresses, host names or serial numbers.
 - No copies of vendor manuals or vendor software. Cite title, document number and page.
+
+`fixtures.toml` holds readings transcribed from these records (request, answer, decoded
+value), each citing its record; `scripts/metadata.py fixtures` checks them against the record
+and the definition and writes the fixtures file of a release.

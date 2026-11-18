@@ -14,6 +14,7 @@ and checked on a live installation with two WTC 250 boilers in cascade and three
 - `docs/upstream-checklist.md` — what a change must satisfy before it enters the fork or is proposed upstream
 - `docs/discoveries.md` — findings from the field that are not yet in a lot branch
 - `evidence/` — how each definition was established
+- `docs/companion-contract.md` — the metadata file released with the definitions, for user interfaces built on them
 - `scripts/` — setup, checks (commit hygiene, format, compile, `ebusd --checkconfig`), integration branch, release archive
 - `AGENTS.md` — instructions for coding agents working in this repository
 

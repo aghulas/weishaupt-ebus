@@ -22,6 +22,12 @@ to the official ebusd configuration; this archive exists so that they can be use
 read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
+Beside the archives the release carries `weishaupt-metadata-@VERSION@.json`: for every message
+of these files, its device, menu, short label in English and French, kind of value and, for a
+setting, the conditions of a write. It is meant for user interfaces built on the definitions
+(format: `docs/companion-contract.md` in https://github.com/aghulas/weishaupt-ebus); ebusd does
+not need it.
+
 ## Use
 
 ```sh
