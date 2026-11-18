@@ -27,17 +27,17 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 
 | Lot | Content | Branch, head | Evidence |
 |---|---|---|---|
-| A | Register reads (`50 22`, checksum precomputed in the ID) of the system manager; status broadcast and the status each boiler sends to the cascade master; room unit / module exchange `HcMode`; system clock and the weekly hot-water and circulation programs of `50`. Reads only, stock ebusd. Files `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`, `broadcast`, `wtc_inc`. | `weishaupt-A` `4cd5a54` (16 commits) **local**, with the local `weishaupt-pr` at the same commit; on the fork `weishaupt-pr` is still `66b775e` (14 commits), two commits behind: `HcMode` without outside sensor, `DHWOperationMode` renamed `DHWLoadingPriority` (2026-11-18). **Pull request #717.** | `ka-reads`, `register-crc`, `broadcast-kastatus`, `bc1-boiler-status`, `em-hcmode`, `em1-clock-program` |
-| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. Hours since last service (`BurnerServiceHours`, i46) now carries the ×10 factor and is defined on both boilers (fix of 2026-11-18). | `weishaupt-E` `9d20b57` (4 commits on A), local; `3b4d19c` on the fork | `em1-fault-log`, `bc-fault-history`, `bc-counters` |
-| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `71094a2` (1 commit on E), local; `5fb13ab` on the fork | `bc-counters` |
-| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `b0526d3` (2 commits on D), local; `2933941` on the fork | `bc-live-values` |
-| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `324d4c5` (5 commits on F), local; `fb15d2b` on the fork | `register-write-crc`, `settings-writes` |
-| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. A comment in `50.w.em1` now says `50` is the system manager's own direct circuit (same device as `15`), not a WCM-EM module like `51`/`52`, so its eight reads duplicate `15` (2026-11-18). | `weishaupt-G` `00fcdfc` (2 commits on C), local; `5c6e592` on the fork | `room-units-reads`, `heating-modules-reads` |
-| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `c88ee40` (3 commits on G), local; `9778221` on the fork | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `a5e5e7d` (1 commit on H), local; `64a0daa` on the fork | `bc-fault-counters` |
-| K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `c212188` (2 commits on J), local; `49e484b` on the fork | `bc-info-values` |
-| L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `3e6aa66` (9 commits on K, 278 keys for 278 strings since the lot-A changes of 2026-11-18), local; `b4cfa16` on the fork | `terms` |
-| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` `17a4bc7` (4 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`), local; `b9d5359` on the fork | the records the entries name; `service-tool-log` for the polling classes |
+| A | Register reads (`50 22`, checksum precomputed in the ID) of the system manager; status broadcast and the status each boiler sends to the cascade master; room unit / module exchange `HcMode`; system clock and the weekly hot-water and circulation programs of `50`. Reads only, stock ebusd. Files `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`, `broadcast`, `wtc_inc`. | `weishaupt-A` `4cd5a54` (16 commits), on the fork as `weishaupt-pr`, pushed on 2026-11-18 with its two last commits: `HcMode` without outside sensor, `DHWOperationMode` renamed `DHWLoadingPriority`. **Pull request #717.** | `ka-reads`, `register-crc`, `broadcast-kastatus`, `bc1-boiler-status`, `em-hcmode`, `em1-clock-program` |
+| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. Hours since last service (`BurnerServiceHours`, i46) now carries the ×10 factor and is defined on both boilers (fix of 2026-11-18). | `weishaupt-E` `9d20b57` (4 commits on A), pushed | `em1-fault-log`, `bc-fault-history`, `bc-counters` |
+| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `71094a2` (1 commit on E), pushed | `bc-counters` |
+| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `b0526d3` (2 commits on D), pushed | `bc-live-values` |
+| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `324d4c5` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
+| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. A comment in `50.w.em1` now says `50` is the system manager's own direct circuit (same device as `15`), not a WCM-EM module like `51`/`52`, so its eight reads duplicate `15` (2026-11-18). | `weishaupt-G` `00fcdfc` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
+| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `c88ee40` (3 commits on G), pushed | `room-units-programs` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `a5e5e7d` (1 commit on H), pushed | `bc-fault-counters` |
+| K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `c212188` (2 commits on J), pushed | `bc-info-values` |
+| L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `3e6aa66` (9 commits on K, 278 keys for 278 strings since the lot-A changes of 2026-11-18), pushed | `terms` |
+| M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` `17a4bc7` (4 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`), pushed | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -49,7 +49,7 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-**0.5.0 prepared locally (2026-11-18), nothing pushed.** The three decisions of the owner of
+**0.5.0 released (2026-11-18)** from `weishaupt` `24b03d7`, on the owner's word: the two commits of lot A pushed to `weishaupt-pr` (fast-forward) with a comment on #717, the ten lot branches forced, five files published. Downloaded again: the four checksums right, 605 messages without error in the official ebusd 26.1; the compiled CSV differ from 0.4.3 only in `15.w.ka` (the renamed message) and in the `HcMode` line of the three module files. `weishaupt-0.4.3` stays online beside it. The three decisions of the owner of
 that day are applied (see "Decisions and history"): `HcMode` decodes for a module without
 outside sensor, `DHWOperationMode` is `DHWLoadingPriority`, the 38 value-list entries have
 labels in the metadata. Lot A has two more commits and every lot above it was replayed (new
@@ -103,7 +103,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1` and `weishaupt-0.4.2` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.3` is the only release online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1` and `weishaupt-0.4.2` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.3` and `weishaupt-0.5.0` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -122,6 +122,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.5.0` (pre-release) | `HcMode` decodes for a heating module without an outside sensor; `DHWOperationMode` renamed `DHWLoadingPriority` (breaking); labels of the value-list entries in the metadata file; fixtures for every message (schema 2). Downloaded again after publication: checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.4.3` (pre-release) | the CSV of 0.4.2 unchanged, plus the metadata asset for the Home Assistant companion (`weishaupt-metadata-0.4.3.json`, format in `docs/companion-contract.md`), a fixtures file and the checksums. Downloaded again after publication: checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
@@ -133,7 +134,7 @@ remain in the local clone.
 
 | Pull request | Head | State on 2026-11-17 |
 |---|---|---|
-| john30/ebusd-configuration#717 (lot A) | `aghulas:weishaupt-pr` `66b775e` (since 2026-11-17 evening: comment of `BlockingTime`; `813ac45` before) | open, mergeable, no review (read again on 2026-11-18). Only the owner's two comments (2026-11-16, 2026-11-17). Description updated on 2026-11-17 (boiler status messages, section "File names"). **Two commits wait locally** (`b2e2db7`, `4cd5a54`): a fast-forward of `weishaupt-pr`, on the owner's word; comment to post with it in `docs/pr-lot-a.md`. |
+| john30/ebusd-configuration#717 (lot A) | `aghulas:weishaupt-pr` `4cd5a54` (since 2026-11-18: two commits on top, `HcMode` without an outside sensor and the rename to `DHWLoadingPriority`, explained in a comment posted the same day; `66b775e` before) | open, mergeable, no review (read again on 2026-11-18). Only the owner's two comments (2026-11-16, 2026-11-17). Description updated on 2026-11-17 (boiler status messages, section "File names"). **Two commits wait locally** (`b2e2db7`, `4cd5a54`): a fast-forward of `weishaupt-pr`, on the owner's word; comment to post with it in `docs/pr-lot-a.md`. |
 | john30/ebusd#1825 (run-time checksum) | `aghulas:crc` `492867d9` | open, mergeable, no review, no comment |
 | john30/ebus-typespec#8 (lot B) | `aghulas:wcrc-decorator` `75c7d58` | opened on 2026-11-17, mergeable, no review, no comment |
 
@@ -145,21 +146,7 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Release 0.5.0: push and publish.** Prepared locally on 2026-11-18, trial files under
-  `out/release/` (`INTEGRATION=weishaupt-next scripts/release.sh 0.5.0`). Needs the owner's
-  word, in this order:
-  1. **The branch behind pull request #717, separately**: `weishaupt-pr` `66b775e` →
-     `4cd5a54`, a fast-forward of two commits (no force), then the comment of
-     `docs/pr-lot-a.md` on #717.
-  2. The lot branches of the fork, all forced (rebuilt on the new lot A; no pull request on
-     any of them): `weishaupt-A` (not on the fork yet under this name: `weishaupt-pr` is its
-     copy), `weishaupt-E`, `-D`, `-F`, `-C`, `-G`, `-H`, `-J`, `-K`, `-L`, `-M`.
-  3. `scripts/release.sh 0.5.0` (moves `weishaupt` to `24b03d7`, the same commit as the
-     trial: same stack, same pin), then `weishaupt` forced, tag `weishaupt-0.5.0`, release
-     with the four files `sha256sums-0.5.0.txt` lists and that file, download and load in
-     the official ebusd.
-  4. The workbench `main`: two commits ahead of `origin/main` (`a9ccf05`), the records and
-     documents of this release.
+- **Release 0.5.0: done** (2026-11-18, see "Current state"). To read when convenient: the three new French strings of lot A, and the label of burner phase 9, still provisional.
 - **Number of that release: settled, 0.5.0** (owner, 2026-11-18). A message is renamed, so
   the second number changes, as the rule below says. It was first built as 0.4.4 on the
   wording of the task; the content is the same. A consumer that accepts ">= 0.4.3, < 0.5"
@@ -380,8 +367,8 @@ data point on arbitration with room units).
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
 
-- **2026-11-18, three decisions of the owner applied; release 0.5.0 prepared.** Local only:
-  nothing pushed, nothing published.
+- **2026-11-18, three decisions of the owner applied; release 0.5.0.** Pushed and published
+  the same day from the main session on the owner's word, the branch behind #717 included.
   - **`HcMode` (lot A, `b2e2db7`).** ebusd refused `em2/HcMode` and `em3/HcMode` because the
     field `OutsideTemp` of the answer had the type `temp2` (`D2B`, range -50 to 127 written
     into the CSV) and the modules without outside sensor send `00 9c`, -100.0: an ordinary
