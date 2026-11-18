@@ -56,7 +56,9 @@ LANGS = ("en", "fr")
 KINDS = ("live", "state", "counter", "diagnostic", "setting", "program_slot")
 POLLS = ("cyclic", "on_demand")  # "passive" is derived from the message type
 RISKS = ("comfort", "regulation")  # "structural" settings are never writable
-PROOFS = ("captured", "change-observed")
+PROOFS = ("captured", "change-observed", "family")
+# Kinds a write may sit on: settings, and the slots of weekly programs (from 0.5.6).
+WRITABLE_KINDS = ("setting", "program_slot")
 # Range of a write the definitions cannot carry (a fractional bound on an integer register).
 WRITE_RANGE = ("min", "max", "step")
 STATUS = ("proposed", "accepted")
@@ -295,8 +297,12 @@ def resolve(side, msgs):
                     texts.append(f.read())
         w = e.get("write")
         if w is not None:
-            if e.get("kind") != "setting":
-                bad.append(f"{where}: written but kind is not setting")
+            if e.get("kind") not in WRITABLE_KINDS:
+                bad.append(f"{where}: written but kind is not one of {', '.join(WRITABLE_KINDS)}")
+            if w.get("proof") == "family" and e.get("kind") != "program_slot":
+                bad.append(f"{where}: proof family is for program slots only")
+            if w.get("proof") == "family" and not w.get("proof_slot"):
+                bad.append(f"{where}: proof family without write.proof_slot (the captured slot)")
             if not re.fullmatch(r"[0-9a-f]{2}", str(w.get("source", ""))):
                 bad.append(f"{where}: write.source must be a source address, two hex digits")
             if w.get("risk") not in RISKS:
@@ -354,6 +360,9 @@ def resolve(side, msgs):
                     bad.append(f"{key}: written in the lot, no write conditions in the metadata")
                 if w is not None and not m["write"]:
                     bad.append(f"{key}: write conditions, but the lot does not write it")
+                if w is not None and w.get("proof") == "family" and (
+                        f"{c}/{w.get('proof_slot')}" not in msgs or rx is None or not rx.fullmatch(w.get("proof_slot", ""))):
+                    bad.append(f"{key}: write.proof_slot must name a slot of the same entry and circuit")
                 if w is not None and m["write"] and not any(
                         re.search(rf"\b{re.escape(m['name'])}\b", t) for t in texts):
                     bad.append(f"{key}: written, but none of its evidence records ({', '.join(ev)}) names it")
@@ -478,10 +487,15 @@ def assemble(side, msgs, resolved, langs):
                     o["write"][k] = w[k]
             if "range_source" in w:
                 o["write"]["range_source"] = w["range_source"]
+            if w["proof"] == "family" and key.split("/")[1] == w.get("proof_slot"):
+                o["write"]["proof"] = "change-observed"  # the captured slot itself
+            elif w["proof"] == "family":
+                o["write"]["proof_slot"] = w["proof_slot"]
             f0 = fields[0]
-            if "min" not in f0 and "min" not in w:
+            # a program slot is bounded by its type (quarter hours of a day, enable flags)
+            if e.get("kind") == "setting" and "min" not in f0 and "min" not in w:
                 open_range.append(key)
-            if "step" not in f0 and "step" not in w:
+            if e.get("kind") == "setting" and "step" not in f0 and "step" not in w:
                 open_step.append(key)
         o["fields"] = fields
         out_msgs[key] = o

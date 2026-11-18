@@ -144,14 +144,16 @@ has `value_labels`, with the same raw values as keys:
 ### Write conditions
 
 Present only when a lot defines the write and an evidence record names the message. A
-message without `write` must not be written, whatever its kind.
+message without `write` must not be written, whatever its kind. From 0.5.6 a write may sit on
+a message of kind `setting` or `program_slot`; the keys are the same.
 
 | Key | Meaning |
 |---|---|
 | `source` | source address of the captured write. `ff`: the setting is taken over only from the address of the vendor service tool, send with `write -s ff`. `31`: captured from ebusd's own address; not proven from another one |
 | `runtime_checksum` | `true`: the telegram needs the register checksum computed at run time, that is an ebusd build with john30/ebusd#1825. A stock ebusd loads the message and sends a wrong checksum |
 | `risk` | `comfort`: may be written directly once writes are enabled. `regulation`: only after a confirmation that shows current value, new value and range. Structural settings are never writable and never appear here |
-| `proof` | `captured`: write telegram captured, acknowledged, and the register read back with the same value. `change-observed`: in addition a change of value was seen on the bus and read back |
+| `proof` | `captured`: write telegram captured, acknowledged, and the register read back with the same value. `change-observed`: in addition a change of value was seen on the bus and read back. `family` (program slots only, from 0.5.6): a change was observed on another slot of the same program and device, named by `proof_slot`; same codec and register scheme. The captured slot itself shows `change-observed` |
+| `proof_slot` | with `family`: the name of the captured slot |
 | `open` | questions that may still remove the setting; `copy-in-use`: a room unit and its heating module both answer this register, and which copy the regulation uses is not established |
 | `min`, `max`, `step` | (from 0.5.5) range of the write where the field has none: the definitions cannot carry a fractional bound on an integer register (setback room setpoint 10.0 to 21.5, heating curve 2.5 to 40.0). Never present when the field has them |
 | `range_source` | with `min` / `max` / `step`: the document and page the range comes from |
@@ -160,8 +162,10 @@ Range and step are those of the field (`min`, `max`, `step`), or of the write co
 the field has none. Nothing is written while the vendor service tool is connected: it uses
 the same source address.
 
-Risk class `comfort`: the normal and setback room setpoints and the hot-water setpoint, on
-every device that writes them; every other written setting is `regulation`.
+Risk class `comfort`: the normal and setback room setpoints, the hot-water setpoint and the
+program slots, on every device that writes them; every other written setting is `regulation`.
+A program slot is written whole (end, start and their enable flags, one telegram per slot) and
+bounded by its type; it never appears in `open.range` or `open.step`.
 
 ### Families
 

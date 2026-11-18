@@ -22,7 +22,16 @@ to the official ebusd configuration; this archive exists so that they can be use
 `50.w.em1`, `51.w.em2` and `52.w.em3` that are read and written. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.4
+## Changes since 0.5.5
+
+- **Heating program 1 of `35.w.fs1` can be written**: its 21 slots, one telegram per slot,
+  from ebusd's own address (`write -c fs1 HCProgram1Tue1 18:00;Enabled;06:30;Enabled`). One
+  slot was seen changed and read back on the test installation; the other 20 share its codec
+  and register scheme (`proof: family` in the metadata). Programs 2 and 3 and the programs of
+  the other devices stay read only. The read ids are unchanged.
+- The metadata may carry write conditions on program slots (`docs/companion-contract.md`).
+
+## Changes from 0.5.4 to 0.5.5
 
 - **Metadata only; the definitions are those of 0.5.4.** The setback room setpoint and the
   heating curve of every circuit get a range in their write conditions (10.0 to 21.5 and

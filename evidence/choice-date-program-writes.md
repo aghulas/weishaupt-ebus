@@ -190,21 +190,31 @@ restore telegram, read, risk.
 - **Batch F** (2): **medium**, the cascade staging moves for a minute.
 - **Batch C** (5): **high**, structural: the boiler sequence reorders the cascade and may
   switch a boiler on or off; the circuit type reconfigures the circuit and may reset its
-  curve. **Owner's decision**, with the boilers without demand, or not at all.
+  curve. **Not done for now** (owner, 2026-11-18): boiler sequence and circuit type stay read
+  only. A change of either can stop a boiler or reconfigure a circuit while it heats, and
+  neither is a setting an operator changes in service; they belong to the commissioning of the
+  installation.
 - **Not in the plan**: the adaption (`15 01`) and the room factor (`0f 01`) of the three room
   units read 0x8000 (function not used); a write is not meaningful here.
 
 ## Definitions
 
-None in this record yet. Only one write meets the rule (a change captured, acknowledged and
-read back): the slot `20 14` of `fs1`. Two things stop its definition:
+**One slot per program and device stands for its 21 slots** (owner, 2026-11-18). The argument:
+the 21 slots of one program of one device differ only in the register address, the weekday in
+the high nibble of the first byte (1 to 7) and the slot in the low nibble (0 to 2), with the
+program in the second byte; every slot has the same two-byte value (end, start, quarter hours,
+bit 7 = disabled), the same checksum routine, the same source, and is answered the same way
+by the read (lot H reads all 21 with one codec). A captured change of one slot proves the
+device takes a write of that program from that source with that encoding; the other 20 would
+need a different register stride or codec to behave otherwise, and none is seen. It does not
+extend to another program or another device: their source and acceptance are tested
+separately (batch E).
 
-- The metadata allows write conditions only on a message of kind `setting`; a program slot is
-  `program_slot`. The contract (`docs/companion-contract.md`) would need write conditions for
-  program slots, or the slots a kind of their own: a change of the contract, to decide first.
-- One slot of one device out of 357. Whether one captured slot per program and device stands
-  for the 21 slots of that program (same register scheme, same codec) is the **owner's
-  decision**; with it, batch E would prove all 357 slots in 17 changes.
+Defined on that basis (2026-11-18): **heating program 1 of `fs1`, its 21 slots**, read and
+written in lot H (`35.w.fs1`, base `SwitchTimesSetting`), the captured slot being `20 14`
+(`HCProgram1Tue1`). In the metadata, the 21 carry write conditions with source `31`, class
+`comfort`, and proof `family` naming `HCProgram1Tue1`; the captured slot itself shows
+`change-observed`. The contract was extended for it (write conditions on program slots).
 
 The choices and dates need a read definition and a value list as well as the write: none is
 in a lot today.
@@ -224,4 +234,6 @@ clock master at `f1`.
 - The value lists of the choices beyond the values read (legionella day 1, sequence 0 and 1,
   holiday level 0, control variation 1, circuit type 2 and 3).
 - That `50` takes program writes from `31`.
+- ebusd building a slot write from the files of the lot: the definition decodes the two
+  captured telegrams (fixtures); sending from it has not been observed.
 - The third register of a holiday date.

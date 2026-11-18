@@ -518,6 +518,29 @@ readings = [
   { message = "SupplyMinTemp", master = "81 2b 01", slave = "50 00", expect = { value = 8.0 } },
 ]
 
+# choice-date-program-writes: the two captured writes of slot 20 14 of room unit 1 (heating program 1); source 31
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-10"
+circuit = "fs1"
+type = "write"
+qq = "31"
+where = "row"
+readings = [
+  { message = "HCProgram1Tue1", master = "5a 20 14 5a 1a", slave = "", expect = { totime = "22:30", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+]
+
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-17"
+circuit = "fs1"
+type = "write"
+qq = "31"
+where = "row"
+readings = [
+  { message = "HCProgram1Tue1", master = "52 20 14 48 1a", slave = "", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"
