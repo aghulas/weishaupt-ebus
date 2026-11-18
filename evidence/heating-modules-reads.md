@@ -82,7 +82,9 @@ heating circuit (same software version, no mixed circuit). Two condensing boiler
 ## Not verified
 
 - Every value was read once, in one afternoon. No setting was changed and no write was tried
-  (rule 7): that `50` and `52` take a write on these registers is not known and not defined.
+  for this record (rule 7). Writes were later captured on site and are in
+  [settings-writes.md](settings-writes.md): five settings of `50` and the curve of `52` are
+  written in lot C.
 - `50` and `15` have the same software version and gave the same answer on every register
   read on both (the seven settings, heat demand, outside temperature, boost offset,
   configuration status 76; the weighted outside temperature 13.3 and 13.4 a minute apart).
@@ -91,6 +93,10 @@ heating circuit (same software version, no mixed circuit). Two condensing boiler
   manager's own direct heating circuit — the same device as `15` — answering at a second
   address. The eight `em1` register reads are a second view of the system manager's registers
   and duplicate `15`'s values; the block comment in `50.w.em1.tsp` (lot G) now says so.
+  **Shown with writes on 2026-11-18** ([settings-writes.md](settings-writes.md), batch 3):
+  each of five settings written at `50` from `ff` was read at `15` with the new value, and
+  with the former one after the restore; the two addresses share these registers, not only
+  their values. The comment of the settings block of `50.w.em1.tsp` (lot C) says so.
 - The setting registers of a module and of its room unit hold different values (see
   [room-units-reads.md](room-units-reads.md)); which copy the regulation uses was not
   established.

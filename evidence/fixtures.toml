@@ -319,6 +319,46 @@ readings = [
   { message = "BoilerMCBoostTemp", master = "ed 11 01", slave = "14 00", expect = { value = 2.0 } },
 ]
 
+# settings-writes, on-site batch 3: change and restore of five settings of the direct circuit (50); source ff
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em1"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "a8 05 00 d2 00", slave = "", expect = { value = 21.0 } },
+  { message = "RoomNormalTemp", master = "d8 05 00 d7 00", slave = "", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "bc 08 00 9b 00", slave = "", expect = { value = 15.5 } },
+  { message = "RoomSetbackTemp", master = "8c 08 00 a0 00", slave = "", expect = { value = 16.0 } },
+  { message = "RoomFrostProtectionTemp", master = "4c 14 0a 5f 00", slave = "", expect = { value = 9.5 } },
+  { message = "RoomFrostProtectionTemp", master = "7c 14 0a 64 00", slave = "", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "94 0e 01 5f 00", slave = "", expect = { value = 9.5 } },
+  { message = "GradientCurve", master = "a4 0e 01 64 00", slave = "", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "60 16 01 c3 00", slave = "", expect = { value = 19.5 } },
+  { message = "SummerWinterChangeOverTemp", master = "dc 16 01 c8 00", slave = "", expect = { value = 20.0 } },
+]
+
+# settings-writes, on-site batch 3: the read of each register at 50 after the change and after the restore
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "em1"
+where = "row"
+readings = [
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d2 00", expect = { value = 21.0 } },
+  { message = "RoomNormalTemp", master = "70 05 00", slave = "d7 00", expect = { value = 21.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "9b 00", expect = { value = 15.5 } },
+  { message = "RoomSetbackTemp", master = "58 08 00", slave = "a0 00", expect = { value = 16.0 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "5f 00", expect = { value = 9.5 } },
+  { message = "RoomFrostProtectionTemp", master = "96 14 0a", slave = "64 00", expect = { value = 10.0 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "5f 00", expect = { value = 9.5 } },
+  { message = "GradientCurve", master = "cd 0e 01", slave = "64 00", expect = { value = 10.0 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c3 00", expect = { value = 19.5 } },
+  { message = "SummerWinterChangeOverTemp", master = "25 16 01", slave = "c8 00", expect = { value = 20.0 } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"

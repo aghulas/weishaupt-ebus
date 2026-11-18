@@ -2,10 +2,11 @@
 
 ## What
 
-Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 44 settings
+Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 49 settings
 (17 until 2026-11-18, when the three marked † were added, then the two marked ‡ from the
 telegram log of ebusd, section "Changes in the telegram log", then the eleven of room units 2
-and 3 from the captures on site, section "Captures on site"),
+and 3 and five of the direct circuit `em1` from the captures on site, section "Captures on
+site"),
 each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the run-time checksum
 (mechanism and checksum in [register-write-crc.md](register-write-crc.md)). The value is
 16 bits, low byte first.
@@ -37,6 +38,7 @@ each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the ru
 | fs2 (`75`) | RoomNormalTemp, RoomSetbackTemp, RoomFrostProtectionTemp, GradientCurve, SummerWinterChangeOverTemp, SupplyMaxTemp, SupplyMinTemp, SwitchOnRuntime, FrostProtectionLimitTemp, BoilerMCBoostTemp | as on `fs1` / `em2` | as on `fs1` / `em2` | as on `fs1` / `em2` | `ff` |
 | fs2 | DHWSetpoint | `13 00` | UIN/10, °C | 40–60, step 0.5 | `ff` |
 | fs3 (`f5`) | the eleven settings of `fs2` | as on `fs2` | as on `fs2` | as on `fs2` | `ff` |
+| em1 (`50`) | RoomNormalTemp, RoomSetbackTemp, RoomFrostProtectionTemp, GradientCurve, SummerWinterChangeOverTemp | as on `em2` | as on `em2` | as on `em2` | `ff` |
 
 "Source" is the source address of the captured write. `BlockingTime` was a read of lot A
 (`4c 25 00`); it is the same register, now read and written.
@@ -245,6 +247,35 @@ installation data, not in this repository.
 - Room unit 3 had the same values as room unit 2 for ten settings; its heating curve was 21.0
   (20.5 and back).
 
+### Batch 3 — direct circuit `em1` (`50`), 2026-11-18 14:59 to 15:36
+
+The column "at `15`" is the read of the same register at the system manager between the change
+and the restore.
+
+| setting | date, time | source | change | read at `50` → answer | at `15` | restore | read at `50` → answer |
+|---|---|---|---|---|---|---|---|
+| em1 RoomNormalTemp | 2026-11-18 14:59–14:59 | `ff` | `a8 05 00 d2 00` | `70 05 00` → `d2 00` | `d2 00` | `d8 05 00 d7 00` | `70 05 00` → `d7 00` |
+| em1 RoomSetbackTemp | 2026-11-18 15:27–15:28 | `ff` | `bc 08 00 9b 00` | `58 08 00` → `9b 00` | `9b 00` | `8c 08 00 a0 00` | `58 08 00` → `a0 00` |
+| em1 RoomFrostProtectionTemp | 2026-11-18 15:28–15:28 | `ff` | `4c 14 0a 5f 00` | `96 14 0a` → `5f 00` | `5f 00` | `7c 14 0a 64 00` | `96 14 0a` → `64 00` |
+| em1 GradientCurve | 2026-11-18 15:28–15:29 | `ff` | `94 0e 01 5f 00` | `cd 0e 01` → `5f 00` | `5f 00` | `a4 0e 01 64 00` | `cd 0e 01` → `64 00` |
+| em1 SummerWinterChangeOverTemp | 2026-11-18 15:29–15:29 | `ff` | `60 16 01 c3 00` | `25 16 01` → `c3 00` | `c3 00` | `dc 16 01 c8 00` | `25 16 01` → `c8 00` |
+
+- 10 writes from `ff`, all acknowledged `00`, checksum right; each read at `50` after a write gave
+  the written value, and `15` answered the same value after each change and the former one
+  after each restore: `50` and `15` share these registers.
+- **Flow limits, not taken from `31`.** Maximum: 15:29:43, `31 50 5023` `b3 28 00 2f 03`
+  (81.5), acknowledged `00`, read at once `64 28 00` → `34 03` (82.0), at `15` 82.0 as well.
+  Minimum: 15:35:14, `00 2b 01 55 00` (8.5) from `31`, acknowledged, read `50 00` (8.0) at `50`
+  and `15`. Nothing changed, nothing to restore. On `50` / `15` these registers are not taken
+  from ebusd's own address, unlike modules `51` and `52`; the operator's log of 2026-10-30 has
+  the flow maximum of `15` taken only from `ff`. Not in the lot. The client in service writes
+  them from `31` on `em1`, so its writes of these two have had no effect.
+- Home Assistant was restarted three times that afternoon, outside the session (about 14:44,
+  15:21, 15:31): the first before the batch, the second during a pause between the first
+  setting (14:59) and the second (15:27), the third between the two flow-limit attempts. No
+  change / restore pair spans one; ebusd was not restarted. The client in service was 0.1.1
+  for the first setting and 0.1.2 from 15:15 on; its telegrams are the same.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, scanning as `MF=Kromschröder`, `ID=W`: system manager at
@@ -328,13 +359,14 @@ where the read is defined today.
 | `fs1` | `05 00`, `08 00`, `0e 01`, `16 01`, `28 00`, `2b 01` (read, lot G), `13 00` (no read) | 7 | read or nothing | operator's log 2026-10-30: all of them changed from `ff` (refused from `31`), read back, restored; no telegram | a captured change |
 | `fs2` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01`, `28 00`, `2b 01`, `10 01`, `be 02`, `13 00`, `11 01` | 11 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
 | `fs3` | the same eleven | 11 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
-| `em1` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01` (`ff`), `28 00`, `2b 01` (`31`) | 7 | read (lots A, G) | none. `50` is the same device as `15` (see `docs/discoveries.md`) | a captured change, and which of `50` and `15` it changes |
+| `em1` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01` | 5 | **writable (lot C), added 2026-11-18 from the captures on site**; shared with `15` | this record | — |
+| `em1` | `28 00`, `2b 01` | 2 | read (lot G) | written from `31` on 2026-11-18: acknowledged, not taken | a captured change from `ff` (the client writes them from `31` today) |
 | `em3` | `05 00`, `08 00`, `14 0a`, `16 01` (`ff`), `28 00`, `2b 01` (`31`) | 6 | read (lot G) | none: same device type as `em2` | a captured change |
 | `ka` | `ea fd` modulation maximum, `eb fd` minimum | 2 | nothing | operator's log 2026-10-30: changed from `ff`, restored; the client cannot write them today (its old definition is a value list) | a read definition, a captured change, the owner's go; range 30 % to 100 %, minimum below maximum (WCM-KA 3.0, 83258404, pages 84 and 85, parameters 535 and 536) |
 | `fs1`–`fs3` | `0f 01` room factor | 3 | nothing | none; the circuits have no room sensor (value not available); the client cannot write it today | a room sensor on the circuit, a captured change, the owner's go |
 
-Total: 44 writable, 22 that one captured change each would prove, 5 that need a decision
-before any test.
+Total: 49 writable, 17 that one captured change each would prove (2 of them from another
+source than the client uses), 5 that need a decision before any test.
 
 ### Other writes of the client
 
@@ -362,7 +394,7 @@ read is kept only as last seen, hence the snapshot after each step.
 |---|---|---|
 | 1 | ~~Export of the telegram log~~ — done on 2026-11-18; a new export after any session of writes is the cheapest proof of what was written | 2 (done) |
 | 2 | ~~Captured change of the eleven settings of `fs2` and of `fs3`~~ — done 2026-11-18, batches 1 and 2 | 22 (done) |
-| 3 | Captured change of the seven settings of `em1` and the six left on `em3` | 13 (and tells whether `50` and `15` share the register) |
+| 3 | Captured change of the six settings left on `em3`, and of the two flow limits of `em1` from `ff` (82.0 → 81.5 → 82.0, 8.0 → 8.5 → 8.0, reads at `50` and `15`); five of `em1` done 2026-11-18, batch 3 | 8 left (5 done) |
 | 4 | Captured change of the seven settings of `fs1` not yet proven | 7 |
 | 5 | Captured change of `ka` flow maximum and hot-water setpoint | 2 |
 | 6 | Captured change of the legionella day and the holiday level (`ka`, three room units) | 4 choices, with their value lists |
@@ -372,6 +404,6 @@ A "captured change" can now be had without snapshots: the client in service send
 export of the telegram log afterwards gives change, read and restore with their dates.
 
 Each change of a room-unit or module setting alters the regulation of its circuit for the
-minute it lasts: an unoccupied period suits. Steps 3 to 5 are 44 writes (22 changes, 22
-restores): about an hour and a half within the client's rate limit (one write per register
+minute it lasts: an unoccupied period suits. Steps 3 to 5 are 34 writes (17 changes, 17
+restores): a little over an hour within the client's rate limit (one write per register
 every 10 s, 30 writes an hour).
