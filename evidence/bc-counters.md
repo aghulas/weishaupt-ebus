@@ -70,6 +70,31 @@ factor of 10 (ebusd divisor −10). The read was confirmed read-only on the live
 39 → 390 h). The second boiler had no `BurnerServiceHours` message before; lot E now defines it
 on both boilers.
 
+## The request as written, on both boilers (2026-11-18)
+
+Sent once to each boiler on 2026-11-18 at 10:27 and 10:28, read-only, with the `hex` command
+of ebusd (source `31`, `<zz> 5000 05 <request>`); answer after the length byte `09`, first
+answer byte first:
+
+| boiler | message | request | answer | FirstByte, OperatingHours, BurnerHours, BurnerStarts |
+|---|---|---|---|---|
+| `08` | Counters | `26 06 01 72 e6` | `00 87 54 01 e4 4e 89 db 02` | 0, 87175, 20196, 187273 |
+| `18` | Counters | `26 06 01 72 e6` | `00 16 44 01 56 4e 27 1f 02` | 0, 82966, 20054, 139047 |
+
+- The single-item request of the definition is answered by both boilers with one first byte
+  and the eight bytes of the model.
+- Operating hours of the first boiler: 87 134 on 2026-11-16 at 17:30, 87 175 now, 41 hours
+  later by the clock as well. Burner hours 20 196 and 20 054 are the figures the `50 22`
+  register `2a 02` gave the same morning ([bc-info-values.md](bc-info-values.md)).
+
+`BurnerServiceHours` was seen again in the passive capture of the same morning, read by the
+running configuration with the request of the definition:
+
+| boiler | message | request | answer | value |
+|---|---|---|---|---|
+| `08` | BurnerServiceHours | `0a bc 02` | `2c 00` | 440 |
+| `18` | BurnerServiceHours | `0a bc 02` | `27 00` | 390 |
+
 Toolchain: `scripts/check.sh` clean (format, compile, `ebusd --checkconfig`, 161 messages).
 
 ## First answer byte

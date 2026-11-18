@@ -86,6 +86,37 @@ All 48 values of that screen equal the bc2 row above.
 
 Toolchain: `scripts/check.sh` clean (format, compile, `ebusd --checkconfig`, 159 messages).
 
+## The seven requests as written, on both boilers (2026-11-18)
+
+The read-back above gives values, not bytes. On 2026-11-18, between 10:27:43 and 10:28:28,
+each of the seven requests was sent once to each boiler, read-only, with the `hex` command of
+ebusd (source `31`, `<zz> 5000 05 <request>`, three seconds apart); answer after the length
+byte, first answer byte first. Values in the order of the fields: FirstByte, then Value for
+the pointer; FirstByte, Number, Kind, OperatingPhase, Load, PumpSpeed, BoilerTemp,
+FlueGasTemp, Ionisation, ReturnTemp for a slot.
+
+| boiler | message | request | answer | values |
+|---|---|---|---|---|
+| `08` | FaultHistoryPointer | `1c 06 02 12 00` | `00 31 02` | 0, 561 |
+| `08` | FaultHistorySlot1 | `5a 06 02 72 02` | `00 8c 06 2a 64 5e 2f c6 27` | 0, 12, warning, BurnerInOperation, 42, 100, 94, 47, 19.8, 39 |
+| `08` | FaultHistorySlot2 | `52 06 02 72 0a` | `00 8c 06 1f 39 5e 3d 8d 42` | 0, 12, warning, BurnerInOperation, 31, 57, 94, 61, 14.1, 66 |
+| `08` | FaultHistorySlot3 | `4a 06 02 72 12` | `00 8c 06 22 3c 5e 3b 93 46` | 0, 12, warning, BurnerInOperation, 34, 60, 94, 59, 14.7, 70 |
+| `08` | FaultHistorySlot4 | `42 06 02 72 1a` | `00 8c 06 2f 48 5e 42 ad 47` | 0, 12, warning, BurnerInOperation, 47, 72, 94, 66, 17.3, 71 |
+| `08` | FaultHistorySlot5 | `7a 06 02 72 22` | `00 0b 00 27 32 69 42 00 47` | 0, 11, fault, BurnerOff, 39, 50, 105, 66, 0.0, 71 |
+| `08` | FaultHistorySlot6 | `72 06 02 72 2a` | `00 8c 08 2c 64 5e 31 00 28` | 0, 12, warning, PostPurge, 44, 100, 94, 49, 0.0, 40 |
+| `18` | FaultHistoryPointer | `1c 06 02 12 00` | `00 09 02` | 0, 521 |
+| `18` | FaultHistorySlot1 | `5a 06 02 72 02` | `00 24 00 00 00 14 14 00 14` | 0, 36, fault, BurnerOff, 0, 0, 20, 20, 0.0, 20 |
+| `18` | FaultHistorySlot2 | `52 06 02 72 0a` | `00 24 00 00 00 4e 44 00 4e` | 0, 36, fault, BurnerOff, 0, 0, 78, 68, 0.0, 78 |
+| `18` | FaultHistorySlot3 | `4a 06 02 72 12` | `00 24 00 1b 32 49 35 00 42` | 0, 36, fault, BurnerOff, 27, 50, 73, 53, 0.0, 66 |
+| `18` | FaultHistorySlot4 | `42 06 02 72 1a` | `00 24 00 1c 32 4d 3a 00 48` | 0, 36, fault, BurnerOff, 28, 50, 77, 58, 0.0, 72 |
+| `18` | FaultHistorySlot5 | `7a 06 02 72 22` | `00 24 00 1c 32 45 33 00 3d` | 0, 36, fault, BurnerOff, 28, 50, 69, 51, 0.0, 61 |
+| `18` | FaultHistorySlot6 | `72 06 02 72 2a` | `00 24 00 00 00 18 14 00 1a` | 0, 36, fault, BurnerOff, 0, 0, 24, 20, 0.0, 26 |
+
+The eight data bytes of every slot of the first boiler are those the vendor tool read on
+2026-11-16, and the values of both boilers are those of the read-back above: no entry was
+added in two days. The names of the operating phase are those of the value list of the status
+broadcast; the record of 2026-11-16 gives the number (6, 0, 8).
+
 ## First answer byte
 
 On 2026-11-18 the first byte of every memory read (`50 00`) was made a visible field

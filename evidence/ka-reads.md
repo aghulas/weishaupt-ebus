@@ -110,3 +110,28 @@ and range (0 to 30 min) of parameter 537 of the system manager, which its instal
 of the cascade is switched on; the anti-cycling time of a burner is parameter P 34 of the
 boiler. The comment now says so (lot A). Established from the manual; no test on the
 installation shows what the register does.
+
+## Bytes of the twelve reads without a kept telegram (2026-11-18)
+
+The table of "What" gives a value for each message but no bytes. On 2026-11-18, between 10:26
+and 10:27, each of the twelve registers below was read once, read-only, with the `hex` command
+of ebusd (source `31`, `15 5022 03 <request>`, reads three seconds apart). The request is the
+ID of the definition; the answer is the two data bytes after the length byte `02`.
+
+| message | request | answer | value |
+|---|---|---|---|
+| ErrorStatus | `5c 01 00` | `00 00` | 0 |
+| HeatDemandTemp | `b8 02 00` | `65 01` | 35.7 |
+| ConfigStatus | `b0 10 00` | `4c 00` | 76 |
+| VersionMajor | `45 99 01` | `0a 01` | 266 |
+| VersionMinor | `a1 9a 01` | `12 00` | 18 |
+| RoomNormalTemp | `70 05 00` | `d7 00` | 21.5 |
+| RoomSetbackTemp | `58 08 00` | `a0 00` | 16.0 |
+| DHWSetpoint | `54 13 00` | `f4 01` | 50.0 |
+| DHWOperationMode | `d8 23 00` | `00 00` | Priority |
+| SupplyMaxTemp | `64 28 00` | `34 03` | 82.0 |
+| ModulationStatus | `48 2c 00` | `08 00` | 8 |
+| DHWExceeded | `14 2d 00` | `64 00` | 10.0 |
+
+Eleven of the twelve values are those of 2026-11-16; the heat demand is a live value. These
+readings are transcribed in [fixtures.toml](fixtures.toml).

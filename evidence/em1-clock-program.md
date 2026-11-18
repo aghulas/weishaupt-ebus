@@ -107,6 +107,26 @@ of ebusd (`31 50 5022 03 4d 25 01`): answer `02 0f 00`, 15, at 15:50 local time.
 is the hour, UIN, as its neighbours `21` to `24`, `26` and `27`. It is in the lot again since
 that day (`SystemHour`, `@ext(0x4d, 0x25, 0x01)`).
 
+## Bytes of the clock registers (2026-11-18)
+
+The clock table above gives values without bytes, except for `SystemHour`. On 2026-11-18,
+between 10:26:51 and 10:27:07 local time, the six other registers were read once each,
+read-only, with the `hex` command of ebusd (source `31`, `50 5022 03 <request>`, three seconds
+apart); answer after the length byte `02`:
+
+| message | request | answer | value |
+|---|---|---|---|
+| SystemWeekday | `61 21 01` | `03 00` | Wednesday |
+| SystemDay | `85 22 01` | `12 00` | 18 |
+| SystemMonth | `d9 23 01` | `0b 00` | November |
+| SystemYear | `11 24 01` | `1a 00` | 26 |
+| SystemMinute | `a9 26 01` | `1a 00` | 26 |
+| SystemSecond | `f5 27 01` | `3b 00` | 59 |
+
+2026-11-18 was a Wednesday: the value list of the weekday holds on a second day (Monday was
+read on 2026-11-16). Minute and second (26:59, read at 10:27:04 and 10:27:07) put the clock of
+the device a few seconds behind the computer that sent the reads.
+
 ## Equipment
 
 Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.

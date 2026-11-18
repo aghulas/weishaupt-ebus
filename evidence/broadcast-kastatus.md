@@ -37,6 +37,27 @@ being idle at the time.
 Toolchain: `tsp compile` clean, `tsp format --check` clean, `ebusd --checkconfig` clean
 (0 errors). Emitted as a type `u` (passive update) message, `ZZ=fe`, ID `500a`.
 
+## Source address, and a second capture (2026-11-18)
+
+The capture of 2026-11-16 did not keep the source address of the broadcast. Passive capture of
+2026-11-18, 10:25 (ebusd `grab result all`, nothing sent): the status broadcast comes from
+`f1`, the master address of the system manager's cascade function, not from a boiler
+(`03` and `13` send theirs to `10`, see [bc1-boiler-status.md](bc1-boiler-status.md)).
+
+```
+f1 fe 500a : 01 00 40 00 ff 50 ff 33 00 0b cd 0c 24
+```
+
+| field | bytes | value |
+|---|---|---|
+| OperatingPhase | `00` | BurnerOff |
+| Load | `ff` | not available |
+| SupplyTemp (D1C) | `50` | 40.0 °C |
+| DHWTemp (D1C) | `33` | 25.5 °C |
+| OutsideTemp (D2B) | `00 0b` | 11.0 °C |
+| OutsideWeightedTemp (D2B) | `cd 0c` | 12.8 °C |
+| SupplySetTemp | `24` | 36 °C |
+
 ## Equipment
 
 Kromschröder WCM/WTC condensing boiler on eBUS, scanning as `MF=Kromschröder`.

@@ -28,6 +28,27 @@ frame `0a bc 02`).
 
 Toolchain: `tsp compile`, `tsp format --check`, `ebusd --checkconfig` all clean (0 errors).
 
+## Bytes of the nine registers (2026-11-18)
+
+The table of "What" gives values without bytes. On 2026-11-18, between 10:27:11 and 10:27:36,
+each register was read once, read-only, with the `hex` command of ebusd (source `31`,
+`50 5022 03 <request>`, three seconds apart); answer after the length byte `02`:
+
+| message | request | answer | value |
+|---|---|---|---|
+| ErrorId | `ab 9a 0b` | `00 00` | 0 |
+| ErrorCode | `f7 9b 0b` | `00 00` | 0 |
+| ErrorType | `3f 9c 0b` | `0a 00` | 10 |
+| ErrorDevice | `63 9d 0b` | `01 00` | 1 |
+| ErrorMinute | `db 9f 0b` | `1e 00` | 30 |
+| ErrorHour | `c7 a0 0b` | `03 00` | 3 |
+| ErrorDay | `9b a1 0b` | `07 00` | 7 |
+| ErrorMonth | `7f a2 0b` | `0b 00` | November |
+| ErrorYear | `23 a3 0b` | `1a 00` | 26 |
+
+The same entry as on 2026-11-16 (device 1, 7 November 2026, 03:30, code 0). `ErrorType` reads
+10; the first reading recorded no value for it.
+
 ## Equipment
 
 Kromschröder WCM-FS heating module on eBUS, `MF=Kromschröder`.
