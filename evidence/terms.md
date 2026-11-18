@@ -135,8 +135,8 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | percent | pour cent | | no vendor term; the manuals print the sign only | owner |
 | fault | défaut | | WTC p. 86; KA p. 31; FS p. 53 | vendor |
 | warning | alarme | | WTC p. 86, 87, 90; FB p. 23 | vendor |
-| fault counters (of the boiler automat) | compteurs de défauts | | provisional; the manuals list the codes, not the counters | provisional |
-| first answer byte (of a memory read); number of bytes asked for | premier octet de la réponse; nombre d'octets demandés | | provisional; not a manual notion | provisional |
+| fault counters (of the boiler automat) | compteurs de défauts | | no vendor term; the manuals list the codes, not the counters | owner |
+| first answer byte (of a memory read); number of bytes asked for | premier octet de la réponse; nombre d'octets demandés | | no vendor term; not a manual notion | owner |
 | safety temperature limiter (eSTL) | thermostat de sécurité (limiteur) | | WTC p. 89 (i 30), 90, 92 | vendor |
 | flow sensor; return sensor; flue gas sensor; defective | sonde de départ; sonde de retour; sonde de fumées; défectueuse | | WTC p. 90, 92 | vendor |
 | no flame at burner start; flame lost during operation; flame signal without a flame | pas de formation de flamme au démarrage du brûleur; perte de flamme en fonctionnement; flamme parasite | | WTC p. 90, 92 | vendor |
@@ -175,16 +175,17 @@ and `wolf/broadcast`, 269 of them of the lots (`scripts/i18n-keys.py`), all 269 
 
 | Kind | Strings | Vendor terms only | Accepted by the owner | Provisional | Left in English |
 |---|---|---|---|---|---|
-| Written by hand, lots | 137 | 109 | 20 | 8 | |
+| Written by hand, lots | 137 | 109 | 28 | 0 | |
 | Patterned (program slots, fault-history slots) | 132 | 84 | 48 | | |
 | Wolf messages of the broadcast file | 24 | | | | 24 |
-| All | 293 | 193 | 68 | 8 | 24 |
+| All | 293 | 193 | 76 | 0 | 24 |
 
 The 48 patterned strings accepted by the owner are the 42 "stored in the room unit" slots and
-the 6 fault-history slots. The 8 provisional strings are those of the fault counters
-(lot J), written after the list below was made: the seven message comments ("fault counters,
-numbers 57 to 51" …, six before the lot was cut in 10-byte reads) and the comment of the
-first answer byte. The Wolf messages are left in English on the
+the 6 fault-history slots. The 8 fault-counter strings of lot J (seven message comments —
+"fault counters, numbers 57 to 51" … — and the comment of the first answer byte), written
+after the list below was first made, were put to the owner on 2026-11-18 and accepted as
+written, so their two terms are now `owner` and no lot has a provisional string left. The
+Wolf messages are left in English on the
 owner's decision of 2026-11-18; the key check does not expect a key for them.
 
 ## To validate
@@ -219,6 +220,11 @@ changed where the line says so; an unticked line was not put to the owner.
 | [x] | fault type of the selected entry | type de défaut de l'entrée sélectionnée | no "type" of a fault in the manuals | nature du défaut de l'entrée sélectionnée |
 | [x] | device that raised the selected entry | origine du défaut de l'entrée sélectionnée | "origine" is the vendor's (KA p. 109); "entry" is not | appareil à l'origine de l'entrée sélectionnée |
 | [x] | percent | pour cent | the manuals print the sign only | pourcentage |
+| [x] | fault counters, numbers `<a>` to `<b>` (the seven lot-J reads) | compteurs de défauts, numéros `<a>` à `<b>` | no vendor term; the manuals list the fault codes, not counters of them | compteurs par code défaut |
+| [x] | first answer byte: 0, or the number of bytes asked for when all counters read 0 | premier octet de la réponse : 0, ou le nombre d'octets demandés quand tous les compteurs sont lus à 0 | not a manual notion | none |
+
+The two lines above were added after the owner's first pass, once lot J existed, and put to
+the owner on 2026-11-18 as well; both accepted as written.
 
 ### Patterned comments
 

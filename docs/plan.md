@@ -34,8 +34,8 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `1289f97` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
 | G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `de1e38b` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `6a46518` (3 commits on G), pushed | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte as a field, 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `78ac7af` (1 commit on H), **local**; the fork has the first version `9e8cdd3` (six reads of 12 bytes) | `bc-fault-counters` |
-| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 68 accepted by the owner, 8 provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `d5a88bd` (7 commits on J), **local**; the fork has `a22b797` | `terms` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte as a field, 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `78ac7af` (1 commit on H), pushed | `bc-fault-counters` |
+| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 76 accepted by the owner, none provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `d5a88bd` (7 commits on J), pushed | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -54,7 +54,8 @@ as seven reads of at most 10 bytes with the first answer byte as a field, and a 
 field in the notice. Both archives downloaded again after publication: checksums right, 588
 messages without error in the official ebusd 26.1. `weishaupt-0.3.1` (tag on `b831213`, 586
 messages, lot J as six 12-byte reads, of which an all-zero answer is lost most of the time)
-is still online beside it. Before that, `b831213` was the integration branch since 2026-11-18 (forced from `bd35b2c` on the owner's word, with `weishaupt-L`
+was deleted from the fork on 2026-11-18 on the owner's request once superseded, its tag kept
+in the local clone. Before that, `b831213` was the integration branch since 2026-11-18 (forced from `bd35b2c` on the owner's word, with `weishaupt-L`
 fast-forward to `a22b797`). `scripts/check.sh` on it: clean, **586 messages** in English,
 German and French. Released from it on 2026-11-18 as the pre-release `weishaupt-0.3.1` (tag
 on `b831213`), made by `scripts/release.sh 0.3.1`: the French archive has the wording the
@@ -65,7 +66,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0` and then `weishaupt-0.3.0` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.1` and `weishaupt-0.3.2` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0` and then `weishaupt-0.3.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.2` is the only release online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -85,7 +86,6 @@ fork heads compared after the push, equal.
 | Repository | Release | Content |
 |---|---|---|
 | `aghulas/ebusd-configuration` | `weishaupt-0.3.2` (pre-release) | as 0.3.1, with the fault counters of lot J read in seven items of at most 10 bytes and their first answer byte as a field. Downloaded again after publication: checksums right, 588 messages without error in the official ebusd 26.1. |
-| `aghulas/ebusd-configuration` | `weishaupt-0.3.1` (pre-release) | compiled CSV of lots A to H and J under `kromschroeder/`, in an English and a French archive, notice, checksums; French archive with the wording decided by the owner on 2026-11-18, Wolf messages of the broadcast file in English. Downloaded again after publication: checksums right, 586 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
 
@@ -120,9 +120,9 @@ data point on arbitration with room units).
   is in use, the seven settings lot C writes on `51` have no effect and must be removed or
   flagged.
 - **Languages other than English.** French is pushed and released (`docs/i18n.md`, sections
-  7 and 8): `src/fr.yaml` on `weishaupt-L`, French archive in `weishaupt-0.3.1` with the
-  owner's decisions of 2026-11-18 on the wording. Still unread by the owner in
-  `evidence/terms.md`: the six comments of the fault counters, the spelling
+  7 and 8): `src/fr.yaml` on `weishaupt-L`, French archive in `weishaupt-0.3.2` with the
+  owner's decisions of 2026-11-18 on the wording, the fault-counter comments included
+  (accepted 2026-11-18). Still unread by the owner in `evidence/terms.md`: the spelling
   "anti-légionelle", the design choices and the findings on the English wording
   ("calorifier").
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
@@ -169,8 +169,9 @@ data point on arbitration with room units).
   decision the lot keeps that byte as a field (`FirstByte`). **Pushed and released on 2026-11-18, on the
   owner's word:** `weishaupt-J` `78ac7af` (amended) and `weishaupt-L` `d5a88bd` (rebased, 269
   keys) forced, `weishaupt` rebuilt and forced to `4c034fc`; `scripts/check.sh` clean, 588
-  messages in English and French; release `weishaupt-0.3.2` made from it. The eight French strings of the lot outside the fault texts (seven
-  message comments, first answer byte) are provisional. Still open: no counter has been
+  messages in English and French; release `weishaupt-0.3.2` made from it. The eight French strings of the lot (seven
+  message comments, first answer byte) were put to the owner on 2026-11-18 and accepted, so
+  no lot has a provisional string left. Still open: no counter has been
   seen to step with a new entry of the fault history, which would also say whether a number
   listed as warning and fault (15, 18, 21, 48, 57) counts warnings, lockouts or both.
 - **First answer byte of the memory reads of lots E, D and F.** The shared model `memr`
