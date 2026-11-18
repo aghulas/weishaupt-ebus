@@ -2,11 +2,11 @@
 
 ## What
 
-Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 62 settings
+Lot C, branch `weishaupt-C` of the ebusd-configuration fork (on top of the stack of lots since 2026-11-17, first written on `weishaupt-A`). 64 settings
 (17 until 2026-11-18, when the three marked † were added, then the two marked ‡ from the
 telegram log of ebusd, section "Changes in the telegram log", then the eleven of room units 2
-and 3, five of the direct circuit `em1`, six of module `em3` and seven more of room unit 1
-from the captures on site, section "Captures on site"),
+and 3, five of the direct circuit `em1`, six of module `em3`, seven more of room unit 1 and two
+of the system manager from the captures on site, section "Captures on site"),
 each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the run-time checksum
 (mechanism and checksum in [register-write-crc.md](register-write-crc.md)). The value is
 16 bits, low byte first.
@@ -23,6 +23,8 @@ each emitted as an `r` message (`50 22`) and a `w` message (`50 23`) with the ru
 | ka | LegionellaCirculationTime | `b1 09` | UIN, s | 180–1200, step 60 | `ff` |
 | ka | RegulationP † | `9f 02` | UIN | 10–300 | `ff` |
 | ka | RegulationI † | `9e 02` | UIN | 10–200 | `ff` |
+| ka | SupplyMaxTemp (batch 6) | `28 00` | UIN/10, °C | 8–82, step 0.5 | `ff` |
+| ka | DHWSetpoint (batch 6) | `13 00` | UIN/10, °C | 40–60, step 0.5 | `ff` |
 | em2 (`51`) | RoomNormalTemp | `05 00` | UIN/10, °C | 16–35, step 0.5 | `ff` |
 | em2 | RoomSetbackTemp | `08 00` | UIN/10, °C | none (10.0–21.5) | `ff` |
 | em2 | RoomFrostProtectionTemp | `14 0a` | UIN/10, °C | 4–16, step 0.5 | `ff` |
@@ -314,6 +316,24 @@ and the restore.
   restore, gave the written value; every setting ended at its value before the batch. The
   three room units now have the same eleven settings written.
 
+### Batch 6 — system manager (`15`), 2026-11-18 15:46 to 15:47
+
+| setting | date, time | source | change | read → answer | restore | read → answer |
+|---|---|---|---|---|---|---|
+| ka SupplyMaxTemp | 2026-11-18 15:46–15:46 | `ff` | `b3 28 00 2f 03` | `64 28 00` → `2f 03` | `bf 28 00 34 03` | `64 28 00` → `34 03` |
+| ka DHWSetpoint | 2026-11-18 15:46–15:47 | `ff` | `bd 13 00 ef 01` | `54 13 00` → `ef 01` | `b1 13 00 f4 01` | `54 13 00` → `f4 01` |
+
+- 4 writes, all acknowledged `00`, checksum right; each read after a write gave the written
+  value; both settings ended at their value before the batch. These two were reads of lot A;
+  lot C now reads and writes them under the same names, with the same read IDs.
+- After the change of the flow maximum at `15` from `ff`, address `50` read `2f 03` (81.5) as
+  well, and `34 03` after the restore. The register is shared and taken from `ff`: the refusals
+  at `50` (batch 3) came from the source `31`, not from the register. The flow limits of `em1`
+  stay out of the lot until a write to `50` from `ff` is captured.
+- Hot-water setpoint bounded 40 to 60: WCM-KA 3.0 (document 83258404, page 95, section 6.7.29,
+  parameter 572: 40.0 °C up to the hot-water maximum, parameter 574, factory value 60.0 °C).
+  The flow maximum keeps the bounds of the same setting on the modules.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, scanning as `MF=Kromschröder`, `ID=W`: system manager at
@@ -348,7 +368,7 @@ two more settings added on 2026-11-18.
 
 | register | what exists | what is missing |
 |---|---|---|
-| ka `RoomNormalTemp` `05 00`, `RoomSetbackTemp` `08 00`, `SupplyMaxTemp` `28 00`, `DHWSetpoint` `13 00` (read in lot A) | read at `15`; the operator's table lists hot-water setpoint and maximum flow as tested on 2026-10-30 | a captured `50 23` to `15`. Test from `ff`, then restore: `99 13 00 f9 01` (50.5) / `b1 13 00 f4 01` (50.0); `64 05 00 dc 00` (22.0) / `d8 05 00 d7 00` (21.5); `fc 08 00 a5 00` (16.5) / `8c 08 00 a0 00` (16.0); `b3 28 00 2f 03` (81.5) / `bf 28 00 34 03` (82.0) |
+| ka `RoomNormalTemp` `05 00`, `RoomSetbackTemp` `08 00` (read in lot A) | read at `15`; written at `50` (`em1`, batch 3) and read back at `15`: the same registers | a write to `15` itself, if the definitions should offer them on `ka` too; the client does not write them |
 | ka `DHWLoadingPriority` `23 00` (`DHWOperationMode` until 0.4.3), `DHWExceeded` `2d 00` (read in lot A) | read only | any write test; for the priority, a change alters how the heating circuits are supplied while the hot water is loaded: operator's decision |
 | ka `ModulationStatus` `2c 00` (read in lot A) | read; the vendor register list calls it a setpoint | nothing says it is a setting. No write to try without the vendor's documentation |
 | ka de-couple maximum `e6 fd` | write from `31` acknowledged, value not taken (see register-write-crc.md) | a write from `ff`: `5f e6 fd 11 03` (78.5), then `c7 e6 fd 0c 03` (78.0) |
@@ -393,7 +413,7 @@ where the read is defined today.
 | `fs1` | `14 0a` | 1 | **writable (lot C), added 2026-11-18 from the telegram log** | this record | — |
 | `em3` | `0e 01` | 1 | **writable (lot C), added 2026-11-18 from the telegram log** | this record | — |
 | `em2` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01` (`ff`), `28 00`, `2b 01` (`31`) | 7 | writable (lot C) | this record | — |
-| `ka` | `28 00` flow maximum, `13 00` hot-water setpoint | 2 | read (lot A) | operator's log 2026-10-30: changed from `ff`, read back, restored; no telegram | a captured change |
+| `ka` | `28 00` flow maximum, `13 00` hot-water setpoint | 2 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
 | `fs1` | `05 00`, `08 00`, `0e 01`, `16 01`, `28 00`, `2b 01`, `13 00` | 7 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
 | `fs2` | `05 00`, `08 00`, `14 0a`, `0e 01`, `16 01`, `28 00`, `2b 01`, `10 01`, `be 02`, `13 00`, `11 01` | 11 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
 | `fs3` | the same eleven | 11 | **writable (lot C), added 2026-11-18 from the captures on site** | this record | — |
@@ -403,9 +423,9 @@ where the read is defined today.
 | `ka` | `ea fd` modulation maximum, `eb fd` minimum | 2 | nothing | operator's log 2026-10-30: changed from `ff`, restored; the client cannot write them today (its old definition is a value list) | a read definition, a captured change, the owner's go; range 30 % to 100 %, minimum below maximum (WCM-KA 3.0, 83258404, pages 84 and 85, parameters 535 and 536) |
 | `fs1`–`fs3` | `0f 01` room factor | 3 | nothing | none; the circuits have no room sensor (value not available); the client cannot write it today | a room sensor on the circuit, a captured change, the owner's go |
 
-Total: 62 writable, 4 that one captured change each would prove (the two flow limits of
-`em1` from another source than the client uses, the two of `ka`), 5 that need a decision
-before any test.
+Total: 64 writable, 2 that one captured change each would prove (the flow limits of `em1`,
+from `ff`, a source the client does not use for them), 5 that need a decision before any
+test.
 
 ### Other writes of the client
 
@@ -435,7 +455,7 @@ read is kept only as last seen, hence the snapshot after each step.
 | 2 | ~~Captured change of the eleven settings of `fs2` and of `fs3`~~ — done 2026-11-18, batches 1 and 2 | 22 (done) |
 | 3 | Captured change of the two flow limits of `em1` from `ff` (82.0 → 81.5 → 82.0, 8.0 → 8.5 → 8.0, reads at `50` and `15`); five of `em1` and six of `em3` done 2026-11-18, batches 3 and 4 | 2 left (11 done) |
 | 4 | ~~Captured change of the seven settings of `fs1` not yet proven~~ — done 2026-11-18, batch 5 | 7 (done) |
-| 5 | Captured change of `ka` flow maximum and hot-water setpoint | 2 |
+| 5 | ~~Captured change of `ka` flow maximum and hot-water setpoint~~ — done 2026-11-18, batch 6 | 2 (done) |
 | 6 | Captured change of the legionella day and the holiday level (`ka`, three room units) | 4 choices, with their value lists |
 | 7 | Owner's decision, then a captured change: modulation limits, room factor, boiler sequence, control variation, adaption, circuit type, holiday dates, program slots | the rest |
 
@@ -443,6 +463,6 @@ A "captured change" can now be had without snapshots: the client in service send
 export of the telegram log afterwards gives change, read and restore with their dates.
 
 Each change of a room-unit or module setting alters the regulation of its circuit for the
-minute it lasts: an unoccupied period suits. Steps 3 and 5 are 8 writes (4 changes, 4
-restores): a few minutes within the client's rate limit (one write per register
+minute it lasts: an unoccupied period suits. Step 3 is 4 writes (2 changes, 2 restores), from `ff`: a few minutes; the client in service
+must first send these two from `ff` on `em1` within the client's rate limit (one write per register
 every 10 s, 30 writes an hour).

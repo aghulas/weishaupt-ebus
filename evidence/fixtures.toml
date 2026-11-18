@@ -462,6 +462,34 @@ readings = [
   { message = "DHWSetpoint", master = "54 13 00", slave = "f4 01", expect = { value = 50.0 } },
 ]
 
+# settings-writes, on-site batch 6: change and restore of two settings of the system manager; source ff
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "ka"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "SupplyMaxTemp", master = "b3 28 00 2f 03", slave = "", expect = { value = 81.5 } },
+  { message = "SupplyMaxTemp", master = "bf 28 00 34 03", slave = "", expect = { value = 82.0 } },
+  { message = "DHWSetpoint", master = "bd 13 00 ef 01", slave = "", expect = { value = 49.5 } },
+  { message = "DHWSetpoint", master = "b1 13 00 f4 01", slave = "", expect = { value = 50.0 } },
+]
+
+# settings-writes, on-site batch 6: the read of each register after the change and after the restore
+[[block]]
+evidence = "settings-writes"
+date = "2026-11-18"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "2f 03", expect = { value = 81.5 } },
+  { message = "SupplyMaxTemp", master = "64 28 00", slave = "34 03", expect = { value = 82.0 } },
+  { message = "DHWSetpoint", master = "54 13 00", slave = "ef 01", expect = { value = 49.5 } },
+  { message = "DHWSetpoint", master = "54 13 00", slave = "f4 01", expect = { value = 50.0 } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"
