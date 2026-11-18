@@ -128,6 +128,122 @@ seven requests of the tool for this area and of `20 06 01 12 a4`; the six IDs of
 definitions were computed with it. The item length of 12 bytes (code `b2`) is the longest the
 tool was seen to send (`df b2 1b`, `service-tool-log.md`), so six reads cover the 66 bytes.
 
+### The six requests as written, 2026-11-18
+
+Sent from `31` with the `hex` command of ebusd (read-only, `50 00`), to both boilers, between
+05:58 and 06:03; the running configuration of the installation does not carry the six
+messages. Request on the bus: `31 <zz> 50 00 05 <ID>`. Answers after the length byte, status
+byte first.
+
+| Boiler | Message | ID | Answer | Data bytes | Counters | Answered |
+|---|---|---|---|---|---|---|
+| `08` | FaultCounters1 | `de 06 01 b2 96` | `00 14 00 01 00 01 00 00 00 00 00 00 00` | 12 | 20, 1, 1, 0, 0, 0 | 1 of 1 |
+| `08` | FaultCounters2 | `ea 06 01 b2 a2` | `00 00 00 06 00 00 00 01 00 00 00 00 00` | 12 | 0, 6, 0, 1, 0, 0 | 1 of 1 |
+| `08` | FaultCounters3 | `e6 06 01 b2 ae` | `00 00 00 00 00 00 00 00 00 66 00 00 00` | 12 | 0, 0, 0, 0, 102, 0 | 7 of 7 |
+| `08` | FaultCounters4 | `f2 06 01 b2 ba` | `00 00 00 00 00 00 00 00 00 00 00 00 00` | 12 | 0, 0, 0, 0, 0, 0 | **3 of 12** |
+| `08` | FaultCounters5 | `8e 06 01 b2 c6` | `00 00 00 11 00 18 00 00 00 00 00 01 00` | 12 | 0, 17, 24, 0, 0, 1 | 2 of 2 |
+| `08` | FaultCounters6 | `2e 06 01 52 d2` | `00 00 00 06 00 01 00` | 6 | 0, 6, 1 | 1 of 1 |
+| `18` | FaultCounters1 | `de 06 01 b2 96` | `00 0b 00 00 00 03 00 00 00 00 00 00 00` | 12 | 11, 0, 3, 0, 0, 0 | 1 of 1 |
+| `18` | FaultCounters2 | `ea 06 01 b2 a2` | `00 30 09 06 00 00 00 00 00 00 00 23 00` | 12 | 2352, 6, 0, 0, 0, 35 | 1 of 1 |
+| `18` | FaultCounters3 | `e6 06 01 b2 ae` | `00 00 00 00 00 00 00 00 00 35 01 00 00` | 12 | 0, 0, 0, 0, 309, 0 | 1 of 1 |
+| `18` | FaultCounters4 | `f2 06 01 b2 ba` | `00 00 00 00 00 00 00 00 00 01 00 00 00` | 12 | 0, 0, 0, 0, 1, 0 | 2 of 2 |
+| `18` | FaultCounters5 | `8e 06 01 b2 c6` | `00 00 00 0e 00 13 00 03 00 00 00 00 00` | 12 | 0, 14, 19, 3, 0, 0 | 1 of 1 |
+| `18` | FaultCounters6 | `2e 06 01 52 d2` | `00 00 00 05 00 03 00` | 6 | 0, 5, 3 | 1 of 1 |
+
+- Every answer received has one status byte `00` and as many data bytes as the model has
+  fields times two; no answer was short or long, and every counter decodes.
+- The 33 two-byte reads of the running configuration, repeated on both boilers right after
+  (06:03, all 66 answered), give the same value as the grouped answers for every counter. All
+  66 values are also those of 2026-11-17: no counter has moved.
+- **`FaultCounters4` to the first boiler failed 9 times out of 12** with `ERR: SYN received`
+  (no answer seen by ebusd): three times in a row at the first pass, then mixed with successes
+  over three minutes, while the requests sent between the attempts were answered. Its answer
+  is the only one of the twelve made of zero bytes only.
+
+**Control reads**, same minutes, first boiler, in the area `0x01b8`–`0x01c7` where its eight
+counters (numbers 35 to 23) are all zero, plus the non-zero `FaultCounters3` in between:
+
+| Item | Requests | Zero bytes in a row in the answer (status included) | Answered |
+|---|---|---|---|
+| 12 bytes at `0x01ba` (`f2 06 01 b2 ba`), `0x01b8` (`f0 06 01 b2 b8`), `0x01bc` (`f4 06 01 b2 bc`) | 12 + 4 + 4 | 13 | 3 + 2 + 1 = 6 of 20 |
+| 11 bytes at `0x01ba` (`42 06 01 a2 ba`) | 4 | 12 | 2 of 4 |
+| 10 bytes at `0x01ba` (`ce 06 01 92 ba`), `0x01b8` (`cc 06 01 92 b8`), `0x01bc` (`c8 06 01 92 bc`) | 9 + 5 + 5 | 11 | 19 of 19 |
+| 8 bytes at `0x01ba` (`7a 06 01 72 ba`) | 4 | 9 | 4 of 4 |
+| 12 bytes at `0x01ae`, not all zero (`e6 06 01 b2 ae`) | 7 | 10 | 7 of 7 |
+
+- The loss follows the content of the answer, not the address or the request: three different
+  12-byte requests whose answer is all zero fail alike, the same length with one non-zero
+  counter is answered every time, and so is the same address with 10 or 8 bytes.
+- The longest run of zero bytes seen answered every time is 11 (19 of 19); with 12 half of the
+  answers were lost, with 13 two thirds.
+- Where the answer is lost (automat, bus level, adapter or ebusd) is not established. The
+  frame checksums do not explain it: neither the request nor the all-zero answer has a
+  checksum byte that needs escaping (computed, `46` for the answer).
+- The vendor tool reads this area in items of 10 bytes (`e2 06 01 92 96` …), never 12.
+
+Consequence: five of the six messages are confirmed as written on the values present. A
+12-byte message whose six counters are all zero, which is the normal state of a boiler
+without faults, is not read reliably on this installation. Proposed change, accepted by the
+owner on 2026-11-18 and **not yet made** (see the next section): seven reads of at most 10 bytes per boiler, on the boundaries of the vendor tool, the last one
+unchanged:
+
+| Message | ID | Counters |
+|---|---|---|
+| FaultCounters1 | `e2 06 01 92 96` | 57, 55, 53, 52, 51 |
+| FaultCounters2 | `d4 06 01 92 a0` | 49, 48, 47, 46, 45 |
+| FaultCounters3 | `de 06 01 92 aa` | 44, 43, 41, 39, 38 |
+| FaultCounters4 | `c0 06 01 92 b4` | 37, 36, 35, 34, 33 |
+| FaultCounters5 | `ca 06 01 92 be` | 32, 31, 30, 24, 23 |
+| FaultCounters6 | `bc 06 01 92 c8` | 22, 21, 18, 16, 15 |
+| FaultCounters7 | `2e 06 01 52 d2` | 14, 12, 11 |
+
+The first ID is the one the tool sends; the others are computed with the CRC-8 of
+[register-crc.md](register-crc.md) and were sent in the next section. The six
+message comments ("fault counters, numbers 57 to 49" …) and their French would change with
+the boundaries.
+
+### The seven 10-byte requests, 2026-11-18
+
+The owner chose the 10-byte cut. Before any change of the definitions the seven requests of
+the table above were sent as written to both boilers, same method, 06:06 to 06:13, five times
+each in turn, then the last two again on the first boiler.
+
+| Boiler | ID | Answer (status byte first) | Counters | Answered |
+|---|---|---|---|---|
+| `08` | `e2 06 01 92 96` | `00 14 00 01 00 01 00 00 00 00 00` | 20, 1, 1, 0, 0 | 5 of 5 |
+| `08` | `d4 06 01 92 a0` | `00 00 00 00 00 06 00 00 00 01 00` | 0, 0, 6, 0, 1 | 5 of 5 |
+| `08` | `de 06 01 92 aa` | `00 00 00 00 00 00 00 00 00 00 00` | 0, 0, 0, 0, 0 | 5 of 5 |
+| `08` | `c0 06 01 92 b4` | `00 00 00 66 00 00 00 00 00 00 00` | 0, 102, 0, 0, 0 | 5 of 5 |
+| `08` | `ca 06 01 92 be` | `00 00 00 00 00 00 00 00 00 00 00` | 0, 0, 0, 0, 0 | 5 of 5 |
+| `08` | `bc 06 01 92 c8` | `00 11 00 18 00 00 00 00 00 01 00` | 17, 24, 0, 0, 1 | 15 of 15, one of them `0a 00 …` |
+| `08` | `2e 06 01 52 d2` | `00 00 00 06 00 01 00` | 0, 6, 1 | 25 of 25, one of them `06 00 …` |
+| `18` | `e2 06 01 92 96` | `00 0b 00 00 00 03 00 00 00 00 00` | 11, 0, 3, 0, 0 | 5 of 5 |
+| `18` | `d4 06 01 92 a0` | `00 00 00 30 09 06 00 00 00 00 00` | 0, 2352, 6, 0, 0 | 5 of 5 |
+| `18` | `de 06 01 92 aa` | `00 00 00 23 00 00 00 00 00 00 00` | 0, 35, 0, 0, 0 | 5 of 5 |
+| `18` | `c0 06 01 92 b4` | `00 00 00 35 01 00 00 00 00 00 00` | 0, 309, 0, 0, 0 | 5 of 5 |
+| `18` | `ca 06 01 92 be` | `00 00 00 00 00 01 00 00 00 00 00` | 0, 0, 1, 0, 0 | 5 of 5 |
+| `18` | `bc 06 01 92 c8` | `00 0e 00 13 00 03 00 00 00 00 00` | 14, 19, 3, 0, 0 | 5 of 5 |
+| `18` | `2e 06 01 52 d2` | `00 00 00 05 00 03 00` | 0, 5, 3 | 15 of 15 |
+
+- No request was left without an answer, the two all-zero blocks of the first boiler included
+  (10 of 10); with the control reads above, 29 all-zero 10-byte answers of 29.
+- Every counter equals the two-byte reads.
+- **Two answers of the first boiler carry no data.** At 06:06:50 the 6-byte request was
+  answered `06 00 00 00 00 00 00`, and at 06:12 the 10-byte request at `0x01c8` was answered
+  `0a 00 00 00 00 00 00 00 00 00 00`: the first byte is the number of bytes asked for instead
+  of `00`, and all data bytes are zero where the counters are 6 and 1, and 17, 24 and 1. The
+  same requests were answered with the values before and after. Over the morning: 2 such
+  answers among 107 answers of the first boiler, none among 52 of the second; none in the
+  earlier records of this repository.
+- The models skip the first byte (`ign`), so such an answer decodes as counters at zero,
+  without an error. This is a property of the memory read, not of the 10-byte cut: the 6-byte
+  request is the one of the published definitions, and every message built on `memr` (fault
+  history, counters, live values, fault counters) skips the byte the same way.
+
+The definitions were not changed after this finding: whether the first byte must become a
+field, so that a reader can tell an answer without data, is a decision to take before
+`weishaupt-J` is rewritten, or the lot would be rewritten twice.
+
 ### Level of proof
 
 | Statement | Counters | Level |
@@ -138,6 +254,8 @@ tool was seen to send (`df b2 1b`, `service-tool-log.md`), so six reads cover th
 | meaning of the number | 32 of 33 | source: manual of the boiler, both editions |
 | meaning of the number | 49 | source: later edition of the manual only (printed nine years after the first; whether it describes this firmware is not established) |
 | value compared with a displayed figure | none | the tool shows no counter on this firmware |
+| grouped request answered as written | 11 of the 12 messages | answered at every attempt, values equal to the two-byte reads |
+| grouped request answered as written | `FaultCounters4`, first boiler (all zero) | answered 3 times out of 12 |
 
 Toolchain: `CFG_REPO=<worktree of weishaupt-J> scripts/check.sh` clean (format, compile,
 `ebusd --checkconfig`, 586 messages, translations).
@@ -149,13 +267,18 @@ Two WTC condensing boilers in cascade, automat scanned `MF=Kromschroeder;SW=1104
 
 ## Date
 
-2026-11-17.
+2026-11-17 (two-byte reads), 2026-11-18 (the six requests as written, control reads).
 
 ## Not verified
 
-- **The six messages have not been sent through ebusd.** The values above come from 2-byte
-  reads of the same addresses. A 12-byte item after the address prefix `06 01` follows from the
-  grammar; the tool was seen with 12 bytes without the prefix and with 10 and 8 bytes after it.
+- **A 12-byte answer of zero bytes only is lost most of the time** (first boiler, 6 answered
+  of 20, see "The six requests as written"). Not established: where it is lost; whether the
+  second boiler behaves alike (none of its 12-byte blocks is all zero); whether another
+  adapter or installation shows it.
+- **Answers whose first byte is the number of bytes asked for, with all data at zero** (2 of
+  107 answers of the first boiler): what the automat means by them, how often they occur
+  over a longer time, and whether the second boiler sends them. The earlier statement that
+  the first byte is a status byte `00` rests on answers that all had `00`.
 - **No counter was seen to step.** The observation that would close this: a new entry in the
   fault history of a boiler with the counter of its number one higher than before.
 - **Which event a counter counts** when the manual lists the number both as a warning and as a

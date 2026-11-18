@@ -148,11 +148,24 @@ data point on arbitration with room units).
 - **Lot J, fault counters (written on 2026-11-17, `evidence/bc-fault-counters.md`).** Local
   branch `weishaupt-J` `9e8cdd3`, in `STACK` below `weishaupt-L`, which was rebased onto it and
   holds the French of its 39 comment strings (`2d9c28b`). All three pushed to the fork
-  on 2026-11-17 (see "Current state"); no pull request, no release. Open on the bus: the six
-  12-byte reads have not been sent through ebusd (the values come from 2-byte reads of the same
-  addresses); no counter has been seen to step with a new entry of the fault history, which
-  would also say whether a number listed as warning and fault (15, 18, 21, 48, 57) counts
-  warnings, lockouts or both.
+  on 2026-11-17 (see "Current state"); no pull request, no release. The six requests were
+  sent as written to both boilers on 2026-11-18 (`hex`, read-only): 11 of the 12 are answered
+  at every attempt, with the values of the 2-byte reads. `FaultCounters4` of the first boiler,
+  whose six counters are zero, was answered 3 times out of 12: a 12-byte answer of zero bytes
+  only is lost most of the time (6 answered of 20 over three addresses), 10 bytes of zeros
+  never (19 answered of 19). The owner chose to cut the area in seven reads of at
+  most 10 bytes, as the vendor tool does (table in the evidence record). The seven requests
+  were sent as written the same morning: all answered on both boilers (5 to 25 times each,
+  all-zero blocks included), values equal to the 2-byte reads. **Fork not changed yet**,
+  because of a second finding: 2 of 107 answers of the first boiler have the number of bytes
+  asked for as first byte and all data at zero, which the models decode as counters at zero
+  (they skip that byte). It concerns every `memr` message of lots E, D, F and J. **To decide
+  by the owner:** rewrite `weishaupt-J` with the 10-byte cut alone, or together with a first
+  byte made visible as a field. Either way: `weishaupt-J` and `weishaupt-L` rewritten
+  (force-push), integration branch rebuilt, seven message comments and their French instead
+  of six, and a release after 0.3.1, which carries the 12-byte messages. Still open: no counter has been
+  seen to step with a new entry of the fault history, which would also say whether a number
+  listed as warning and fault (15, 18, 21, 48, 57) counts warnings, lockouts or both.
 - **Lot F, what was left out**: 23 of the 30 data-logger channels, the output bits (RAM `2b`),
   and `Load` before the flame (reads 23 to 40 while the status says 0 %).
 - **Info values of the service tool** readable through `50 22`; only the hours since last
