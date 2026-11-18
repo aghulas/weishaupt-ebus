@@ -28,14 +28,14 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | Lot | Content | Branch, head | Evidence |
 |---|---|---|---|
 | A | Register reads (`50 22`, checksum precomputed in the ID) of the system manager; status broadcast and the status each boiler sends to the cascade master; room unit / module exchange `HcMode`; system clock and the weekly hot-water and circulation programs of `50`. Reads only, stock ebusd. Files `15.w.ka`, `50.w.em1`, `51.w.em2`, `52.w.em3`, `broadcast`, `wtc_inc`. | `weishaupt-A` `66b775e`, on the fork as `weishaupt-pr` (14 commits). **Pull request #717.** | `ka-reads`, `register-crc`, `broadcast-kastatus`, `bc1-boiler-status`, `em-hcmode`, `em1-clock-program` |
-| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. | `weishaupt-E` `20506af` (4 commits on A), local; origin at `3e9347f`, force-push pending | `em1-fault-log`, `bc-fault-history` |
-| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `193e2d5` (1 commit on E), local; origin at `bd1c760`, force-push pending | `bc-counters` |
-| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `d6f797f` (2 commits on D), local; origin at `c4bc54c`, force-push pending | `bc-live-values` |
-| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `0a0c8ae` (5 commits on F), local; origin at `1289f97`, force-push pending | `register-write-crc`, `settings-writes` |
-| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `46fb341` (2 commits on C), local; origin at `de1e38b`, force-push pending | `room-units-reads`, `heating-modules-reads` |
-| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `9976bcc` (3 commits on G), local; origin at `6a46518`, force-push pending | `room-units-programs` |
-| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `58345b2` (1 commit on H), local; origin at `78ac7af`, force-push pending | `bc-fault-counters` |
-| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 76 accepted by the owner, none provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `915f5cc` (7 commits on J), local; origin at `d5a88bd`, force-push pending | `terms` |
+| E | Fault log of the system (`50.w.em1`), hours since last service and fault history of both boiler automats, first use of the memory read `50 00` (`08.w.bc1`, `18.w.bc2`); the first answer byte of every memory read is kept as the field `FirstByte` through the shared base `memr`. | `weishaupt-E` `20506af` (4 commits on A), pushed | `em1-fault-log`, `bc-fault-history` |
+| D | Counters of both automats: operating hours, burner hours, burner starts. Not the whole memory map. | `weishaupt-D` `193e2d5` (1 commit on E), pushed | `bc-counters` |
+| F | Live values of both automats from RAM / XRAM: `Temperatures` (return, flue gas, flow, outside), `Operation` (load, ionisation, pump speed). | `weishaupt-F` `d6f797f` (2 commits on D), pushed | `bc-live-values` |
+| C | 17 settings read and written (`50 23`, checksum computed by ebusd at run time, decorator `@wcrc`): 8 on the system manager, 7 on heating module `51`, 2 on room unit `35`. | `weishaupt-C` `0a0c8ae` (5 commits on F), pushed | `register-write-crc`, `settings-writes` |
+| G | Reads of the heating-circuit values and settings on the three room units (new files `75.w.fs2`, `f5.w.fs3`) and the three heating modules. | `weishaupt-G` `46fb341` (2 commits on C), pushed | `room-units-reads`, `heating-modules-reads` |
+| H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `9976bcc` (3 commits on G), pushed | `room-units-programs` |
+| J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `58345b2` (1 commit on H), pushed | `bc-fault-counters` |
+| L | French translation of the comments: `src/fr.yaml`, 269 keys for the 269 comment strings of the lots (193 from vendor terms, 76 accepted by the owner, none provisional); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `915f5cc` (7 commits on J), pushed | `terms` |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
@@ -45,14 +45,16 @@ The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, L (`S
 goes below it. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
-Integration branch: `weishaupt` `4c034fc`, the stack A to H, J and L plus the pin commit, on
-the fork since 2026-11-18 (forced from `b831213` on the owner's word, with `weishaupt-J`
-forced to `78ac7af` and `weishaupt-L` to `d5a88bd`). `scripts/check.sh` on it: clean,
-**588 messages** in English, German and French. Released from it on 2026-11-18 as the
-pre-release `weishaupt-0.3.2` (tag on `4c034fc`), made by `scripts/release.sh 0.3.2`: lot J
-as seven reads of at most 10 bytes with the first answer byte as a field, and a line on that
-field in the notice. Both archives downloaded again after publication: checksums right, 588
-messages without error in the official ebusd 26.1. `weishaupt-0.3.1` (tag on `b831213`, 586
+Integration branch: `weishaupt` `de42c7c`, the stack A to H, J and L plus the pin commit, on
+the fork since 2026-11-18 (forced from `4c034fc` on the owner's word, the eight lot branches
+forced with it). `scripts/check.sh` on it: clean, **588 messages** in English, German and
+French. Released from it on 2026-11-18 as the pre-release `weishaupt-0.4.0` (tag on
+`de42c7c`), made by `scripts/release.sh 0.4.0`: the first answer byte of every memory read
+(`50 00`) kept as the field `FirstByte` on lots E, D and F as well as J, with a line on it in
+the notice. The two archives and the `sha256sums.txt` downloaded again after publication:
+checksums right, 588 messages without error in the official ebusd 26.1. Before it,
+`weishaupt-0.3.2` (tag on `4c034fc`, the first answer byte on lot J only) was released the
+same day and stays online. `weishaupt-0.3.1` (tag on `b831213`, 586
 messages, lot J as six 12-byte reads, of which an all-zero answer is lost most of the time)
 was deleted from the fork on 2026-11-18 on the owner's request once superseded, its tag kept
 in the local clone. Before that, `b831213` was the integration branch since 2026-11-18 (forced from `bd35b2c` on the owner's word, with `weishaupt-L`
@@ -66,7 +68,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0` and then `weishaupt-0.3.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.2` is the only release online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0` and then `weishaupt-0.3.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.3.2` and `weishaupt-0.4.0` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -85,6 +87,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.4.0` (pre-release) | as 0.3.2, with the first answer byte of every memory read of lots E, D and F (not only J) kept as the field `FirstByte`; a breaking change to those message fields. Downloaded again after publication: three assets (two archives and `sha256sums.txt`), checksums right, 588 messages without error in the official ebusd 26.1. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.3.2` (pre-release) | as 0.3.1, with the fault counters of lot J read in seven items of at most 10 bytes and their first answer byte as a field. Downloaded again after publication: checksums right, 588 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
@@ -125,14 +128,12 @@ data point on arbitration with room units).
   (accepted 2026-11-18). Still unread by the owner in `evidence/terms.md`: the spelling
   "anti-légionelle", the design choices and the findings on the English wording
   ("calorifier").
-- **Force-push the rebuilt lots and rebuild the release (`FirstByte` on E, D, F).** Done
-  locally on 2026-11-18, nothing pushed. Awaiting the owner's word to force-push `weishaupt-E`
-  `20506af`, `weishaupt-D` `193e2d5`, `weishaupt-F` `d6f797f`, `weishaupt-C` `0a0c8ae`,
-  `weishaupt-G` `46fb341`, `weishaupt-H` `9976bcc`, `weishaupt-J` `58345b2` and `weishaupt-L`
-  `915f5cc` (all eight diverge from origin), then rebuild and force `weishaupt` from the stack
-  and cut a new release. This changes the fields of already-published messages (the memory
-  reads of E, D, F gain a leading `FirstByte` field), so it is a breaking change and needs a
-  version above `0.3.2`.
+- **Force-push the rebuilt lots and the breaking release (`FirstByte` on E, D, F).** Done on
+  2026-11-18 on the owner's word: the eight lot branches and `weishaupt` (`de42c7c`)
+  force-pushed, released as `weishaupt-0.4.0`. Earlier the same day a session had force-pushed
+  and published this on its own user instruction before the main session's review; it was
+  rolled back on the owner's word and redone cleanly from the main session, with the
+  `sha256sums.txt` asset the first attempt lacked.
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
   request (rule 8).
 
@@ -272,8 +273,11 @@ date; see 2026-11-17 "Commit identity".
   E, D and F (`ign` → `firstbyte`, both boilers); the 14 fault-counter messages kept their
   field and only their comment changed; no other message changed and none gained or lost a
   field. One reading of each of E, D and F confirmed on the live bus read-only (`50 00` hex):
-  `FirstByte` is `00`, the data decode as before. All local; nothing pushed, `weishaupt` and
-  the tags unmoved (see "Needs the owner").
+  `FirstByte` is `00`, the data decode as before. Pushed and released on 2026-11-18 as
+  `weishaupt-0.4.0` (`weishaupt` `de42c7c`), with a `sha256sums.txt` asset; `weishaupt-0.3.2`
+  stays online beside it. A session had first force-pushed and published this without the
+  owner's go-ahead; it was rolled back on the owner's word and redone cleanly from the main
+  session.
 - **2026-11-17, commit identity.** Every commit of the owner in the four repositories was
   rewritten to the noreply address (metadata only; the tree of every branch and tag compared
   before and after, identical) and pushed again, the branches of #717 and #1825 included;
