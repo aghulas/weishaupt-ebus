@@ -199,6 +199,12 @@ restore telegram, read, risk.
 
 ## Definitions
 
+Defined on 2026-11-18 from the captures on site: the five choices of batch A (lot C, value
+lists in `wtc_inc`), the date and time broadcast (lot C, `broadcast`, as a write beside the
+passive message of the general file), and the five programs of room unit 1 (lot H, 105 slots).
+Not defined: the programs of `fs2`, `fs3`, `50`, the holiday dates, the control variation, the
+boiler sequence and the circuit type.
+
 **One slot per program and device stands for its 21 slots** (owner, 2026-11-18). The argument:
 the 21 slots of one program of one device differ only in the register address, the weekday in
 the high nibble of the first byte (1 to 7) and the slot in the low nibble (0 to 2), with the
@@ -219,6 +225,118 @@ written in lot H (`35.w.fs1`, base `SwitchTimesSetting`), the captured slot bein
 The choices and dates need a read definition and a value list as well as the write: none is
 in a lot today.
 
+
+## Captures on site, 2026-11-18 evening
+
+By the operator's deployment session, each on the owner's go, service tool disconnected, raw
+telegrams through ebusd; exports of the telegram log for the period (installation data, not in
+this repository). Only telegrams and dates are quoted.
+
+### Clock: the broadcast is taken (read only)
+
+Every `fe 07 00` telegram of the telegram log from `31` and from `f1`, 2026-11-08 20:42 to
+2026-11-18 21:07: 520 from `31`, 14 332 from `f1`. `f1` broadcasts once a minute, at about
+second 04, its time normally 0 to 1 s behind the host. In **72 of 72** cases where a broadcast
+of `31` carried a time 3 s or more away from `f1`'s, the next regular broadcast of `f1` carried
+the time sent by `31`. Examples (master data: outside temperature, then BCD second, minute,
+hour, day, month, weekday, year):
+
+| date | sender | time of the log | data | time carried |
+|---|---|---|---|---|
+| 2026-11-18 | `31` | 14:46:59 | `00 0d 00 46 14 18 11 03 26` | 14:46:00 (59 s late) |
+| 2026-11-18 | `f1` | 14:48:04 | `00 0d 05 47 14 18 11 03 26` | 14:47:05: taken, 59 s behind |
+| 2026-11-18 | `31` | 15:00:00 | `00 0d 00 00 15 18 11 03 26` | 15:00:00 |
+| 2026-11-18 | `f1` | 15:01:04 | `00 0d 04 01 15 18 11 03 26` | 15:01:04: back on time |
+| 2026-11-10 | `31` | 19:00:06 | `00 0d 00 00 19 10 11 02 26` | 19:00:00 (6 s late) |
+| 2026-11-10 | `f1` | 19:01:11 | `00 0d 04 01 19 10 11 02 26` | 19:01:04: taken, 7 s behind |
+
+- **Known limit**: the clock master takes the time as sent, seconds included. A broadcast sent
+  late with second 00 (off the minute grid: 6 to 59 s late, seen 70 times) sets the whole
+  installation behind until the next correct one; the half-hourly broadcast of an automation
+  of the installation corrected each. A sender must send at second 00 of the minute it carries.
+- Not explained: 167 of the 520 broadcasts of `31` are followed within 3 s by an `f1`
+  telegram carrying a time 59 s ahead; `f1`'s next regular broadcast is normal.
+- The outside temperature sent is replaced by `f1` with its own sensor within a minute.
+
+### Batch A: five choices proven (21:08 to 21:10, source `ff`)
+
+| setting | date | source | change | read → answer | restore | read → answer |
+|---|---|---|---|---|---|---|
+| ka DHWLegionellaDay | 2026-11-18 21:08 | `ff` | `0c 01 01 02 00` | `5d 01 01` → `02 00` | `e8 01 01 01 00` | `5d 01 01` → `01 00` |
+| ka CircWithLegionella | 2026-11-18 21:09 | `ff` | `e8 f3 13 01 00` | `f3 f3 13` → `01 00` | `b4 f3 13 00 00` | `f3 f3 13` → `00 00` |
+| fs1 HolidayTempLevel | 2026-11-18 21:09 | `ff` | `54 3d 01 01 00` | `a5 3d 01` → `01 00` | `08 3d 01 00 00` | `a5 3d 01` → `00 00` |
+| fs2 HolidayTempLevel | 2026-11-18 21:10 | `ff` | `54 3d 01 01 00` | `a5 3d 01` → `01 00` | `08 3d 01 00 00` | `a5 3d 01` → `00 00` |
+| fs3 HolidayTempLevel | 2026-11-18 21:10 | `ff` | `54 3d 01 01 00` | `a5 3d 01` → `01 00` | `08 3d 01 00 00` | `a5 3d 01` → `00 00` |
+
+10 writes acknowledged `00`, each read back with the value written, every value restored.
+Value lists: the legionella day is 1 Monday (the protection runs on Mondays, operator's log of
+2026-11-09) and 2 the next day; the rest of the list (0 off, 3 to 7) is the older community
+template's and the client's, not observed. The circulation with legionella is 0 off, 1 on
+(both observed, meaning from the client and the template). The holiday level is 0 antifreeze,
+1 setback (`docs/discoveries.md`, 2026-11-08: the circuit went to the antifreeze setpoint with
+0); 1 observed taken, its effect not.
+
+### Batch E part 1: room unit 1, five programs proven; room unit 2 does not keep a slot
+
+Sunday slot 3 of each program (`72 <program>`), from `31`, 21:11 to 21:14:
+
+| setting | date | source | change | read → answer | restore | read → answer |
+|---|---|---|---|---|---|---|
+| fs1 HCProgram1Sun3 | 2026-11-18 21:11 | `31` | `4c 72 14 09 08` | `58 72 14` → `09 08` | `30 72 14 80 80` | `58 72 14` → `80 80` |
+| fs1 HCProgram2Sun3 | 2026-11-18 21:12 | `31` | `f0 72 15 09 08` | `59 72 15` → `09 08` | `8c 72 15 80 80` | `59 72 15` → `80 80` |
+| fs1 HCProgram3Sun3 | 2026-11-18 21:12 | `31` | `68 72 16 09 08` | `5a 72 16` → `09 08` | `14 72 16 80 80` | `5a 72 16` → `80 80` |
+| fs1 DHWProgramSun3 | 2026-11-18 21:13 | `31` | `d4 72 17 09 08` | `5b 72 17` → `09 08` | `a8 72 17 80 80` | `5b 72 17` → `80 80` |
+| fs1 CircProgramSun3 | 2026-11-18 21:13 | `31` | `3c 72 1a 4b 44` | `56 72 1a` → `4b 44` | `f4 72 1a 4c 44` | `56 72 1a` → `4c 44` |
+
+`09 08` is 02:00 to 02:15, enabled; `80 80` the unused slot; `4b 44` / `4c 44` 17:00 to 18:45 /
+19:00. With the rule above, each proves its program's 21 slots on `fs1`: the five programs of
+room unit 1, 105 slots.
+
+**Room unit 2 (`75`), heating program 1, Sunday slot 3**: 21:13:56, `31 75 5023` `4c 72 14 09 08`,
+acknowledged `00` (the same master data and the same eBUS checksum as to `35`, only the
+target differs); read `58 72 14` → `80 80` at 21:13:59, 21:14:05 and 21:43:08. Sent again from
+`ff` at 21:42:51 (`ff 75 5023` `4c 72 14 09 08`), acknowledged, read `80 80` at 21:42:55: not
+kept from either source. Nothing to restore. The batch stopped there: not sent, `fs2` four
+other programs, `fs3` five, `50` two. The rule of one slot for 21 is not applied to `fs2`,
+`fs3` or `50`.
+
+### Why room unit 2 does not keep the slot: what the captures say
+
+- **Not the telegram**: byte for byte the one `fs1` kept, checksum and acknowledgement alike.
+- **Not the source**: refused from `31` and from `ff`; `fs2` took, the same evening, the holiday
+  level from `ff` (21:10) and, that afternoon, eleven numeric settings from `ff`.
+- **Not a delayed write**: three reads over half an hour give `80 80`; no later write to
+  `72 14` of `75` is in the log.
+- **Not the program content**: `fs1`, `fs2` and `fs3` read the same slots (Monday slot 1 of
+  heating program 1 `48 1a`, all Sunday heating slots `80 80`); the program selector reads 11
+  on the three (`docs/discoveries.md`, 2026-11-17).
+- **Earlier**: the operator's log records Monday slot 1 of heating program 1 (`10 14`) written
+  on the three room units from `31` on 2026-11-02 (06:00 to 22:00) and restored on 2026-11-03,
+  read back `48 1a`: a **used** slot, changed in place, apparently taken by `fs2` then
+  (transcribed, no telegram kept; whether the change was read back on `fs2` is not written).
+
+Hypotheses, in the order the captures leave them open:
+
+1. `fs2` does not take a write that **enables an unused slot** (`80 80` → a time), but takes a
+   change of a slot in use; `fs1` would then differ (it is the room unit at `35`, the one whose
+   date and time the others follow, `docs/discoveries.md` 2026-10-30).
+2. `fs2` takes **no program write at all** now (an access or lock setting of the room unit, the
+   "access to heating circuit without remote control" of the manual, WCM-FS 2.0 user manual
+   83277702, chapter 4.7.27, not read here); the 2026-11-02 case would then be a write not
+   checked on `fs2`.
+3. Something particular to `fs2` that evening (its display in a menu, a user at the unit).
+
+### Smallest next test (not sent)
+
+One write, one restore, on **room unit 3**, the same slot: `31 f5 5023` `4c 72 14 09 08`, read
+`58 72 14`, restore `30 72 14 80 80`. If `fs3` keeps it, `fs2` is the odd one (hypothesis 3 or a
+setting of `fs2`); if `fs3` refuses it too, `fs1` is the odd one and hypotheses 1 and 2 remain.
+Then, only if needed, on `fs2` a **used** slot changed in place and restored: Monday slot 1 of
+heating program 1, `48 1a` (06:30 to 18:00) → `47 1a` (06:30 to 17:45): `31 75 5023`
+`1e 10 14 47 1a`, restore `8e 10 14 48 1a` (the restore telegram of 2026-11-03); it
+tells hypothesis 1 from 2. The first changes heating for a Sunday night only; the second
+shortens a heating period by 15 minutes for the minute it lasts.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, `MF=Kromschröder`, `ID=W`: system manager at `15`
@@ -234,6 +352,8 @@ clock master at `f1`.
 - The value lists of the choices beyond the values read (legionella day 1, sequence 0 and 1,
   holiday level 0, control variation 1, circuit type 2 and 3).
 - That `50` takes program writes from `31`.
+- The date and time broadcast has no fixture: ebusd keeps no value for a message it can only
+  send, so the check cannot decode it back; its telegrams are those quoted above.
 - ebusd building a slot write from the files of the lot: the definition decodes the two
   captured telegrams (fixtures); sending from it has not been observed.
 - The third register of a holiday date.

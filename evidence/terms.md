@@ -131,6 +131,8 @@ certain), `ChangeOverTime` = 532 (factory 50 h as read on the installation; the 
 | heating program 1 to 3 | programme de chauffe 1 … 3 | | FS p. 27, 78; KA p. 31, 49; FB p. 11 | vendor |
 | hot-water program | programme ECS | | FS p. 32, 97; KA p. 106 | vendor |
 | circulation program | programme de circulation ECS | | FS p. 95; KA p. 106 | vendor |
+| holiday period; temperature level (of a holiday period) | vacances; niveau de température | | FS p. 32 (P141, P142) | vendor |
+| date; time | date; heure | | FS p. 32 (P151, P152) | vendor |
 | slot (of a weekly program) | plage horaire | | KA p. 48, 106; FB p. 7, 11 | vendor |
 | stored in the room unit | enregistré dans la commande à distance | | no vendor term ("stored"); device name FS p. 1 | owner |
 | Monday … Sunday | lundi … dimanche | | KA p. 48, 66, 101; FS p. 39, 89; abbreviations FB p. 13 | vendor |

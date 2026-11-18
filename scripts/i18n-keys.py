@@ -12,7 +12,7 @@ The lot files are those named with the identification of the devices, ZZ.w.<circ
 broadcast.csv, in the lot folder (LOT_DIR, default wolf). The strings are the message comments
 and the field comments of these files, as the emitter looks them up: whole string, exact,
 without the "[WCRC] " marker it puts in front after translation. In broadcast.csv only the
-messages of the lots count (LOT_BROADCAST, default KaStatus): the others are the Wolf messages
+messages of the lots count (LOT_BROADCAST, default KaStatus and Datetime): the others are the Wolf messages
 of the official configuration, which stay in English.
 
 check prints the coverage (strings with a key, strings without) and the keys of the file that
@@ -31,7 +31,7 @@ import re
 import sys
 
 LOT = os.environ.get("LOT_DIR", "wolf")
-LOT_BROADCAST = set(os.environ.get("LOT_BROADCAST", "KaStatus").split())
+LOT_BROADCAST = set(os.environ.get("LOT_BROADCAST", "KaStatus Datetime").split())
 MARKER = "[WCRC] "
 KEY_RE = re.compile(r"""^(?:"((?:[^"\\]|\\.)*)"|'((?:[^']|'')*)'|([^#'"].*?))\s*:(?:\s+(.*))?$""")
 

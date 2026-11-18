@@ -48,7 +48,7 @@ import tomllib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LOT = os.environ.get("LOT_DIR", "wolf")
-LOT_BROADCAST = set(os.environ.get("LOT_BROADCAST", "KaStatus").split())
+LOT_BROADCAST = set(os.environ.get("LOT_BROADCAST", "KaStatus Datetime").split())
 EVIDENCE = os.environ.get("EVIDENCE_DIR", os.path.join(ROOT, "evidence"))
 MARKER = "[WCRC] "
 SCHEMA = 1

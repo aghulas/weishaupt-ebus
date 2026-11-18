@@ -155,6 +155,17 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
+- **Choices, clock and programs of room unit 1 (prepared locally on 2026-11-18, nothing
+  pushed).** From the captures of the evening: 5 choices (legionella day, circulation with
+  legionella, holiday level of the three room units), the date and time broadcast (72 of 72
+  adoptions), the five programs of `fs1` (105 slots). Trial `weishaupt-next` `87d7caf`: 778
+  messages, 177 written. New labels and a new menu of the metadata to accept: value labels
+  Antifreeze / Hors-gel, Setback / Réduit; labels of the new messages; menu "Date and time"
+  of the installation. `fs2` does not keep a program slot: next test, the same slot on `fs3`
+  (`evidence/choice-date-program-writes.md`). To publish as 0.5.6, on the owner's word:
+  force-push `weishaupt-C` `0033290`, `-G` `168ad54`, `-H` `e22d1d8`, `-J` `4af642a`, `-K` `164c30b`, `-L` `45445ea`,
+  `-M` `beda3f3`, `weishaupt` to `87d7caf`, the workbench `main`, then `scripts/release.sh 0.5.6`.
+
 - **Program-slot writes (prepared locally on 2026-11-18, nothing pushed).** Owner's word
   « Oui, comme proposé »: batch C not done (boiler sequence, circuit type read only); one
   captured slot per program and device proves its 21 slots; the contract carries write
@@ -414,6 +425,15 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-18, evening captures into definitions.** Clock: 72 of 72 adoptions by `f1` in the
+  telegram log; `Broadcast/Datetime` written (lot C), with the limit of a late send. Batch A:
+  five choices written (lot C, two commits with the clock). Batch E: the five programs of `fs1`
+  written (lot H, one more commit); `fs2` acknowledged the same slot from `31` and `ff` and did
+  not keep it: analysis and the next test in the record. Metadata (lot M) and French (lot L)
+  follow; `LOT_BROADCAST` of the scripts now counts `Datetime`. `scripts/check.sh` clean on C
+  (306 messages) and on `weishaupt-next` `87d7caf` (778 messages, 177 written, 787 fixtures; the
+  broadcast has none: ebusd cannot read back a send-only message).
 
 - **2026-11-18, program-slot writes (owner: « Oui, comme proposé »).** Contract: write
   conditions allowed on `program_slot` messages, `proof: family` with `proof_slot` (the

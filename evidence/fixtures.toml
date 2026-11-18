@@ -541,6 +541,127 @@ readings = [
   { message = "HCProgram1Tue1", master = "52 20 14 48 1a", slave = "", expect = { totime = "18:00", toenabled = "Enabled", fromtime = "06:30", fromenabled = "Enabled" } },
 ]
 
+# choice-date-program-writes, batch A: change and restore of two choices of the system manager; source ff
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "ka"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "DHWLegionellaDay", master = "0c 01 01 02 00", slave = "", expect = { value = "Tuesday" } },
+  { message = "DHWLegionellaDay", master = "e8 01 01 01 00", slave = "", expect = { value = "Monday" } },
+  { message = "CircWithLegionella", master = "e8 f3 13 01 00", slave = "", expect = { value = "on" } },
+  { message = "CircWithLegionella", master = "b4 f3 13 00 00", slave = "", expect = { value = "off" } },
+]
+
+# choice-date-program-writes, batch A: the reads after the change and after the restore
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "DHWLegionellaDay", master = "5d 01 01", slave = "02 00", expect = { value = "Tuesday" } },
+  { message = "DHWLegionellaDay", master = "5d 01 01", slave = "01 00", expect = { value = "Monday" } },
+  { message = "CircWithLegionella", master = "f3 f3 13", slave = "01 00", expect = { value = "on" } },
+  { message = "CircWithLegionella", master = "f3 f3 13", slave = "00 00", expect = { value = "off" } },
+]
+
+# choice-date-program-writes, batch A: holiday level of fs1; source ff
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs1"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "HolidayTempLevel", master = "54 3d 01 01 00", slave = "", expect = { value = "Setback" } },
+  { message = "HolidayTempLevel", master = "08 3d 01 00 00", slave = "", expect = { value = "Antifreeze" } },
+]
+
+# choice-date-program-writes, batch A: the reads of the holiday level of fs1
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "HolidayTempLevel", master = "a5 3d 01", slave = "01 00", expect = { value = "Setback" } },
+  { message = "HolidayTempLevel", master = "a5 3d 01", slave = "00 00", expect = { value = "Antifreeze" } },
+]
+
+# choice-date-program-writes, batch A: holiday level of fs2; source ff
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs2"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "HolidayTempLevel", master = "54 3d 01 01 00", slave = "", expect = { value = "Setback" } },
+  { message = "HolidayTempLevel", master = "08 3d 01 00 00", slave = "", expect = { value = "Antifreeze" } },
+]
+
+# choice-date-program-writes, batch A: the reads of the holiday level of fs2
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "HolidayTempLevel", master = "a5 3d 01", slave = "01 00", expect = { value = "Setback" } },
+  { message = "HolidayTempLevel", master = "a5 3d 01", slave = "00 00", expect = { value = "Antifreeze" } },
+]
+
+# choice-date-program-writes, batch A: holiday level of fs3; source ff
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs3"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "HolidayTempLevel", master = "54 3d 01 01 00", slave = "", expect = { value = "Setback" } },
+  { message = "HolidayTempLevel", master = "08 3d 01 00 00", slave = "", expect = { value = "Antifreeze" } },
+]
+
+# choice-date-program-writes, batch A: the reads of the holiday level of fs3
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "HolidayTempLevel", master = "a5 3d 01", slave = "01 00", expect = { value = "Setback" } },
+  { message = "HolidayTempLevel", master = "a5 3d 01", slave = "00 00", expect = { value = "Antifreeze" } },
+]
+
+# choice-date-program-writes, batch E: Sunday slot 3 of the five programs of room unit 1 changed and restored; source 31
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-18"
+circuit = "fs1"
+type = "write"
+qq = "31"
+where = "row"
+readings = [
+  { message = "HCProgram1Sun3", master = "4c 72 14 09 08", slave = "", expect = { totime = "02:15", toenabled = "Enabled", fromtime = "02:00", fromenabled = "Enabled" } },
+  { message = "HCProgram1Sun3", master = "30 72 14 80 80", slave = "", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram2Sun3", master = "f0 72 15 09 08", slave = "", expect = { totime = "02:15", toenabled = "Enabled", fromtime = "02:00", fromenabled = "Enabled" } },
+  { message = "HCProgram2Sun3", master = "8c 72 15 80 80", slave = "", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "HCProgram3Sun3", master = "68 72 16 09 08", slave = "", expect = { totime = "02:15", toenabled = "Enabled", fromtime = "02:00", fromenabled = "Enabled" } },
+  { message = "HCProgram3Sun3", master = "14 72 16 80 80", slave = "", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "DHWProgramSun3", master = "d4 72 17 09 08", slave = "", expect = { totime = "02:15", toenabled = "Enabled", fromtime = "02:00", fromenabled = "Enabled" } },
+  { message = "DHWProgramSun3", master = "a8 72 17 80 80", slave = "", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+  { message = "CircProgramSun3", master = "3c 72 1a 4b 44", slave = "", expect = { totime = "18:45", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+  { message = "CircProgramSun3", master = "f4 72 1a 4c 44", slave = "", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"
