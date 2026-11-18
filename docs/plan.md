@@ -49,6 +49,12 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
+**0.4.3 released (2026-11-18)** from `weishaupt` `0eb6d16` (stack A to M plus the pin
+commit, `weishaupt-M` `b9d5359`): the CSV are byte-identical to 0.4.2 (compared file by
+file, English and French), and the release carries three more files, the metadata asset
+`weishaupt-metadata-0.4.3.json` (528 messages, menu trees and labels accepted by the owner),
+`weishaupt-fixtures-0.4.3.json` and `sha256sums-0.4.3.txt`. Downloaded again after
+publication: the four checksums right, 605 messages without error in the official ebusd 26.1.
 **0.4.2 released (2026-11-18)** from `weishaupt` `f58a45f` (605 messages): 0.4.1 plus three boiler information values in lot K (see "Decisions and history"). **0.4.1 released (2026-11-18).** On top of 0.4.0: lot K (the
 five boiler information-value `50 22` reads on both boilers), the lot-E fix of `BurnerServiceHours`
 (×10 factor, now on both boilers), and the lot-G comment that `50` is the system manager's own
@@ -87,7 +93,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0` and `weishaupt-0.4.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.2` is the only release online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0` and `weishaupt-0.4.1` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.4.2` and `weishaupt-0.4.3` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -106,6 +112,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.4.3` (pre-release) | the CSV of 0.4.2 unchanged, plus the metadata asset for the Home Assistant companion (`weishaupt-metadata-0.4.3.json`, format in `docs/companion-contract.md`), a fixtures file and the checksums. Downloaded again after publication: checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.4.2` (pre-release) | as 0.4.1, plus three boiler information values on both boilers: hydraulic separator temperature i39, software versions i44 and i45. Downloaded again after publication: three assets, checksums right, 605 messages without error in the official ebusd 26.1. |
 | `aghulas/ebus-typespec` | `v0.31.0-weishaupt.1` (pre-release) | library package with `@crc` / `@wcrc`, the one the integration branch pins |
 | `aghulas/ebusd` | `v26.1-weishaupt.1` | static ebusd with the run-time checksum, the one `scripts/check.sh` uses |
@@ -129,13 +136,9 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
-- **Release carrying the metadata asset.** The menu trees and labels are accepted
-  (2026-11-18); what remains is to publish. Local and waiting for the owner's word: the
-  second commit of `weishaupt-M` (`b9d5359`, fast-forward of the branch on the fork) and the
-  workbench commit that goes with it; then `scripts/release.sh 0.4.3` once more, push of
-  `weishaupt`, tag `weishaupt-0.4.3`, release with five files: the two archives,
-  `weishaupt-metadata-0.4.3.json`, `weishaupt-fixtures-0.4.3.json`, `sha256sums-0.4.3.txt`
-  (the CSV are those of 0.4.2).
+- **Release carrying the metadata asset: done.** `weishaupt-0.4.3` was published on
+  2026-11-18 on the owner's word (see "Current state"). Nothing waits here for the contract;
+  the next step of the companion is its phase 1, in `aghulas/ha-weishaupt`.
 
 - **GitHub support request** to remove the former commits (see "Commit identity"): text ready in
   `out/github-support-request.md` (not versioned), to send from the owner's account.
