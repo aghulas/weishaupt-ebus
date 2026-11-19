@@ -229,6 +229,14 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Room unit 2 retest and boiler parameters (2026-11-19, prepared, nothing sent).** The owner
+  wants the program writes of `75` retried: plan `docs/retest-room-unit-2.md` (four refusals on
+  record; new: the 105 program slots of `75` equal those of `35`, and the tool groups units 1 and
+  2 as "FS#1+2"; hypotheses ranked: programs mirrored from `35`, role P312 / P335, source,
+  `09 03`; step 1 a telegram-log export, step 2 a write on `35` read on `75`, step 3 the owner's
+  edit on the display). Boiler P10–P71: `docs/boiler-parameters-proposal.md`, 8 registers with one
+  candidate, the rest waiting for the tool's display of both boilers; proposed for lot K. Both
+  ride with 0.5.15 with the comment of `CalorifierExcessTemp`; nothing to publish now.
 - **For 0.5.15 (local, 2026-11-19).** Comment of `CalorifierExcessTemp` (parameter 561): the
   buffer storage, not the hot water (manual 83258404, p. 92); labels unchanged, they were right.
   Lot O `fcea55e`, L `f186db4`, M rebased; trial `weishaupt-next` `faa462e`, check clean, 1 075
