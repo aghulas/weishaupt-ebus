@@ -24,7 +24,11 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.10
+## Changes since 0.5.9
+
+This release holds two steps; the first, 0.5.10, was not published on its own.
+
+### New messages and writes
 
 - **Holiday dates of the room units** (`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`), read and written
   from `ff`: `HolidayStartDay`, `HolidayStartMonth`, `HolidayEndDay`, `HolidayEndMonth` (calendar
@@ -41,10 +45,10 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   the upper), read and written from `ff`, each changed by one percent and restored on site.
 - Writing needs the ebusd with the run-time checksum, as every write here. 46 messages more;
   nothing renamed.
-- The CSV of the three room units and of `15.w.ka` change: unlike 0.5.10, ebusd needs the new files (a restart
+- The CSV of the three room units and of `15.w.ka` change: unlike the metadata step below, ebusd needs the new files (a restart
   of ebusd with them), then the interface takes the metadata as before.
 
-## Changes from 0.5.9 to 0.5.10
+### Metadata (the step called 0.5.10)
 
 - **Metadata only; the CSV files are the same as in 0.5.9.** ebusd needs nothing: keep the
   0.5.9 files or swap them, the messages are identical. An interface that reads the metadata
