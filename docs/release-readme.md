@@ -20,8 +20,8 @@ to the official ebusd configuration; this archive exists so that they can be use
 
 @COUNT@ messages. Reads only, except what is read and written: 71 settings of `15.w.ka`,
 `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`, `51.w.em2` and `52.w.em3` (66 numbers, 5
-choices), 126 program slots (the five programs of `35.w.fs1`, heating program 1 of
-`f5.w.fs3`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
+choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, the
+hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
 ## Changes since 0.5.7
@@ -30,8 +30,8 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   four other programs of `f5.w.fs3` (heating 2 and 3, stored hot water and circulation) and
   the hot-water and circulation programs of `50.w.em1` (the hot-water program is the one the
   installation applies). In each program one slot was seen changed and read back. The
-  programs of `75.w.fs2` stay read only: room unit 2 acknowledged a slot write three times, on
-  two days, and never kept it. The read ids are unchanged.
+  programs of `75.w.fs2` stay read only: room unit 2 acknowledged four slot writes, on two days,
+  an empty slot and a slot in use, and kept none. The read ids are unchanged.
 
 ## Changes from 0.5.6 to 0.5.7
 
