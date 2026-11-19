@@ -157,6 +157,14 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
+- **Heating program 1 of `fs3` (prepared locally on 2026-11-19, for 0.5.7, nothing pushed).**
+  Slot test of 07:55 kept by `fs3`: its 21 slots written in lot H. `fs2` is the one that
+  differs; next tests and the batch for the four other programs of `fs3` and the two of `50`
+  in `evidence/choice-date-program-writes.md`. Trial `weishaupt-next` `f9b1b43`: 799 messages, 198
+  written. To publish, on the owner's word: force-push `weishaupt-H` `835175b`, `-J` `4190665`, `-K`
+  `8a79173`, `-L` `2d4e257`, `-M` `5a78f37`, `weishaupt` to `f9b1b43`, the workbench `main`, then
+  `scripts/release.sh 0.5.7`. C and G unchanged since 0.5.6.
+
 - **Release 0.5.6: done** (2026-11-18, see "Current state"). Labels and the menu "Date and
   time" accepted by the owner (« Oui, tout »). Batch C not done (boiler sequence, circuit type
   read only); one captured slot per program and device proves its 21 slots. `fs2` does not keep
@@ -411,6 +419,12 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-19, room unit 3 keeps a program slot.** The fs3 test (owner's word, 07:55) kept the
+  slot fs2 refused: heating program 1 of `fs3` written (lot H, one commit; lot M, one commit);
+  the other programs of `fs3` not extended. `fs2` compared from the captures: same software, no
+  differing setting among 205 registers; open hypotheses and next tests in the record.
+  `scripts/check.sh` clean on H and on `weishaupt-next` `f9b1b43`. Backups `backup/pre062-*`.
 
 - **2026-11-18, evening captures into definitions.** Clock: 72 of 72 adoptions by `f1` in the
   telegram log; `Broadcast/Datetime` written (lot C), with the limit of a late send. Batch A:

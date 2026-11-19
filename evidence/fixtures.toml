@@ -662,6 +662,19 @@ readings = [
   { message = "CircProgramSun3", master = "f4 72 1a 4c 44", slave = "", expect = { totime = "19:00", toenabled = "Enabled", fromtime = "17:00", fromenabled = "Enabled" } },
 ]
 
+# choice-date-program-writes: Sunday slot 3 of heating program 1 of room unit 3 changed and restored; source 31
+[[block]]
+evidence = "choice-date-program-writes"
+date = "2026-11-19"
+circuit = "fs3"
+type = "write"
+qq = "31"
+where = "row"
+readings = [
+  { message = "HCProgram1Sun3", master = "4c 72 14 09 08", slave = "", expect = { totime = "02:15", toenabled = "Enabled", fromtime = "02:00", fromenabled = "Enabled" } },
+  { message = "HCProgram1Sun3", master = "30 72 14 80 80", slave = "", expect = { toenabled = "Disabled", fromenabled = "Disabled" } },
+]
+
 # ka-reads, sign of registers 3, 13 and 14: passive capture of the three reads
 [[block]]
 evidence = "ka-reads"

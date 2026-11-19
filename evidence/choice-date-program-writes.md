@@ -337,6 +337,56 @@ heating program 1, `48 1a` (06:30 to 18:00) → `47 1a` (06:30 to 17:45): `31 75
 tells hypothesis 1 from 2. The first changes heating for a Sunday night only; the second
 shortens a heating period by 15 minutes for the minute it lasts.
 
+### Room unit 3, heating program 1 (2026-11-19)
+
+| setting | date | source | change | read → answer | restore | read → answer |
+|---|---|---|---|---|---|---|
+| fs3 HCProgram1Sun3 | 2026-11-19 07:55 | `31` | `4c 72 14 09 08` | `58 72 14` → `09 08` | `30 72 14 80 80` | `58 72 14` → `80 80` |
+
+Read `80 80` before the change. The same telegrams as kept by room unit 1. Heating program 1
+of `fs3` is proven, its 21 slots by the rule above; its four other programs are not (one
+program captured). **Room unit 2 is the one that differs**, not room unit 1.
+
+What could differ on room unit 2, from the captures only:
+
+- Not the software: the scan gives the three room units the same software and hardware
+  (`SW=2726`, `HW=ffff`); the fifth byte of the identification reads `18` on `35` and `75`,
+  `08` on `f5`: room unit 2 has the value of room unit 1, which keeps the slot.
+- Not a setting read so far: of 205 registers read on the three units, six differ, all current
+  values (heat demand, flow setpoint, room temperature, room setpoint), the curve, and the
+  circuit type (`fs1` 2, `fs2` and `fs3` 3): room unit 2 has the values of room unit 3, which
+  keeps the slot.
+- Its pairing: room unit 2 (master `70`) drives heating module `51`, room unit 3 (`f0`) module
+  `52`, room unit 1 (`30`) the system manager's circuit `50`. The two modules have the same
+  software (`SW=7203`); what each takes from its room unit by `09 03` is the same list.
+- Left: a setting of room unit 2 no register read shows (an access or lock of program edits,
+  WCM-FS 2.0 user manual 83277702, chapter 4.7.27, not read here); a state of the unit at
+  21:13 and 21:42 on 2026-11-18 (a menu open on its display, someone at the unit); or a
+  refusal to enable an unused slot that the two others do not have.
+
+Next tests, none sent: the same telegram to `75` again at another time (`31 75 5023`
+`4c 72 14 09 08`, restore `30 72 14 80 80`): kept now means a passing state; refused again,
+then a used slot changed in place (`1e 10 14 47 1a`, restore `8e 10 14 48 1a`): kept means
+room unit 2 refuses only to enable an unused slot. A look at the display of room unit 2 (menu,
+access level) answers the rest.
+
+### Shortest batch for the other programs of `fs3` and the two of `50` (not sent)
+
+Six slots, each changed and restored: 12 writes, from `31` (for `50`: from `31` first, then
+`ff` if the read gives the old value). Read the register first and send nothing if it does not
+answer the "now" value. Each changes a program for a Sunday 02:00–02:15 (or a stored-only
+circulation slot) for the minute it lasts: low risk; the hot-water program of `50` is the one
+the installation applies.
+
+| device | program | register | values | change | restore | read |
+|---|---|---|---|---|---|---|
+| `fs3` (`f5`) | heating program 2, Sunday slot 3 | `72 15` | `80 80` → `09 08` → back | `f0 72 15 09 08` | `8c 72 15 80 80` | `59 72 15` |
+| `fs3` (`f5`) | heating program 3, Sunday slot 3 | `72 16` | `80 80` → `09 08` → back | `68 72 16 09 08` | `14 72 16 80 80` | `5a 72 16` |
+| `fs3` (`f5`) | hot-water program (stored only), Sunday slot 3 | `72 17` | `80 80` → `09 08` → back | `d4 72 17 09 08` | `a8 72 17 80 80` | `5b 72 17` |
+| `fs3` (`f5`) | circulation program (stored only), Sunday slot 3 | `72 1a` | `4c 44` → `4b 44` → back | `3c 72 1a 4b 44` | `f4 72 1a 4c 44` | `56 72 1a` |
+| `em1` (`50`) | hot-water program (applied), Sunday slot 3 | `72 17` | `80 80` → `09 08` → back | `d4 72 17 09 08` | `a8 72 17 80 80` | `5b 72 17` |
+| `em1` (`50`) | circulation program, Sunday slot 3 | `72 1a` | `80 80` → `09 08` → back | `b0 72 1a 09 08` | `cc 72 1a 80 80` | `56 72 1a` |
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, `MF=Kromschröder`, `ID=W`: system manager at `15`
