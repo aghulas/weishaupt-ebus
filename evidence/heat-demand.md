@@ -161,13 +161,37 @@ units send `bb` and `55` (room unit 3: `bb` while heating, `55` in setback on 20
 (a room unit without hot water sending `55`, "hot water" in the standard list), so no value
 is named: the field is `Status`, a plain number.
 
+### As ebusd publishes byte 1, release 0.5.9 (2026-11-19)
+
+ebusd prints the field `status` as a decimal number: the values of this record are `00` = 0,
+`55` = 85, `66` = 102, `bb` = 187, `ee` = 238. Read from ebusd's cache over HTTP (`/data`,
+nothing sent on the bus) after the installation's ebusd took release 0.5.9 at 12:13:
+
+| circuit | updated | status | heatdemandtemp | modulation | dhwsettemp |
+|---|---|---|---|---|---|
+| bc1 | 12:16:08 | 85 (`55`) | 78.31 | 0.0 | 50.0 |
+| bc2 | 12:16:09 | 238 (`ee`) | 78.38 | 64.0 | 50.0 |
+| fs1 | 12:15:55 | 187 (`bb`) | 49.0 | - | - |
+| fs2 | 12:15:57 | 187 (`bb`) | 52.12 | - | - |
+| fs3 | 12:15:57 | 187 (`bb`) | 53.19 | - | - |
+
+The same picture as the captures: the first boiler not asked for power gets 85, the second,
+firing, 238; the room units, all heating, send 187. `ukn2` and `ukn9` of the room units and
+`ukn9` of the boilers are empty in the cache: `ff` is the replacement value of `UCH`.
+
+As bits the values do not fall into a pattern: every one has two equal nibbles (`0`, `5`,
+`6`, `b`, `e`), like the status list of the standard `05 07` (`55`, `aa`, `bb`, `cc`, `dd`,
+`ee`, `66`, `44`), which reads as a list of codes chosen far apart, not as flags; `ee` and
+`66` (both "asked for power") differ by `88`, `bb` and `55` (room unit heating, setback) by
+`ee`. Nothing ties a single bit to a state, so the field stays a plain number.
+
 ### Unnamed bytes
 
 - **Byte 2**: `03` and `05` alternate from the manager while the hot-water period is off, `05`
   and `06` in it; `ff` from the room units. Nothing compared.
 - **Bytes 5–6**: `00 80` in every telegram of both days (the replacement value of a signed
   two-byte number); kept as raw bytes.
-- **Byte 9**: `ff` in every telegram, except in some of the 15 with byte 1 `66`, which carry
+- **Byte 9**: `ff` (published empty) in every telegram, except in some of the 15 with byte 1 `66`, which carry
   `81`, `83`, `86`, `8c`, `8d`, `8e` there (for example `66 03 d6 04 00 80 40 64 8d`).
 
 ## Names compared with the configuration used before release 0.5.2
