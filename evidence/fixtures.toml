@@ -1586,3 +1586,110 @@ readings = [
   { message = "FaultHistorySlot5", master = "7a 06 02 72 22", slave = "00 24 00 1c 32 45 33 00 3d", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 28, pumpspeed = 50, boilertemp = 69, fluegastemp = 51, ionisation = 0.0, returntemp = 61 } },
   { message = "FaultHistorySlot6", master = "72 06 02 72 2a", slave = "00 24 00 00 00 18 14 00 1a", expect = { firstbyte = 0, number = 36, kind = "fault", operatingphase = "BurnerOff", load = 0, pumpspeed = 0, boilertemp = 24, fluegastemp = 20, ionisation = 0.0, returntemp = 26 } },
 ]
+
+# heat-demand: room units to the cascade manager, burner off; bytes 7 and 8 not available
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-18"
+circuit = "fs1"
+type = "passive"
+qq = "30"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "55 ff 50 00 00 80 ff ff ff", expect = { status = 85, heatdemandtemp = 5.0, modulation = "-", dhwsettemp = "-" }, case = "not-available" },
+]
+
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-18"
+circuit = "fs2"
+type = "passive"
+qq = "70"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "55 ff 70 00 00 80 ff ff ff", expect = { status = 85, heatdemandtemp = 7.0, modulation = "-", dhwsettemp = "-" }, case = "not-available" },
+]
+
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-18"
+circuit = "fs3"
+type = "passive"
+qq = "f0"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "bb ff 9e 01 00 80 ff ff ff", expect = { status = 187, heatdemandtemp = 25.9, modulation = "-", dhwsettemp = "-" }, case = "not-available" },
+]
+
+# heat-demand: the same three while heating, compared with the register of each room unit
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-19"
+circuit = "fs1"
+type = "passive"
+qq = "30"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "bb ff 10 03 00 80 ff ff ff", expect = { status = 187, heatdemandtemp = 49.0 } },
+]
+
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-19"
+circuit = "fs2"
+type = "passive"
+qq = "70"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "bb ff 42 03 00 80 ff ff ff", expect = { status = 187, heatdemandtemp = 52.1 } },
+]
+
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-19"
+circuit = "fs3"
+type = "passive"
+qq = "f0"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "bb ff 53 03 00 80 ff ff ff", expect = { status = 187, heatdemandtemp = 53.2 } },
+]
+
+# heat-demand: cascade manager to the first boiler, burner off, outside the hot-water period
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-18"
+circuit = "bc1"
+type = "passive"
+qq = "10"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "55 05 12 03 00 80 00 10 ff", expect = { status = 85, heatdemandtemp = 49.1, modulation = 0.0, dhwsettemp = 8.0 } },
+  { message = "PowerDemand", master = "55 05 08 03 00 80 00 10 ff", expect = { status = 85, heatdemandtemp = 48.5, modulation = 0.0, dhwsettemp = 8.0 } },
+]
+
+# heat-demand: cascade manager to the first boiler, not asked to fire, hot-water period
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-19"
+circuit = "bc1"
+type = "passive"
+qq = "10"
+where = "text"
+readings = [
+  { message = "PowerDemand", master = "55 05 e0 04 00 80 00 64 ff", expect = { status = 85, heatdemandtemp = 78.0, modulation = 0.0, dhwsettemp = 50.0 } },
+]
+
+# heat-demand: cascade manager to the second boiler, firing, compared with RAM 0x6e / 0x6f
+[[block]]
+evidence = "heat-demand"
+date = "2026-11-19"
+circuit = "bc2"
+type = "passive"
+qq = "10"
+where = "row"
+readings = [
+  { message = "PowerDemand", master = "ee 06 66 04 00 80 40 64 ff", expect = { status = 238, heatdemandtemp = 70.4, modulation = 32.0, dhwsettemp = 50.0 } },
+  { message = "PowerDemand", master = "ee 05 e0 04 00 80 78 64 ff", expect = { status = 238, heatdemandtemp = 78.0, modulation = 60.0, dhwsettemp = 50.0 } },
+  { message = "PowerDemand", master = "ee 05 f2 04 00 80 84 64 ff", expect = { status = 238, heatdemandtemp = 79.1, modulation = 66.0, dhwsettemp = 50.0 } },
+]

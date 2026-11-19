@@ -256,6 +256,17 @@ changed where the line says so; an unticked line was not put to the owner.
 The two lines above were added after the owner's first pass, once lot J existed, and put to
 the owner on 2026-11-18 as well; both accepted as written.
 
+Added on 2026-11-19 with the heat demand lot (`weishaupt-N`), not yet put to the owner:
+
+| | English string | French proposal | Why the sources did not settle it | Alternative |
+|---|---|---|---|---|
+| [ ] | heat demand of the cascade manager to the first boiler (second boiler) | demande de chaleur du manager de cascade à la première (seconde) chaudière | vendor terms only ("demande de chaleur" KA p. 57, device names KA p. 18); the telegram itself is not described | demande de chaleur transmise par le manager de cascade à la première chaudière |
+| [ ] | heat demand of the room unit to the cascade manager | demande de chaleur de la commande à distance au manager de cascade | same | demande de chaleur transmise au manager de cascade |
+| [ ] | requested flow temperature | température de départ demandée | "requested" as in the accepted "consigne de température départ demandée" | consigne de départ demandée |
+| [ ] | modulation demand | consigne de degré de modulation | "degré de modulation" is the vendor's (KA p. 109); the service tool's label is "setpoint mod. degree" | demande de modulation |
+| [ ] | request state, values not established | état de la demande, valeurs non établies | not a manual notion | octet d'état de la demande |
+| [ ] | second byte / fifth and sixth byte / ninth byte, meaning not established | deuxième octet / cinquième et sixième octets / neuvième octet, signification non établie | not a manual notion | octet n, signification inconnue |
+
 ### Patterned comments
 
 | | English pattern | French proposal | Why | Alternative |

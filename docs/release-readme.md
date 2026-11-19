@@ -24,7 +24,18 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.7
+## Changes since 0.5.8
+
+- **Heat demand telegrams `05 07`** (`PowerDemand`), passive, nothing polled: what each room
+  unit asks the cascade manager (`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`) and what the cascade
+  manager asks each boiler (`08.w.bc1`, `18.w.bc2`). Named fields: `heatdemandtemp` (room unit:
+  its requested flow temperature; manager: its modulation limit temperature),
+  `modulation` (manager to boiler: the burner load asked for, in %), `dhwsettemp` (manager to
+  boiler: the hot-water setpoint), `status` (a plain number: `238` or `102` while a boiler is asked for
+  power). The other bytes are published as `ukn2`, `ukn5`, `ukn9`, meaning not established.
+  Field names are lower case, as for every message of these files.
+
+## Changes from 0.5.7 to 0.5.8
 
 - **More weekly programs can be written**, one telegram per slot, from ebusd's own address: the
   four other programs of `f5.w.fs3` (heating 2 and 3, stored hot water and circulation) and

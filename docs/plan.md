@@ -36,16 +36,18 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | H | Weekly programs of the three room units, read side: heating programs 1 to 3, then hot water and circulation in a second commit that can be dropped alone. 315 messages. | `weishaupt-H` `3fe8432` (4 commits on G: heating program 1 of `fs1` read and written since 2026-11-18), pushed | `room-units-programs` |
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `db4c627` (1 commit on H), pushed | `bc-fault-counters` |
 | K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `67bc8a0` (2 commits on J), pushed | `bc-info-values` |
+| N | Heat demand telegrams `05 07` (`PowerDemand`), passive, on five pairs: cascade manager `10` to each boiler (`03`, `13`; files `08.w.bc1`, `18.w.bc2`) and each room unit to the cascade manager (`30`, `70`, `f0` to `f1`; files `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`). One shared model in `wtc_inc`: `HeatDemandTemp` (room unit: its register `b8 02`; manager: setpoint + 10.0 K + (B24 − B22), the modulation limit temperature of KA p. 87–88), `Modulation` (= RAM `6e` of the automat), `DHWSetTemp` (= RAM `6f`), `Status` (plain number, `ee`/`66` while a boiler is asked for power); bytes 2, 5–6, 9 unnamed. 5 messages. | `weishaupt-N` `78e2082` (1 commit on K), **local only** | `heat-demand` |
 | L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `354408c` (10 commits on K; no new string since 0.5.1), pushed | `terms` |
 | M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` (6 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`, the metadata of the three settings of 0.5.1, then of two more with every written setting `change-observed`, then the eleven of `fs2` and of `fs3`, five of `em1`, six of `em3`, seven more of `fs1`, two of `ka`, the flow limits of `em1`, then the write ranges and comfort classes of 0.5.5, the write conditions of heating program 1 of `fs1`), `a988764` (15 commits), pushed (0.5.5) | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
 
-The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, L, M (`STACK` in
+The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, N, L, M (`STACK` in
 `scripts/integrate.sh`). `weishaupt-L` (translation files) and `weishaupt-M` (metadata sidecar)
 hold no definition and stay on top, in this order: a new lot goes below them (lot K was
-inserted between J and L this way on 2026-11-18), then L and M are rebased and the sidecar
+inserted between J and L this way on 2026-11-18, lot N between K and L on 2026-11-19), then L
+and M are rebased and the sidecar
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
@@ -161,6 +163,19 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
+- **Release 0.5.9, heat demand (prepared locally on 2026-11-19, nothing pushed).** Lot N
+  `weishaupt-N` `78e2082` on K `262ef3d`; `weishaupt-L` `1701dfd` (nine French strings, in the
+  provisional part, listed unticked in `evidence/terms.md`, "To validate"); `weishaupt-M`
+  `8e84db1` (two message labels, five field labels, new: to be read by the owner). Trial
+  `weishaupt-next` `0aaa841`: `scripts/check.sh` clean, 930 messages in English, German and
+  French, 813 fixtures (12 new) decoded by ebusd. CSV against 0.5.8: `08.w.bc1`, `18.w.bc2`,
+  `35.w.fs1`, `75.w.fs2`, `f5.w.fs3` only, one `PowerDemand` line each (plus the default line
+  `*u,`); nothing else changed. To publish, on the owner's word: push `weishaupt-N` (new),
+  force-push `weishaupt-L` and `weishaupt-M`, set `weishaupt` to the trial, tag, release.
+  Ids for the takeover of the old entities: `weishaupt_<circuit>_PowerDemand_<field>`, field in
+  lower case (`heatdemandtemp`, `modulation`, `dhwsettemp`, `status`), circuits `bc1`, `bc2`,
+  `fs1`, `fs2`, `fs3` as before the switch; the old `hc1`–`hc3` entities were already orphans
+  then.
 - **Release 0.5.8 (prepared locally on 2026-11-19, nothing pushed).** The four other programs
   of `fs3` and the two programs of `50` written (126 slots); `fs2` refused the slot a third
   time. Trial `weishaupt-next` `f1989ab`: 925 messages, 324 written, 801 fixtures. CSV against
@@ -458,6 +473,14 @@ drops its copy).
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
 
+- **2026-11-19, lot N: heat demand telegrams `05 07`.** Passive capture of 2026-11-18 (13:33
+  to 17:28, burner off, a heat request at 14:10, then eight short cycles of the second boiler)
+  and 2026-11-19 (11:28 to 11:48, hot-water period, second boiler firing at 32 to 68 %), with
+  `50 22` register reads of `15` (setpoint, B22, B24, `e9 fd`) and of the room units, and
+  `50 00` memory reads of RAM `6e` / `6f` of the boilers. Five pairs, no other. Fields tied to
+  an independent figure are named, the others kept neutral (`evidence/heat-demand.md`). Names
+  follow the configuration used before the switch so that the lost entities can come back.
+  Inserted below L (`STACK`), L and M rebased; trial 0.5.9 built locally.
 - **2026-11-19, room unit 2 keeps no program write.** A slot in use (Monday slot 1, `1e 10 14
   47 1a`) acknowledged and not kept at 08:46: the programs of `fs2` stay read only. No lock in
   the manuals; the role of the unit (installer parameter P312) is the lead, not readable here.
