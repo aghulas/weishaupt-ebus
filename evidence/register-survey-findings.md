@@ -455,7 +455,7 @@ beside the room unit's own register and the survey's read of the module:
 |---|---|---|---|---|---|
 | `28 00` | `ee 02` = 75.0 | 1 409 | `SupplyMaxTemp` 75.0 | 75.0 (defined, lot C) | confirms that the room unit sets the module's flow maximum, as `docs/discoveries.md` (2026-11-17) said |
 | `2b 01` | `50 00` = 8.0 | 1 395 | `SupplyMinTemp` 8.0 | 8.0 (defined, lot C) | the same for the minimum |
-| `41 01` | `01 00` = 1 | 1 405 | `ControlVariation` 1 | 0 / 1 on `51` / `52`: not read yet as such | **`ControlVariation` on the modules**, read only, "set by the room unit" |
+| `41 01` | `01 00` = 1 | 1 405 | `ControlVariation` 1 | `00 00` on `51` (chunk 4) | the module answered 0 at 19:4x, while `70` writes 1: **not a plain copy**; left out |
 | `73 09` | `03 00` = 3 | 1 397 | `HeatingCircuitType` 3 | `05 00` on `51` (chunk 5) | the module answered 5 at 20:0x, while `70` writes 3 every ten minutes: **not a plain copy**; to compare in time before a definition |
 | `b1 09` | `b4 00` = 180 | 1 403 | `LegionellaCirculationTime` 180 s | 180 | **`LegionellaCirculationTime` on the modules**, read only, "set by the room unit" |
 | `20 0a` | `00 00` (once `e8 00` = 232) | 42 200 | — | 0 on `51`, 1 on `52` | written every 20 s: a state the room unit sets on its module (a release or a request); meaning not established |
@@ -465,9 +465,11 @@ beside the room unit's own register and the survey's read of the module:
 `29 0a` (input H1, 0 and 1 alternating) and `59 03`. The same export of `f0` (room unit 3 to module
 `52`) would give the second module.
 
-Proposed when the owner wants them (two sources and the write as a third): `ControlVariation` and
-`LegionellaCirculationTime` on `51.w.em2` and `52.w.em3`, read only. `73 09` on the module answers
-5 where the room unit writes 3: left out until a read and a write are compared in the same minute.
+Proposed when the owner wants it (two sources and the write as a third):
+`LegionellaCirculationTime` on `51.w.em2` and `52.w.em3`, read only (180 written, 180 read). On
+`41 01` and `73 09` the module answers 0 and 5 where the room unit writes 1 and 3: the module's
+register is not the room unit's value read back; left out until a read and a write are compared
+in the same minute.
 
 ## Date
 
