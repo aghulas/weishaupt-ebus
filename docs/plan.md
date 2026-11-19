@@ -257,6 +257,32 @@ data point on arbitration with room units).
 - **Publishing** anything (release, pull request, comment) and pushing to a branch behind a pull
   request (rule 8).
 
+### Upstream pull requests prepared (2026-11-19, local only)
+
+Nine branches `upstream/<topic>` in the local clone, cut again on lot A (`weishaupt-pr`),
+nothing pushed or opened; texts in `docs/pr-<topic>.md`. Two chains, both on #717:
+
+| # | Branch | On | Content | Needs |
+|---|---|---|---|---|
+| 1 | `upstream/boiler-faults` | #717 | fault log of `50`, fault history and service hours of the boilers, memory-read base `memr` (lot E) | #717 |
+| 2 | `upstream/boiler-counters` | 1 | operating counters (lot D) | 1 |
+| 3 | `upstream/boiler-live-values` | 2 | temperatures and operation from memory (lot F) | 2 |
+| 4 | `upstream/boiler-fault-counters` | 3 | fault counters (lot J) | 3 |
+| 5 | `upstream/boiler-info-values` | 4 | information values (lot K); carries its own shared `OutsideTemp` read | 4 (only for the boiler files) |
+| 6 | `upstream/circuit-reads` | #717 | reads of room units and heating modules, settings included, read only (lot G, plus the read side of lot C) | #717 |
+| 7 | `upstream/room-unit-programs` | 6 | weekly programs of the room units, read side (lot H) | 6 |
+| 8 | `upstream/settings-write` | 7 | 66 setting writes, five choices, date and time broadcast (lot C) | 7, john30/ebusd#1825, john30/ebus-typespec#8 |
+| 9 | `upstream/programs-write` | 8 | program-slot writes (lot H) | 8 |
+
+`scripts/check.sh` with `CFG_REPO` clean on each of the nine heads (160, 162, 166, 180, 196,
+211, 526, 612 and 864 messages). 8 and 9 compile only with the library build of the fork
+(`@wcrc`), as lot C.
+Built by cherry-pick (1 to 5) and, for 6 to 9, from the fork's final state without the boiler
+lots, each step checked against the fork: the read lines of 6 to 8 and all lines of 9 compile
+to the CSV of the fork (only the fault log of `50`, chain 1, absent). Differences from the fork:
+comments and messages no longer name lots; `OutsideTemp` is in 5 and in 6 (the second merged
+drops its copy).
+
 ### Needs the maintainer
 
 - A review of #717, #1825, #8. The pull requests for E, D, F, C, G, H wait for #717; C also
