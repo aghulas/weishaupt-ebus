@@ -579,6 +579,8 @@ only. If one unit refuses, the other two still prove the registers.
 
 ### Batch B: control variation of the three room units (6 writes)
 
+**Sent on 2026-11-19, 13:57:34 to 13:58:23**: all six writes taken and restored. Record: [room-units-control-variation.md](room-units-control-variation.md); defined in lot C.
+
 The value list is not established: 1 is the stored value on all three; 0 is the other value of
 the client's table, meaning not proven (the proof plan's "constant flow setpoint" is the
 client's label). **Risk** medium: the circuit's control mode changes for the time of one line.
@@ -597,6 +599,8 @@ Also read the flow setpoint of the circuit before, between and after (the compan
 note any change: it is the first hint of what value 0 means.
 
 ### Batch F: modulation limits of the system manager (4 writes)
+
+**Sent on 2026-11-19, 14:00:38 to 14:01:07**: all four writes taken and restored. Record: [ka-modulation-limits.md](ka-modulation-limits.md); defined in lot C.
 
 Range from the manual: minimum 30 % to the maximum, maximum the minimum to 100 % (WCM-KA 3.0,
 document 83258404, pages 84 and 85, P535, P536); both steps stay inside it. **Risk** medium on

@@ -1825,3 +1825,103 @@ readings = [
   { message = "HolidayStartThird", master = "99 1d 01", slave = "00 00", expect = { value = 0 } },
   { message = "HolidayEndThird", master = "3d 20 01", slave = "00 00", expect = { value = 0 } },
 ]
+
+# room-units-control-variation, batch B: control variation of fs1, written from ff
+[[block]]
+evidence = "room-units-control-variation"
+date = "2026-11-19"
+circuit = "fs1"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "ControlVariation", master = "0c 41 01 00 00", slave = "", expect = { value = 0 } },
+  { message = "ControlVariation", master = "50 41 01 01 00", slave = "", expect = { value = 1 } },
+]
+
+# room-units-control-variation, batch B: the reads of fs1
+[[block]]
+evidence = "room-units-control-variation"
+date = "2026-11-19"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "ControlVariation", master = "25 41 01", slave = "00 00", expect = { value = 0 } },
+  { message = "ControlVariation", master = "25 41 01", slave = "01 00", expect = { value = 1 } },
+]
+
+# room-units-control-variation, batch B: control variation of fs2, written from ff
+[[block]]
+evidence = "room-units-control-variation"
+date = "2026-11-19"
+circuit = "fs2"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "ControlVariation", master = "0c 41 01 00 00", slave = "", expect = { value = 0 } },
+  { message = "ControlVariation", master = "50 41 01 01 00", slave = "", expect = { value = 1 } },
+]
+
+# room-units-control-variation, batch B: the reads of fs2
+[[block]]
+evidence = "room-units-control-variation"
+date = "2026-11-19"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "ControlVariation", master = "25 41 01", slave = "00 00", expect = { value = 0 } },
+  { message = "ControlVariation", master = "25 41 01", slave = "01 00", expect = { value = 1 } },
+]
+
+# room-units-control-variation, batch B: control variation of fs3, written from ff
+[[block]]
+evidence = "room-units-control-variation"
+date = "2026-11-19"
+circuit = "fs3"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "ControlVariation", master = "0c 41 01 00 00", slave = "", expect = { value = 0 } },
+  { message = "ControlVariation", master = "50 41 01 01 00", slave = "", expect = { value = 1 } },
+]
+
+# room-units-control-variation, batch B: the reads of fs3
+[[block]]
+evidence = "room-units-control-variation"
+date = "2026-11-19"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "ControlVariation", master = "25 41 01", slave = "00 00", expect = { value = 0 } },
+  { message = "ControlVariation", master = "25 41 01", slave = "01 00", expect = { value = 1 } },
+]
+
+# ka-modulation-limits, batch F: written from ff
+[[block]]
+evidence = "ka-modulation-limits"
+date = "2026-11-19"
+circuit = "ka"
+type = "write"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "ModulationMax", master = "38 ea fd 4f 00", slave = "", expect = { value = 79 } },
+  { message = "ModulationMax", master = "18 ea fd 50 00", slave = "", expect = { value = 80 } },
+  { message = "ModulationMin", master = "f8 eb fd 1f 00", slave = "", expect = { value = 31 } },
+  { message = "ModulationMin", master = "a4 eb fd 1e 00", slave = "", expect = { value = 30 } },
+]
+
+# ka-modulation-limits, batch F: the reads
+[[block]]
+evidence = "ka-modulation-limits"
+date = "2026-11-19"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "ModulationMax", master = "a9 ea fd", slave = "4f 00", expect = { value = 79 } },
+  { message = "ModulationMax", master = "a9 ea fd", slave = "50 00", expect = { value = 80 } },
+  { message = "ModulationMin", master = "f5 eb fd", slave = "1f 00", expect = { value = 31 } },
+  { message = "ModulationMin", master = "f5 eb fd", slave = "1e 00", expect = { value = 30 } },
+]

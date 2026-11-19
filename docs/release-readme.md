@@ -18,8 +18,8 @@ to the official ebusd configuration; this archive exists so that they can be use
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
-@COUNT@ messages. Reads only, except what is read and written: 89 settings of `15.w.ka`,
-`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`, `51.w.em2` and `52.w.em3` (84 numbers, 5
+@COUNT@ messages. Reads only, except what is read and written: 94 settings of `15.w.ka`,
+`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`, `51.w.em2` and `52.w.em3` (89 numbers, 5
 choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, the
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
@@ -31,9 +31,17 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   day 1 to 31, month 1 to 12), and the third register of each date, `HolidayStartThird` and
   `HolidayEndThird`, whose meaning is not established (0 and 24 were written and read back; in
   the metadata their write conditions say `open = ["meaning"]`). Each register of the three
-  units was changed and restored on site. Writing needs the ebusd with the run-time checksum,
-  as every write here. 36 messages more; nothing renamed.
-- The CSV of the three room units change: unlike 0.5.10, ebusd needs the new files (a restart
+  units was changed and restored on site.
+- **Control variation of the room units** (`ControlVariation`, register `41 01`), read and
+  written from `ff`, a number: 1 is the value in service; 0 was written and read back, and while
+  it was set the heating modules raised their flow setpoint (on one circuit to its maximum).
+  No value has an established name (metadata: `open = ["meaning"]`).
+- **Limits of the optimal operating range of the cascade** in `15.w.ka` (`ModulationMax`,
+  `ModulationMin`, vendor parameters 535 and 536, percent, 30 to 100; the lower must stay below
+  the upper), read and written from `ff`, each changed by one percent and restored on site.
+- Writing needs the ebusd with the run-time checksum, as every write here. 46 messages more;
+  nothing renamed.
+- The CSV of the three room units and of `15.w.ka` change: unlike 0.5.10, ebusd needs the new files (a restart
   of ebusd with them), then the interface takes the metadata as before.
 
 ## Changes from 0.5.9 to 0.5.10
