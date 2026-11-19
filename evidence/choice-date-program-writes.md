@@ -134,19 +134,19 @@ restore telegram, read, risk.
 | D | `fs1` (`35`) | holiday start, month | `1c 01` | `ff` | 10 → 9 → 10 | `58 1c 01 09 00` | `bc 1c 01 0a 00` | `c5 1c 01` | same |
 | D | `fs1` (`35`) | holiday start, year | `1d 01` | `ff` | 0 → 24 → 0 | `bc 1d 01 18 00` | `54 1d 01 00 00` | `99 1d 01` | same |
 | D | `fs1` (`35`) | holiday end, day | `1e 01` | `ff` | 1 → 2 → 1 | `f4 1e 01 02 00` | `10 1e 01 01 00` | `7d 1e 01` | same |
-| D | `fs1` (`35`) | holiday end, month | `1f 01` | `ff` | 11 → 12 → 11 | `30 1f 01 0c 00` | `f8 1f 01 0b 00` | `21 1f 01` | same |
+| D | `fs1` (`35`) | holiday end, month | `1f 01` | `ff` | 11 → 10 → 11 (sent while the start month is 9, see "Ready to run") | `a4 1f 01 0a 00` | `f8 1f 01 0b 00` | `21 1f 01` | same |
 | D | `fs1` (`35`) | holiday end, year | `20 01` | `ff` | 0 → 24 → 0 | `08 20 01 18 00` | `e0 20 01 00 00` | `3d 20 01` | same |
 | D | `fs2` (`75`) | holiday start, day | `1b 01` | `ff` | 30 → 29 → 30 | `fc 1b 01 1d 00` | `18 1b 01 1e 00` | `0d 1b 01` | low to medium: the period stays in the past (year 2000); an immediate effect was once seen on a room unit when a period covering the day was written |
 | D | `fs2` (`75`) | holiday start, month | `1c 01` | `ff` | 10 → 9 → 10 | `58 1c 01 09 00` | `bc 1c 01 0a 00` | `c5 1c 01` | same |
 | D | `fs2` (`75`) | holiday start, year | `1d 01` | `ff` | 0 → 24 → 0 | `bc 1d 01 18 00` | `54 1d 01 00 00` | `99 1d 01` | same |
 | D | `fs2` (`75`) | holiday end, day | `1e 01` | `ff` | 1 → 2 → 1 | `f4 1e 01 02 00` | `10 1e 01 01 00` | `7d 1e 01` | same |
-| D | `fs2` (`75`) | holiday end, month | `1f 01` | `ff` | 11 → 12 → 11 | `30 1f 01 0c 00` | `f8 1f 01 0b 00` | `21 1f 01` | same |
+| D | `fs2` (`75`) | holiday end, month | `1f 01` | `ff` | 11 → 10 → 11 (sent while the start month is 9, see "Ready to run") | `a4 1f 01 0a 00` | `f8 1f 01 0b 00` | `21 1f 01` | same |
 | D | `fs2` (`75`) | holiday end, year | `20 01` | `ff` | 0 → 24 → 0 | `08 20 01 18 00` | `e0 20 01 00 00` | `3d 20 01` | same |
 | D | `fs3` (`f5`) | holiday start, day | `1b 01` | `ff` | 30 → 29 → 30 | `fc 1b 01 1d 00` | `18 1b 01 1e 00` | `0d 1b 01` | low to medium: the period stays in the past (year 2000); an immediate effect was once seen on a room unit when a period covering the day was written |
 | D | `fs3` (`f5`) | holiday start, month | `1c 01` | `ff` | 10 → 9 → 10 | `58 1c 01 09 00` | `bc 1c 01 0a 00` | `c5 1c 01` | same |
 | D | `fs3` (`f5`) | holiday start, year | `1d 01` | `ff` | 0 → 24 → 0 | `bc 1d 01 18 00` | `54 1d 01 00 00` | `99 1d 01` | same |
 | D | `fs3` (`f5`) | holiday end, day | `1e 01` | `ff` | 1 → 2 → 1 | `f4 1e 01 02 00` | `10 1e 01 01 00` | `7d 1e 01` | same |
-| D | `fs3` (`f5`) | holiday end, month | `1f 01` | `ff` | 11 → 12 → 11 | `30 1f 01 0c 00` | `f8 1f 01 0b 00` | `21 1f 01` | same |
+| D | `fs3` (`f5`) | holiday end, month | `1f 01` | `ff` | 11 → 10 → 11 (sent while the start month is 9, see "Ready to run") | `a4 1f 01 0a 00` | `f8 1f 01 0b 00` | `21 1f 01` | same |
 | D | `fs3` (`f5`) | holiday end, year | `20 01` | `ff` | 0 → 24 → 0 | `08 20 01 18 00` | `e0 20 01 00 00` | `3d 20 01` | same |
 | E | `fs1` (`35`) | heating program 1, Sunday slot 3 | `72 14` | `31` | 8080 → 0908 → 8080 | `4c 72 14 09 08` | `30 72 14 80 80` | `58 72 14` | low: 02:00–02:15 on Sunday, restored within a minute |
 | E | `fs1` (`35`) | heating program 2, Sunday slot 3 | `72 15` | `31` | 8080 → 0908 → 8080 | `f0 72 15 09 08` | `8c 72 15 80 80` | `59 72 15` | low: 02:00–02:15 on Sunday, restored within a minute |
@@ -476,6 +476,143 @@ the installation applies.
 | `em1` (`50`) | hot-water program (applied), Sunday slot 3 | `72 17` | `80 80` → `09 08` → back | `d4 72 17 09 08` | `a8 72 17 80 80` | `5b 72 17` |
 | `em1` (`50`) | circulation program, Sunday slot 3 | `72 1a` | `80 80` → `09 08` → back | `b0 72 1a 09 08` | `cc 72 1a 80 80` | `56 72 1a` |
 
+## Ready to run: batches D, B and F (prepared 2026-11-19, not sent)
+
+For the deployment session, on the owner's go, line by line. Nothing below has been sent.
+
+**Checked on 2026-11-19 against definitions 0.5.9 and ebusd's cache (read only).** None of
+these registers is defined in 0.5.9 (`git grep` of the integration branch `85c1af6`: no
+`1b 01`–`20 01`, `41 01`, `ea fd`, `eb fd`; only `HolidayTempLevel` `3d 01`), so ebusd's cache
+holds no value for them and the companion neither reads nor writes them: every line is a raw
+`hex` through ebusd. The holiday level of the three room units reads `Antifreeze` in the cache
+(13:17–13:21), so an active holiday period would put the circuit at frost protection. Each
+telegram was computed again with the checksum routine of `register-write-crc` and equals the
+row of the proof plan above; the end month of batch D was changed there on the same day
+(11 → 10 instead of 12, see below). Cross-checks with captured telegrams: `fs1` `41 01` read `01 00` on 2026-11-15 (telegram
+log, `25 41 01` from `31`) and its write of the stored value `50 41 01 01 00` captured that day
+(= the restore below); `ka` `ea fd` = `50 00` (80 %) in the service-tool log
+(`service-tool-log`); holiday dates 30.10 → 01.11, third registers 0 (`room-units-reads`,
+2026-11-17). The latest values are therefore up to four days old: the "read before" of each line
+is the check.
+
+**Rules for every line.**
+
+1. Service tool disconnected. Send from the ebusd of the installation; the read without `-s`
+   (ebusd's own address `31`), the write with `-s ff` (these settings are taken only from
+   `ff`, as the 66 of lot C).
+2. Read before: if the answer is not the value in the "before" column, send nothing more for
+   that device and report.
+3. Write, then read back at once. Expected: the new value. If the old value comes back, the
+   device did not take it: send the restore anyway (it writes the value already stored, harmless),
+   read, stop that device and report.
+4. Restore, then read back: the original value. If not, send the restore once more; if still
+   not, stop everything and tell the owner, who sets the value on the device's display (values in
+   the "before" column).
+5. Between the write and the restore: no wait beyond the read back; one line lasts under a
+   minute.
+6. Afterwards: export of the telegram log for the period (the proof), as for the earlier
+   batches.
+
+### Batch D: holiday dates of the three room units (36 writes)
+
+**Dates proposed.** The stored period is 30.10 → 01.11 (third registers 0), in the past. Every
+intermediate state below stays a period in the past, with the start before the end, so no
+holiday is active at any moment, whatever the third register means:
+
+| State | Start | End | Note |
+|---|---|---|---|
+| stored | 30.10 (0) | 01.11 (0) | |
+| D1 | 29.10 | 01.11 | start day |
+| D2 | 30.09 | 01.11 | start month |
+| D3 | 30.09 | 01.10 | end month, while the start month is 9 |
+| D4 | 30.10 | 02.11 | end day |
+| D5 | 30.10 (0) | 01.11 (24) | end third first: as a year, 2000 → 2024, in the past |
+| D6 | 30.10 (24) | 01.11 (24) | start third, while the end third is 24: 2024 → 2024 |
+
+The proof plan's end month 11 → 12 is dropped: 30.10 → 01.12 covers today if the third register
+is not a year, and would put the circuit at frost protection. An end month of 10 with a start
+month of 10 would end before it starts, which a device may read as a period across the new
+year, so D3 moves the end only while the start month is 9. The start is never today (a start
+equal to the day of the write resets the third register to 0, operator's log of 2026-11-07).
+
+**Should the school be closed?** No. No state above covers the day, so no circuit should
+change; the one unexplained effect (operator's log of 2026-10-30) followed a period that did
+cover the day. Still, run it outside lessons (after 17:00, Wednesday afternoon or the weekend)
+so that an unexpected setback would last minutes in an empty building, and read the holiday
+level `3d 01` and the room setpoint shown by each unit before and after.
+
+**Risk** low. **Expected effect on the heating**: none; at worst, if a device took a past
+period as active, its circuit at frost protection until the restore of that line, under a
+minute.
+
+Per room unit, in this order (`fs1` `35`, then `fs2` `75`, then `fs3` `f5`; the same lines with
+the address changed):
+
+| Step | Device | Register | Before | Read | Write | Read back | Restore | Read back | Order |
+|---|---|---|---|---|---|---|---|---|---|
+| D1 | `fs1` (`35`) | start day `1b 01` | 30 `1e 00` | `hex 355022030d1b01` | `hex -s ff 35502305fc1b011d00` | `1d 00` | `hex -s ff 35502305181b011e00` | `1e 00` | write, read, restore, read |
+| D2 | `fs1` (`35`) | start month `1c 01` | 10 `0a 00` | `hex 35502203c51c01` | `hex -s ff 35502305581c010900` | `09 00` | `hex -s ff 35502305bc1c010a00` | `0a 00` | write, read; **keep** (restore after D3) |
+| D3 | `fs1` (`35`) | end month `1f 01` | 11 `0b 00` | `hex 35502203211f01` | `hex -s ff 35502305a41f010a00` | `0a 00` | `hex -s ff 35502305f81f010b00` | `0b 00` | write, read, restore, read; then restore D2, read |
+| D4 | `fs1` (`35`) | end day `1e 01` | 1 `01 00` | `hex 355022037d1e01` | `hex -s ff 35502305f41e010200` | `02 00` | `hex -s ff 35502305101e010100` | `01 00` | write, read, restore, read |
+| D5 | `fs1` (`35`) | end third `20 01` | 0 `00 00` | `hex 355022033d2001` | `hex -s ff 355023050820011800` | `18 00` | `hex -s ff 35502305e020010000` | `00 00` | write, read; **keep** (restore after D6) |
+| D6 | `fs1` (`35`) | start third `1d 01` | 0 `00 00` | `hex 35502203991d01` | `hex -s ff 35502305bc1d011800` | `18 00` | `hex -s ff 35502305541d010000` | `00 00` | write, read, restore, read; then restore D5, read |
+| D1 | `fs2` (`75`) | start day `1b 01` | 30 `1e 00` | `hex 755022030d1b01` | `hex -s ff 75502305fc1b011d00` | `1d 00` | `hex -s ff 75502305181b011e00` | `1e 00` | write, read, restore, read |
+| D2 | `fs2` (`75`) | start month `1c 01` | 10 `0a 00` | `hex 75502203c51c01` | `hex -s ff 75502305581c010900` | `09 00` | `hex -s ff 75502305bc1c010a00` | `0a 00` | write, read; **keep** (restore after D3) |
+| D3 | `fs2` (`75`) | end month `1f 01` | 11 `0b 00` | `hex 75502203211f01` | `hex -s ff 75502305a41f010a00` | `0a 00` | `hex -s ff 75502305f81f010b00` | `0b 00` | write, read, restore, read; then restore D2, read |
+| D4 | `fs2` (`75`) | end day `1e 01` | 1 `01 00` | `hex 755022037d1e01` | `hex -s ff 75502305f41e010200` | `02 00` | `hex -s ff 75502305101e010100` | `01 00` | write, read, restore, read |
+| D5 | `fs2` (`75`) | end third `20 01` | 0 `00 00` | `hex 755022033d2001` | `hex -s ff 755023050820011800` | `18 00` | `hex -s ff 75502305e020010000` | `00 00` | write, read; **keep** (restore after D6) |
+| D6 | `fs2` (`75`) | start third `1d 01` | 0 `00 00` | `hex 75502203991d01` | `hex -s ff 75502305bc1d011800` | `18 00` | `hex -s ff 75502305541d010000` | `00 00` | write, read, restore, read; then restore D5, read |
+| D1 | `fs3` (`f5`) | start day `1b 01` | 30 `1e 00` | `hex f55022030d1b01` | `hex -s ff f5502305fc1b011d00` | `1d 00` | `hex -s ff f5502305181b011e00` | `1e 00` | write, read, restore, read |
+| D2 | `fs3` (`f5`) | start month `1c 01` | 10 `0a 00` | `hex f5502203c51c01` | `hex -s ff f5502305581c010900` | `09 00` | `hex -s ff f5502305bc1c010a00` | `0a 00` | write, read; **keep** (restore after D3) |
+| D3 | `fs3` (`f5`) | end month `1f 01` | 11 `0b 00` | `hex f5502203211f01` | `hex -s ff f5502305a41f010a00` | `0a 00` | `hex -s ff f5502305f81f010b00` | `0b 00` | write, read, restore, read; then restore D2, read |
+| D4 | `fs3` (`f5`) | end day `1e 01` | 1 `01 00` | `hex f55022037d1e01` | `hex -s ff f5502305f41e010200` | `02 00` | `hex -s ff f5502305101e010100` | `01 00` | write, read, restore, read |
+| D5 | `fs3` (`f5`) | end third `20 01` | 0 `00 00` | `hex f55022033d2001` | `hex -s ff f55023050820011800` | `18 00` | `hex -s ff f5502305e020010000` | `00 00` | write, read; **keep** (restore after D6) |
+| D6 | `fs3` (`f5`) | start third `1d 01` | 0 `00 00` | `hex f5502203991d01` | `hex -s ff f5502305bc1d011800` | `18 00` | `hex -s ff f5502305541d010000` | `00 00` | write, read, restore, read; then restore D5, read |
+
+Count: 6 changes and 6 restores per room unit, 36 writes, 48 reads with the "before" reads.
+`fs2` takes settings from `ff` (11 of lot C proven there); its refusal concerns program slots
+only. If one unit refuses, the other two still prove the registers.
+
+### Batch B: control variation of the three room units (6 writes)
+
+The value list is not established: 1 is the stored value on all three; 0 is the other value of
+the client's table, meaning not proven (the proof plan's "constant flow setpoint" is the
+client's label). **Risk** medium: the circuit's control mode changes for the time of one line.
+**Expected effect on the heating**: the circuit's flow setpoint may move to another rule for
+under a minute per unit; the mixing valve may start to move; no measurable change of room
+temperature in a minute. Run outside lessons, one unit at a time; closing the school is not
+needed.
+
+| Step | Device | Register | Before | Read | Write | Read back | Restore | Read back |
+|---|---|---|---|---|---|---|---|---|
+| B | `fs1` (`35`) | control variation `41 01` | 1 `01 00` | `hex 35502203254101` | `hex -s ff 355023050c41010000` | `00 00` | `hex -s ff 355023055041010100` | `01 00` |
+| B | `fs2` (`75`) | control variation `41 01` | 1 `01 00` | `hex 75502203254101` | `hex -s ff 755023050c41010000` | `00 00` | `hex -s ff 755023055041010100` | `01 00` |
+| B | `fs3` (`f5`) | control variation `41 01` | 1 `01 00` | `hex f5502203254101` | `hex -s ff f55023050c41010000` | `00 00` | `hex -s ff f55023055041010100` | `01 00` |
+
+Also read the flow setpoint of the circuit before, between and after (the companion shows it);
+note any change: it is the first hint of what value 0 means.
+
+### Batch F: modulation limits of the system manager (4 writes)
+
+Range from the manual: minimum 30 % to the maximum, maximum the minimum to 100 % (WCM-KA 3.0,
+document 83258404, pages 84 and 85, P535, P536); both steps stay inside it. **Risk** medium on
+paper, small in fact: one percent for under a minute. **Expected effect on the heating**: the
+modulation points at which the cascade starts or stops the next boiler move by 1 % for the
+minute of the line; with the burner at low load (8 % at 13:21) no boiler should start or stop.
+Any time; read `ka ModulationStatus` and the two boilers' status before and after.
+
+| Step | Device | Register | Before | Read | Write | Read back | Restore | Read back |
+|---|---|---|---|---|---|---|---|---|
+| F | `ka` (`15`) | modulation maximum `ea fd` | 80 % `50 00` | `hex 15502203a9eafd` | `hex -s ff 1550230538eafd4f00` | 79 % `4f 00` | `hex -s ff 1550230518eafd5000` | 80 % `50 00` |
+| F | `ka` (`15`) | modulation minimum `eb fd` | 30 % `1e 00` | `hex 15502203f5ebfd` | `hex -s ff 15502305f8ebfd1f00` | 31 % `1f 00` | `hex -s ff 15502305a4ebfd1e00` | 30 % `1e 00` |
+
+### What the batches change in the definitions
+
+Nothing until they are captured. Once a register is proven: the holiday dates and the control
+variation become settings of lot C (read and written, from `ff`) and get their metadata; the
+modulation limits, two numeric settings of `ka` with the manual's range; the meaning of the
+third holiday register is recorded from what D5 and D6 read back.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, `MF=Kromschröder`, `ID=W`: system manager at `15`
@@ -484,7 +621,7 @@ clock master at `f1`.
 
 ## Date
 
-2026-11-18.
+2026-11-18; ready-to-run section of batches D, B and F 2026-11-19.
 
 ## Not verified
 
