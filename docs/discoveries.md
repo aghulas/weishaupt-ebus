@@ -78,3 +78,20 @@ owner-assisted display steps, no bus write) and the owner's checklist:
   changed on the display).
 - **`PowerDemand` bytes, clock master answers, `SW=7203`**: exports D1 to D3, read only.
 - **`ForcedVenting`**: no test; checklist item 6 if the vendor tool is on site.
+
+## Batch G, steps A and D (2026-11-19, read only)
+
+- **`27 02`**: read again 731 / 543 with starts 187 277 / 139 104; `26 02`, `25 02` and `28 02`
+  answer 0x8000, so it is no 16-bit window. Stays "starts / 256", not defined (lot D has the
+  full counter); one read when `08` passes 187 392 starts confirms it.
+- **`PowerDemand` byte 1: settled for the boilers** over ten days (`evidence/heat-demand.md`):
+  `66` / `ee` exactly while power is requested, `55` / `00` otherwise; in trial 0.5.13 as the
+  comment of the field. Room units: `55` likely setback, not established. Bytes 2 and 9: not
+  named. New: three telegrams `10 → fc` (`05 07`), unanswered, an address no device has.
+- **Clock master**: it answers a broadcast whose time is ahead of its own clock, not one that is
+  behind (`evidence/choice-date-program-writes.md`); the entry of 2026-11-18 is settled as far
+  as the bus shows.
+- **`SW=7203` on `75`**: not reproduced; after the restart of 2026-11-19 14:17 `75` answered
+  `SW=2726`, as `35` and `f5`. The identification answers also show that `f5` gives the ID
+  bytes `57 02 00 08 00` where `35` and `75` give `57 02 00 18 00` (the heating modules give
+  `57 03 00 08 00`): room unit 3, not room unit 2, is the one that differs here. Meaning not known.

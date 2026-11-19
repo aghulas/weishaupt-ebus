@@ -159,5 +159,10 @@ cascade under a WCM system manager (`15`). Read-only; no write was sent (rule 7)
   give 731 and 543, the values read here; 187 277 and 139 101 in ebusd's cache on 2026-11-19
   still give 731 and 543 (any count from 187 136 to 187 391 gives 731).
   Not confirmed by a step: `08` should read 732 once its starts pass 187 392. Not defined, lot
-  D holds the full counter. Other sub-01
+  D holds the full counter.
+  Batch G, step A (2026-11-19 15:37, read only): starts 187 277 and 139 104; `27 02` read
+  `db 02` (731) and `1f 02` (543) again. The neighbouring registers do not complete it:
+  `26 02` answers `00 80` (0x8000, not available) on both boilers, and so do `25 02` and
+  `28 02` of `08`. So `27 02` is not the upper half of a 16-bit window on the counter; it
+  stays "starts / 256", confirmed by a step only when `08` passes 187 392 starts. Other sub-01
   registers hold parameters and setpoints and were not read here.

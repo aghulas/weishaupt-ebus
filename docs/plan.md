@@ -212,7 +212,12 @@ data point on arbitration with room units).
   de chauffage (paramètre 315) : 0 température de départ constante, 1 en fonction de la
   température extérieure ». To publish, on the owner's word: force-push with leases C, G, H,
   J, K, N, L, M and `weishaupt` to the trial head, the workbench `main`; release
-  `weishaupt-0.5.13`. **Held** (owner, 2026-11-19, « Oui, comme proposé »): not published
+  `weishaupt-0.5.13`. After batch G steps A and D: also the comment of `status` of
+  `PowerDemand` (lot N `b96827b`, L `e0d8bb3`, M `86d5f29`, trial head `c1cf595`; check clean,
+  976 messages; CSV of `08.w.bc1`, `18.w.bc2` and the three room units differ from 0.5.12 in
+  comments only, metadata in 8 descriptions; French string « état de la demande : puissance
+  demandée (0x66, 0xee) ou non (0x55, 0x00) par le manager de cascade ; 0xbb ou 0x55 d'une
+  commande à distance » for the owner). **Held** (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
 - **Trial 0.5.12, metadata only (prepared locally on 2026-11-19, nothing pushed).** Field key

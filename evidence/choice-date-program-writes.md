@@ -258,6 +258,25 @@ hour, day, month, weekday, year):
   telegram carrying a time 59 s ahead; `f1`'s next regular broadcast is normal.
 - The outside temperature sent is replaced by `f1` with its own sensor within a minute.
 
+### Which broadcasts the clock master answers (batch G, export D3, 2026-11-19)
+
+An export, read only, of every `fe 07 00` broadcast of ten days (2026-11-09 to 2026-11-19):
+541 from `31`, 14 315 from the clock master `f1`. For each broadcast of `31`, the clock of `f1`
+at that instant was estimated from its previous regular broadcast (to about a second), and
+compared with the time `31` sent (536 of the 541 could be placed):
+
+| time sent by `31` against the clock of `f1` | answered within 3 s | not answered |
+|---|---|---|
+| behind by 6 s or more | 0 | 48 |
+| from 3 s behind to 1 s ahead (the second of `f1` not known better) | 128 | 305 |
+| 2 s ahead or more | 42 | 13 |
+
+So the clock master answers a broadcast whose time is ahead of its own, with the hour and
+minute received and its own second (hence the 59 s when its second is still 59), and does not
+answer one that is behind it. The 13 exceptions ahead and the split near 0 are within the error
+of the estimate. A time sent behind its own clock: adopted or not, the export cannot say (no
+answer follows). This is the behaviour of the device; nothing in the definitions depends on it.
+
 ### Batch A: five choices proven (21:08 to 21:10, source `ff`)
 
 | setting | date | source | change | read → answer | restore | read → answer |

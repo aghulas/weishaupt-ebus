@@ -26,11 +26,14 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
 ## Changes since 0.5.12
 
-- **Comment only.** `ControlVariation` of the three room units: the comment now names the
+- **Comments only.** `PowerDemand` of the boilers and room units: the comment of `status` now
+  says what ten days of telegrams show, power requested (`0x66` to the first boiler, `0xee` to
+  the second) or not (`0x55`, `0x00`); the field stays a number.
+- `ControlVariation` of the three room units: the comment now names the
   values from the manual of the room unit (parameter 315): 0 constant flow temperature, 1
   outside temperature; which of 2 and 3 is room control is not established, so the field stays
-  a number. CSV of the three room units change in that comment only (English and French);
-  nothing else, metadata the same apart from the description. ebusd takes the new files at its
+  a number. The CSV of the boilers and of the three room units change in these comments only (English
+  and French); the metadata only in the descriptions. ebusd takes the new files at its
   next start; nothing changes in what it reads or writes.
 
 ## Changes from 0.5.11 to 0.5.12

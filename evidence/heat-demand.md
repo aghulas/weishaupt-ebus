@@ -185,6 +185,40 @@ As bits the values do not fall into a pattern: every one has two equal nibbles (
 `66` (both "asked for power") differ by `88`, `bb` and `55` (room unit heating, setback) by
 `ee`. Nothing ties a single bit to a state, so the field stays a plain number.
 
+### Ten days of telegrams (2026-11-09 to 2026-11-19, batch G, export D1)
+
+An export of the telegram log, read only, of every `05 07` and `50 0a` telegram of the ten
+days it keeps (`2026-11-19-batch-G-D1-powerdemand-and-boiler-status.csv`, installation data,
+not versioned): 85 425 telegrams to the first boiler, 85 777 to the second, 41 768, 42 035 and
+42 786 from the three room units.
+
+| sender → receiver | byte 1 | with byte 7 (modulation) |
+|---|---|---|
+| `10` → `03` (first boiler) | `55` 65 289, `66` 20 096 | `55` always with 0, `66` always above 0 |
+| `10` → `13` (second boiler) | `00` 65 738, `ee` 19 976 | `00` always with 0, `ee` always above 0 |
+| `30` → `f1` (room unit 1) | `bb` 19 894, `55` 21 856 | (byte 7 is `ff`) |
+| `70` → `f1` (room unit 2) | `bb` 19 996, `55` 22 028 | |
+| `f0` → `f1` (room unit 3) | `bb` 39 418, `55` 3 346 | |
+
+**Settled for the boilers**: byte 1 is a request code per receiver, `66` / `ee` exactly while
+the modulation demand is above 0 and `55` / `00` while it is 0, without exception in the 171 099
+telegrams read as valid. Release 0.5.13 says so in the comment of the field, which stays a number (a value
+list would change its type). For the room units, `55` comes mostly at night (19:00 to 01:00 on
+units 1 and 2, 18:00 to 02:00 on unit 3) and with a low requested flow temperature (median
+6.9 °C against 42.5 °C with `bb`), but 6 244 of the 47 230 `55` telegrams carry more than
+20 °C: setback is likely, not established.
+
+Other bytes over the same ten days: bytes 5–6 `00 80` in every telegram; byte 2 from the
+manager `03` in a steady third of the telegrams and `05` or `06` in the others, `06` more
+often from 06:00 to 09:00, `05` in the evening, `04` 60 times, from the room units always
+`ff`; byte 9 `ff` except in 5 086 telegrams to the boilers, 4 967 of them while power is
+requested, values `72` to `97` with no relation found to byte 7. Not named.
+
+Three telegrams went from the cascade manager to `fc` (2026-11-11 14:28, 2026-11-16 00:41
+and 03:30), `00 06 ad 03 00 80 00 10 ff` and similar, byte 1 `00`, as a master-slave telegram
+that no slave answered (timeout): an address no device of the installation has. Not
+explained.
+
 ### Unnamed bytes
 
 - **Byte 2**: `03` and `05` alternate from the manager while the hot-water period is off, `05`
