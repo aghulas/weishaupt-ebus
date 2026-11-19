@@ -33,6 +33,16 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   shows them as durations. The CSV of `50.w.em1` changes: ebusd takes the new files at its next
   start, an interface the metadata with a reload.
 
+- **24 new reads** (stock ebusd), each established by the vendor service tool's screen and an
+  independent read with the same value. `15.w.ka`: `ModulationDiffTemp` (parameter 538, K),
+  `DeCoupleExcessTemp`, `DeCoupleMaxTemp`, `CalorifierExcessTemp`, `SummerTimeStartDay`,
+  `SummerTimeStartMonth`, `SummerTimeEndDay`, `SummerTimeEndMonth`, `BoilerSequence1First`,
+  `BoilerSequence1Second`, `BoilerSequence2First`, `BoilerSequence2Second` (A or B),
+  `DHWSetbackTemp`, `LegionellaStartTime` (quarter hours since midnight),
+  `PlateExchangerPrimaryTemp` (sensor B24). Each room unit: `RoomSetpointTemp` (the room setpoint
+  in effect), `OutsideMixedTemp`, `HeatingCircuitType` (read only). The CSV of `15.w.ka` and of the
+  three room units gain these lines; nothing else changes in them.
+
 ## Changes from 0.5.12 to 0.5.13
 
 - **Comments only; no message, field, type or value changes.** ebusd still needs the new files:

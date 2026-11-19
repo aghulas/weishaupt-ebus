@@ -1925,3 +1925,60 @@ readings = [
   { message = "ModulationMin", master = "f5 eb fd", slave = "1f 00", expect = { value = 31 } },
   { message = "ModulationMin", master = "f5 eb fd", slave = "1e 00", expect = { value = 30 } },
 ]
+
+# survey-reads: system manager, single-register IDs, answers of the register survey
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "ka"
+where = "row"
+readings = [
+  { message = "ModulationDiffTemp", master = "4d e9 fd", slave = "64 00", expect = { value = 10.0 } },
+  { message = "DeCoupleExcessTemp", master = "11 e8 fd", slave = "3c 00", expect = { value = 6.0 } },
+  { message = "DeCoupleMaxTemp", master = "dd e6 fd", slave = "0c 03", expect = { value = 78.0 } },
+  { message = "CalorifierExcessTemp", master = "ad e3 fd", slave = "0a 00", expect = { value = 1.0 } },
+  { message = "SummerTimeStartDay", master = "09 de fd", slave = "1d 00", expect = { value = 29 } },
+  { message = "SummerTimeStartMonth", master = "55 df fd", slave = "03 00", expect = { value = "March" } },
+  { message = "SummerTimeEndDay", master = "49 e0 fd", slave = "19 00", expect = { value = 25 } },
+  { message = "SummerTimeEndMonth", master = "15 e1 fd", slave = "0a 00", expect = { value = "October" } },
+  { message = "BoilerSequence1First", master = "95 ca fd", slave = "00 00", expect = { value = "A" } },
+  { message = "BoilerSequence1Second", master = "c9 cb fd", slave = "01 00", expect = { value = "B" } },
+  { message = "BoilerSequence2First", master = "e9 d4 fd", slave = "01 00", expect = { value = "B" } },
+  { message = "BoilerSequence2Second", master = "b5 d5 fd", slave = "00 00", expect = { value = "A" } },
+  { message = "DHWSetbackTemp", master = "12 8a 02", slave = "50 00", expect = { value = 8.0 } },
+  { message = "LegionellaStartTime", master = "d5 f4 fd", slave = "22 00", expect = { value = 34 } },
+  { message = "PlateExchangerPrimaryTemp", master = "72 40 0a", slave = "51 02", expect = { value = 59.3 } },
+]
+
+# survey-reads: room unit fs1
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "RoomSetpointTemp", master = "08 12 00", slave = "50 00", expect = { value = 8.0 } },
+  { message = "OutsideMixedTemp", master = "5a 1a 0a", slave = "70 00", expect = { value = 11.2 } },
+  { message = "HeatingCircuitType", master = "19 73 09", slave = "02 00", expect = { value = "Radiator60" } },
+]
+
+# survey-reads: room unit fs2
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "HeatingCircuitType", master = "19 73 09", slave = "03 00", expect = { value = "Radiator70" } },
+]
+
+# survey-reads: room unit fs3
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "RoomSetpointTemp", master = "08 12 00", slave = "8c 00", expect = { value = 14.0 } },
+  { message = "HeatingCircuitType", master = "19 73 09", slave = "03 00", expect = { value = "Radiator70" } },
+]

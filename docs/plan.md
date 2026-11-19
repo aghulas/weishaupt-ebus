@@ -37,14 +37,15 @@ on upstream `master` (`9c3ed3a`, nothing to rebase). Files are under `src/wolf/`
 | J | Fault counters of both automats: one counter per fault number (33, numbers 11 to 57), seven memory reads of at most 10 bytes of EEPROM `0x0196`–`0x01d7` per boiler, with the first answer byte kept as a field through the shared base `memr` (as every memory read since 2026-11-18), 14 messages. Address and number from the symbol table of the firmware, meaning from the manual of the boiler (48 as a warning and 49 only in its 2020 edition). | `weishaupt-J` `db4c627` (1 commit on H), pushed; **local 2026-11-19: `0202da5`** (trial 0.5.11) | `bc-fault-counters` |
 | K | Boiler information values read with `50 22` (the WTC display "i" codes) on both boilers (`08`, `18`): five temperatures — flow i35, return i37, flue gas i31, outside i33, hot water i34 — plus (0.4.2 prep) the hydraulic-separator temperature i39 (`86 02`, no sensor here), and the two software versions i44 WCM-CPU and i45 WCM-CUI (`99 01` / `9a 01`, kept as the raw bytes `11 04` = scan `SW=1104`). Reuses the precomputed-CRC register base and the `SIN`/10 scalar. 16 messages. Reads only, stock ebusd. An unidentified per-boiler counter at `27 02` (731/543) is left out as a finding. | `weishaupt-K` `3f11b51` (3 commits on J; the third, 2026-11-19, local only: the comment of the information values names the shared read `OutsideTemp` of the room-unit reads instead of "lot A"), `262ef3d` pushed; **local 2026-11-19: `22ff0d9`** (trial 0.5.11) | `bc-info-values` |
 | N | Heat demand telegrams `05 07` (`PowerDemand`), passive, on five pairs: cascade manager `10` to each boiler (`03`, `13`; files `08.w.bc1`, `18.w.bc2`) and each room unit to the cascade manager (`30`, `70`, `f0` to `f1`; files `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`). One shared model in `wtc_inc`: `HeatDemandTemp` (room unit: its register `b8 02`; manager: setpoint + 10.0 K + (B24 − B22), the modulation limit temperature of KA p. 87–88), `Modulation` (= RAM `6e` of the automat), `DHWSetTemp` (= RAM `6f`), `Status` (plain number, `ee`/`66` while a boiler is asked for power); bytes 2, 5–6, 9 unnamed. 5 messages. | `weishaupt-N` `5e5476e` (1 commit on K), pushed as `78e2082` (0.5.9), replayed locally on the K fix; **local 2026-11-19: `706727a`** (trial 0.5.11) | `heat-demand` |
+| O | Reads established by the register survey and the vendor service tool (two sources each): fifteen registers of the system manager (`15.w.ka`: modulation differential P538, de-couple excess and maximum, calorifier excess, summer time, boiler sequences, reduced hot-water setpoint, legionella start time, B24) and three of each room unit (room setpoint in effect, mixed outside temperature, heating circuit type), read only. | `weishaupt-O` `074f46a` (2 commits on N), **local only** | `survey-reads` |
 | L | French translation of the comments: `src/fr.yaml`, 277 keys for the 277 comment strings of the lots (vendor terms and owner-accepted wording; none provisional; the three 0.4.2 info-value strings accepted by the owner on 2026-11-18); the 24 Wolf comments of `wolf/broadcast` stay in English. No definition; no upstream pull request is cut from it. | `weishaupt-L` `17027d7` (12 commits on N), pushed as `aa88f82` (0.5.9), replayed locally; **local 2026-11-19: `ea3d372`** (trial 0.5.11) | `terms` |
 | M | Metadata sidecar `metadata/weishaupt.toml`: devices, menu tree per device type, short labels in English and French, kind of value, polling class, write conditions and evidence record of every message of the lots (107 entries for 528 messages, the families by pattern). No definition; no upstream pull request is cut from it. Menu trees and labels **accepted by the owner on 2026-11-18** as proposed (`out/companion-menu-proposal.md`); default polling class by kind since. | `weishaupt-M` (6 commits on L: the two of 0.4.3, the rename to `DHWLoadingPriority` with `renamed_from`, the labels of the 38 value-list entries in `[values]`, the metadata of the three settings of 0.5.1, then of two more with every written setting `change-observed`, then the eleven of `fs2` and of `fs3`, five of `em1`, six of `em3`, seven more of `fs1`, two of `ka`, the flow limits of `em1`, then the write ranges and comfort classes of 0.5.5, the write conditions of heating program 1 of `fs1`), `56d9565` (19 commits on L), pushed as `b59ccb3` (0.5.9), replayed locally; **local 2026-11-19: `2aa0420`** (trial 0.5.11) | the records the entries name; `service-tool-log` for the polling classes |
 | I | Weekly programs of the devices other than the room units (`15`, `50`, `f6`, `51`, `52`): examined on 2026-11-17, **nothing defined**. `15`, `50` and `f6` answer identical bytes on all 105 slots; `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units. Hot water follows the program of the system manager, which lot A already defines at `50`; the third heating circuit follows its room unit (lot H) and its module does not apply its own programs. The rest would be schedules the installation does not follow, or a copy of lots A and H. | none, no branch | `modules-programs` |
 | B | Library: decorators `@crc` (checksum computed when emitting) and `@wcrc` (marker for the run-time checksum; the byte emitted is the checksum of the address, so reads stay valid on a stock ebusd). | `aghulas/ebus-typespec`, `wcrc-decorator` `75c7d58`. **Pull request #8.** | `register-write-crc` section 5 |
 | — | ebusd: checksum computed at run time for messages marked `[WCRC]`. | `aghulas/ebusd`, `crc` `492867d9`. **Pull request #1825.** | `register-write-crc` |
 
-The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, N, L, M (`STACK` in
-`scripts/integrate.sh`). `weishaupt-L` (translation files) and `weishaupt-M` (metadata sidecar)
+The lot letters are historical; the stack order is A, E, D, F, C, G, H, J, K, N, O, L, M (`STACK`
+in `scripts/integrate.sh`). `weishaupt-L` (translation files) and `weishaupt-M` (metadata sidecar)
 hold no definition and stay on top, in this order: a new lot goes below them (lot K was
 inserted between J and L this way on 2026-11-18, lot N between K and L on 2026-11-19), then L
 and M are rebased and the sidecar
@@ -226,6 +227,25 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Lot O, reads established by the register survey (2026-11-19, local only).** On the owner's
+  approval of the 18-register list ("je valide"): new branch `weishaupt-O` on N, two commits,
+  `5f12f07` (fifteen reads of the system manager) and `074f46a` (three reads of each room unit),
+  reads only, stock ebusd; evidence `evidence/survey-reads.md`, 21 fixtures. Parameter 538 at
+  `e9 fd`: the manual of the WCM-KA (pages 87–88) names it the modulation differential, 5.0 to
+  20.0 K, so it is `ModulationDiffTemp`, `diff10`, not the proposed `ContinuousTemp` in °C (the
+  tool's English label). L `858c9ad` (twenty French strings), M `c3760b6` (eighteen entries, labels
+  of the boiler letters and of the six circuit types). `scripts/integrate.sh` stack now ends N, O,
+  L, M. Trial `weishaupt-next` `03c939e`: check clean, **1 000 messages** (976 before), 926 fixtures;
+  lot O alone clean (1 000). New labels for the owner (metadata): "Modulation differential" /
+  « Différentiel de modulation », "De-couple excess" / « Surélévation casse-pression », "De-couple
+  maximum" / « Température maximale casse-pression », "Buffer excess" / « Surélévation stock
+  tampon », "Boiler sequence 1, first" / « Ordre des chaudières 1, première » (and the three others),
+  "Reduced hot water setpoint" / « Consigne ECS réduite », "Legionella start time (quarter hours)" /
+  « Heure anti-légionelle (quarts d'heure) », "Summer time start, day" / « Début heure d'été, jour »
+  (and the three others), "Plate exchanger primary B24" / « Échangeur à plaques, primaire B24 »,
+  "Room setpoint in effect" / « Consigne d'ambiance en vigueur », "Outside temperature, mixed" /
+  « Température extérieure mélangée », "Heating circuit type" / « Type de circuit de chauffage »;
+  value labels "Boiler A / B" and the six circuit types; the twenty French comments in `src/fr.yaml`.
 - **Trial 0.5.14 (prepared locally on 2026-11-19, nothing pushed).** The clock fields
   `SystemHour`, `SystemMinute`, `SystemSecond` and the fault-log `ErrorHour`, `ErrorMinute` of
   `50.w.em1` lose their duration units (h, min, s): times of the day, found by the companion's
@@ -233,7 +253,8 @@ data point on arbitration with room units).
   without the owner, and E cannot be replayed here (lot F is checked out in the clone's own
   checkout), so the fix is one commit in lot G (`b06e738`, on the published `c030f75`), H to M
   replayed: H `a5a833c`, J `4efe2f1`, K `8c87a80`, N `c608cc4`, L `ac3a9bf`, M `023f54b`; trial
-  `weishaupt-next` `fbc46f1`, check clean, 976 messages, 905 fixtures. CSV against 0.5.13:
+  `weishaupt-next` `fbc46f1`, check clean, 976 messages, 905 fixtures. Lot O joined the trial
+  afterwards (above); the heads of G to M below are those before it. CSV against 0.5.13:
   `50.w.em1` only, five unit columns emptied; metadata: unit and unit description of these five
   fields. ebusd restarts with the new files. To publish, on the owner's word: force-push with
   leases G, H, J, K, N, L, M and `weishaupt` to `fbc46f1`, the workbench `main`; release
