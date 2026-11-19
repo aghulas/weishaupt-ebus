@@ -212,7 +212,9 @@ data point on arbitration with room units).
   de chauffage (paramètre 315) : 0 température de départ constante, 1 en fonction de la
   température extérieure ». To publish, on the owner's word: force-push with leases C, G, H,
   J, K, N, L, M and `weishaupt` to the trial head, the workbench `main`; release
-  `weishaupt-0.5.13`. Or keep it for the next definitions change.
+  `weishaupt-0.5.13`. **Held** (owner, 2026-11-19, « Oui, comme proposé »): not published
+  alone, it rides with the next real definitions change; its French string is accepted
+  (`evidence/terms.md`).
 - **Trial 0.5.12, metadata only (prepared locally on 2026-11-19, nothing pushed).** Field key
   `absent` (contract, `scripts/metadata.py`: output and check) for a temperature whose sensor is
   not fitted, on 22 fields: -40.0 on both boilers (information values `OutsideTemp`,
