@@ -193,7 +193,7 @@ Two registers have a second, earlier independent read as well: `1a 0a` of the ro
 
 The developer window of the second build displayed **`EEA_N_ZUE` = 187 277** on automat A
 from the EEPROM bytes `8d db 02` at `0x01eb` (19:19). That is the counter lot D reads
-(`BurnerStarts`, 187 277 in ebusd's cache at 15:47 and 15:17 the same day: no start in between),
+(`BurnerStarts`, 187 277 in ebusd's cache at 13:47 and 15:17 the same day: no start in between),
 and the register `27 02` answered `db 02` (731) in the survey: **the two upper bytes of that
 counter, `db 02`, exactly**. So `27 02` is a 16-bit register mapped on EEPROM `0x01ec`–`0x01ed`,
 the upper two bytes of the burner-start counter (starts / 256), now established by the tool's
