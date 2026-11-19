@@ -728,12 +728,27 @@ Parameter lists of the DHW extension module (a type not installed here), numbers
 
 The EM entry opens the window of a heating module on its own, for circuit 2: process values (type
 of operation, error, room setpoint, flow setpoint, current heat demand, mixed outside temperature,
-flow temperature of the heat exchanger) and the tabs listed above. With the tool connected this
-window would presumably read module `51` directly instead of through the room unit.
+flow temperature of the heat exchanger) and the tabs listed above.
 
-Not established: what these entries send when the tool is connected (reads of the chosen type
-only, or telegrams in the name of a simulated device). Not tried online. The other six entries
-were not opened.
+The other six entries were not opened.
+
+### 20:06–20:08 — the EM entry with the tool connected
+
+On the owner's word. Tool connected at about 20:06:05, EM chosen at 20:06:34, window open until
+20:07:50, tool disconnected at 20:08:01. Four snapshots of the grabbed telegrams over that time.
+
+- **The simulated window sends nothing.** Not when it opens, not when the Configuration tab is
+  shown, not when `Read` is pressed on that tab: the count of telegrams with source `ff` did not
+  move (368 before and after) and no new source address appeared on the bus.
+- The window stays empty, error field 11, as offline. Connected, the Process values tab shows the
+  module part as well (flow temperature of the circuit, outside temperature, H1 input, mixer
+  pump, pump PWM, mixer opening and closing); the Configuration tab shows P315 with the type
+  pre-filled as mixed heating circuit and empty fields for pump, outside sensor, voltage and
+  module version.
+- **Established:** Sim FS is a display-only simulation. It shows the layout and parameter numbers
+  of a device type; it neither reads a real device nor answers on the bus as one. It cannot be
+  used to read module `51` directly. The tool still reaches the modules only through the windows
+  of the room units.
 
 ## Registers without a definition, by device
 
@@ -786,7 +801,7 @@ register is to be read from ebusd with the same result (`docs/service-tool-proto
 - Heating programmes of `f5`: not opened.
 - Automat B: not opened (the tool reported it as not available on the second visit).
 - System time, Extra access, Password, eBus-Trigger, CM controller, BCC, Analyse BCC, and the
-  tabs MasterReset and Ion-Kalib of the developer window: not opened. Sim FS: offline only.
+  tabs MasterReset and Ion-Kalib of the developer window: not opened.
 - The meaning of the values of the enumerations (circuit type, functions of inputs and outputs)
   beyond the ones displayed.
 

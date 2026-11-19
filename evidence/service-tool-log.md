@@ -568,3 +568,6 @@ was driven remotely; each screen was matched with the telegrams of source `ff` g
   earlier statement that a type not on the bus cannot be opened holds for File, Open only.
 - 19:53: the three selectors were written back to 0 through ebusd from source `31`
   (`0903 9a 0b 00 00`, answer `00`), read 9 before and 0 after; `ErrorId` of `em1` reads 0 again.
+- 20:06–20:08, tool connected: the Sim FS entry for a heating module opens its window but sends
+  nothing, also on `Read`. Sim FS is display-only; it gives layouts and parameter numbers, no
+  access to a device.
