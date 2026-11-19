@@ -49,6 +49,7 @@ inserted between J and L this way on 2026-11-18), then L and M are rebased and t
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
+**0.5.7 released (2026-11-19)** from `weishaupt` `f9b1b43`, on the owner's word (« Oui, comme proposé »): lot branches H to M and `weishaupt` forced with leases (C and G unchanged), five files published as a pre-release. 799 messages: heating program 1 of `fs3` (21 slots) read and written, proven by one slot on 2026-11-19. Downloaded again: the four checksums right, 799 messages without error in the official ebusd, both archives. The same morning `ha-weishaupt` v0.3.0rc2 was released as a pre-release (five choices as selects).
 **0.5.6 released (2026-11-18)** from `weishaupt` `87d7caf`, on the owner's word (« Oui, tout »): lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 778 messages: 5 choices (legionella day, circulation with legionella, holiday level of the three room units), the date and time broadcast, the five programs of `fs1` (105 slots) read and written, on top of the 66 numeric settings. The notice counted 66 written settings and was corrected before publication. Downloaded again: the four checksums right, 778 messages without error in the official ebusd, both archives. The same evening `ha-weishaupt` v0.3.0rc1 was released as a pre-release.
 **0.5.5 released (2026-11-18)** from `weishaupt` `75f943f`, on the owner's word: `weishaupt-M` and `weishaupt` forced with leases (C to L unchanged), five files published as a pre-release. Metadata only: write ranges of the setback setpoint and the curve (12 settings), comfort class for the room and hot-water setpoints on every device; CSV identical to 0.5.4. Downloaded again: the four checksums right, 662 messages without error in the official ebusd, both archives.
 **0.5.4 released (2026-11-18)** from `weishaupt` `970143b`, on the owner's word: lot branches C to M and `weishaupt` forced with leases, five files published as a pre-release. 66 writable settings: the flow limits of `50.w.em1`, taken from `ff` only (batch 7 on site); the CSV differ from 0.5.3 only in `50.w.em1`. Downloaded again: the four checksums right, 662 messages without error in the official ebusd, both archives. The same day `ha-weishaupt` v0.1.3 was released (latest), which sends these two from `ff`.
@@ -109,7 +110,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3`, `weishaupt-0.5.4` `weishaupt-0.5.5` and `weishaupt-0.5.6` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3`, `weishaupt-0.5.4` `weishaupt-0.5.5`, `weishaupt-0.5.6` and `weishaupt-0.5.7` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -128,6 +129,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
+| `aghulas/ebusd-configuration` | `weishaupt-0.5.7` (pre-release) | as 0.5.6, plus heating program 1 of `fs3`, written. Downloaded again after publication: checksums right, 799 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.6` (pre-release) | as 0.5.5, plus 5 choices, the date and time broadcast and the programs of `fs1`, written. Downloaded again after publication: checksums right, 778 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.5` (pre-release) | as 0.5.4 (same CSV); in the metadata, write ranges of 12 settings and a consistent comfort class. Downloaded again after publication: checksums right, 662 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.4` (pre-release) | as 0.5.3, plus the flow limits of the direct circuit `50`, written from `ff` (66 in all). Downloaded again after publication: checksums right, 662 messages without error in the official ebusd. |
