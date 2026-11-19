@@ -95,3 +95,36 @@ owner-assisted display steps, no bus write) and the owner's checklist:
   `SW=2726`, as `35` and `f5`. The identification answers also show that `f5` gives the ID
   bytes `57 02 00 08 00` where `35` and `75` give `57 02 00 18 00` (the heating modules give
   `57 03 00 08 00`): room unit 3, not room unit 2, is the one that differs here. Meaning not known.
+
+## A participant at master `00` / slave `05` (recorded 2026-11-19, read only)
+
+From the deploy session's reading of ebusd's log and the telegram log; nothing sent to the bus.
+
+- **`05` answers an identification request** (`07 04`) with `0a 50 00 00 00 00 00 01 20 00 98`:
+  manufacturer 0x50 (Kromschröder), an empty ID, software 01.20, hardware 00.98 (ebusd:
+  `scan 05: ;Kromschroeder;;0120;0098`). `05` is the slave address of master `00`.
+- **Master `00` is active every day** since the telegram log begins (2026-11-09), about 10 000
+  telegrams a day: lone `00` bytes and `07 04` identification requests to `16`, `1c`, `24`, `3c`,
+  `44`, `53`, `54` and others, 248 times each on 2026-11-19. It scans the bus itself.
+- **It is not the vendor's interface**: the service tool (source `ff`) addressed `05` at 20:07:32
+  (`09 02`, register `59 03`, four timeouts) and reports its own version as 156.24. The system
+  manager's other address `f6` answers W, 66.18 (as `ka`); `0c` answers `ff` bytes.
+- **"First answered on 2026-11-18 at 12:43" is our change, not a new device.** Until the switch to
+  the definitions release that morning, ebusd ran without `--scanconfig` (deploy log, 2026-11-18,
+  "Switch of ebusd": the options before had no `--scanconfig`); it was added at 12:35, and the first
+  full scan of every address followed. So ebusd first *asked* `05` at 12:43. Before, the only
+  telegrams to `05` were the system manager's (`f1 → 05`, on 11-10, 11-16, 11-17), which timed out;
+  `05` answers identification but not those. One scan since (2026-11-19 08:27) did not list `05`:
+  it does not answer every time. Master `00` itself was already in the log on 2026-11-15 (noted in the
+  deploy log of 2026-11-18 18:40).
+- **Earlier traces in this repository**: none of the evidence records names `05` or master `00`;
+  the three telegrams `10 → fc` (heat demand to an address no device has, `evidence/heat-demand.md`)
+  are a different address (`fc` is the slave of master `f7`) and unrelated as far as the data go.
+
+**What would establish it**: the equipment list of the installation (a Kromschröder / Weishaupt
+module with bus access that is not one of the boilers, the system manager, the room units or the
+heating modules: a gateway, remote-access or display module), then, once named, a register read
+of `05` (`50 22`) against its manual's parameter list. Nothing to define until then.
+
+**Most likely**: a Kromschröder communication module of the WCM family (a gateway or remote-access
+unit) that keeps a list of the bus participants by scanning them from master `00`.
