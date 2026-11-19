@@ -30,8 +30,8 @@ and the answer is `02 <lo> <hi>`; "register N" is the 16-bit number, as in `DL.I
 - The developer window names the boiler EEPROM bytes `0x02`–`0x18` and `0x1b`–`0x51` one by one
   and displays the counters with their sizes. All displayed values equal the bytes on the bus.
   This gives the displayed figure for burner starts and mains-on that lot D was missing.
-- Nothing was written by a control of the tool, no parameter was changed, no reset was used.
-  The tool was left disconnected.
+- No parameter was changed and no reset was used. The only writes are the selector writes of the
+  history tabs. The tool was left disconnected.
 
 ## Program and connection
 
@@ -217,13 +217,14 @@ device "KA", code 191.)
 - Device value 0 is displayed as "KA". Codes seen: 0 and 191, alternating; several entries are
   dated in the year 2000 (clock not set at the time).
 - **Side effect of this session:** the selector of room unit `35` was left at 9. It was at an
-  unknown value before. The History tab was not opened on any other device after this was seen.
+  unknown value before. The other history tabs were opened later, on the owner's word (see
+  "Second visit").
 - The tab has a `Reset` button; it was not used.
 
 ## Room unit `f5` with heating module `52`, window `FS#3 EM-HZ#3`
 
-Tabs: Process values, User, Engineer HC, Heating 1–3, Configuration, History. Heating 1–3 and
-History were not opened.
+Tabs: Process values, User, Engineer HC, Heating 1–3, Configuration, History. Heating 1–3 were
+not opened; History: see "Second visit".
 
 ### 19:08:40 — Process values (targets `f5` and `52`)
 
@@ -303,7 +304,7 @@ setpoint with register 2 of `15` (36,2).
 ## Cascade manager, entry `KA` (`15`)
 
 Tabs: Process values, Engineer HC, Engineer DHW, DHW, Circulation, Error history, Configuration.
-Error history was not opened (see "History" above).
+Error history: see "Second visit".
 
 ### 19:11:51 — Process values
 
@@ -385,7 +386,7 @@ registers 118 (`76 00`) and 120 (`78 00`), both `18 fc` = -100,0 (buffer top and
 ## Boiler automat A (`08`), second build
 
 Window title as on 2026-11-16. Tabs: Process values WTC, End user, Heating specialist,
-Manufacturer, Statistic, Error history (not opened this time).
+Manufacturer, Statistic, Error history (see "Second visit").
 
 ### 19:15:55 — Heating specialist
 
@@ -597,6 +598,90 @@ The order is the reverse of the Statistic tab of the boiler window (which starts
   parameter file: the entries SOL and FB/EM ask for a file with the extension `ESO` and `EEM`.
   No such file is on the PC. Both dialogs were cancelled.
 
+## Second visit, 19:30–19:36 — fault histories
+
+On the owner's word the history tabs were opened on the other devices. The tool was connected
+again at 19:29:58 and disconnected at 19:35:40.
+
+### 19:30:57 — room unit `f5`, Process values (seen again)
+
+One more field than at 19:08: flow temperature of the heating circuit, 38,2 °C, read on the module:
+`52 0902 0f 00 02 / 02 7f 01` (register 15 = 38,3; polled, the display was one read behind).
+Register 15 on a heating module is not defined for `52` in the fork. The field was absent at 19:08
+and no request for register 15 was sent then.
+
+### 19:31:38 — room unit `f5`, History
+
+Ten writes `f5 0903 9a 0b <n> 00` (n = 0–9), each followed by the eight reads, as on `35`.
+
+| Entry | Date | Time | Device shown | Code |
+|---|---|---|---|---|
+| 1 | 01.09.2000 | 03:51 | WTC | 0 |
+| 2 | 03.09.2000 | 11:42 | WTC | 191 |
+| 3 | 03.09.2000 | 10:28 | WTC | 0 |
+| 4 | 01.09.2000 | 19:57 | WTC | 191 |
+| 5 | 01.09.2000 | 17:56 | WTC | 181 |
+| 6 | 01.09.2000 | 01:11 | WTC | 191 |
+| 7 | 01.09.2000 | 00:55 | WTC | 0 |
+| 8 | 01.09.2000 | 00:15 | WTC | 191 |
+| 9 | 19.09.2000 | 23:58 | WTC | 0 |
+| 10 | 02.09.2000 | 06:36 | WTC | 191 |
+
+Registers of entry 10: code `bf 00`, type `03 00`, device `00 00`, minute 36, hour 6, day 2,
+month 9, year 0.
+
+- Year 0 is displayed as 2000.
+- Entry 10 of `35` and entry 10 of `f5` both read type 3 and device 0, yet the device column says
+  "KA" in one window and "WTC" in the other. The text of that column is therefore not derived
+  from registers 2972 / 2973 alone. Not established.
+- Eight of the ten entries of `f5` are also in the list of `35` (same date, time and code).
+
+### 19:32:53 — cascade manager `15`, Error history
+
+Same mechanism: ten writes `15 0903 9a 0b <n> 00`, eight reads each.
+
+| Entry | Date as shown | Time | Device shown | Code |
+|---|---|---|---|---|
+| 1 | 07.11.2026 | 03:30 | WTC 2 | 0 |
+| 2 | 07.11.2026 | 03:30 | WTC 1 | 0 |
+| 3 | 01.01.20165 | 00:00 | WTC 2 | 80 |
+| 4 | 01.01.20165 | 00:00 | WTC 1 | 80 |
+| 5 | 00.00.2000 | 03:51 | KA | 0 |
+| 6 | 03.00.2000 | 11:27 | KA | 191 |
+| 7 | 03.00.2000 | 10:28 | KA | 0 |
+| 8 | 03.00.2000 | 10:28 | KA | 192 |
+| 9 | 01.00.2000 | 19:42 | KA | 191 |
+| 10 | 01.00.2000 | 17:41 | KA | 181 |
+
+Registers of entry 10: code `b5 00` (181), type `09 00`, device `00 00`, minute 41, hour 17,
+day 1, month 0, year 0.
+
+- Entries 1 and 2 carry the date and time of the entry read through ebusd on `50`
+  (`evidence/em1-fault-log.md`: 7 November 2026, 03:30, code 0, device 1). That read returned
+  device 1 for selector 0; the tool shows "WTC 2" first. Which of the two is selector 0 was not
+  separated in this capture (only the registers of the last entry stay in the snapshot).
+- Month 0 is displayed as "00"; the year of entries 3 and 4 is displayed with five digits.
+- **Established: `15` and `50` share the selector.** Right after this tab, a read through ebusd
+  (`read -f -c em1 ErrorId`, target `50`) returned 9. It returned 0 on 2026-11-18. Until the
+  selector is written back to 0, the fault-log messages of `em1` return entry 9, not the most
+  recent one.
+
+### 19:34:26 — boiler automat A, Error history
+
+Five `50 00` reads of EEPROM `0x0200`–`0x0231`, no write. The six entries and all 48 values are
+the ones recorded on 2026-11-16 (W12, F11, W12, W12, W12, W12): no new entry since.
+
+### 19:34:56 and 19:35:25 — boiler automat B
+
+The tool answered twice that the selected device is not available, and sent no telegram to `18`
+either time. Not opened. Its history is in the log of 2026-11-16.
+
+### Selectors
+
+After this visit the selectors of `35`, `f5` and `15` (and so `50`) are at 9. The tool offers no
+way to write them back; a `Read` in the tab runs through 0–9 again. Writing them back to 0 is a
+bus write and was handed to the session that runs the on-site write tests, with the owner's words.
+
 ## Registers without a definition, by device
 
 Candidates for the definitions session. "Value" = established by a value that occurs once on the
@@ -645,11 +730,11 @@ register is to be read from ebusd with the same result (`docs/service-tool-proto
 
 ## Not opened, not verified
 
-- History tab of `f5`, Error history of `15`, heating programmes of `f5`: not opened.
-- Automat B: not opened in this session.
+- Heating programmes of `f5`: not opened.
+- Automat B: not opened (the tool reported it as not available on the second visit).
 - System time, Extra access, Password, eBus-Trigger, CM controller, BCC, Analyse BCC, Sim FS,
   and the tabs MasterReset and Ion-Kalib of the developer window: not opened.
-- The selector written by the History tab on `35` was not read back.
+- The selectors of `35` and `f5` were not read back; the one of `15` was, through `50`.
 - The meaning of the values of the enumerations (circuit type, functions of inputs and outputs)
   beyond the ones displayed.
 

@@ -557,4 +557,8 @@ was driven remotely; each screen was matched with the telegrams of source `ff` g
   only). The selector of room unit `35` was left at 9. The tab was not opened on another device.
 - The tool never addressed `50`. A device type that is not on the bus cannot be opened: File,
   Open only loads saved parameter files.
-- The tool was disconnected at 19:22:06; no telegram with source `ff` after that.
+- The tool was disconnected at 19:22:06, and after the second visit at 19:35:40.
+- Second visit, 19:30–19:36, on the owner's word: History of `f5` and Error history of `15` opened
+  (ten selector writes each, entries recorded), Error history of automat A unchanged since
+  2026-11-16, automat B reported as not available. `15` and `50` share the selector: `ErrorId` of
+  `em1` read 9 afterwards. Selectors of `35`, `f5`, `15` are at 9 until written back to 0.
