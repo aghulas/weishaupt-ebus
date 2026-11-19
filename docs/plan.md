@@ -194,6 +194,22 @@ data point on arbitration with room units).
 - **Nine upstream branches wait for #717.** `upstream/<topic>` (section below), local only, texts
   in `docs/pr-<topic>.md`; to propose one at a time once the maintainer answers #717, on the
   owner's word (rule 8).
+- **Trial 0.5.10, metadata only (prepared locally on 2026-11-19, nothing pushed).** Lot M
+  `d882b90` (one commit on `56d9565`): the room units' `PowerDemand` gets its own field set,
+  `modulation` and `dhwsettemp` skipped (the room units always send the replacement value;
+  `ukn2` was already skipped), and the requested flow temperature labelled "Requested flow
+  temperature (sent)" / « Température de départ demandée (envoyée) », because the label it had
+  is also that of `HeatDemandTemp` on the same device, which made the companion put the message
+  label in front (checked with the companion's own naming code: under 0.5.10 the room units show
+  "Request state" and the new label, nothing prefixed). The new label is **proposed**: the
+  owner's word is needed before publication. With the lot K comment fix below. Trial
+  `weishaupt-next` `c9c200e`: `scripts/check.sh` clean, 930 messages, 813 fixtures. Built with
+  `scripts/release.sh 0.5.10` into `out/release/`: the CSV of both archives identical to 0.5.9
+  (only `README.md` and `sha256sums.txt` differ); the metadata differs in 9 fields only (three
+  per room unit). The notice says it installs with a reload only. To publish, on the owner's
+  word: force-push `weishaupt-K`, `-N`, `-L`, `-M` and `weishaupt` with leases, tag and release
+  `weishaupt-0.5.10` with the five files. On the installation the six room-unit entities that
+  read `unknown` lose their metadata; how the companion treats them then is its own.
 - **Comment fix of lot K (local, 2026-11-19).** `weishaupt-K` `3f11b51` and the lots above it
   replayed (`weishaupt-N` `5e5476e`, `-L` `17027d7`, `-M` `56d9565`); `scripts/check.sh` clean on
   K (925 messages) and on the trial `weishaupt-next` `523d30a` (930 messages, 813 fixtures);

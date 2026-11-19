@@ -106,7 +106,9 @@ value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, 
 
 - A message with one field is one value: its label is the message's.
 - A message with several fields has per field a `label` and a `kind`, or `skip: true` for a
-  bit without a known meaning. `compose: true` on the message means a field label needs the
+  bit without a known meaning or a field the devices of the entry never fill (they always
+  send the replacement value; from 0.5.10, `modulation` and `dhwsettemp` of the room units'
+  `PowerDemand`). `compose: true` on the message means a field label needs the
   message label in front to be unique on the device ("Boiler 1 status" + "Flame");
   `compose: false` means the field label stands alone.
 - `guard: true` (the field `firstbyte` of the memory reads): the reading is valid only when

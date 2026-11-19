@@ -152,5 +152,12 @@ cascade under a WCM system manager (`15`). Read-only; no write was sent (rule 7)
   `SW=1104` of the WCM-CPU; the WCM-CUI version was not read separately from the scan.
 - **Register `27 02`** (731 on `08`, 543 on `18`): a per-boiler number, stable and stepping on
   its own, not matched to any *Info* `i` code (the Info counters i 42 and i 43 do not fit it).
-  Left out of the lot; a finding for a later session with the service tool. Other sub-01
+  Left out of the lot; a finding for a later session with the service tool.
+  **Identified on 2026-11-19 from the data** (no new read): it is the burner-start counter
+  divided by 256, the upper 16 bits of the 24-bit counter lot D reads from EEPROM
+  ([bc-counters.md](bc-counters.md)): its 187 226 to 187 230 starts on `08` and 139 017 on `18`
+  give 731 and 543, the values read here; 187 277 and 139 101 in ebusd's cache on 2026-11-19
+  still give 731 and 543 (any count from 187 136 to 187 391 gives 731).
+  Not confirmed by a step: `08` should read 732 once its starts pass 187 392. Not defined, lot
+  D holds the full counter. Other sub-01
   registers hold parameters and setpoints and were not read here.

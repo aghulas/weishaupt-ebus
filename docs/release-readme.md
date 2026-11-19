@@ -24,7 +24,22 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.8
+## Changes since 0.5.9
+
+- **Metadata only; the CSV files are the same as in 0.5.9.** ebusd needs nothing: keep the
+  0.5.9 files or swap them, the messages are identical. An interface that reads the metadata
+  file takes this release with a reload of its configuration, without a restart of ebusd or of
+  the interface: the first update of the definitions that installs this way.
+- `PowerDemand` of the room units (`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`): `modulation` and
+  `dhwsettemp` are marked `skip` in the metadata, as `ukn2` already was. The room units always
+  send the replacement value there (ebusd prints `-`), so an interface no longer shows two
+  values that never have one. The boilers keep these fields.
+- The requested flow temperature of the room units' `PowerDemand` has its own label,
+  "Requested flow temperature (sent)", so that it no longer has the label of the message
+  `HeatDemandTemp` of the same device (an interface had to put the message label in front).
+- A source comment of the boiler information values corrected (no effect on the CSV).
+
+## Changes from 0.5.8 to 0.5.9
 
 - **Heat demand telegrams `05 07`** (`PowerDemand`, five messages), passive, nothing polled:
   what each room unit asks the cascade manager (`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`) and what
