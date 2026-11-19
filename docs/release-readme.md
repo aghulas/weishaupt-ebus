@@ -136,6 +136,8 @@ those translated here (for example `temperature`).
 
 ## Known limits
 
+- One room unit of the test installation (`75.w.fs2`) acknowledges program-slot writes and keeps
+  none, the cause unknown; its programs are read only here. The two others keep them.
 - Checked on one installation: two WTC boilers in cascade (automat software 11.04), system
   manager, three heating circuits. Other models and software versions may differ.
 - The files are named with the identification the devices answer to the scan (`W`), for

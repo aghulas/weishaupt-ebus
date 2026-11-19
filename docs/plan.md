@@ -430,6 +430,10 @@ data point on arbitration with room units).
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
 
+- **2026-11-19, room unit 2 keeps no program write.** A slot in use (Monday slot 1, `1e 10 14
+  47 1a`) acknowledged and not kept at 08:46: the programs of `fs2` stay read only. No lock in
+  the manuals; the role of the unit (installer parameter P312) is the lead, not readable here.
+  Notice of 0.5.8: a known limit for it; archives rebuilt, definitions unchanged.
 - **2026-11-19, programs of `fs3` and `50`; trial release 0.5.8 (local).** Batch of 08:41–08:44
   (owner's word): six programs kept and restored from `31`, `fs2` refused the same slot again
   (not a passing state). Lot H one commit (the programs of `50` are read by lot A; their writes

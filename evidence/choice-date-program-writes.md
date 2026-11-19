@@ -398,6 +398,39 @@ or a refusal to enable an unused slot that room units 1 and 3 do not have. Next,
 used slot changed in place (`1e 10 14 47 1a`, restore `8e 10 14 48 1a`), and a look at the
 display and access settings of room unit 2.
 
+### Room unit 2 refuses a slot in use too (2026-11-19 08:46)
+
+| setting | date | source | change | read → answer |
+|---|---|---|---|---|
+| fs2 HCProgram1Mon1 | 2026-11-19 08:46 | `31` | `1e 10 14 47 1a` (06:30 to 17:45) | `a4 10 14` → `48 1a` before, at 08:46:29 and at 08:47:29 |
+
+Acknowledged `00`, not kept; nothing to restore. So room unit 2 does not refuse only the
+enabling of an unused slot: it keeps **no program write**, from `31` or from `ff`, used or
+unused slot, on two days. **The programs of `fs2` stay read only.**
+
+What is left, read only:
+
+- **No lock in the manuals.** The user manual of the WCM-FS 2.0 (document 83277702) gives the
+  programs as editable at the end-user level (chapters 4.7.24 and 4.7.25, pages 38 and 39) and
+  names no lock or access code for them; its "Lockout" (page 9) is a fault display. The
+  installer manual (document 83277504, page 36) lists the commissioning parameter P312
+  "address of the room unit", which sets the role of each unit (control centre, heating circuit
+  1 of the boiler, heating circuit of extension module 2, or both; user manual page 37); the user
+  manual's chapter 4.7.27 (page 41) lets one room unit set an extension module that has no room
+  unit of its own, its time programs included. Which register holds P312, and whether the
+  role of room unit 2 keeps its programs elsewhere, is not established.
+- **No candidate among the registers read.** Of 205 registers read on the three room units, six
+  differ (heat demand, flow setpoint, room temperature, room setpoint: current values; the
+  curve; the circuit type, where room unit 2 equals room unit 3). None is a lock. The
+  identification differs in one byte (`18` on `35` and `75`, `08` on `f5`), room unit 2 having
+  the value of room unit 1, which keeps program writes.
+- **The change of 2026-11-02** on the three room units (Monday slot 1, the operator's log) was
+  never checked on room unit 2: the log gives the restore read back, not the change.
+
+Next, read only: the display of room unit 2 (installer level, P312 and the menu "Access HC
+w.o. FS" of the other units), and the parameter P335 "configuration of the room unit" on
+each.
+
 ### The identification of room unit 2 (2026-11-19)
 
 After a restart of ebusd on 2026-11-19 at 08:27, the operator's deployment session read
