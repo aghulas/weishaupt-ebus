@@ -26,14 +26,15 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
 ## Changes since 0.5.8
 
-- **Heat demand telegrams `05 07`** (`PowerDemand`), passive, nothing polled: what each room
-  unit asks the cascade manager (`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`) and what the cascade
-  manager asks each boiler (`08.w.bc1`, `18.w.bc2`). Named fields: `heatdemandtemp` (room unit:
-  its requested flow temperature; manager: its modulation limit temperature),
-  `modulation` (manager to boiler: the burner load asked for, in %), `dhwsettemp` (manager to
-  boiler: the hot-water setpoint), `status` (a plain number: `238` or `102` while a boiler is asked for
-  power). The other bytes are published as `ukn2`, `ukn5`, `ukn9`, meaning not established.
-  Field names are lower case, as for every message of these files.
+- **Heat demand telegrams `05 07`** (`PowerDemand`, five messages), passive, nothing polled:
+  what each room unit asks the cascade manager (`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`) and what
+  the cascade manager asks each boiler (`08.w.bc1`, `18.w.bc2`). Named fields:
+  `heatdemandtemp` (room unit: its requested flow temperature; manager: its modulation limit
+  temperature), `modulation` (manager to boiler: the burner load asked for, in %),
+  `dhwsettemp` (manager to boiler: the hot-water setpoint), `status` (a plain number: `238`
+  or `102` while a boiler is asked for power). The other bytes are published as `ukn2`,
+  `ukn5`, `ukn9`, meaning not established. Field names are lower case, as for every message
+  of these files. Nothing else changed: no message renamed, no write added.
 
 ## Changes from 0.5.7 to 0.5.8
 

@@ -256,16 +256,17 @@ changed where the line says so; an unticked line was not put to the owner.
 The two lines above were added after the owner's first pass, once lot J existed, and put to
 the owner on 2026-11-18 as well; both accepted as written.
 
-Added on 2026-11-19 with the heat demand lot (`weishaupt-N`), not yet put to the owner:
+Added on 2026-11-19 with the heat demand lot (`weishaupt-N`) and put to the owner the same day:
+accepted as proposed, except "modulation demand", where the owner chose the alternative.
 
 | | English string | French proposal | Why the sources did not settle it | Alternative |
 |---|---|---|---|---|
-| [ ] | heat demand of the cascade manager to the first boiler (second boiler) | demande de chaleur du manager de cascade à la première (seconde) chaudière | vendor terms only ("demande de chaleur" KA p. 57, device names KA p. 18); the telegram itself is not described | demande de chaleur transmise par le manager de cascade à la première chaudière |
-| [ ] | heat demand of the room unit to the cascade manager | demande de chaleur de la commande à distance au manager de cascade | same | demande de chaleur transmise au manager de cascade |
-| [ ] | requested flow temperature | température de départ demandée | "requested" as in the accepted "consigne de température départ demandée" | consigne de départ demandée |
-| [ ] | modulation demand | consigne de degré de modulation | "degré de modulation" is the vendor's (KA p. 109); the service tool's label is "setpoint mod. degree" | demande de modulation |
-| [ ] | request state, values not established | état de la demande, valeurs non établies | not a manual notion | octet d'état de la demande |
-| [ ] | second byte / fifth and sixth byte / ninth byte, meaning not established | deuxième octet / cinquième et sixième octets / neuvième octet, signification non établie | not a manual notion | octet n, signification inconnue |
+| [x] | heat demand of the cascade manager to the first boiler (second boiler) | demande de chaleur du manager de cascade à la première (seconde) chaudière | vendor terms only ("demande de chaleur" KA p. 57, device names KA p. 18); the telegram itself is not described | demande de chaleur transmise par le manager de cascade à la première chaudière |
+| [x] | heat demand of the room unit to the cascade manager | demande de chaleur de la commande à distance au manager de cascade | same | demande de chaleur transmise au manager de cascade |
+| [x] | requested flow temperature | température de départ demandée | "requested" as in the accepted "consigne de température départ demandée" | consigne de départ demandée |
+| [x] | modulation demand | demande de modulation (chosen by the owner; the proposal was "consigne de degré de modulation") | "degré de modulation" is the vendor's (KA p. 109); the service tool's label is "setpoint mod. degree" | consigne de degré de modulation |
+| [x] | request state, values not established | état de la demande, valeurs non établies | not a manual notion | octet d'état de la demande |
+| [x] | second byte / fifth and sixth byte / ninth byte, meaning not established | deuxième octet / cinquième et sixième octets / neuvième octet, signification non établie | not a manual notion | octet n, signification inconnue |
 
 ### Patterned comments
 
@@ -336,6 +337,8 @@ that date.
 | Mixer closing, opening | Vanne mélangeuse, fermeture, ouverture | bits of the room unit / module exchange | not read in a manual |
 | Flame; Burner; Service; Heating | Flamme; Brûleur; Entretien; Chauffage | status bits | vendor words, used alone as the name of a bit |
 | Start, End; Start enabled, End enabled | Début, Fin; Début activé, Fin activée | fields of a program slot | the display shows times, not field names |
+| Heat demand of the cascade manager; Heat demand to the cascade manager | Demande de chaleur du manager de cascade; Demande de chaleur au manager de cascade | message `PowerDemand` of the boilers; of the room units | the telegram is not described; accepted by the owner on 2026-11-19 |
+| Request state; Modulation demand | État de la demande; Demande de modulation | fields of `PowerDemand` | same; "Demande de modulation" chosen by the owner on 2026-11-19 (proposal "Consigne de degré de modulation") |
 
 Decided at the same time: the labels follow the glossary and not the abbreviations of the
 displays ("Tps blocage", "Lim antigel"); the boiler information values keep their code in
