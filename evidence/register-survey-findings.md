@@ -237,30 +237,118 @@ the six function registers (values agree, assignment not established); `12 01` (
 `52` (pass 2); the boiler parameters of chunks 1 and 2 (the owner's reading of P10–P71); the
 six boiler counters of the developer window (pass 2, memory read).
 
-## Pass 2, as now generated
+## Chunks 5 and 6 — heating module `51` (end) and room unit `35` (2026-11-19, 20:02 to 20:55)
 
-`scripts/register-survey.py <csv-dir> pass2 out/register-survey-pass1-results.csv` now also
-sends the five failed requests of `08` again, one register each, and adds on every device of a
-type the catalogue's on-installation registers that the pass-1 ranges miss: 6 for the heating
-modules (`a9 04`, `e9 04`, `ae 06`, `1f 0c`, `fb fd`), 20 for the room units (legionella
-`87 05`, WTC delay `14 06`, solar yield `ae 06`–`b1 06`, the floor-drying registers `9c 08`–`a2 08`,
-`1f 0c`, `21 0c`, daylight saving `de fd`–`e1 fd`, legionella start `f4 fd`). None for the system
-manager (all its catalogue registers lie inside its pass-1 ranges). Rows the catalogue reads at a
-master address (`0x70`, `0x4c`, `0xf1`) are left out: they are not slave registers. The full
-pass 2 is generated once pass 1 has ended.
+Chunk 5: 670 registers of `51` (0x0961–0x0bff) and the first 1 248 of `35`; chunk 6: the last 776
+of `35`. All answered. Chunk 6 paused from 20:33:11 (seq 2404) to 20:47:16 (seq 2405) when the job
+was relaunched; no request is missing (every sequence number 1–2 594 is in the results, each with
+the number of registers its request names).
 
-Two memory reads join pass 2 by hand, one per boiler, for the six counters of the developer
-window (14 EEPROM bytes from `0x01d8`, the checksum computed as for lot D's `Counters`, checked:
-lot D's `06 01 72 e6` gives `26`):
+- **`51`** (94 answering in all): besides chunk 4 (above), `6d 09` 11, `70 09` 255, `73 09` 5,
+  `b1 09` 180, `00 0a` 50, `0c 0a` 12.0, `0e 0a` `bb`, `1a 0a` 11.2 (the mixed outside
+  temperature, as on the room units), `1c 0a` 10, `22 0a` 7.3, `29 0a` 1 (input H1), the rest 0.
+- **`35`** (77 answering): the version `99 01` / `9a 01` = 327, 26 (the room units' software
+  327.26, `SW=2726` in the scan); a copy of the clock at `21 01`–`26 01` (Thursday 19.11.26,
+  20:12); hot-water settings `81 01` = 60.0, `8a 02` = 40.0, `40 01` = −3.0, `b1 09` = 180,
+  `01 01` = 5; `23 00` = 2; `10 00` = 2; `12 00` = 8.0, `1a 0a` = 11.2, `73 09` = 2 (lot O);
+  `75 00`, `76 00`, `78 00` = −100.0 (sensors not fitted); the fault-log registers `9a 0b`–`a3 0b`
+  (below).
+- **`0e 0a` on four devices**: `15` `ee`, `51` `bb`, `35` `55` (and `0f 0a`, `11 0a` beside it):
+  the request-state codes of the heat demand telegrams (`heat-demand.md`). A register holding the
+  code each device sends in `05 07` is likely; one read per device, not compared in time: a
+  finding, not a definition.
 
-```
-hex 08500005d40601d2d8
-hex 18500005d40601d2d8
-```
+## The service tool on the bus, and the fault-log selector
 
-Expected on `08`: a first byte 0, then `00 00 dd 00 00 04 00 00 bf 05 00 01 00 00` if nothing
-changed since 19:19. Every register of the tool's table is covered by pass 1 (chunks 5, 6) or by
-the catalogue additions of pass 2; none needed adding.
+The vendor tool was connected from 19:02 to 19:35:40, and its History tabs left the fault-log
+selector `9a 0b` at 9 on `35`, `f5` and `15` (so `50`) until the deploy session wrote it back to 0
+at 19:53:05–19:53:23 ([service-tool-ui-exploration.md](service-tool-ui-exploration.md),
+"Selectors"). Survey reads that depend on the selector are the fault-log entry registers
+(`9b 0b`–`a3 0b`) of those devices:
+
+- `15`: its entry registers are defined (left out of the survey); the only one read in the window
+  is `9e 0b` (19:34:18, `00 80`, not an entry field). **Nothing to discard.**
+- `35`: read at 20:51:35–40, after the selector was back at 0: entry 0, the most recent. Usable.
+- `f5`: not surveyed in pass 1.
+
+Not in the survey but worth knowing: between 19:07 and 19:53 the fault-log messages of `em1`
+(`ErrorCode` … `ErrorYear`) read entry 9, not entry 0; anything that recorded them in that window
+(the companion's history) holds the tenth entry, not the latest.
+
+## Pass 1 crossed with the catalogue, complete
+
+`scripts/survey-crosscheck.py` on the final results: system manager 65 rows answering within the
+catalogue's range, 4 `00 80`; room unit (`35`) 25 within range, 28 `00 80`, 30 rows outside the
+pass-1 ranges (in pass 2); heating module (`51`) 15 within range, 6 in pass 2. No answer outside a
+catalogue range. Answering registers without a catalogue row: 45 on `08` (the boiler is
+catalogued by memory address only), and on `15`, `51`, `35` the clock copies, versions and the
+blocks listed above.
+
+The tool's "not surveyed yet" registers of `35` and `51`, now surveyed:
+
+| Device | Register | Tool | Survey | Agrees |
+|---|---|---|---|---|
+| `35` | `1a 0a` | outside temperature, mixed, 11,2 °C | `70 00` = 11.2 | yes (lot O) |
+| `35` | `73 09` | circuit type, radiator 60 °C (2) | 2 | yes (lot O) |
+| `35` | `3b 01` (315) | one of the empty fields (`ff ff`) | `ff ff` | yes (no value) |
+| `35` | `71 09`, `1c 0a`, `bb 01`, `bc 01`, `00 0a`, `12 0a` | no value (`00 80`) | `00 80` | yes |
+| `35` | `5b 0a` (2651) | one of P370 / P371 / P331 (0) | 0 | yes; the catalogue gives 2651 as P401 function of H1 |
+| `35` | `1a 01` (282) | one of the same three (0) | 0 | yes; the catalogue gives 282 as P441 screed function |
+| `35` | `28 01`, `32 01` | one is P381 reducing operation (1) | 1, 1 | yes; the catalogue gives 306 as P501 reduced operation, 296 as P504 construction type |
+| `35` | `23 00` | P343 DHW operation, "parallel" (2) | 2 | **yes: value 2 is "parallel"** |
+| `35` | `de fd`–`e1 fd`, `af 06`, `14 06`, `1f 0c`, `21 0c` | 25 / 3 / 25 / 10; no value | outside the pass-1 ranges | pass 2 |
+| `51` | `fb fd`, `ae 06` | configuration; 0 | outside the pass-1 ranges | pass 2 |
+
+**`DHWLoadingPriority`, value 2.** The tool shows "parallel" for `23 00` = 2 on `35` and `75`.
+That establishes 2 = `Parallel` in the value list of `DHWLoadingPriority` (`ka`, read 0 =
+`Priority`), which had only 0 established; 1 = `Sliding` follows by elimination from the manual's
+three settings.
+
+## Proposed for a lot, two sources each (names for the owner)
+
+| Device, file | Register | Proposed name | Type | Sources |
+|---|---|---|---|---|
+| room units `35`, `75`, `f5` | `23 00` | `DHWLoadingPriority` (as on `ka`) | value list (0 Priority, 1 Sliding, 2 Parallel) | tool screen ("parallel" = 2 on two units) + survey |
+| | `99 01`, `9a 01` | `VersionMajor`, `VersionMinor` | UIN | scan and tool (327.26) + survey (327, 26) |
+| | `8a 02` | `DHWSetbackTemp` (parameter 133) | temp10 | room unit manual, factory 40 °C (83277504 p. 31–32) + survey 40.0 |
+| | `81 01` | `DHWMaxTemp` (parameter 601) | temp10 | manual, factory 60 °C (p. 35, 39) + survey 60.0 |
+| | `01 01` | `DHWLegionellaDay` (parameter 605) | legionellaDay | manual, factory Friday (p. 39) + survey 5 = Friday |
+| | `b1 09` | `LegionellaCirculationTime` (parameter 609), as on `ka` | seconds | manual, factory 3 min (p. 39) + survey 180 s |
+| | `9a 0b`–`a3 0b` | `ErrorId`, `ErrorCode`, `ErrorType`, `ErrorDevice`, `ErrorMinute`, `ErrorHour`, `ErrorDay`, `ErrorMonth`, `ErrorYear`, as on `em1` (read side; the selector `ErrorId` is written by the tool's History tab) | UIN, month | tool's History tab on `35` (registers and displayed entries) + survey (entry 0) |
+| heating modules `51`, `52` | `8f 01` | `MixerParameter` (parameter 365 / 425) | diff10 | tool (P365, 8.0, the only register left) + manual factory 8 K (p. 37) + survey 8.0 |
+| | `99 01`, `9a 01` | `VersionMajor`, `VersionMinor` | UIN | tool ("372.03", read on `52`) + survey on `51` (372, 3); pass 2 reads `52` |
+
+The hot-water settings of the room units are what the room unit stores; where the system manager
+prepares the hot water, as here, the values in use are those of the manager (as for the programs,
+[room-units-programs.md](room-units-programs.md)). Their comments would say so.
+
+**Still one source, or the meaning by elimination**, not proposed: `28 01` / `32 01`, `1a 01`,
+`5b 0a` (assignment by the catalogue only), `10 00` (2, the tool reads it on `f5` as P335 "internal
+room sensor"; pass 2 reads `f5`), `0e 0a` (request-state codes), `72 09`, `40 01` (−3.0, the
+factory hot-water switching difference, on the room unit and on a heating module), the clock
+copies, the boiler parameters (the owner's reading of P10–P71).
+
+## Pass 2, final request file (for the owner's approval)
+
+`out/register-survey-pass2-requests.csv`, generated with
+`scripts/register-survey.py out/release/weishaupt-ebusd-config-0.5.13/kromschroeder pass2 out/register-survey-pass1-results.csv`
+and two memory reads added by hand. **134 requests, one chunk, about 6 minutes of bus time** at one
+request every 2.5 s (plus the burner pause). Reads only: 132 `50 22` register reads (368 registers)
+and 2 `50 00` memory reads.
+
+| Device | Requests | Registers | What |
+|---|---|---|---|
+| `08` | 5 + 1 | 5 | the five failed reads again (`38 03`, `3d 03`, `3f 03`, `4b 03`, `4d 03`), one register each; one memory read of 14 EEPROM bytes from `0x01d8` (the six counters of the developer window) |
+| `18` | 45 + 1 | 45 | the 45 registers that answered on `08`, one each; the same memory read |
+| `51` | 2 | 5 | catalogue registers outside the pass-1 ranges: `a9 04`, `e9 04`, `ae 06`, `1f 0c`, `fb fd` |
+| `35` | 5 | 20 | catalogue registers outside the pass-1 ranges: `87 05`, `14 06`, `ae 06`–`b1 06`, `9c 08`–`a2 08`, `1f 0c`, `21 0c`, `de fd`–`e1 fd`, `f4 fd` |
+| `52` | 25 | 99 | the 94 registers that answered on `51`, and the 5 above |
+| `75` | 25 | 97 | the 77 that answered on `35`, and the 20 above |
+| `f5` | 25 | 97 | the same as `75` |
+
+The memory reads are `hex 08500005d40601d2d8` and `hex 18500005d40601d2d8` (checksum as lot D's
+`Counters`, checked). The fault-log registers of `75` and `f5` are read with their selectors at 0
+(set back at 19:53). The deploy session runs the file only on the owner's yes, in its window.
 
 ## Date
 
