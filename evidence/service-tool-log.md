@@ -537,3 +537,24 @@ Bus side of this table, from the captures of 17:30–17:45:
 - `AB_0000` (RAM `2b`) read `70`: bits 4, 5, 6, that is MFA1, MFA2 and pump on by the table.
   `EB_0000` (RAM `27`) read `ad` on both automats. Neither was compared with a state shown by
   the tool, so the bit numbers stay unconfirmed.
+
+## Session 3 — user interface, second build
+
+Date: 2026-11-19, 19:01–19:22. Full record: `evidence/service-tool-ui-exploration.md`. The tool
+was driven remotely; each screen was matched with the telegrams of source `ff` grabbed by ebusd.
+
+- The second build of the program has a `Development` menu. Its boiler window displays the
+  heating-specialist parameters, and its developer window names EEPROM `0x02`–`0x18` (23 bytes)
+  and `0x1b`–`0x51` (55 bytes) symbol by symbol; every displayed value equals the byte on the bus.
+- The same window displays the nine counters of automat A with their sizes: mains-on 221, burner
+  starts 187 277, operating hours 87 208, burner hours 20 197, all equal to the bytes read
+  (low byte first). Burner starts and mains-on now have a displayed figure (lot D).
+- Room units `35` and `f5`, room unit `75` and modules `51`, `52` (reached through the two
+  room-unit windows) and the parameter tabs of the cascade manager were read for the first time:
+  76 register numbers without a definition, listed with how each was established.
+- **The History tab of a room unit sends writes**: `09 03 9a 0b <n> 00`, n = 0–9, to select each
+  fault-log entry before reading it. No other write was seen (`09 02`, `50 00`, `50 22`, `07 04`
+  only). The selector of room unit `35` was left at 9. The tab was not opened on another device.
+- The tool never addressed `50`. A device type that is not on the bus cannot be opened: File,
+  Open only loads saved parameter files.
+- The tool was disconnected at 19:22:06; no telegram with source `ff` after that.
