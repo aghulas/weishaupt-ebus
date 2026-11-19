@@ -55,6 +55,14 @@ the message is `ModulationDiffTemp`, type `diff10` (K), not the proposed `Contin
 Its value, 10.0 K, is also the differential the heat-demand telegrams imply
 ([heat-demand.md](heat-demand.md)).
 
+**Parameter 561 (`e3 fd`).** The manual of the WCM-KA (document 83258404, page 92, section
+6.7.26) describes it as the temperature excess of the buffer storage ("Surch Accu", menu
+"Tampon", 0.0 to 10.0 K), which makes up for the losses of the pipes; it is not a hot-water
+setting. The message keeps its name `CalorifierExcessTemp` (the project's word for the buffer
+storage, as for the switching differential of parameter 562); its comment, which said "over the
+hot-water setpoint", is corrected for 0.5.15, and its labels "Buffer excess" / « Surélévation
+stock tampon » already say what it is.
+
 `DeCoupleMaxTemp` stays read only: a write of 78.5 was acknowledged and not taken
 (`docs/discoveries.md`); the tool's catalogue sets this parameter from 8 to 78 °C, which
 explains it. The four boiler-sequence registers stay read only (batch C not done, owner's

@@ -229,6 +229,10 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **For 0.5.15 (local, 2026-11-19).** Comment of `CalorifierExcessTemp` (parameter 561): the
+  buffer storage, not the hot water (manual 83258404, p. 92); labels unchanged, they were right.
+  Lot O `fcea55e`, L `f186db4`, M rebased; trial `weishaupt-next` `faa462e`, check clean, 1 075
+  messages. Rides with the next definitions change.
 - **0.5.14 frozen for publication (2026-11-19).** The owner approved here (main session, « Oui,
   les deux ») publishing 0.5.14 and the third group. Third group finished: `EEA_N_KON` is the
   unknown field `ukn6` (skipped in the metadata), the "today" counters named after the symbols
