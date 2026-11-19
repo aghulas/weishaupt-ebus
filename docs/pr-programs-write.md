@@ -1,12 +1,12 @@
 # Pull request text: programs-write
 
 Prepared on 2026-11-19, **not opened**. Branch `upstream/programs-write` of the local clone of the fork (not
-pushed), on `upstream/settings-write` (`1c12b5b`), head `bbad5a0`; 4 files changed, 526 insertions(+), 300 deletions(-).
-`scripts/check.sh` with `CFG_REPO` on the head: clean, seven steps, 864 messages in `ebusd --checkconfig`.
+pushed), on `upstream/settings-write` (`417feff`), head `ba3cb02`; 4 files changed, 526 insertions(+), 300 deletions(-).
+`scripts/check.sh` with `CFG_REPO` on the head: clean, seven steps, 913 messages in `ebusd --checkconfig`.
 
 Commits:
 
-- `bbad5a0` kromschroeder: write the weekly programs of room units 1 and 3 and of the direct circuit
+- `ba3cb02` kromschroeder: write the weekly programs of room units 1 and 3 and of the direct circuit
 
 ---
 

@@ -197,7 +197,7 @@ data point on arbitration with room units).
   start of Home Assistant sends the broadcast late, so the devices take a late time until the
   next half-hourly broadcast. The automation is the owner's, outside the definitions: for the
   owner to change or drop that trigger and keep the half-hourly one.
-- **Nine upstream branches wait for #717.** `upstream/<topic>` (section below), local only, texts
+- **Eleven upstream branches wait for #717** (refreshed after 0.5.13). `upstream/<topic>` (section below), local only, texts
   in `docs/pr-<topic>.md`; to propose one at a time once the maintainer answers #717, on the
   owner's word (rule 8).
 - **Open findings taken further (2026-11-19, nothing sent, nothing pushed).** Batch G and its
@@ -417,29 +417,33 @@ data point on arbitration with room units).
 
 ### Upstream pull requests prepared (2026-11-19, local only)
 
-Nine branches `upstream/<topic>` in the local clone, cut again on lot A (`weishaupt-pr`),
-nothing pushed or opened; texts in `docs/pr-<topic>.md`. Two chains, both on #717:
+Eleven branches `upstream/<topic>` in the local clone, on lot A (`weishaupt-pr`), nothing pushed
+or opened; texts in `docs/pr-<topic>.md`. Refreshed on 2026-11-19 after 0.5.13: the heat demand
+(lot N) split in two pull requests, one per chain; the holiday dates, the control variation and
+the modulation limits added to the setting writes. Two chains, both on #717:
 
-| # | Branch | On | Content | Needs |
-|---|---|---|---|---|
-| 1 | `upstream/boiler-faults` | #717 | fault log of `50`, fault history and service hours of the boilers, memory-read base `memr` (lot E) | #717 |
-| 2 | `upstream/boiler-counters` | 1 | operating counters (lot D) | 1 |
-| 3 | `upstream/boiler-live-values` | 2 | temperatures and operation from memory (lot F) | 2 |
-| 4 | `upstream/boiler-fault-counters` | 3 | fault counters (lot J) | 3 |
-| 5 | `upstream/boiler-info-values` | 4 | information values (lot K); carries its own shared `OutsideTemp` read | 4 (only for the boiler files) |
-| 6 | `upstream/circuit-reads` | #717 | reads of room units and heating modules, settings included, read only (lot G, plus the read side of lot C) | #717 |
-| 7 | `upstream/room-unit-programs` | 6 | weekly programs of the room units, read side (lot H) | 6 |
-| 8 | `upstream/settings-write` | 7 | 66 setting writes, five choices, date and time broadcast (lot C) | 7, john30/ebusd#1825, john30/ebus-typespec#8 |
-| 9 | `upstream/programs-write` | 8 | program-slot writes (lot H) | 8 |
+| # | Branch | On | Content | Needs | Head | Messages |
+|---|---|---|---|---|---|---|
+| 1 | `upstream/boiler-faults` | #717 | fault log of `50`, fault history and service hours of the boilers, memory-read base `memr` (lot E) | #717 | `9b29656` | 160 |
+| 2 | `upstream/boiler-counters` | 1 | operating counters (lot D) | 1 | `ede1f45` | 162 |
+| 3 | `upstream/boiler-live-values` | 2 | temperatures and operation from memory (lot F) | 2 | `e25a877` | 166 |
+| 4 | `upstream/boiler-fault-counters` | 3 | fault counters (lot J) | 3 | `2a4d265` | 180 |
+| 5 | `upstream/boiler-info-values` | 4 | information values (lot K); its own copy of `OutsideTemp` | 4 | `5b93079` | 196 |
+| 6 | `upstream/heat-demand-boilers` | 5 | heat demand `05 07` from the cascade manager to the boilers (lot N, boiler side); its own copy of `PowerDemand` | 5 | `9e0f796` | 198 |
+| 7 | `upstream/circuit-reads` | #717 | reads of room units and heating modules, settings included, read only (lot G, plus the read side of lot C) | #717 | `bb098af` | 211 |
+| 8 | `upstream/heat-demand-room-units` | 7 | heat demand `05 07` of the room units (lot N, room-unit side); its own copy of `PowerDemand` | 7 | `99c38aa` | 214 |
+| 9 | `upstream/room-unit-programs` | 8 | weekly programs of the room units, read side (lot H) | 8 | `adef8dd` | 529 |
+| 10 | `upstream/settings-write` | 9 | 89 numeric settings (with the holiday dates, the control variation, the modulation limits), five choices, date and time broadcast (lot C) | 9, john30/ebusd#1825, john30/ebus-typespec#8 | `417feff` | 661 |
+| 11 | `upstream/programs-write` | 10 | program-slot writes (lot H) | 10 | `ba3cb02` | 913 |
 
-`scripts/check.sh` with `CFG_REPO` clean on each of the nine heads (160, 162, 166, 180, 196,
-211, 526, 612 and 864 messages). 8 and 9 compile only with the library build of the fork
-(`@wcrc`), as lot C.
-Built by cherry-pick (1 to 5) and, for 6 to 9, from the fork's final state without the boiler
-lots, each step checked against the fork: the read lines of 6 to 8 and all lines of 9 compile
-to the CSV of the fork (only the fault log of `50`, chain 1, absent). Differences from the fork:
-comments and messages no longer name lots; `OutsideTemp` is in 5 and in 6 (the second merged
-drops its copy).
+`scripts/check.sh` with `CFG_REPO` clean on each of the eleven heads. 10 and 11 compile only
+with the library build of the fork (`@wcrc`), as lot C. 1 to 5 and 7 unchanged; 6 and 8 by
+cherry-pick of the two commits of lot N, each keeping the files of its chain; 9 to 11 replayed,
+10 with the three commits of lot C (the control variation as one commit with its 0.5.13
+comment). The CSV of 11 equals that of the fork for `15.w.ka`, the room units and the heating
+modules `51`, `52`; `50.w.em1` lacks only its fault log (chain 1). Differences from the fork:
+comments and messages name no lot; `OutsideTemp` is in 5 and in 7, `PowerDemand` in 6 and 8
+(the one merged second drops its copy).
 
 ### Needs the maintainer
 

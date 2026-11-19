@@ -1,12 +1,12 @@
 # Pull request text: room-unit-programs
 
 Prepared on 2026-11-19, **not opened**. Branch `upstream/room-unit-programs` of the local clone of the fork (not
-pushed), on `upstream/circuit-reads` (`bb098af`), head `b786e06`; 4 files changed, 1425 insertions(+).
-`scripts/check.sh` with `CFG_REPO` on the head: clean, seven steps, 526 messages in `ebusd --checkconfig`.
+pushed), on `upstream/heat-demand-room-units` (`99c38aa`), head `adef8dd`; 4 files changed, 1425 insertions(+).
+`scripts/check.sh` with `CFG_REPO` on the head: clean, seven steps, 529 messages in `ebusd --checkconfig`.
 
 Commits:
 
-- `b786e06` kromschroeder: add the weekly programs of the room units, read side (fs1, fs2, fs3)
+- `adef8dd` kromschroeder: add the weekly programs of the room units, read side (fs1, fs2, fs3)
 
 ---
 
@@ -16,9 +16,10 @@ Add Kromschröder/Weishaupt weekly programs of the room units (read side) to src
 
 ## Body
 
-Depends on the pull request of `circuit-reads`: the diff of this branch includes their commits until they are merged.
+Depends on the pull request of `heat-demand-room-units`: the diff of this branch includes their commits until they are merged.
 
-Reads, stock ebusd. Builds on the circuit reads.
+Reads, stock ebusd. Builds on the circuit reads (and, in this chain, on the heat demand of the
+room units).
 
 The five weekly programs of each room unit (heating 1 to 3, hot water, circulation), one
 message per switch-time slot (105 per unit), with the register scheme in the comments. All 315
