@@ -227,6 +227,16 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Lot O, third group (2026-11-19, local only).** The owner approved here the five further
+  proposals (« Approve them »). One commit on O, `b418258`: `EventCounters` on both boilers (placed
+  in lot O, not lot D: D sits below F, which is checked out in the clone's own checkout and cannot
+  be replayed from here), summer time and `LegionellaSetpoint` on the room units, `MixerPump` and
+  `CirculationReturnSetTemp` on the modules. L `b547588` (13 French strings), M `0e425de`. Trial
+  `weishaupt-next` `97ef2fe`: check clean, **1 075 messages** (976 in 0.5.13: 24 + 54 + 21 reads),
+  953 fixtures; lot O alone clean. New labels for the owner: "Event counters" / « Compteurs
+  d'événements » and its six fields, "Legionella setpoint (stored)" / « Consigne anti-légionelle
+  (mémorisée) », "Mixer circuit pump" / « Pompe du circuit mélangé », "Circulation return
+  setpoint" / « Consigne retour circulation ECS », summer time as on `ka`.
 - **Survey pass 2 done (2026-11-19, 21:00–21:06), analysed.** 368 register reads and 2 memory
   reads (the results file repeats its first 40 rows). Lot O answers on every device it is defined
   for, nothing to fix. The six boiler counters of the developer window are established by an

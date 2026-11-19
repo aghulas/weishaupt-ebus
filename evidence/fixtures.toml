@@ -2018,3 +2018,46 @@ readings = [
   { message = "VersionMajor", master = "45 99 01", slave = "74 01", expect = { value = 372 } },
   { message = "VersionMinor", master = "a1 9a 01", slave = "03 00", expect = { value = 3 } },
 ]
+
+# survey-reads, third group: boiler event counters (pass 2)
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "EventCounters", master = "d4 06 01 d2 d8", slave = "00 00 00 dd 00 00 04 00 00 bf 05 00 01 00 00", expect = { firstbyte = 0, burnerhourstoday = 0, ignitionstoday = 0, poweroncount = 221, koncount = 4, resetcount = 1471, shutoffcount = 1 } },
+]
+
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "EventCounters", master = "d4 06 01 d2 d8", slave = "00 00 00 e2 00 00 03 00 00 fb 04 00 01 00 00", expect = { firstbyte = 0, burnerhourstoday = 0, ignitionstoday = 0, poweroncount = 226, koncount = 3, resetcount = 1275, shutoffcount = 1 } },
+]
+
+# survey-reads, third group: room unit fs1 and module em3
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "SummerTimeStartDay", master = "09 de fd", slave = "19 00", expect = { value = 25 } },
+  { message = "SummerTimeStartMonth", master = "55 df fd", slave = "03 00", expect = { value = "March" } },
+  { message = "SummerTimeEndDay", master = "49 e0 fd", slave = "19 00", expect = { value = 25 } },
+  { message = "SummerTimeEndMonth", master = "15 e1 fd", slave = "0a 00", expect = { value = "October" } },
+  { message = "LegionellaSetpoint", master = "3d 87 05", slave = "58 02", expect = { value = 60.0 } },
+]
+
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "em3"
+where = "row"
+readings = [
+  { message = "MixerPump", master = "70 52 00", slave = "01 00", expect = { value = 1 } },
+  { message = "CirculationReturnSetTemp", master = "cc a9 04", slave = "2c 01", expect = { value = 30.0 } },
+]

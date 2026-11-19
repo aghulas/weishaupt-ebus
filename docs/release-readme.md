@@ -48,7 +48,13 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   the ones in use where it prepares the hot water) and its fault log (`ErrorId` … `ErrorYear`, as
   on `50.w.em1`). Each heating module (`51.w.em2`, `52.w.em3`): `MixerParameter`, `VersionMajor`,
   `VersionMinor`.
-- 78 messages more in all; no message renamed, removed or retyped, no write added. ebusd takes the
+- **21 more reads** (stock ebusd), two sources each. Both boilers: `EventCounters`, one memory
+  read of six counters (burner hours and ignitions of the day, mains switch-ons, counter N_KON,
+  resets, shut-offs), named after the automat's firmware symbols. Each room unit:
+  `SummerTimeStartDay`, `SummerTimeStartMonth`, `SummerTimeEndDay`, `SummerTimeEndMonth`, and
+  `LegionellaSetpoint` as it stores it. Each heating module: `MixerPump` (state of the
+  mixer-circuit pump) and `CirculationReturnSetTemp`.
+- 99 messages more in all; no message renamed, removed or retyped, no write added. ebusd takes the
   new files at its next start; an interface takes the metadata with a reload.
 
 ## Changes from 0.5.12 to 0.5.13

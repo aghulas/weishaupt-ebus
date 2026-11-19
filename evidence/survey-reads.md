@@ -115,6 +115,42 @@ says only 0 is established; lot A is not changed here). The hot-water settings a
 unit stores; the system manager prepares the hot water on this installation and its values are the
 ones in use.
 
+## Third group (approved by the owner on 2026-11-19)
+
+One more commit on lot O. Answers from pass 2 of the survey (21:00–21:06) unless named.
+
+**Boiler event counters** (`EventCounters`, `08.w.bc1`, `18.w.bc2`): one memory read of 14 EEPROM
+bytes from `0x01d8`, request `d4 06 01 d2 d8` (the checksum computed as for lot D's `Counters`).
+The vendor tool's developer window (19:19, boiler A) showed the six symbols with their sizes and
+values; ebusd read at 21:0x:
+
+| Boiler | Request | Answer after the length byte | Decoded |
+|---|---|---|---|
+| `08` | `d4 06 01 d2 d8` | `00 00 00 dd 00 00 04 00 00 bf 05 00 01 00 00` | first byte 0; 0 h, 0 ignitions today; 221 switch-ons; N_KON 4; 1 471 resets; 1 shut-off: the tool's values, byte for byte |
+| `18` | `d4 06 01 d2 d8` | `00 00 00 e2 00 00 03 00 00 fb 04 00 01 00 00` | 0, 0, 226, 3, 1 275, 1 |
+
+The field names follow the firmware symbols (`EEA_HBRONTAG`, `EEA_NZUENDTAG`, `EEA_N_PON`,
+`EEA_N_KON`, `EEA_RES_CNT`, `EEA_SHUT_OFF`); what N_KON counts is not established, and the
+"today" counters were 0 at the time of both reads (no burner run that evening). The counters
+belong with lot D's `Counters`; they are in lot O because lot D could not be replayed from this
+workbench (lot F is checked out in the clone's own checkout).
+
+**Room units** (the same registers as on the system manager, `de fd`–`e1 fd`, and `87 05`):
+
+| Unit | Message | Request (ID) | Answer, decoded | Second source |
+|---|---|---|---|---|
+| `35`, `75`, `f5` | `SummerTimeStartDay`, `SummerTimeStartMonth` | `09 de fd`, `55 df fd` | `19 00` = 25, `03 00` = March | the tool's screen on `35`: start of summer time 25 March |
+| `35`, `75`, `f5` | `SummerTimeEndDay`, `SummerTimeEndMonth` | `49 e0 fd`, `15 e1 fd` | `19 00` = 25, `0a 00` = October | the same screen: end 25 October |
+| `35`, `f5` | `LegionellaSetpoint` | `3d 87 05` | `58 02` = 60.0 | room unit manual 83277504, P606 factory 60 °C (p. 39, 41) |
+
+**Heating modules**:
+
+| Unit | Message | Request (ID) | Answer, decoded | Second source |
+|---|---|---|---|---|
+| `52` | `MixerPump` | `70 52 00` | `01 00` = 1 | the tool's screen on `52`: mixer pump on, the only box ticked, the only register reading 1 |
+| `51` | `MixerPump` | `70 52 00` | `00 00` = 0 | |
+| `51`, `52` | `CirculationReturnSetTemp` | `cc a9 04` | `2c 01` = 30.0 | room unit manual, P610 factory 30 °C (p. 39) |
+
 ## Equipment
 
 A Kromschröder WCM-KA system manager (266.18) of a cascade of two WTC-GB boilers with a plate
