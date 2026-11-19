@@ -159,6 +159,14 @@ data point on arbitration with room units).
 
 ### Needs the owner
 
+- **Release 0.5.8 (prepared locally on 2026-11-19, nothing pushed).** The four other programs
+  of `fs3` and the two programs of `50` written (126 slots); `fs2` refused the slot a third
+  time. Trial `weishaupt-next` `f1989ab`: 925 messages, 324 written, 801 fixtures. CSV against
+  0.5.7: `50.w.em1.csv` (+42 write lines) and `f5.w.fs3.csv` (+84), reads unchanged in id. To
+  publish, on the owner's word: force-push `weishaupt-H` `594c6b6`, `-J` `c411108`, `-K` `262ef3d`, `-L`
+  `a623e9a`, `-M` `96b26bc`, `weishaupt` to `f1989ab`, the workbench `main`; publish `weishaupt-0.5.8`
+  with the five files in `out/release/`. C and G unchanged since 0.5.6.
+
 - **Heating program 1 of `fs3` (prepared locally on 2026-11-19, for 0.5.7, nothing pushed).**
   Slot test of 07:55 kept by `fs3`: its 21 slots written in lot H. `fs2` is the one that
   differs; next tests and the batch for the four other programs of `fs3` and the two of `50`
@@ -421,6 +429,13 @@ data point on arbitration with room units).
 
 Dated, newest first. Commit ids quoted in `evidence/` and in older texts are those of their
 date; see 2026-11-17 "Commit identity".
+
+- **2026-11-19, programs of `fs3` and `50`; trial release 0.5.8 (local).** Batch of 08:41–08:44
+  (owner's word): six programs kept and restored from `31`, `fs2` refused the same slot again
+  (not a passing state). Lot H one commit (the programs of `50` are read by lot A; their writes
+  live in lot H, which owns the program writes), lot M one commit. `scripts/release.sh 0.5.8`
+  with `INTEGRATION=weishaupt-next`: seven steps clean, 925 messages, 324 written. Backups
+  `backup/pre063-*`.
 
 - **2026-11-19, room unit 3 keeps a program slot.** The fs3 test (owner's word, 07:55) kept the
   slot fs2 refused: heating program 1 of `fs3` written (lot H, one commit; lot M, one commit);

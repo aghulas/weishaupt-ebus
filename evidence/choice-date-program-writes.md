@@ -370,6 +370,34 @@ then a used slot changed in place (`1e 10 14 47 1a`, restore `8e 10 14 48 1a`): 
 room unit 2 refuses only to enable an unused slot. A look at the display of room unit 2 (menu,
 access level) answers the rest.
 
+
+### Batch of 2026-11-19: the other programs of room unit 3, the programs of `50`, room unit 2 again
+
+08:41 to 08:44, on the owner's word, service tool disconnected, all from `31`; each register read
+before (the "now" value) and after each write.
+
+| setting | date | source | change | read → answer | restore | read → answer |
+|---|---|---|---|---|---|---|
+| fs3 HCProgram2Sun3 | 2026-11-19 08:41 | `31` | `f0 72 15 09 08` | `59 72 15` → `09 08` | `8c 72 15 80 80` | `59 72 15` → `80 80` |
+| fs3 HCProgram3Sun3 | 2026-11-19 08:41 | `31` | `68 72 16 09 08` | `5a 72 16` → `09 08` | `14 72 16 80 80` | `5a 72 16` → `80 80` |
+| fs3 DHWProgramSun3 | 2026-11-19 08:42 | `31` | `d4 72 17 09 08` | `5b 72 17` → `09 08` | `a8 72 17 80 80` | `5b 72 17` → `80 80` |
+| fs3 CircProgramSun3 | 2026-11-19 08:42 | `31` | `3c 72 1a 4b 44` | `56 72 1a` → `4b 44` | `f4 72 1a 4c 44` | `56 72 1a` → `4c 44` |
+| em1 DHWProgramSun3 | 2026-11-19 08:43 | `31` | `d4 72 17 09 08` | `5b 72 17` → `09 08` | `a8 72 17 80 80` | `5b 72 17` → `80 80` |
+| em1 CircProgramSun3 | 2026-11-19 08:43 | `31` | `b0 72 1a 09 08` | `56 72 1a` → `09 08` | `cc 72 1a 80 80` | `56 72 1a` → `80 80` |
+
+12 writes acknowledged `00`, each read back with the value written and restored. `50` takes the
+program writes from `31` (unlike its flow limits); its hot-water slot, the applied program,
+was changed for 4 s. With the rule above: the five programs of room unit 3 and the two of `50`
+are proven, 147 slots.
+
+**Room unit 2 again**, same batch: `31 75 5023` `4c 72 14 09 08` at 08:43:45, acknowledged, read
+`58 72 14` → `80 80` at 08:43:48 and one minute later. Nobody looked at its display. Refused on
+2026-11-18 at 21:13 and 21:42 and on 2026-11-19 at 08:43: **not a passing state**. Left: a
+setting of room unit 2 that no register read shows (a lock of program edits, an access level),
+or a refusal to enable an unused slot that room units 1 and 3 do not have. Next, if wanted: a
+used slot changed in place (`1e 10 14 47 1a`, restore `8e 10 14 48 1a`), and a look at the
+display and access settings of room unit 2.
+
 ### The identification of room unit 2 (2026-11-19)
 
 After a restart of ebusd on 2026-11-19 at 08:27, the operator's deployment session read

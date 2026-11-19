@@ -24,7 +24,16 @@ choices), 126 program slots (the five programs of `35.w.fs1`, heating program 1 
 `f5.w.fs3`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.6
+## Changes since 0.5.7
+
+- **More weekly programs can be written**, one telegram per slot, from ebusd's own address: the
+  four other programs of `f5.w.fs3` (heating 2 and 3, stored hot water and circulation) and
+  the hot-water and circulation programs of `50.w.em1` (the hot-water program is the one the
+  installation applies). In each program one slot was seen changed and read back. The
+  programs of `75.w.fs2` stay read only: room unit 2 acknowledged a slot write three times, on
+  two days, and never kept it. The read ids are unchanged.
+
+## Changes from 0.5.6 to 0.5.7
 
 - **Heating program 1 of `f5.w.fs3` can be written** (21 slots, from ebusd's own address), on
   one slot seen changed and read back, as the programs of `35.w.fs1`. The other programs of
