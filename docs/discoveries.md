@@ -61,3 +61,20 @@ ebusd's grab buffer and cache (read over HTTP), the captures of the evidence rec
 | 2026-11-19 `PowerDemand` byte 1 (0, 85, 102, 187, 238), byte 2, byte 9 | no: the grab buffer keeps only the last telegram of each kind (13:56: `55` to `08`, `ee` to `18`, `bb` from the three room units, as recorded); `evidence/heat-demand.md` already shows the values are codes, not flags | none on the bus: the history of `status` against `modulation` in Home Assistant over a few days (read only) |
 | 2026-11-19 register `27 02` (new) | **yes, from the data**: burner starts / 256 | the one confirming read above, when convenient (risk none) |
 | `ForcedVenting` (operating phase 9, `evidence/broadcast-kastatus.md`) | no: phase 9 never seen, no manual lists it | no bus test can provoke it safely; it stays provisional until a source is found |
+
+## Second pass, 2026-11-19 (after 0.5.12)
+
+Each finding still open, taken as far as the data and the manuals go, with batch G (reads and
+owner-assisted display steps, no bus write) and the owner's checklist:
+`evidence/open-findings-batch.md`, `docs/owner-checklist-room-units.md`.
+
+- **Control variation 0: settled** (manual of the room unit, parameter 315: 0 constant flow,
+  1 outside temperature; `evidence/room-units-control-variation.md`), in trial 0.5.13 as the
+  comment of `ControlVariation`. Values 2 and 3: batch G, step C.
+- **`27 02`**: step A reads `26 02`, which should hold the low 16 bits of the starts.
+- **`0c`**: nothing to define whatever `07` is; proposed to close the entry.
+- **Third holiday register**: step B, a future period entered on a display, read by ebusd.
+- **`fs2` and programs**: checklist items 1 to 3 (P312 "Adresse FS", P335 "Config. FS", a slot
+  changed on the display).
+- **`PowerDemand` bytes, clock master answers, `SW=7203`**: exports D1 to D3, read only.
+- **`ForcedVenting`**: no test; checklist item 6 if the vendor tool is on site.

@@ -44,8 +44,31 @@ The deployment session followed the flow setpoint each heating module broadcasts
 On circuit 2 the mixing valve opened briefly: flow 46.7 → 50.4 °C, back to 49.6 °C at 14:00:15.
 So with 0 the module raised the flow setpoint, on circuit 2 to the circuit's maximum; that
 fits a constant flow setpoint, but neither the name of value 0 nor what 2 or 3 would do is
-established. The client's table of the operator lists 0 constant flow, 1 weather-compensated,
-2 weather and room, 3 room; no manual read so far names them. The definition keeps a number.
+established from this capture alone; the manual (next section) names 0 and 1.
+
+## From the manual of the room unit (2026-11-19)
+
+The installation manual of the room unit (WCM-FS 2.0 / WCM-EM 2.1, document 83277504, pages
+36 and 48 to 51) lists the control variation as installer parameter 315 ("Ty régul#1",
+316 for a second circuit), menu "Mise en service", with four settings in this order:
+constant flow ("Const. Dép": the flow temperature is held at the flow setpoint set for normal
+and reduced operation, parameters 115 / 116; no frost protection and no optimisation; the
+circuit pump runs except in standby), outside temperature ("Extérieur": heating curve; the
+factory setting), room ("Ambiance") and outside and room ("Exté./Amb."). The same manual
+(page 48) gives the factory flow setpoint for normal operation by circuit type: 60 °C for
+"radiators 60", 75 °C for "radiators 70".
+
+- **1 = outside temperature.** It is the value in service, the installation has an outside
+  sensor and runs on heating curves, and it is the factory setting.
+- **0 = constant flow.** While 0 was set, circuit 1 (room unit `35`, circuit type 2,
+  radiators 60) broadcast 60 °C and circuit 2 (`75`, circuit type 3, radiators 70) 75 °C: the
+  factory constant flow setpoints of these types, and what "constant flow" does.
+- **2 and 3**: room, and outside and room, in an order not established. The client's table of
+  the operator has 2 = outside and room, 3 = room, the manual's list the reverse order. Test:
+  [open-findings-batch.md](open-findings-batch.md), step C.
+
+From 0.5.13 the comment of the message names 0 and 1; the field stays a number until 2 and 3
+are known, so that the value list, a change of type, comes once.
 
 ## Equipment
 
@@ -59,6 +82,6 @@ boilers.
 
 ## Not verified
 
-- The meaning of each value; values 2 and 3 not tried.
+- Values 2 and 3 (room, outside and room): which is which.
 - The effect of 0 on circuit 3.
 - That 60 °C on circuit 1 is that circuit's maximum (its `SupplyMaxTemp` was not read then).

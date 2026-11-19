@@ -198,6 +198,21 @@ data point on arbitration with room units).
 - **Nine upstream branches wait for #717.** `upstream/<topic>` (section below), local only, texts
   in `docs/pr-<topic>.md`; to propose one at a time once the maintainer answers #717, on the
   owner's word (rule 8).
+- **Open findings taken further (2026-11-19, nothing sent, nothing pushed).** Batch G and its
+  status table in `evidence/open-findings-batch.md` (reads, owner-assisted display steps,
+  exports; no bus write), the owner's one-page checklist `docs/owner-checklist-room-units.md`
+  (P312 "Adresse FS", P335 "Config. FS", a slot on the display of `fs2`, the holiday period,
+  P315). Settled from the manual of the room unit: `ControlVariation` 0 constant flow, 1
+  outside temperature. **Trial 0.5.13** (comment only): lot C `197ff7a` (one commit on the
+  published `17fd8de`), G to K, N replayed (`c030f75`, `26c6fd8`, `75efa42`, `f36928e`,
+  `d178e0a`), L `697c746` (one French string replaced), M `b62bc50` replayed on L (no metadata change); trial head `8769741`;
+  trial `weishaupt-next`: check clean, 976 messages, 905 fixtures; CSV against 0.5.12: the
+  comment of `ControlVariation` in the three room-unit files, English and French; metadata:
+  its description only. New French string for the owner: « variante de régulation du circuit
+  de chauffage (paramètre 315) : 0 température de départ constante, 1 en fonction de la
+  température extérieure ». To publish, on the owner's word: force-push with leases C, G, H,
+  J, K, N, L, M and `weishaupt` to the trial head, the workbench `main`; release
+  `weishaupt-0.5.13`. Or keep it for the next definitions change.
 - **Trial 0.5.12, metadata only (prepared locally on 2026-11-19, nothing pushed).** Field key
   `absent` (contract, `scripts/metadata.py`: output and check) for a temperature whose sensor is
   not fitted, on 22 fields: -40.0 on both boilers (information values `OutsideTemp`,

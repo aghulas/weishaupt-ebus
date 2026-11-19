@@ -24,7 +24,16 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.11
+## Changes since 0.5.12
+
+- **Comment only.** `ControlVariation` of the three room units: the comment now names the
+  values from the manual of the room unit (parameter 315): 0 constant flow temperature, 1
+  outside temperature; which of 2 and 3 is room control is not established, so the field stays
+  a number. CSV of the three room units change in that comment only (English and French);
+  nothing else, metadata the same apart from the description. ebusd takes the new files at its
+  next start; nothing changes in what it reads or writes.
+
+## Changes from 0.5.11 to 0.5.12
 
 - **Metadata only; the CSV files are the same as in 0.5.11.** ebusd needs nothing; an interface
   that reads the metadata file takes this release with a reload of its configuration.
