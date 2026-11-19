@@ -594,8 +594,8 @@ The order is the reverse of the Statistic tab of the boiler window (which starts
 - **Datalogger**: one chart with a temperature axis (-15 to 110 °C) and a speed axis (to 6600 rpm)
   and a tool bar; while opening it listed the two automats, the two room-unit entries and `KA`
   (not `KA-WST`). No channel was selected, nothing was started, nothing was sent.
-- **A device type that is not on the bus cannot be opened as such.** File, Open only loads a saved
-  parameter file: the entries SOL and FB/EM ask for a file with the extension `ESO` and `EEM`.
+- File, Open does not open a device type that is not on the bus; it only loads a saved
+  parameter file (the `Development` menu can: see "Third visit"): the entries SOL and FB/EM ask for a file with the extension `ESO` and `EEM`.
   No such file is on the PC. Both dialogs were cancelled.
 
 ## Second visit, 19:30–19:36 — fault histories
@@ -682,6 +682,41 @@ After this visit the selectors of `35`, `f5` and `15` (and so `50`) are at 9. Th
 way to write them back; a `Read` in the tab runs through 0–9 again. Writing them back to 0 is a
 bus write and was handed to the session that runs the on-site write tests, with the owner's words.
 
+## Third visit, 19:43–19:45 — `Development`, Sim FS, tool offline
+
+Looked at on the owner's suggestion, with the tool disconnected so that nothing could reach the
+bus. The sub-menu offers nine device types: FS1, FS2, FS1+2, control centre, FS+EM, EM, FS+EWW,
+EWW, KA. Choosing one asks a yes/no question about an "FS 1.0" generation (answered no), then
+opens the window of that device type as if the scan had found it, with an invented version
+number. **This is the way to open a device type that is not on the bus.** Offline every field
+stays empty and the error field shows 11.
+
+| Entry | Window title | Tabs |
+|---|---|---|
+| EWW | DHW extension module, circuit 2, version 267.00 | Process values, User, Engineer WW, DHW, Circulation, Configuration |
+| control centre | room unit "L", version 196.00 | the same six tabs |
+| EM | heating extension module, circuit 2, version 267.00 | Process values, User, Engineer HC, Heating 1–3, Configuration |
+
+Parameter lists of the DHW extension module (a type not installed here), numbers as printed:
+
+- User: 132 normal DHW setpoint, 133 reduced DHW setpoint, 141 holiday start and end, 142 holiday
+  temperature level.
+- Engineer WW: 391 maximum DHW temperature, 395 legionella function, 605 solar use for
+  legionella (check box), 606 legionella setpoint, 396 legionella time, 608 circulation with
+  legionella (check box), 397 circulation time, 611 DHW from solar yield (list, with two check
+  boxes: on coverage, on excess temperature).
+- Process values: type of operation, error, DHW setpoint, current heat demand.
+- Configuration: empty until read.
+
+The EM entry opens the window of a heating module on its own, for circuit 2: process values (type
+of operation, error, room setpoint, flow setpoint, current heat demand, mixed outside temperature,
+flow temperature of the heat exchanger) and the tabs listed above. With the tool connected this
+window would presumably read module `51` directly instead of through the room unit.
+
+Not established: what these entries send when the tool is connected (reads of the chosen type
+only, or telegrams in the name of a simulated device). Not tried online. The other six entries
+were not opened.
+
 ## Registers without a definition, by device
 
 Candidates for the definitions session. "Value" = established by a value that occurs once on the
@@ -732,8 +767,8 @@ register is to be read from ebusd with the same result (`docs/service-tool-proto
 
 - Heating programmes of `f5`: not opened.
 - Automat B: not opened (the tool reported it as not available on the second visit).
-- System time, Extra access, Password, eBus-Trigger, CM controller, BCC, Analyse BCC, Sim FS,
-  and the tabs MasterReset and Ion-Kalib of the developer window: not opened.
+- System time, Extra access, Password, eBus-Trigger, CM controller, BCC, Analyse BCC, and the
+  tabs MasterReset and Ion-Kalib of the developer window: not opened. Sim FS: offline only.
 - The selectors of `35` and `f5` were not read back; the one of `15` was, through `50`.
 - The meaning of the values of the enumerations (circuit type, functions of inputs and outputs)
   beyond the ones displayed.

@@ -562,3 +562,7 @@ was driven remotely; each screen was matched with the telegrams of source `ff` g
   (ten selector writes each, entries recorded), Error history of automat A unchanged since
   2026-11-16, automat B reported as not available. `15` and `50` share the selector: `ErrorId` of
   `em1` read 9 afterwards. Selectors of `35`, `f5`, `15` are at 9 until written back to 0.
+- Third visit, 19:43–19:45, tool offline: `Development`, Sim FS opens the window of a chosen
+  device type without the device (DHW extension module, control centre, heating module alone).
+  Parameter lists of the DHW extension module recorded. Not tried with the tool connected. The
+  earlier statement that a type not on the bus cannot be opened holds for File, Open only.
