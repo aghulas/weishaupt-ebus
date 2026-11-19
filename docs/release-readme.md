@@ -49,8 +49,10 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   on `50.w.em1`). Each heating module (`51.w.em2`, `52.w.em3`): `MixerParameter`, `VersionMajor`,
   `VersionMinor`.
 - **21 more reads** (stock ebusd), two sources each. Both boilers: `EventCounters`, one memory
-  read of six counters (burner hours and ignitions of the day, mains switch-ons, counter N_KON,
-  resets, shut-offs), named after the automat's firmware symbols. Each room unit:
+  read of six counters: burner hours and ignitions of the day (`burnerhourstoday`,
+  `ignitionstoday`, named after the firmware symbols only, both read 0), mains switch-ons, resets,
+  shut-offs, and `ukn6`, a counter whose meaning is not established. It sits with the other
+  boiler counters (`Counters`) in the boiler files. Each room unit:
   `SummerTimeStartDay`, `SummerTimeStartMonth`, `SummerTimeEndDay`, `SummerTimeEndMonth`, and
   `LegionellaSetpoint` as it stores it. Each heating module: `MixerPump` (state of the
   mixer-circuit pump) and `CirculationReturnSetTemp`.
@@ -274,8 +276,9 @@ those translated here (for example `temperature`).
   `50.w.em1`). The heating of a circuit follows the program of its room unit; a room unit
   whose selector reads 11 runs heating program 1. The selector is not defined.
 - The value list of `DHWLoadingPriority` (`0=Priority;1=Sliding;2=Parallel`) is established
-  for 0 only; the manual lists the settings in the order priority, parallel, sliding. The
-  message is read only.
+  for 0 (read on the system manager) and 2 (shown as "parallel" by the vendor tool on two room
+  units); 1 follows by elimination. Its comment in `15.w.ka` still says only 0 is established.
+  The message is read only.
 - The operating phase `ForcedVenting` (9) of the status messages comes from no manual and was
   never seen on a bus; its label in the metadata file is provisional.
 - A temperature whose sensor is not fitted reads as a number: -100.0 on a heating module or

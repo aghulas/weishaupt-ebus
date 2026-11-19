@@ -227,10 +227,19 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **0.5.14 frozen for publication (2026-11-19).** The owner approved here (main session, « Oui,
+  les deux ») publishing 0.5.14 and the third group. Third group finished: `EEA_N_KON` is the
+  unknown field `ukn6` (skipped in the metadata), the "today" counters named after the symbols
+  only (labels "(by the symbol)" / « (selon le symbole) »). Heads to publish: lot O `004112e`, L
+  `13b4311`, M `2988cac`, G `b06e738`, H `a5a833c`, J `4efe2f1`, K `8c87a80`, N `c608cc4`,
+  `weishaupt` = `weishaupt-next` = `fe82952`; check clean, 1 075 messages, 953 fixtures; files in
+  `out/release/` built from `fe82952`. `EventCounters` is in lot O although it belongs to lot D.
 - **Lot O, third group (2026-11-19, local only).** The owner approved here the five further
-  proposals (« Approve them »). One commit on O, `b418258`: `EventCounters` on both boilers (placed
-  in lot O, not lot D: D sits below F, which is checked out in the clone's own checkout and cannot
-  be replayed from here), summer time and `LegionellaSetpoint` on the room units, `MixerPump` and
+  proposals (« Approve them »). One commit on O, `b418258`: `EventCounters` on both boilers (it belongs
+  to lot D, with `Counters`; it is in lot O because D sits below F, which is checked out in the
+  clone's own checkout and cannot be replayed from here: to move to D when the stack is next
+  rebuilt from another checkout; the counter `EEA_N_KON` is the unknown field `ukn6`, the "today"
+  counters are named after the symbols only, both read 0), summer time and `LegionellaSetpoint` on the room units, `MixerPump` and
   `CirculationReturnSetTemp` on the modules. L `b547588` (13 French strings), M `0e425de`. Trial
   `weishaupt-next` `97ef2fe`: check clean, **1 075 messages** (976 in 0.5.13: 24 + 54 + 21 reads),
   953 fixtures; lot O alone clean. New labels for the owner: "Event counters" / « Compteurs

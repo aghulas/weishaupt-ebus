@@ -130,8 +130,11 @@ values; ebusd read at 21:0x:
 | `18` | `d4 06 01 d2 d8` | `00 00 00 e2 00 00 03 00 00 fb 04 00 01 00 00` | 0, 0, 226, 3, 1 275, 1 |
 
 The field names follow the firmware symbols (`EEA_HBRONTAG`, `EEA_NZUENDTAG`, `EEA_N_PON`,
-`EEA_N_KON`, `EEA_RES_CNT`, `EEA_SHUT_OFF`); what N_KON counts is not established, and the
-"today" counters were 0 at the time of both reads (no burner run that evening). The counters
+`EEA_RES_CNT`, `EEA_SHUT_OFF`). `EEA_N_KON` has no established meaning: its field is `ukn6` (the
+sixth to eighth byte of the answer), skipped in the metadata, as the project names such bytes;
+reserve stated to the owner with the proposal. The two "today" counters
+(`BurnerHoursToday`, `IgnitionsToday`) read 0 on both boilers: their names rest on the symbols
+only, which their comments and labels say. The counters
 belong with lot D's `Counters`; they are in lot O because lot D could not be replayed from this
 workbench (lot F is checked out in the clone's own checkout).
 

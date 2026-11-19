@@ -2026,7 +2026,7 @@ date = "2026-11-19"
 circuit = "bc1"
 where = "row"
 readings = [
-  { message = "EventCounters", master = "d4 06 01 d2 d8", slave = "00 00 00 dd 00 00 04 00 00 bf 05 00 01 00 00", expect = { firstbyte = 0, burnerhourstoday = 0, ignitionstoday = 0, poweroncount = 221, koncount = 4, resetcount = 1471, shutoffcount = 1 } },
+  { message = "EventCounters", master = "d4 06 01 d2 d8", slave = "00 00 00 dd 00 00 04 00 00 bf 05 00 01 00 00", expect = { firstbyte = 0, burnerhourstoday = 0, ignitionstoday = 0, poweroncount = 221, ukn6 = 4, resetcount = 1471, shutoffcount = 1 } },
 ]
 
 [[block]]
@@ -2035,7 +2035,7 @@ date = "2026-11-19"
 circuit = "bc2"
 where = "row"
 readings = [
-  { message = "EventCounters", master = "d4 06 01 d2 d8", slave = "00 00 00 e2 00 00 03 00 00 fb 04 00 01 00 00", expect = { firstbyte = 0, burnerhourstoday = 0, ignitionstoday = 0, poweroncount = 226, koncount = 3, resetcount = 1275, shutoffcount = 1 } },
+  { message = "EventCounters", master = "d4 06 01 d2 d8", slave = "00 00 00 e2 00 00 03 00 00 fb 04 00 01 00 00", expect = { firstbyte = 0, burnerhourstoday = 0, ignitionstoday = 0, poweroncount = 226, ukn6 = 3, resetcount = 1275, shutoffcount = 1 } },
 ]
 
 # survey-reads, third group: room unit fs1 and module em3
