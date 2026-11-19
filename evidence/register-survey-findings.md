@@ -56,9 +56,20 @@ parameter whose value differs from its factory setting, or between the two boile
 points to one register; pass 2 on `18` gives the second boiler's registers. A read of the
 0x0000–0x002d block while a burner fires separates live setpoints from settings.
 
-## Chunks 2 to 6
+## Chunk 2 — boiler `08`, from 0x01e7 (in progress; 118 of 480 read by 18:35)
 
-Not yet analysed.
+| Register | Answer | Read as | Likely | Confidence | What confirms it |
+|---|---|---|---|---|---|
+| `09 02` (0x0209) | `25 00` | 37 | **P35 ignition speed, 37 %** (factory of the WTC 250, a value no other parameter has) | medium-high | pass 2 on `18`; display |
+| `11 02` (0x0211) | `b0 04` | 120.0 (SIN/10) | **P33 flue-gas safety temperature, 120 °C** (factory; range 80–120 °C) | medium | display; pass 2 |
+| `2a 02` | `e5 4e` | 20 197 | burner operating hours (info value i43): equal to the burner hours lot D reads from EEPROM (20 197 h) | high; left out of the lots on purpose as a duplicate | — |
+| `27 02` | `db 02` | 731 | burner starts / 256, as recorded in [bc-info-values.md](bc-info-values.md) | as there | the step at 187 392 starts |
+| `fd 01` | `32 00` | 50 or 5.0 | as `55 01`: P23 (5 °C) or P34 (5 min) | low | display |
+| `0d 02` | `16 00` | 22 or 2.2 | none from the list (22 % is P36 of other models) | none | pass 2 |
+| `19 02`–`1d 02` | `00 02` / `01 02` | 512 / 513 | five neighbouring values `0x0200` / `0x0201`: a block of states or a version pair, not a parameter | none | a second read later; pass 2 |
+
+The rest of chunk 2 and chunks 3 to 6 (system manager, heating module, room unit): not yet
+analysed.
 
 ## Date
 

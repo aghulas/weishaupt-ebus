@@ -107,6 +107,12 @@ of ebusd (`31 50 5022 03 4d 25 01`): answer `02 0f 00`, 15, at 15:50 local time.
 is the hour, UIN, as its neighbours `21` to `24`, `26` and `27`. It is in the lot again since
 that day (`SystemHour`, `@ext(0x4d, 0x25, 0x01)`).
 
+**Unit (2026-11-19, trial 0.5.14).** Hour, minute and second of the clock are times of the
+day, not durations: since 0.5.14 they carry no unit (they used the duration templates with
+`h`, `min`, `s`), as the day, month and year beside them, and so do the hour and minute of the
+fault-log entry. The change sits in a lot above lot A (`weishaupt-G`), so pull request #717
+still carries the units until lot A is changed on the owner's word.
+
 ## Bytes of the clock registers (2026-11-18)
 
 The clock table above gives values without bytes, except for `SystemHour`. On 2026-11-18,

@@ -24,7 +24,16 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.12
+## Changes since 0.5.13
+
+- **Units of five clock fields of `50.w.em1`.** `SystemHour`, `SystemMinute`, `SystemSecond`
+  (the system clock) and `ErrorHour`, `ErrorMinute` (the time stamp of a fault-log entry) are
+  times of the day, not durations: they lose the units `h`, `min`, `s`, like their neighbours
+  day, month and year. Name, type, register and value are unchanged; an interface no longer
+  shows them as durations. The CSV of `50.w.em1` changes: ebusd takes the new files at its next
+  start, an interface the metadata with a reload.
+
+## Changes from 0.5.12 to 0.5.13
 
 - **Comments only; no message, field, type or value changes.** ebusd still needs the new files:
   the comments are part of the CSV, so install the archive and restart ebusd with it, as for any

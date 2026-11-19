@@ -226,6 +226,19 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Trial 0.5.14 (prepared locally on 2026-11-19, nothing pushed).** The clock fields
+  `SystemHour`, `SystemMinute`, `SystemSecond` and the fault-log `ErrorHour`, `ErrorMinute` of
+  `50.w.em1` lose their duration units (h, min, s): times of the day, found by the companion's
+  audit. The right lots are A (clock) and E (fault log); A backs #717 and must not change
+  without the owner, and E cannot be replayed here (lot F is checked out in the clone's own
+  checkout), so the fix is one commit in lot G (`b06e738`, on the published `c030f75`), H to M
+  replayed: H `a5a833c`, J `4efe2f1`, K `8c87a80`, N `c608cc4`, L `ac3a9bf`, M `023f54b`; trial
+  `weishaupt-next` `fbc46f1`, check clean, 976 messages, 905 fixtures. CSV against 0.5.13:
+  `50.w.em1` only, five unit columns emptied; metadata: unit and unit description of these five
+  fields. ebusd restarts with the new files. To publish, on the owner's word: force-push with
+  leases G, H, J, K, N, L, M and `weishaupt` to `fbc46f1`, the workbench `main`; release
+  `weishaupt-0.5.14` from `out/release/`. #717 keeps the units until lot A is changed (owner).
+  The register survey findings join it when they settle a definition.
 - **Trial 0.5.12, metadata only (prepared locally on 2026-11-19, nothing pushed).** Field key
   `absent` (contract, `scripts/metadata.py`: output and check) for a temperature whose sensor is
   not fitted, on 22 fields: -40.0 on both boilers (information values `OutsideTemp`,
