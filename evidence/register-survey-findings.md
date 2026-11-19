@@ -56,7 +56,11 @@ parameter whose value differs from its factory setting, or between the two boile
 points to one register; pass 2 on `18` gives the second boiler's registers. A read of the
 0x0000–0x002d block while a burner fires separates live setpoints from settings.
 
-## Chunk 2 — boiler `08`, from 0x01e7 (in progress; 118 of 480 read by 18:35)
+## Chunk 2 — boiler `08`, registers 0x01e7–0x03ff (2026-11-19, until 18:51)
+
+480 requests: 475 answered, 5 failed with "SYN received" (seq 816, 821, 823, 835, 837:
+registers `38 03`, `3d 03`, `3f 03`, `4b 03`, `4d 03`), sent again one by one in pass 2. Burner
+off throughout. Eleven registers answered other than `00 80`, all below 0x022b:
 
 | Register | Answer | Read as | Likely | Confidence | What confirms it |
 |---|---|---|---|---|---|
@@ -68,8 +72,70 @@ points to one register; pass 2 on `18` gives the second boiler's registers. A re
 | `0d 02` | `16 00` | 22 or 2.2 | none from the list (22 % is P36 of other models) | none | pass 2 |
 | `19 02`–`1d 02` | `00 02` / `01 02` | 512 / 513 | five neighbouring values `0x0200` / `0x0201`: a block of states or a version pair, not a parameter | none | a second read later; pass 2 |
 
-The rest of chunk 2 and chunks 3 to 6 (system manager, heating module, room unit): not yet
-analysed.
+**The boiler automat in the catalogue.** The vendor-software catalogue
+([register-candidates.csv](register-candidates.csv), [docs/register-candidates.md](../docs/register-candidates.md))
+lists the boiler automat of this generation by memory address only (`50 00` reads, 137 rows on
+the installation and not defined), not by register. So none of the 45 boiler registers that
+answer has a catalogue row; their matches above rest on the boiler manual and the service tool's
+screen alone.
+
+## Chunk 3 — boiler `08` (end) and system manager `15` (2026-11-19, until 19:22)
+
+480 requests, all answered: the last 55 registers of `08` (nothing but `00 80`), then 425
+four-register requests to `15`, registers 0x0000–0x0ac7 (1 700 registers). Burner off
+throughout. 56 registers of `15` answered other than `00 80`.
+
+### Crossed with the catalogue
+
+Generated with `scripts/survey-crosscheck.py out/register-survey-pass1-results.csv`. Of the 69
+catalogue rows of the system manager that are on the installation and not defined (43 distinct
+registers), 20 rows are surveyed: 18 answer within the catalogue's type and range, 2 answer
+`00 80`; 49 rows are not surveyed yet (beyond 0x0ac7). The room unit and heating-module rows
+(104) wait for chunks 5 and 6.
+
+| Register | Catalogue (type, factor, unit, range) | Answer | Status |
+|---|---|---|---|
+| `40 0a` (2624) | plate exchanger primary B24, SIN ×0.1 °C | `51 02` = 59.3 °C | **ready**: the same register was read before as B24 and its value used in the manager's demand formula ([heat-demand.md](heat-demand.md)); bus read, catalogue and that record agree |
+| `81 01` (385) | DHW maximum (vendor 353 / 574), UIN ×0.1 °C, 8–80 | `58 02` = 60.0 °C | plausible (60 °C is the factory DHW maximum of the room unit's list, P601); needs the system manager's own manual or display |
+| `8a 02` (650) | DHW setback setpoint (573), UIN ×0.1 °C, 8–80 | `50 00` = 8.0 °C | plausible (the lowest value); needs a second source |
+| `12 01` (274) | operating mode switch, UIN | `0b 00` = 11 | the register `discoveries.md` calls the program selector (11 on `15`); catalogue and finding agree on the register, not yet on the meaning of 11; needs the value list |
+| `76 00`, `78 00` (118, 120) | buffer temperature top, bottom, SIN ×0.1 °C | `18 fc` = −100.0 | the "sensor not fitted" value ([ka-reads.md](ka-reads.md) read them so, as calorifier registers); definable with `absent = -100.0`, but no fitted value is seen here: needs the manual's sensor names (B10, B11) |
+| `a9 01`, `aa 01` (425, 426) | control voltage V, control current mA, UIN ×0.1 | `00 00` | 0 only (the analogue input is not used); needs a second source |
+| `28 0a` (2600), `8e 0a` (2702) | input H1, output MFA 2 | `00 00` | 0 only; needs a second source |
+| `0b 00` (11) | read by the program logic, no display | `0a 01` = 266 | 266 is the software version of the system manager (the tool's title "KA 266.18"), and master `07` reads the same 266 from `99 01` of `50` and `f6`: a version register |
+| `33 01`, `35 01` (307, 309) | DHW minimum (352), DHW variant (571) | `00 80` | not available on this system manager |
+
+Registers of `15` that answer and have no catalogue row (45): `16 00` `18 fc`; `51 00`, `53 00`,
+`64 00`, `67 00`, `6f 00`, `72 00`, `ff 00` `00 00`; `58 00`, `59 00`, `63 00` `01 00`; `68 00`
+`41 20` (the identification bytes `41 20` that `15` answers to the scan); `09 01`, `0d 01`,
+`15 01`, `1d 01`, `20 01`, `3d 01`, `44 01` `00 00`; `0f 01` `05 00`; `10 01` `08 00`; `13 01`
+`02 00`; `17 01` `c8 00` (20.0); `1b 01`, `1c 01`, `1e 01`, `1f 01`, `28 01`, `32 01`, `48 01`
+`01 00`; `46 01` `57 00`; `47 01` `50 00`; `f1 01` `00 00`; `f2 01` `45 00`; `a2 02` `01 00`;
+`be 02` `0a 00`; `70 09`, `71 09` `ff 00`; `72 09` `0a 00`; `0d 0a`, `23 0a` `00 00`; `0e 0a`
+`ee 00`; `0f 0a` `03 00`; `11 0a` `01 00`; `1c 0a` `0a 00`. Several are registers the room units
+define (`1b 01`–`20 01` holiday dates, `3d 01`, `be 02`), answering on the system manager too.
+
+### Ready for a lot, and what still needs a second source
+
+- **Ready with the survey read as evidence**: `40 0a` B24 of the system manager (bus read,
+  catalogue meaning, and an earlier record that used its value). One register.
+- **Needs a second source** (manual page, display value, or a value that moves as expected):
+  `81 01`, `8a 02`, `12 01` (value list), `76 00` / `78 00` (no fitted sensor), `a9 01`,
+  `aa 01`, `28 0a`, `8e 0a`, `0b 00`. The boiler registers of chunks 1 and 2 likewise (the owner's
+  reading of P10–P71 on both displays settles most of them).
+- A catalogue row alone is never evidence (rule 3).
+
+## Pass 2, as now generated
+
+`scripts/register-survey.py <csv-dir> pass2 out/register-survey-pass1-results.csv` now also
+sends the five failed requests of `08` again, one register each, and adds on every device of a
+type the catalogue's on-installation registers that the pass-1 ranges miss: 6 for the heating
+modules (`a9 04`, `e9 04`, `ae 06`, `1f 0c`, `fb fd`), 20 for the room units (legionella
+`87 05`, WTC delay `14 06`, solar yield `ae 06`–`b1 06`, the floor-drying registers `9c 08`–`a2 08`,
+`1f 0c`, `21 0c`, daylight saving `de fd`–`e1 fd`, legionella start `f4 fd`). None for the system
+manager (all its catalogue registers lie inside its pass-1 ranges). Rows the catalogue reads at a
+master address (`0x70`, `0x4c`, `0xf1`) are left out: they are not slave registers. The full
+pass 2 is generated once pass 1 has ended.
 
 ## Date
 

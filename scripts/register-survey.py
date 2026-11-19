@@ -3,12 +3,14 @@
 
 Usage:
   scripts/register-survey.py <csv-dir> pass1 > requests.csv
-  scripts/register-survey.py <csv-dir> pass2 <results.csv> > requests.csv
+  scripts/register-survey.py <csv-dir> pass2 <results.csv> [<catalogue.csv>] > requests.csv
 
 <csv-dir> is the folder `kromschroeder/` of a release archive; every register a `50 22` read line
 of it already defines is left out. pass1 surveys one device of each type (08, 15, 51, 35);
 pass2 reads, on the other devices of the same type (18, 52, 75, f5), the registers that answered
-in pass 1 with something other than 0x8000.
+in pass 1 with something other than 0x8000; on every device of a type, the registers of the
+vendor-software catalogue (evidence/register-candidates.csv, status on-installation) that the
+pass-1 ranges miss; and, on the pass-1 devices, the requests that failed, one register each.
 
 Each request reads four registers in one `50 22` telegram (ID `<crc>` plus four addresses, the
 checksum over the eight address bytes, as ebusd's own four-register reads on this bus), one on
@@ -57,6 +59,22 @@ def defined(csvdir, zz):
     return regs
 
 
+def catalogue_extra(path):
+    """Registers of the vendor-software catalogue on the installation, outside the pass-1 ranges."""
+    out = {}
+    for c in csv.DictReader(open(path, encoding="utf-8")):
+        if c["access"] != "register" or c["status"] != "on-installation" or not c["register"].isdigit():
+            continue
+        if c["read_at"].startswith("address"):
+            continue  # read at a master address, not a slave: not a 50 22 register of a device
+        typ = ("manager" if c["device"].startswith("system manager") else
+               "module" if c["read_at"] == "module" else "room")
+        reg = int(c["register"])
+        if not any(a <= reg < b for a, b in RANGES[typ]):
+            out.setdefault(typ, set()).add(reg)
+    return out
+
+
 def blocks(regs, size):
     regs = sorted(regs)
     while regs:
@@ -79,13 +97,24 @@ def main():
             regs = [r for a, b in RANGES[typ] for r in range(a, b) if r not in known]
             plan += [(zz, blk) for blk in blocks(regs, SIZE[typ])]
     else:
-        answered = {}
+        answered, failed = {}, {}
         for row in csv.DictReader(open(sys.argv[3], encoding="utf-8")):
             if row["status"] == "ok" and row["raw"] not in ("00 80", ""):
                 answered.setdefault(row["zz"], set()).add(int(row["reg_dec"]))
+            elif row["status"] != "ok":
+                failed.setdefault(row["zz"], set()).add(int(row["reg_dec"]))
+        extra = catalogue_extra(sys.argv[4] if len(sys.argv) > 4 else "evidence/register-candidates.csv")
+        # pass-1 devices: the failed requests again, one register each, and the catalogue's
+        # on-installation registers outside the pass-1 ranges
+        for zz, typ in PASS1.items():
+            known = defined(csvdir, zz)
+            plan += [(zz, [r]) for r in sorted(failed.get(zz, ()))]
+            plan += [(zz, blk) for blk in blocks((r for r in extra.get(typ, ()) if r not in known), SIZE[typ])]
+        # the other devices of each type: what answered on the pass-1 device, and the same extras
         for zz, src in PASS2.items():
             known = defined(csvdir, zz)
-            plan += [(zz, blk) for blk in blocks((r for r in answered.get(src, ()) if r not in known), SIZE[TYPE[zz]])]
+            regs = (answered.get(src, set()) | extra.get(TYPE[zz], set())) - known
+            plan += [(zz, blk) for blk in blocks(regs, SIZE[TYPE[zz]])]
     w = csv.writer(sys.stdout)
     w.writerow(["chunk", "seq", "zz", "registers", "request"])
     for i, (zz, blk) in enumerate(plan):
