@@ -35,6 +35,10 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   hot water and de-couple of the system manager; outside temperature of the exchange of the
   three heating circuits, flow temperature of the modules `51` and `52`). An interface can show
   "no sensor" instead of the number.
+- Labels of the modulation limits of `15.w.ka` in the metadata: `ModulationMax` "Maximum
+  modulation (optimal range)" / « Modulation maximale (plage optimale) », `ModulationMin`
+  "Minimum modulation (optimal range)" / « Modulation minimale (plage optimale) » (were
+  "Optimal range, upper / lower limit"). Message names unchanged.
 
 ## Changes from 0.5.9 to 0.5.11
 

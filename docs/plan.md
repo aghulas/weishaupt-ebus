@@ -205,12 +205,16 @@ data point on arbitration with room units).
   `HcMode` (em1–em3) and on `SupplyHCTemp` of `em2`, `em3`. Left without it: the flow, return
   and flue-gas information values of the boilers (no sentinel seen or stated for them),
   setpoints and computed values, the boiler status telegrams (they use the eBUS replacement
-  value, already `null`). Lot M `6b63ea7` (on `2aa0420`, published); trial `weishaupt-next`:
-  check clean, 976 messages, 905 fixtures; built with `scripts/release.sh 0.5.12`: CSV identical
+  value, already `null`). Trial: check clean, 976 messages, 905 fixtures; built with `scripts/release.sh 0.5.12`: CSV identical
   to 0.5.11 (only `README.md`, `sha256sums.txt`), metadata differs only by `absent` on those
-  22 fields. Installs with a reload only. No new string. To publish, on the owner's word:
-  push `weishaupt-M` (fast-forward) and force `weishaupt` with a lease to the trial head
-  `1d3de89` (the pin commit is rebuilt on top of M), the workbench `main`; tag and release `weishaupt-0.5.12`.
+  22 fields. Also the labels of `ka` `ModulationMax` / `ModulationMin`, "Maximum / Minimum
+  modulation (optimal range)", « Modulation maximale / minimale (plage optimale) », accepted by
+  the owner (« ok », 2026-11-19, `evidence/terms.md`); French comments of the CSV unchanged.
+  Lot M `5a6041b` (two commits on `2aa0420`); trial `weishaupt-next` `94b3a9c`, check clean;
+  the metadata differs from 0.5.11 only by these 22 `absent` and the two labels. Installs with a
+  reload only. To publish, on the owner's word: push `weishaupt-M` (fast-forward to `5a6041b`)
+  and force `weishaupt` with a lease to `94b3a9c` (the pin commit is rebuilt on top of M), the
+  workbench `main`; tag and release `weishaupt-0.5.12` with the five files of `out/release/`.
 - **Trial 0.5.11 with batches B and F (2026-11-19, nothing pushed).** B (control variation
   `41 01`, 1 → 0 → 1 on the three room units) and F (`ka` `ea fd` 80 → 79 → 80, `eb fd`
   30 → 31 → 30) ran on site, all 10 writes from `ff` taken and restored. Records

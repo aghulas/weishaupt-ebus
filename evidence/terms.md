@@ -339,6 +339,7 @@ that date.
 | Start, End; Start enabled, End enabled | Début, Fin; Début activé, Fin activée | fields of a program slot | the display shows times, not field names |
 | Heat demand of the cascade manager; Heat demand to the cascade manager | Demande de chaleur du manager de cascade; Demande de chaleur au manager de cascade | message `PowerDemand` of the boilers; of the room units | the telegram is not described; accepted by the owner on 2026-11-19 |
 | Request state; Modulation demand | État de la demande; Demande de modulation | fields of `PowerDemand` | same; "Demande de modulation" chosen by the owner on 2026-11-19 (proposal "Consigne de degré de modulation") |
+| Maximum modulation (optimal range); Minimum modulation (optimal range) | Modulation maximale (plage optimale); Modulation minimale (plage optimale) | messages `ModulationMax`, `ModulationMin` of the system manager (registers `ea fd`, `eb fd`, parameters 535, 536) | the service tool names them "Max. / Min. limit opt. operating range" (English only); the first labels, "Optimal range, upper / lower limit" (0.5.11), did not say on site that they limit the modulation; relabelled on the owner's « ok » of 2026-11-19. The French comments of the CSV keep "limite haute / basse de la plage de fonctionnement optimale de la cascade", a description, not a label |
 
 Decided at the same time: the labels follow the glossary and not the abbreviations of the
 displays ("Tps blocage", "Lim antigel"); the boiler information values keep their code in
