@@ -566,3 +566,5 @@ was driven remotely; each screen was matched with the telegrams of source `ff` g
   device type without the device (DHW extension module, control centre, heating module alone).
   Parameter lists of the DHW extension module recorded. Not tried with the tool connected. The
   earlier statement that a type not on the bus cannot be opened holds for File, Open only.
+- 19:53: the three selectors were written back to 0 through ebusd from source `31`
+  (`0903 9a 0b 00 00`, answer `00`), read 9 before and 0 after; `ErrorId` of `em1` reads 0 again.

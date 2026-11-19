@@ -678,9 +678,27 @@ either time. Not opened. Its history is in the log of 2026-11-16.
 
 ### Selectors
 
-After this visit the selectors of `35`, `f5` and `15` (and so `50`) are at 9. The tool offers no
+After this visit the selectors of `35`, `f5` and `15` (and so `50`) were at 9. The tool offers no
 way to write them back; a `Read` in the tab runs through 0–9 again. Writing them back to 0 is a
 bus write and was handed to the session that runs the on-site write tests, with the owner's words.
+
+Written back on the owner's word, 19:53:05–19:53:23, by that session, through ebusd, one device at
+a time, from ebusd's own address `31`:
+
+| Target | Read before | Write | Answer | Read after |
+|---|---|---|---|---|
+| `35` | `0902 9a 0b 02` / `02 09 00` | `0903 9a 0b 00 00` | `00` | `02 00 00` |
+| `f5` | `02 09 00` | same | `00` | `02 00 00` |
+| `15` | `02 09 00` | same | `00` | `02 00 00` |
+
+Checked from this session afterwards: the three writes with source `31` are in the grabbed
+telegrams, each answered `00`, and `read -f -c em1 ErrorId` (target `50`) returns 0 again.
+
+- **Established:** the selector takes a `09 03` write from source `31`; source `ff` is not needed
+  for this register (unlike the `50 23` settings). Selector 9 was read back from all three devices
+  before the write, so the value the tool leaves behind is confirmed on the bus.
+- The selector is ordinary read/write state: reading the fault log entry by entry is possible from
+  ebusd with a write of the entry number followed by the eight reads.
 
 ## Third visit, 19:43–19:45 — `Development`, Sim FS, tool offline
 
@@ -769,7 +787,6 @@ register is to be read from ebusd with the same result (`docs/service-tool-proto
 - Automat B: not opened (the tool reported it as not available on the second visit).
 - System time, Extra access, Password, eBus-Trigger, CM controller, BCC, Analyse BCC, and the
   tabs MasterReset and Ion-Kalib of the developer window: not opened. Sim FS: offline only.
-- The selectors of `35` and `f5` were not read back; the one of `15` was, through `50`.
 - The meaning of the values of the enumerations (circuit type, functions of inputs and outputs)
   beyond the ones displayed.
 
