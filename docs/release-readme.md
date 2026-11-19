@@ -20,7 +20,8 @@ to the official ebusd configuration; this archive exists so that they can be use
 
 @COUNT@ messages. Reads only, except what is read and written: 71 settings of `15.w.ka`,
 `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`, `51.w.em2` and `52.w.em3` (66 numbers, 5
-choices), the 105 program slots of `35.w.fs1`, and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
+choices), 126 program slots (the five programs of `35.w.fs1`, heating program 1 of
+`f5.w.fs3`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
 ## Changes since 0.5.6
@@ -132,7 +133,7 @@ those translated here (for example `temperature`).
   example `50.w.em1`. A device that answers another identification gets the Wolf file of the
   same address, if there is one.
 - The write definitions were checked by decoding captured telegrams. Each of the 71 settings
-  and one slot of each program of `35.w.fs1` was seen on the installation changed by one step, read back with the new value and restored;
+  and one slot of each written program was seen on the installation changed by one step, read back with the new value and restored;
   the telegrams were the expected ones. They were built by the ebusd of the installation with
   its own configuration or by a client sending raw telegrams; ebusd sending from the files of
   this archive has not been observed yet.
