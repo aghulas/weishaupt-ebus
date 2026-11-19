@@ -227,6 +227,14 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Survey pass 2 done (2026-11-19, 21:00–21:06), analysed.** 368 register reads and 2 memory
+  reads (the results file repeats its first 40 rows). Lot O answers on every device it is defined
+  for, nothing to fix. The six boiler counters of the developer window are established by an
+  ebusd memory read (`EventCounters`, proposed for lot D). Proposed with two sources, for the
+  owner: `EventCounters` (lot D); summer time and `LegionellaSetpoint` on the room units,
+  `MixerPump` and `CirculationReturnSetTemp` on the modules (lot O); list and the rest in
+  `evidence/register-survey-findings.md`. 0.5.14 (`5f198f1`, 1 054 messages) is ready to publish
+  once the owner accepts the labels of lot O; its notice's count of the second group corrected (54).
 - **Lot O, second group (2026-11-19, local only).** The owner approved here the nine further
   groups and pass 2 of the survey (« Approve both »; pass 2 handed to the main session for the
   deploy session's window). Two more commits on O: `f19ea6d` (room units: version, the hot-water

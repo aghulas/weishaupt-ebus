@@ -32,7 +32,6 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   day, month and year. Name, type, register and value are unchanged; an interface no longer
   shows them as durations. The CSV of `50.w.em1` changes: ebusd takes the new files at its next
   start, an interface the metadata with a reload.
-
 - **24 new reads** (stock ebusd), each established by the vendor service tool's screen and an
   independent read with the same value. `15.w.ka`: `ModulationDiffTemp` (parameter 538, K),
   `DeCoupleExcessTemp`, `DeCoupleMaxTemp`, `CalorifierExcessTemp`, `SummerTimeStartDay`,
@@ -42,12 +41,15 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   `PlateExchangerPrimaryTemp` (sensor B24). Each room unit: `RoomSetpointTemp` (the room setpoint
   in effect), `OutsideMixedTemp`, `HeatingCircuitType` (read only). The CSV of `15.w.ka` and of the
   three room units gain these lines; nothing else changes in them.
-- **30 more reads** (stock ebusd), with two sources each. Each room unit: `VersionMajor`,
+- **54 more reads** (stock ebusd, 16 on each room unit, 3 on each heating module), with two
+  sources each. Each room unit: `VersionMajor`,
   `VersionMinor`, the hot-water settings it stores (`DHWLoadingPriority`, `DHWSetbackTemp`,
   `DHWMaxTemp`, `DHWLegionellaDay`, `LegionellaCirculationTime`; the system manager's values are
   the ones in use where it prepares the hot water) and its fault log (`ErrorId` … `ErrorYear`, as
   on `50.w.em1`). Each heating module (`51.w.em2`, `52.w.em3`): `MixerParameter`, `VersionMajor`,
   `VersionMinor`.
+- 78 messages more in all; no message renamed, removed or retyped, no write added. ebusd takes the
+  new files at its next start; an interface takes the metadata with a reload.
 
 ## Changes from 0.5.12 to 0.5.13
 

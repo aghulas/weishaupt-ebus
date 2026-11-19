@@ -350,6 +350,100 @@ The memory reads are `hex 08500005d40601d2d8` and `hex 18500005d40601d2d8` (chec
 `Counters`, checked). The fault-log registers of `75` and `f5` are read with their selectors at 0
 (set back at 19:53). The deploy session runs the file only on the owner's yes, in its window.
 
+## Pass 2 (2026-11-19, 21:00:49 to 21:06:36)
+
+134 requests, all answered, no burner pause. **368 register reads and 2 memory reads**: the
+generator's count is right. The results file holds 410 rows because its first 40 rows (requests
+1 to 22: the five retries on `08`, the catalogue registers of `51` and `35`, the first ten of
+`18`) are written twice, with identical values; 370 distinct rows. Answering other than `00 80`,
+distinct registers: `52` 99, `75` 84, `f5` 83, `18` 45, `35` 7, `51` 5 (the counts 56, 14, 10
+reported for `18`, `35`, `51` include the duplicates).
+
+- The five retried registers of `08` (`38 03`, `3d 03`, `3f 03`, `4b 03`, `4d 03`) answer `00 80`.
+
+### Twins
+
+| Pair | Same value | Different |
+|---|---|---|
+| `18` vs `08` | 37 | 8: `00 00` and `5b 01` (`45` / `55`), `60 01` (128 / 0), `76 01` (0 / 14), **`78 01` (2 / 1)**, `1d 02`, `27 02` (543 / 731, starts / 256), `2a 02` (20 067 / 20 197, burner hours) |
+| `52` vs `51` | 90 | 9: `02 00`, `09 00`, `12 00`, **`52 00` (1 / 0)**, the clock copy `25 01`–`27 01`, `20 0a`, `29 0a` (0 / 1) |
+| `75` vs `35` | 93 | 4: `09 00`, the clock copy, **`73 09` (3 / 2)** |
+| `f5` vs `35` | 88 | 9: `09 00`, **`12 00` (14.0 / 8.0)**, `68 00` (`08` / `18`), `ff 00` (3 / 4), the clock copy, `72 09` (`00 80` / 20), `73 09` (3 / 2), `0e 0a` (`bb` / `55`) |
+
+The boiler parameters matched in chunks 1 and 2 read the same on both boilers (`27 00` 80.0,
+`09 02` 37, `11 02` 120.0, `5a 01` 23.0 %): both are WTC 250 set alike. **`78 01` reads 1 on the
+first boiler and 2 on the second**: the boiler address in the cascade (P12 of the boiler manual:
+A for the first, b to E for the others); the coding of the letters (1, 2) is seen, the value of a
+single boiler is not. `68 00` holds the byte that differs in the identification answers of the
+room units (`18` on `35` and `75`, `08` on `f5`).
+
+### Lot O on every device it is defined for
+
+Every register of lot O answers on every device it is defined for, with a value of the expected
+kind: room units `12 00` 8.0 / 8.0 / 14.0, `1a 0a` 11.2 on all three, `73 09` 2 / 3 / 3, version
+327.26, hot-water settings 2 / 40.0 / 60.0 / Friday / 180 s on all three, the fault log (entry 0)
+the same on all three (device 0 "KA", 03:51, 1 September, year 0); modules `8f 01` 8.0, version
+372.03 on both. **No `00 80`, no change of kind: nothing to fix in lot O.**
+
+### Room unit 2 (`75`): `10 00` and `12 01`
+
+`10 00` (configuration of the room unit, P335 "internal room sensor" = 2 in the tool) reads 2 and
+`12 01` (type of operation) reads 11 on all three room units. No difference for `75` here; of all
+registers, `75` differs from `35` only in the circuit type and the clock copy. The lead stays the
+installer parameter P312 (the owner's checklist).
+
+### Summer time and legionella on the room units
+
+`de fd`–`e1 fd` read 25 / 3 / 25 / 10 on the three room units (the tool showed 25 March and
+25 October on `35`; the system manager has 29 March). `f4 fd` reads 88 (22:00 in quarter hours),
+`87 05` 600 (60.0 °C) on `35` and `f5`.
+
+## The six boiler counters (memory read at `0x01d8`)
+
+| Boiler | Answer (length, status, 14 bytes) |
+|---|---|
+| `08` | `0f 00` · `00` `00` `dd 00 00` `04 00 00` `bf 05 00` `01 00 00` |
+| `18` | `0f 00` · `00` `00` `e2 00 00` `03 00 00` `fb 04 00` `01 00 00` |
+
+The first byte of the data (`firstbyte` of lot D's memory reads) is 0: a valid answer. On boiler
+A every byte equals what the developer window showed at 19:19: `EEA_HBRONTAG` 0, `EEA_NZUENDTAG`
+0, `EEA_N_PON` 221, `EEA_N_KON` 4, `EEA_RES_CNT` 1 471, `EEA_SHUT_OFF` 1. Two sources (the tool's
+display and an independent read by ebusd) establish addresses, sizes, byte order and values;
+the meaning rests on the vendor's symbol names. Boiler B: 0, 0, 226, 3, 1 275, 1.
+
+Proposed for **lot D** (the boiler counters), one memory read per boiler like `Counters`, message
+`EventCounters`, fields `firstbyte`, `BurnerHoursToday` (`EEA_HBRONTAG`, 1 byte),
+`IgnitionsToday` (`EEA_NZUENDTAG`, 1 byte), `PowerOnCount` (`EEA_N_PON`, 3 bytes), `KonCount`
+(`EEA_N_KON`, 3 bytes, meaning not established), `ResetCount` (`EEA_RES_CNT`, 3 bytes),
+`ShutOffCount` (`EEA_SHUT_OFF`, 3 bytes).
+
+## Final list proposed with two sources (for the owner)
+
+| Lot, file | Register | Proposed name | Sources |
+|---|---|---|---|
+| D, `08.w.bc1`, `18.w.bc2` | memory `0x01d8`, 14 bytes | `EventCounters` (six counters, above) | developer window + ebusd read, byte for byte |
+| O, room units | `de fd`–`e1 fd` | `SummerTimeStartDay`, `SummerTimeStartMonth`, `SummerTimeEndDay`, `SummerTimeEndMonth` (parameters 153, 154) | tool screen on `35` (25 March, 25 October) + survey on the three units |
+| O, room units | `87 05` | `LegionellaSetpoint` (parameter 606), as on `ka` | manual 83277504, factory 60 °C (p. 39, 41) + survey 60.0 on `35`, `f5` |
+| O, heating modules | `52 00` | `MixerPump` (state of the mixer-circuit pump) | tool screen on `52` (the only box ticked, reading 1) + survey: 1 on `52`, 0 on `51` |
+| O, heating modules | `a9 04` | `CirculationReturnSetTemp` (parameter 610) | manual, factory 30 °C (p. 39, 95) + survey 30.0 on `51` and `52` |
+
+**Not proposed** (one source, or a meaning by elimination or by the catalogue alone): `78 01`
+(boiler address: the coding of the letters needs a single boiler or the display), `f4 fd` on the
+room units (88 = 22:00; the manual gives 22 h 00 in two tables and 20 h 00 in a third),
+`fb fd` (2 on both modules, the tool's "mixed heating circuit" on `52`, but its split with `59 03`
+is not established), `56 00`, `57 00`, `85 02`, `29 0a` (assigned by the tool's legends only), the
+boiler parameters (the owner's reading of P10–P71), `0e 0a`, `68 00`, the clock copies.
+
+## Release 0.5.14
+
+As it stands, trial `weishaupt-next` `5f198f1` (stack A, E, D, F, C, G, H, J, K, N, O, L, M):
+the clock-field units (lot G), lot O with both approved groups, 1 054 messages (976 in 0.5.13),
+944 fixtures, check clean. The notice "Changes since 0.5.13" is corrected: 24 + 54 = 78 messages
+(it said 30 for the second group). **Ready to publish** once the owner accepts the new labels and
+French strings of lot O (listed in `docs/plan.md`). Known and stated: the comment of
+`DHWOperation` in lot A still says that only value 0 is established (lot A unchanged: #717).
+The proposals above would make a later release.
+
 ## Date
 
 2026-11-19.
