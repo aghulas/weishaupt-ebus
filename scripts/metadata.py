@@ -373,6 +373,8 @@ def resolve(side, msgs):
                 if w is not None and any(k in w for k in WRITE_RANGE) and any(
                         k in f for f in m["fields"] for k in WRITE_RANGE if k in w):
                     bad.append(f"{key}: write range repeats a bound the CSV already has")
+                if "absent" in e and (len([f for f in m["fields"] if not f["type"].startswith("IGN")]) != 1 or fs is not None):
+                    bad.append(f"{key}: absent on the entry needs a message of one field; put it on the field set")
                 if "same_as" in e and e["same_as"].format(circuit=c, name=m["name"]) not in msgs:
                     bad.append(f"{key}: same_as names a message that does not exist")
                 # fields
@@ -392,6 +394,10 @@ def resolve(side, msgs):
     for key in msgs:
         if key not in resolved:
             bad.append(f"{key}: no metadata")
+    for where, a in [(f"entry {n}", e.get("absent")) for n, e in enumerate(side.get("entry", []), 1)] + [
+            (f"fields.{fs}.{k}", f.get("absent")) for fs, t in fieldsets.items() for k, f in t.items()]:
+        if a is not None and (isinstance(a, bool) or not isinstance(a, (int, float))):
+            bad.append(f"{where}: absent must be a number, the decoded value of a sensor not fitted")
     for fs, table in fieldsets.items():
         for k, f in table.items():
             if f.get("skip"):
@@ -451,10 +457,14 @@ def assemble(side, msgs, resolved, langs):
                     o["kind"] = meta.get("kind", e["kind"])
                 if meta.get("guard"):
                     o["guard"] = True
+                if meta.get("absent") is not None:
+                    o["absent"] = float(meta["absent"])
                 if mm.groupdict():
                     o["group"] = group_values(mm.groupdict(), days)
             if len(real) == 1 and "min" not in f and e.get("range"):
                 o["min"], o["max"] = e["range"]
+            if len(real) == 1 and e.get("absent") is not None:
+                o["absent"] = float(e["absent"])
             if len(real) == 1 and "step" not in f and e.get("step") is not None:
                 o["step"] = e["step"]
             fields.append(o)

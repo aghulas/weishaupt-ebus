@@ -196,6 +196,21 @@ data point on arbitration with room units).
 - **Nine upstream branches wait for #717.** `upstream/<topic>` (section below), local only, texts
   in `docs/pr-<topic>.md`; to propose one at a time once the maintainer answers #717, on the
   owner's word (rule 8).
+- **Trial 0.5.12, metadata only (prepared locally on 2026-11-19, nothing pushed).** Field key
+  `absent` (contract, `scripts/metadata.py`: output and check) for a temperature whose sensor is
+  not fitted, on 22 fields: -40.0 on both boilers (information values `OutsideTemp`,
+  `DHWTemp`, `HydraulicSeparatorTemp`, where the sentinel was read; the four fields of the
+  memory read `Temperatures`, whose record states it), -100.0 on `ka` `OutsideTemp`,
+  `DHWTemp`, `DeCoupleTemp` (the family rule of `ka-reads`), on the outside temperature of
+  `HcMode` (em1–em3) and on `SupplyHCTemp` of `em2`, `em3`. Left without it: the flow, return
+  and flue-gas information values of the boilers (no sentinel seen or stated for them),
+  setpoints and computed values, the boiler status telegrams (they use the eBUS replacement
+  value, already `null`). Lot M `6b63ea7` (on `2aa0420`, published); trial `weishaupt-next`:
+  check clean, 976 messages, 905 fixtures; built with `scripts/release.sh 0.5.12`: CSV identical
+  to 0.5.11 (only `README.md`, `sha256sums.txt`), metadata differs only by `absent` on those
+  22 fields. Installs with a reload only. No new string. To publish, on the owner's word:
+  push `weishaupt-M` (fast-forward) and force `weishaupt` with a lease to the trial head
+  `1d3de89` (the pin commit is rebuilt on top of M), the workbench `main`; tag and release `weishaupt-0.5.12`.
 - **Trial 0.5.11 with batches B and F (2026-11-19, nothing pushed).** B (control variation
   `41 01`, 1 → 0 → 1 on the three room units) and F (`ka` `ea fd` 80 → 79 → 80, `eb fd`
   30 → 31 → 30) ran on site, all 10 writes from `ff` taken and restored. Records

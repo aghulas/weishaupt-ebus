@@ -24,7 +24,19 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.9
+## Changes since 0.5.11
+
+- **Metadata only; the CSV files are the same as in 0.5.11.** ebusd needs nothing; an interface
+  that reads the metadata file takes this release with a reload of its configuration.
+- New field key `absent`: the value a temperature reads when its sensor is not fitted, -40.0 on
+  the boilers, -100.0 on the system manager and the heating modules, on the 22 temperature
+  fields where the evidence shows or states it (information values outside, hot water and
+  hydraulic separator and the four temperatures of the memory read of both boilers; outside,
+  hot water and de-couple of the system manager; outside temperature of the exchange of the
+  three heating circuits, flow temperature of the modules `51` and `52`). An interface can show
+  "no sensor" instead of the number.
+
+## Changes from 0.5.9 to 0.5.11
 
 This release holds two steps; the first, 0.5.10, was not published on its own.
 
@@ -213,7 +225,8 @@ those translated here (for example `temperature`).
 - The operating phase `ForcedVenting` (9) of the status messages comes from no manual and was
   never seen on a bus; its label in the metadata file is provisional.
 - A temperature whose sensor is not fitted reads as a number: -100.0 on a heating module or
-  the system manager, -40 on a boiler. Nothing in the telegram marks it.
+  the system manager, -40 on a boiler. Nothing in the telegram marks it; the metadata file
+  marks the fields concerned with `absent`.
 - Every memory read (`50 00`) of the boilers — the fault history, the operating counters, the
   live values and the fault counters `FaultCounters1` to `7` — starts with the field
   `firstbyte`. It reads 0 in a normal answer. In 2 of 107 answers of one boiler it read the

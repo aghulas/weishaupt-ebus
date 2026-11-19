@@ -113,6 +113,12 @@ value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, 
   `compose: false` means the field label stands alone.
 - `guard: true` (the field `firstbyte` of the memory reads): the reading is valid only when
   this field reads 0. Otherwise every value of that reading must be discarded.
+- `absent` (from 0.5.12): the decoded value this field reads when its sensor is not fitted,
+  -40.0 on the boilers, -100.0 on the system manager and the heating modules. The device sends
+  it as an ordinary number, not the eBUS replacement value (which ebusd prints as `-` and the
+  fixtures as `null`), so ebusd cannot mark it: an interface shows "no sensor" for a reading
+  equal to `absent`, and not a temperature. Present only where an evidence record shows or
+  states that value for that read.
 - A field matched by a pattern carries `group`, the numbers of its name (`code57` gives
   `{ "n": 57 }`).
 
