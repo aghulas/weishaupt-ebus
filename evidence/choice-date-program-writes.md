@@ -48,7 +48,7 @@ third register that does not hold as a year (`docs/discoveries.md`, operator's l
 | `fs1`–`fs3` | holiday start | `1b 01` day, `1c 01` month, `1d 01` third | 30, 10, 0 (`1e 00`, `0a 00`, `00 00`) | none in the log (the writes of 2026-10-30 and 2026-11-07 predate it) | no telegram |
 | `fs1`–`fs3` | holiday end | `1e 01`, `1f 01`, `20 01` | 1, 11, 0 | none | no telegram |
 
-Proven: **0 of 6**. The meaning of the third register is not settled.
+Proven: **0 of 6** on 2026-11-18; **6 of 6** on 2026-11-19 (batch D, [holiday-dates.md](holiday-dates.md)). The meaning of the third register is not settled.
 
 ### Weekly program slots
 
@@ -514,6 +514,10 @@ is the check.
    batches.
 
 ### Batch D: holiday dates of the three room units (36 writes)
+
+**Sent on 2026-11-19, 13:55:45 to 13:56:19**, on the owner's go: all 36 writes acknowledged and
+read back as planned, holiday level 0 before and after. Record and telegrams:
+[holiday-dates.md](holiday-dates.md); defined in lot C.
 
 **Dates proposed.** The stored period is 30.10 → 01.11 (third registers 0), in the past. Every
 intermediate state below stays a period in the past, with the start before the end, so no
