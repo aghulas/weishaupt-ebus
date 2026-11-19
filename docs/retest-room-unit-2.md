@@ -1,5 +1,11 @@
 # Retest plan: program writes on room unit 2 (`75`)
 
+**Closed 2026-11-19 after step 2: `75` answers its programs from the store of `35`.** A slot
+written to `35` is read at `75` within 3 s, both ways, with nothing on the bus between; a
+program write to `75` is acknowledged and not kept. Record:
+[evidence/room-units-shared-store.md](../evidence/room-units-shared-store.md). Steps 3 to 6
+were not run and are not needed for the definitions; the plan below is kept as it was run.
+
 For the deployment session, step by step. **Each write needs the owner's approval, given for
 that step, in the session's window** (rule 7: nothing is written from this repository). Reads
 first; a write only when the reads before it leave the question open. Prepared 2026-11-19.
@@ -143,6 +149,15 @@ may take it as a message of unit 1. One write and one restore, nothing else from
 
 With the installer level open on the display of `75` (owner), step 4 or the original `50 23`
 write once more. If still refused, the on-site checklist (P312, P335) decides.
+
+## Step 2 done (2026-11-19 22:31–22:42, owner's approval, `hex` from `31`)
+
+2a `80 80` on both; 2b ack `00`; 2c at +3 s, +60 s, +5 min `09 08` on `35` **and on `75`**;
+2d ack `00`; 2e `80 80` on both at the three times. No telegram to `75` between the write and
+its first read other than ebusd's own, none from `30`, `70` or `f1` to `35` or `75`.
+Hypothesis 4 holds in its strong form (one store, not a copy on the bus); hypotheses 1 to 3
+are moot for the programs. The same log shows the setback and frost-protection room setpoints
+shared too, and the heating curve, flow maximum and circuit type kept apart (see the record).
 
 ## Second pass of the vendor tool
 

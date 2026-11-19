@@ -195,7 +195,10 @@ data point on arbitration with room units).
   configuration, "access to the heating circuit without FS"), readable only on the device's
   installer menu. For the owner, on site: read both on `fs2` and on `fs1` or `fs3`, and say
   whether they differ (`evidence/choice-date-program-writes.md`, "The identification of room
-  unit 2"). Until then the programs of `fs2` stay read only.
+  unit 2"). Until then the programs of `fs2` stay read only. **Superseded 2026-11-19**: step 2
+  of the retest showed `75` answering its programs from the store of `35`
+  (`evidence/room-units-shared-store.md`); P312 / P335 are no longer needed for the
+  definitions, only to say whether one physical unit has both addresses.
 - **The owner's clock automation sends late after a Home Assistant start.** Its trigger at the
   start of Home Assistant sends the broadcast late, so the devices take a late time until the
   next half-hourly broadcast. The automation is the owner's, outside the definitions: for the
@@ -229,6 +232,13 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Room unit 2: one program store with room unit 1 (2026-11-19, step 2 of the retest run by
+  the deploy session on the owner's yes).** A slot written to `35` is read at `75` within 3 s,
+  both ways; program writes to `75` are not kept; the setback and frost-protection room
+  setpoints are shared too, curve, flow maximum and circuit type are not. Record
+  `evidence/room-units-shared-store.md`; discovery and retest plan closed. For 0.5.15: comments
+  on the programs of `75.w.fs2` and a metadata key pointing to `fs1`, wording proposed in
+  `docs/fs2-programs-proposal.md`, **waiting for the owner** before any branch changes.
 - **Room unit 2 retest and boiler parameters (2026-11-19, prepared, nothing sent).** The owner
   wants the program writes of `75` retried: plan `docs/retest-room-unit-2.md` (four refusals on
   record; new: the 105 program slots of `75` equal those of `35`, and the tool groups units 1 and

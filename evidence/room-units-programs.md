@@ -246,6 +246,14 @@ heating module (`50`, `51`, `52`). Two condensing boilers in cascade behind a sy
   `docs/discoveries.md` (2026-10-30) says the slots accept any master, but no telegram was
   kept.
 
+## Addition of 2026-11-19
+
+Room unit 2 (`75`) answers its programs from the store of room unit 1 (`35`): a slot written to
+`35` is read at `75` within 3 s, and a program write to `75` is not kept
+([room-units-shared-store.md](room-units-shared-store.md)). This explains the equal values of
+the two units in the tables above; it does not change the definitions (the programs of `fs2`
+stay read only).
+
 ## Addition of 2026-11-17 (evening)
 
 Three points of "Not verified" were examined the same day by reads around switch times, see
