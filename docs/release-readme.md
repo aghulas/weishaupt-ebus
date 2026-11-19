@@ -42,6 +42,12 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
   `PlateExchangerPrimaryTemp` (sensor B24). Each room unit: `RoomSetpointTemp` (the room setpoint
   in effect), `OutsideMixedTemp`, `HeatingCircuitType` (read only). The CSV of `15.w.ka` and of the
   three room units gain these lines; nothing else changes in them.
+- **30 more reads** (stock ebusd), with two sources each. Each room unit: `VersionMajor`,
+  `VersionMinor`, the hot-water settings it stores (`DHWLoadingPriority`, `DHWSetbackTemp`,
+  `DHWMaxTemp`, `DHWLegionellaDay`, `LegionellaCirculationTime`; the system manager's values are
+  the ones in use where it prepares the hot water) and its fault log (`ErrorId` … `ErrorYear`, as
+  on `50.w.em1`). Each heating module (`51.w.em2`, `52.w.em3`): `MixerParameter`, `VersionMajor`,
+  `VersionMinor`.
 
 ## Changes from 0.5.12 to 0.5.13
 

@@ -82,6 +82,39 @@ type 3 "radiator 75 °C", the manual "radiators 70" with a factory flow setpoint
 value name follows the manual. The circuit type stays read only. `OutsideMixedTemp` and the B24
 sensor answer -100.0 when the sensor or value is not available (the tool shows "--").
 
+## Second group (approved by the owner on 2026-11-19)
+
+Lot O, two more commits: the room units' version, stored hot-water settings and fault log, and
+the heating modules' mixer parameter and version. Read only, shared models in `wtc_inc.tsp`.
+Answers from the register survey (pass 1, `35` and `51`); `75`, `f5` and `52` are read in pass 2.
+
+| Unit | Message | Register | Request (ID) | Answer, decoded | Second source |
+|---|---|---|---|---|---|
+| `35` | `VersionMajor`, `VersionMinor` | `99 01`, `9a 01` | `45 99 01`, `a1 9a 01` | `47 01` = 327, `1a 00` = 26 | the scan (`SW=2726`) and the tool's version 327.26 |
+| `35` | `DHWLoadingPriority` | `23 00` | `d8 23 00` | `02 00` = Parallel | the tool's screen: P343 "parallel", reading 2, on `35` and `75` |
+| `35` | `DHWSetbackTemp` | `8a 02` | `12 8a 02` | `90 01` = 40.0 | room unit manual 83277504, P133 factory 40 °C (p. 32) |
+| `35` | `DHWMaxTemp` | `81 01` | `ad 81 01` | `58 02` = 60.0 | the same manual, P601 factory 60 °C (p. 39) |
+| `35` | `DHWLegionellaDay` | `01 01` | `5d 01 01` | `05 00` = Friday | the same manual, P605 factory Friday (p. 39) |
+| `35` | `LegionellaCirculationTime` | `b1 09` | `29 b1 09` | `b4 00` = 180 s | the same manual, P609 factory 3 min (p. 39) |
+| `35` | `ErrorId` | `9a 0b` | `ab 9a 0b` | `00 00` = 0 (the most recent entry) | the tool's History tab reads these nine registers on `35`, entry by entry, and shows date, time, device and code |
+| `35` | `ErrorCode` | `9b 0b` | `f7 9b 0b` | `00 00` = 0 | as above (codes 0 and 191 shown) |
+| `35` | `ErrorType` | `9c 0b` | `3f 9c 0b` | `03 00` = 3 | as above |
+| `35` | `ErrorDevice` | `9d 0b` | `63 9d 0b` | `00 00` = 0 (shown "KA") | as above |
+| `35` | `ErrorMinute` | `9f 0b` | `db 9f 0b` | `33 00` = 51 | as above |
+| `35` | `ErrorHour` | `a0 0b` | `c7 a0 0b` | `03 00` = 3 | as above |
+| `35` | `ErrorDay` | `a1 0b` | `9b a1 0b` | `01 00` = 1 | as above |
+| `35` | `ErrorMonth` | `a2 0b` | `7f a2 0b` | `09 00` = September | as above |
+| `35` | `ErrorYear` | `a3 0b` | `23 a3 0b` | `00 00` = 0 | as above (entries dated 2000 shown) |
+| `51` | `MixerParameter` | `8f 01` | `61 8f 01` | `50 00` = 8.0 K | the tool's P365 "mixer parameter" 8.0 on `51` (its own request), and the manual's P425 factory 8 K (p. 37) |
+| `51` | `VersionMajor`, `VersionMinor` | `99 01`, `9a 01` | `45 99 01`, `a1 9a 01` | `74 01` = 372, `03 00` = 3 | the tool's "version of the module 372.03" (read on `52`) |
+
+The fault log of `35` was read at 20:51, after the entry selectors that the tool had left at 9
+were written back to 0 (19:53): it is entry 0. `DHWLoadingPriority`: the tool's "parallel" for 2
+also settles value 2 of the system manager's list (`DHWOperation`, whose comment in lot A still
+says only 0 is established; lot A is not changed here). The hot-water settings are what the room
+unit stores; the system manager prepares the hot water on this installation and its values are the
+ones in use.
+
 ## Equipment
 
 A Kromschröder WCM-KA system manager (266.18) of a cascade of two WTC-GB boilers with a plate

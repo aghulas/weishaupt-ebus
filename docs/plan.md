@@ -227,6 +227,15 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **Lot O, second group (2026-11-19, local only).** The owner approved here the nine further
+  groups and pass 2 of the survey (« Approve both »; pass 2 handed to the main session for the
+  deploy session's window). Two more commits on O: `f19ea6d` (room units: version, the hot-water
+  settings they store, fault log `ErrorId`–`ErrorYear`) and `baddd37` (modules: mixer parameter,
+  version); L `f063fe4` (six French strings), M `099c0fd` (labels: stored hot-water settings
+  marked "(stored)" / « (mémorisée) », fault log and versions as on `ka` / `em1`). Trial
+  `weishaupt-next` `5f198f1`: check clean, **1 054 messages** (1 000 after the first group, 976
+  in 0.5.13), 944 fixtures. Value 2 of `DHWOperation` is now established (the tool's
+  "parallel"); its comment in lot A still says otherwise, to change with lot A on the owner's word.
 - **Lot O, reads established by the register survey (2026-11-19, local only).** On the owner's
   approval of the 18-register list ("je valide"): new branch `weishaupt-O` on N, two commits,
   `5f12f07` (fifteen reads of the system manager) and `074f46a` (three reads of each room unit),

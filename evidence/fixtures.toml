@@ -1982,3 +1982,39 @@ readings = [
   { message = "RoomSetpointTemp", master = "08 12 00", slave = "8c 00", expect = { value = 14.0 } },
   { message = "HeatingCircuitType", master = "19 73 09", slave = "03 00", expect = { value = "Radiator70" } },
 ]
+
+# survey-reads, second group: room unit fs1
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "VersionMajor", master = "45 99 01", slave = "47 01", expect = { value = 327 } },
+  { message = "DHWLoadingPriority", master = "d8 23 00", slave = "02 00", expect = { value = "Parallel" } },
+  { message = "DHWSetbackTemp", master = "12 8a 02", slave = "90 01", expect = { value = 40.0 } },
+  { message = "DHWMaxTemp", master = "ad 81 01", slave = "58 02", expect = { value = 60.0 } },
+  { message = "DHWLegionellaDay", master = "5d 01 01", slave = "05 00", expect = { value = "Friday" } },
+  { message = "LegionellaCirculationTime", master = "29 b1 09", slave = "b4 00", expect = { value = 180 } },
+  { message = "ErrorId", master = "ab 9a 0b", slave = "00 00", expect = { value = 0 } },
+  { message = "ErrorCode", master = "f7 9b 0b", slave = "00 00", expect = { value = 0 } },
+  { message = "ErrorType", master = "3f 9c 0b", slave = "03 00", expect = { value = 3 } },
+  { message = "ErrorDevice", master = "63 9d 0b", slave = "00 00", expect = { value = 0 } },
+  { message = "ErrorMinute", master = "db 9f 0b", slave = "33 00", expect = { value = 51 } },
+  { message = "ErrorHour", master = "c7 a0 0b", slave = "03 00", expect = { value = 3 } },
+  { message = "ErrorDay", master = "9b a1 0b", slave = "01 00", expect = { value = 1 } },
+  { message = "ErrorMonth", master = "7f a2 0b", slave = "09 00", expect = { value = "September" } },
+  { message = "ErrorYear", master = "23 a3 0b", slave = "00 00", expect = { value = 0 } },
+]
+
+# survey-reads, second group: heating module em2
+[[block]]
+evidence = "survey-reads"
+date = "2026-11-19"
+circuit = "em2"
+where = "row"
+readings = [
+  { message = "MixerParameter", master = "61 8f 01", slave = "50 00", expect = { value = 8.0 } },
+  { message = "VersionMajor", master = "45 99 01", slave = "74 01", expect = { value = 372 } },
+  { message = "VersionMinor", master = "a1 9a 01", slave = "03 00", expect = { value = 3 } },
+]
