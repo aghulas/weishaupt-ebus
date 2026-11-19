@@ -444,6 +444,31 @@ French strings of lot O (listed in `docs/plan.md`). Known and stated: the commen
 `DHWOperation` in lot A still says that only value 0 is established (lot A unchanged: #717).
 The proposals above would make a later release.
 
+## What room unit 2 writes into its module (telegram log, 2026-11-09 to 2026-11-19)
+
+From the export of the retest of room unit 2, step 1 ([docs/retest-room-unit-2.md](../docs/retest-room-unit-2.md)):
+master `70` (room unit 2) writes module `51` with `09 03 <reg lo> <reg hi> <val lo> <val hi>`,
+the same values for ten days. Each is a third source for the module register of the same number,
+beside the room unit's own register and the survey's read of the module:
+
+| Module register | Written by `70` | Count | Room unit `75` (own register) | Survey on `51` | Candidate |
+|---|---|---|---|---|---|
+| `28 00` | `ee 02` = 75.0 | 1 409 | `SupplyMaxTemp` 75.0 | 75.0 (defined, lot C) | confirms that the room unit sets the module's flow maximum, as `docs/discoveries.md` (2026-11-17) said |
+| `2b 01` | `50 00` = 8.0 | 1 395 | `SupplyMinTemp` 8.0 | 8.0 (defined, lot C) | the same for the minimum |
+| `41 01` | `01 00` = 1 | 1 405 | `ControlVariation` 1 | 0 / 1 on `51` / `52`: not read yet as such | **`ControlVariation` on the modules**, read only, "set by the room unit" |
+| `73 09` | `03 00` = 3 | 1 397 | `HeatingCircuitType` 3 | `05 00` on `51` (chunk 5) | the module answered 5 at 20:0x, while `70` writes 3 every ten minutes: **not a plain copy**; to compare in time before a definition |
+| `b1 09` | `b4 00` = 180 | 1 403 | `LegionellaCirculationTime` 180 s | 180 | **`LegionellaCirculationTime` on the modules**, read only, "set by the room unit" |
+| `20 0a` | `00 00` (once `e8 00` = 232) | 42 200 | — | 0 on `51`, 1 on `52` | written every 20 s: a state the room unit sets on its module (a release or a request); meaning not established |
+| `85 02` | `00 00` | 41 891 | — | 0 on `51` and `52` | the vendor tool's legend calls it the mixer pump PWM: a pump-speed command from the room unit; 0 only |
+
+`70` also reads, with `09 02`, the module's `0c 0a` (the weighted outside temperature, 12–13 °C),
+`29 0a` (input H1, 0 and 1 alternating) and `59 03`. The same export of `f0` (room unit 3 to module
+`52`) would give the second module.
+
+Proposed when the owner wants them (two sources and the write as a third): `ControlVariation` and
+`LegionellaCirculationTime` on `51.w.em2` and `52.w.em3`, read only. `73 09` on the module answers
+5 where the room unit writes 3: left out until a read and a write are compared in the same minute.
+
 ## Date
 
 2026-11-19.

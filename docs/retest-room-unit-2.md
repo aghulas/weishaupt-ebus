@@ -38,20 +38,48 @@ are refused.
   differs from `35` only in the circuit type (3 / 2) and the clock copy (register survey).
 - Address `50` (the manager's own circuit) takes program writes from `31`.
 
-## Hypotheses, ranked
+## Step 1 done (2026-11-19, read only): what the bus shows
 
-1. **The programs of unit 2 are kept elsewhere and `75` mirrors them.** Its 105 slots are those of
-   `35`, and the tool treats `35` as "FS#1+2". If `35` (or the manager) writes them into `75`, a
-   write to `75` is acknowledged and replaced, or ignored, and the program of circuit 2 is edited
-   on `35`. First test: a write on `35`, then read `75` (step 2).
-2. **The role of unit 2 makes its store read-only** (P312 "Adresse FS", P335 "Config. FS"): the
-   same effect seen from the unit. Test: the owner's reading of P312 / P335 (on-site checklist,
-   `docs/owner-checklist-room-units.md`) and the display test (step 3).
-3. **The source matters**: unit 2 takes programs only from its partner (`30`, the master
-   address of `35`). Written from `31` and `ff` so far. Test: step 5, only if 1 and 2 leave it
-   open.
-4. **The service matters**: unit 2 takes programs by `09 03` only. Least likely (`35`, `f5`, `50`
-   take `50 23`); cheap to test (step 4).
+Telegram-log export over ten days, 272 319 telegrams
+(`out/ebusd-telegram-log-export/2026-11-19-retest-75-step1.csv`, installation data):
+
+- **No mirror on the bus.** Every program-register write (`0x1410`–`0x1a72`) of the ten days is
+  ours: `35` ×24, `f5` ×11, `50` ×4, `75` ×3. None from `30` or `f1` to `75`, none from `70` or
+  `30` to `35`. No edit on a display reached the bus as `50 23` or `09 03`.
+- **Room unit 1 (`30`) is silent**: two reads, both to `f6`.
+- **Room unit 2 (`70`) drives module `51`, and only it**, about 17 000 telegrams a day:
+  - `09 03` writes of its own settings into the module, about every ten minutes (1 400 each):
+    `28 00` = `ee 02` (75.0, maximum flow), `2b 01` = `50 00` (8.0, minimum flow), `41 01` =
+    `01 00` (control variation 1), `73 09` = `03 00` (circuit type 3), `b1 09` = `b4 00` (180 s);
+  - `09 03` writes every 20 s or so (42 000 each) of `20 0a` = 0 (once 232) and `85 02` = 0;
+  - `09 02` reads of the module's `0c 0a` (the weighted outside temperature, 12–13 °C), `29 0a`
+    (input H1, 0 and 1) and `59 03`.
+- Step 2a read: slot `72 14` = `80 80` on `35` and `75`.
+
+What it says: **the unit that runs circuit 2 is `75`**. It writes its settings into module
+`51`, sends the heat demand of the circuit (`70 → f1`, `05 07`) and the room-unit / module
+exchange (`HcMode`, `70 → 51`); batch B showed it too (the control variation written on `75`
+moved the flow setpoint of `51`). The "FS#1+2" window of the vendor tool groups units 1 and 2 on
+screen; the bus does not show unit 1 controlling circuit 2. The program of circuit 2 is then
+evaluated by `75` itself, from its own store, whose 105 slots equal those of `35` (most likely
+copied once, at commissioning). A read-only check of that: on a Tuesday between 22:05 and 22:25,
+when heating program 1 of `75` still runs (to 22:30) and the programs of `15`, `50`, `51` have
+ended (22:00), the flow setpoint of `51` and the room setpoint of `75` (`12 00`) show which
+program circuit 2 follows.
+
+## Hypotheses, ranked (after step 1)
+
+1. **The role or an access setting of unit 2 refuses program edits from the bus** (P312 "Adresse
+   FS", P335 "Config. FS", or a setting no register read shows): `75` runs its circuit from its
+   own programs and takes every other setting from `ff`. Test: the owner's reading of P312 /
+   P335 and the display test (step 3), then the installer level open (step 6).
+2. **The source matters**: unit 2 takes program writes only from a given master. Written from
+   `31` and `ff` so far. Test: step 5 (`30`), only if 1 leaves it open.
+3. **The service matters**: `09 03` instead of `50 23` (step 4). Unit 2 itself writes its module
+   with `09 03`; cheap to test.
+4. **The programs of unit 2 are kept elsewhere and `75` mirrors them**: no mirror is seen on the
+   bus in ten days; weakened, not excluded (a copy at commissioning, or a path not logged). Step 2
+   still settles it in six minutes, and the deploy session is asking the owner for it.
 
 ## Steps
 
