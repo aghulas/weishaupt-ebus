@@ -268,6 +268,7 @@ accepted as proposed, except "modulation demand", where the owner chose the alte
 | [x] | request state, values not established | état de la demande, valeurs non établies | not a manual notion | octet d'état de la demande |
 | [x] | second byte / fifth and sixth byte / ninth byte, meaning not established | deuxième octet / cinquième et sixième octets / neuvième octet, signification non établie | not a manual notion | octet n, signification inconnue |
 | [x] | control variation of the heating circuit (parameter 315): 0 constant flow temperature, 1 outside temperature | variante de régulation du circuit de chauffage (paramètre 315) : 0 température de départ constante, 1 en fonction de la température extérieure | the manual names the parameter "Ty régul" and its settings "Const. Dép" and "Extérieur" (FS p. 50); the comment spells them out. Accepted by the owner on 2026-11-19 (« Oui, comme proposé ») | « … : 0 Const. Dép, 1 Extérieur » (display abbreviations) |
+| [x] | request state: power requested (0x66, 0xee) or not (0x55, 0x00) from the cascade manager; 0xbb or 0x55 from a room unit | état de la demande : puissance demandée (0x66, 0xee) ou non (0x55, 0x00) par le manager de cascade ; 0xbb ou 0x55 d'une commande à distance | the telegram is not described in a manual; the codes are those of ten days of telegrams (`heat-demand`). Accepted by the owner on 2026-11-19 (« Oui, valide le libellé ») | « état de la demande, valeurs non établies » (0.5.9 to 0.5.12) |
 
 ### Patterned comments
 
