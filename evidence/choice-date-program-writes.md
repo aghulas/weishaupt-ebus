@@ -370,6 +370,34 @@ then a used slot changed in place (`1e 10 14 47 1a`, restore `8e 10 14 48 1a`): 
 room unit 2 refuses only to enable an unused slot. A look at the display of room unit 2 (menu,
 access level) answers the rest.
 
+### The identification of room unit 2 (2026-11-19)
+
+After a restart of ebusd on 2026-11-19 at 08:27, the operator's deployment session read
+`SW=7203` (the software of the heating modules) for `75` in ebusd's list of participants.
+Checked read only:
+
+- Every identification answer of `75` captured, 2026-10-29 to 2026-11-19 08:39 (snapshots of
+  `grab result all`, the scans of master `00`): `0a 50 57 02 00 18 00 27 26 ff ff`, that is
+  `MF=Kromschröder`, `ID=W`, `SW=2726`, `HW=ffff`; the same as room unit 1 (`35`); room unit
+  3 (`f5`) differs only in the fifth byte of the identification (`08`). The modules `51`
+  and `52` answer `… 03 00 08 00 72 03 ff ff` (`SW=7203`).
+- ebusd's list at 08:39 the same morning gives `75` `SW=2726` again.
+- At its start ebusd broadcast an inquiry of existence (`31 fe 07fe`); masters answer it with an
+  identification broadcast (`<qq> fe 0704`), which ebusd may file under the slave address of
+  the sender (master + 5). The capture keeps only the last one (from `f0`, `SW=2726`); which
+  master, if any, broadcast `7203` is not in the captures.
+
+So `SW=2726` for room unit 2 stands, and the `7203` of 08:27 was not seen again; nothing shows
+a second device answering at `75`: on 2026-11-18 its numeric settings were written and read
+back as on the other units, which two devices at one address would not give. The file name
+`75.w.fs2` depends on the identification `W` only, which both values share: the same file
+loads either way. For the program slot refused by room unit 2 this changes nothing; the open
+hypotheses stay those above.
+
+To settle where `7203` came from, read only: an export of the telegram log of every `07 04` and
+`07 fe` telegram (scans and identification broadcasts, with their sender) on 2026-11-19 from
+08:27 to 08:33, and of every identification broadcast `fe 07 04` over the ten days kept.
+
 ### Shortest batch for the other programs of `fs3` and the two of `50` (not sent)
 
 Six slots, each changed and restored: 12 writes, from `31` (for `50`: from `31` first, then
