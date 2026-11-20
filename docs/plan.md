@@ -232,6 +232,29 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **0.5.15 ready to publish (local, 2026-11-20; the owner decided it is finished without the
+  vendor service tool, which is not available).** Scope, all on the lot branches since 0.5.14:
+  the comment of `CalorifierExcessTemp` (buffer storage, parameter 561), the 21 comments of
+  heating program 1 of `75.w.fs2` and their French, and `shared_with` on those 21 slots in the
+  metadata (contract and check). No message added, renamed, removed or retyped, no write
+  added or removed: 1 075 messages as 0.5.14. Heads A `4cd5a54`, E `9d20b57`, D `71094a2`, F
+  `b0526d3`, C `197ff7a`, G `b06e738`, H `337c954`, J `302916b`, K `2bac01b`, N `1edf9a5`, O
+  `4d439c5`, L `dc11464`, M `012d02f`, `weishaupt` `6bc3ae5` (rebuilt from the lots; differs
+  from tag `weishaupt-0.5.14` in `15.w.ka.tsp`, `75.w.fs2.tsp`, `src/fr.yaml`,
+  `metadata/weishaupt.toml` only); `scripts/check.sh` with `METADATA=required` passed, hygiene
+  passed. Notice "Changes since 0.5.14" in `docs/release-readme.md`. The French of the 21
+  comments is provisional until the owner reads it (`evidence/terms.md`). Publishing: main
+  session, on the owner's word. Pending without blocking it: the full export of three windows
+  that may add `shared_with` to the setback and frost setpoints of `fs2`
+  (`evidence/room-units-shared-store.md`); if it comes before publication, a change of lot M
+  only.
+- **What the next pass of the vendor service tool must settle (moved out of 0.5.15).** The
+  boiler installer parameters P10 to P71 (`docs/boiler-parameters-proposal.md`: 8 registers with
+  one candidate, the rest by the displayed values of both boilers); the register-survey
+  candidates with one source only (`evidence/register-survey-findings.md`, "Needs a second
+  source" and "Still lacking a source"); the participant at master `00` / slave `05`
+  (`docs/discoveries.md`); the placeholder of `docs/retest-room-unit-2.md` ("Second pass of the
+  vendor tool").
 - **Room unit 2: one program store with room unit 1 (2026-11-19, step 2 of the retest run by
   the deploy session on the owner's yes).** A slot written to `35` is read at `75` within 3 s,
   both ways; program writes to `75` are not kept; the setback and frost-protection room
@@ -244,20 +267,19 @@ data point on arbitration with room units).
   `012d02f` (`shared_with = "fs1/{name}"` on the 21 slots of `fs2`; contract and
   `scripts/metadata.py` check added); trial `weishaupt-next` `6bc3ae5`, all checks passed, 1 075
   messages. Open: heating programs 2 and 3, hot water, circulation and the setback / frost
-  setpoints (checks in the record). Nothing pushed; 0.5.15 waits for the second service-tool
-  pass.
+  setpoints (checks in the record). Nothing pushed.
 - **Room unit 2 retest and boiler parameters (2026-11-19, prepared, nothing sent).** The owner
   wants the program writes of `75` retried: plan `docs/retest-room-unit-2.md` (four refusals on
   record; new: the 105 program slots of `75` equal those of `35`, and the tool groups units 1 and
   2 as "FS#1+2"; hypotheses ranked: programs mirrored from `35`, role P312 / P335, source,
   `09 03`; step 1 a telegram-log export, step 2 a write on `35` read on `75`, step 3 the owner's
   edit on the display). Boiler P10–P71: `docs/boiler-parameters-proposal.md`, 8 registers with one
-  candidate, the rest waiting for the tool's display of both boilers; proposed for lot K. Both
-  ride with 0.5.15 with the comment of `CalorifierExcessTemp`; nothing to publish now.
+  candidate, the rest waiting for the tool's display of both boilers; proposed for lot K. The
+  retest is closed; the boiler parameters moved out of 0.5.15 (2026-11-20, see above).
 - **For 0.5.15 (local, 2026-11-19).** Comment of `CalorifierExcessTemp` (parameter 561): the
   buffer storage, not the hot water (manual 83258404, p. 92); labels unchanged, they were right.
   Lot O `fcea55e`, L `f186db4`, M rebased; trial `weishaupt-next` `faa462e`, check clean, 1 075
-  messages. Rides with the next definitions change.
+  messages. In 0.5.15 (2026-11-20).
 - **0.5.14 frozen for publication (2026-11-19).** The owner approved here (main session, « Oui,
   les deux ») publishing 0.5.14 and the third group. Third group finished: `EEA_N_KON` is the
   unknown field `ukn6` (skipped in the metadata), the "today" counters named after the symbols

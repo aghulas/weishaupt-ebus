@@ -24,7 +24,29 @@ choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, 
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.13
+## Changes since 0.5.14
+
+- **Heating program 1 of room unit 2 is changed on room unit 1.** On the test installation the
+  room unit at `75` answers heating program 1 from the store of the one at `35`: a slot written
+  to `35` is read at `75` within seconds, and a slot written to `75` is acknowledged and not
+  kept. The 21 slots of heating program 1 in `75.w.fs2` stay read only, as before; their
+  comment now says so and names the place to change them, `35.w.fs1` (French:
+  « … en lecture seule : vue comme la plage de la commande à distance 1, écrite via
+  35.w.fs1 »). For a user: read the program of room unit 2 there, change it on room unit 1.
+- **`shared_with` in the metadata** (new key, described in the contract of the companion): on
+  each of these 21 slots, the key of the slot of `35.w.fs1` that keeps the value
+  (`fs2/HCProgram1Mon1` → `fs1/HCProgram1Mon1`). An interface shows the slot read only with a
+  pointer to room unit 1 and reads it again after a write there. Heating programs 2 and 3, the
+  hot-water and circulation programs and the setpoints of `75.w.fs2` carry no marker: their
+  sharing is not proven.
+- `CalorifierExcessTemp` of `15.w.ka`: the comment names the buffer storage (parameter 561), not
+  the hot water; name, register and value unchanged.
+- **Users of 0.5.14 lose nothing.** Same 1 075 messages, same names, fields, types and writes; no
+  write added or removed. The CSV of `15.w.ka` and `75.w.fs2` differ in comments only, English
+  and French: ebusd shows the new comments after a start with the new files, and reads and
+  publishes the same values meanwhile. An interface takes the metadata with a reload.
+
+## Changes from 0.5.13 to 0.5.14
 
 - **Units of five clock fields of `50.w.em1`.** `SystemHour`, `SystemMinute`, `SystemSecond`
   (the system clock) and `ErrorHour`, `ErrorMinute` (the time stamp of a fault-log entry) are
@@ -256,7 +278,10 @@ those translated here (for example `temperature`).
 ## Known limits
 
 - One room unit of the test installation (`75.w.fs2`) acknowledges program-slot writes and keeps
-  none, the cause unknown; its programs are read only here. The two others keep them.
+  none; its programs are read only here. Heating program 1 is shown to be the one of `35.w.fs1`
+  (see "Changes since 0.5.14"); whether one room unit answers at both addresses there, and
+  whether `75` behaves the same on another installation, is not established. The two other
+  room units keep their slot writes.
 - Checked on one installation: two WTC boilers in cascade (automat software 11.04), system
   manager, three heating circuits. Other models and software versions may differ.
 - The files are named with the identification the devices answer to the scan (`W`), for
