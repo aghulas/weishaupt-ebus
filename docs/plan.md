@@ -47,7 +47,11 @@ exists, the notice states in its first lines that the definitions were checked o
    (`out/cold-read-0.6.1.md`): reading yes; writing yes for one numeric setting after opening the
    CSV, no for the date and time. Third pass on the owner's « Oui, les trois »: notice and front
    README for 0.6.2 (documentation only, workbench); the companion's README and the add-on's
-   documentation by their sessions.*
+   documentation by their sessions. Published 2026-11-20: `weishaupt-0.6.2`, `ha-weishaupt`
+   v0.10.2 (Latest), the add-on's DOCS.md, README and store description on `aghulas/ha-addons`
+   `weishaupt`. The companion was checked on site with port 8888 of the add-on not published.
+   Open: a third cold read is optional; the remaining doubt is that every reading so far was on
+   paper, without a heating system.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
    of a shared program), then request HACS default store on the owner's word.
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
@@ -67,10 +71,10 @@ installation with separate room units, and upstream merges.
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` `8c7ec27` (`weishaupt-0.6.1`) | 130 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions (1 073 messages loaded, 669 in metadata, 92 writable settings, 252 writable program slots), `src/fr.yaml`, `metadata/weishaupt.toml`, library pin |
+| `aghulas/ebusd-configuration` | `weishaupt` `8c7ec27` (`weishaupt-0.6.1`, `weishaupt-0.6.2`: same definitions, notice only) | 130 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions (1 073 messages loaded, 669 in metadata, 92 writable settings, 252 writable program slots), `src/fr.yaml`, `metadata/weishaupt.toml`, library pin |
 | `aghulas/ebus-typespec` | `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc` and `@wcrc` decorators |
 | `aghulas/ebusd` | `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum |
-| `aghulas/ha-weishaupt` | `v0.10.1` (Latest) | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
+| `aghulas/ha-weishaupt` | `v0.10.2` (Latest) | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
