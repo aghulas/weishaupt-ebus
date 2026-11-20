@@ -18,11 +18,13 @@ CSV parser; nothing is retyped by hand.
 
 ## Where it comes from
 
-- **Source**: `metadata/weishaupt.toml` on the branch `weishaupt-M` of the configuration
-  fork, the top of the stack, above the translation file. The same commit pins definitions,
-  translations and metadata. No upstream pull request is cut from it.
+- **Source**: `metadata/weishaupt.toml` on the `weishaupt` branch of the configuration fork.
+  The same commit pins definitions, translations and metadata. No upstream pull request carries it.
 - **Generator**: `scripts/metadata.py build`, run by `scripts/release.sh` on the CSV the
   check has just compiled, English and every release language.
+- **Schemas**: formal JSON Schemas (Draft 2020-12) live under `schemas/metadata.schema.json`
+  (schema 1) and `schemas/fixtures.schema.json` (schema 2) in this repository, validated by
+  `scripts/validate-schema.py` during `scripts/release.sh`.
 - **Check**: `scripts/metadata.py check`, step 7 of `scripts/check.sh`. It fails when a
   message of the lot files has no entry or two, when an entry names a message that does not
   exist or a pattern does not match the stated number of messages, when a field of a

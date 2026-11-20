@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aghulas/weishaupt-ebus/schemas/metadata.schema.json",
+  "title": "Weishaupt ebusd definitions metadata (schema 1)",
+  "description": "Metadata sidecar released beside the compiled ebusd CSV archives. Contract: docs/companion-contract.md.",
+  "type": "object",
+  "required": [
+    "schema",
+    "definitions",
+    "languages",
+    "status",
+    "devices",
+    "menus",
+    "messages",
+    "groups",
+    "open"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": 1
+    },
+    "definitions": {
+      "type": "object",
+      "required": ["version", "commit", "messages", "csv_lines", "sidecar_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "messages": { "type": "integer", "minimum": 1 },
+        "csv_lines": { "type": "integer", "minimum": 1 },
+        "loaded_by_ebusd": { "type": ["integer", "null"], "minimum": 1 },
+        "sidecar_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "languages": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z]{2}$" },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "status": {
+      "type": "object",
+      "required": ["menus", "labels", "values"],
+      "additionalProperties": false,
+      "properties": {
+        "menus": { "enum": ["proposed", "accepted"] },
+        "labels": { "enum": ["proposed", "accepted"] },
+        "values": { "enum": ["proposed", "accepted"] },
+        "date": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" }
+      }
+    },
+    "devices": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/device" }
+    },
+    "menus": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "#/$defs/menuItem" }
+      }
+    },
+    "messages": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z0-9_]+/[A-Za-z0-9_]+$" },
+      "additionalProperties": { "$ref": "#/$defs/message" }
+    },
+    "groups": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/group" }
+    },
+    "open": {
+      "type": "object",
+      "required": ["poll", "range", "step", "value_labels"],
+      "additionalProperties": false,
+      "properties": {
+        "poll": { "type": "array", "items": { "type": "string" } },
+        "range": { "type": "array", "items": { "type": "string" } },
+        "step": { "type": "array", "items": { "type": "string" } },
+        "value_labels": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "$defs": {
+    "localizedString": {
+      "type": "object",
+      "required": ["en"],
+      "additionalProperties": { "type": "string" }
+    },
+    "kind": {
+      "enum": ["live", "state", "counter", "diagnostic", "setting", "program_slot"]
+    },
+    "device": {
+      "type": "object",
+      "required": ["type", "label", "circuits"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "enum": ["boiler", "manager", "module", "room", "system"] },
+        "label": { "$ref": "#/$defs/localizedString" },
+        "circuits": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["circuit", "address", "file"],
+            "additionalProperties": false,
+            "properties": {
+              "circuit": { "type": "string", "minLength": 1 },
+              "address": { "type": "string", "pattern": "^[0-9a-f]{2}$" },
+              "file": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "menuItem": {
+      "type": "object",
+      "required": ["id", "parent", "label", "source"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "parent": { "type": "string" },
+        "label": { "$ref": "#/$defs/localizedString" },
+        "source": { "type": "string" }
+      }
+    },
+    "writeConditions": {
+      "type": "object",
+      "required": ["source", "runtime_checksum", "risk", "proof"],
+      "additionalProperties": false,
+      "properties": {
+        "source": { "type": "string", "pattern": "^[0-9a-f]{2}$" },
+        "runtime_checksum": { "type": "boolean" },
+        "risk": { "enum": ["comfort", "regulation"] },
+        "proof": { "enum": ["captured", "change-observed", "family"] },
+        "proof_slot": { "type": "string", "minLength": 1 },
+        "open": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number", "exclusiveMinimum": 0 },
+        "range_source": { "type": "string", "minLength": 1 }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "type": "string", "minLength": 1 },
+        "divisor": { "type": "number" },
+        "unit": { "type": "string" },
+        "values": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "value_labels": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/localizedString" }
+        },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number", "exclusiveMinimum": 0 },
+        "description": { "$ref": "#/$defs/localizedString" },
+        "label": { "$ref": "#/$defs/localizedString" },
+        "kind": { "$ref": "#/$defs/kind" },
+        "skip": { "type": "boolean" },
+        "guard": { "type": "boolean" },
+        "absent": { "type": "number" },
+        "group": {
+          "type": "object",
+          "additionalProperties": { "type": ["integer", "string"] }
+        },
+        "renamed_from": { "type": "string", "minLength": 1 }
+      }
+    },
+    "message": {
+      "type": "object",
+      "required": [
+        "circuit",
+        "name",
+        "address",
+        "device",
+        "menu",
+        "kind",
+        "label",
+        "description",
+        "read",
+        "passive",
+        "poll",
+        "poll_basis",
+        "evidence",
+        "fields"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "circuit": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "address": { "type": "string", "pattern": "^[0-9a-f]{2}$" },
+        "device": { "type": "string", "minLength": 1 },
+        "menu": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/kind" },
+        "label": { "$ref": "#/$defs/localizedString" },
+        "description": { "$ref": "#/$defs/localizedString" },
+        "read": { "type": "boolean" },
+        "passive": { "type": "boolean" },
+        "poll": { "enum": ["passive", "cyclic", "on_demand", null] },
+        "poll_basis": { "enum": ["passive", "record", "default", null] },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "write": { "$ref": "#/$defs/writeConditions" },
+        "same_as": { "type": "string", "pattern": "^[a-z0-9_]+/[A-Za-z0-9_]+$" },
+        "shared_with": { "type": "string", "pattern": "^[a-z0-9_]+/[A-Za-z0-9_]+$" },
+        "renamed_from": { "type": "string", "pattern": "^[a-z0-9_]+/[A-Za-z0-9_]+$" },
+        "family": { "enum": ["program", "fault_history", "fault_counter"] },
+        "group": { "type": "string", "minLength": 1 },
+        "position": {
+          "type": "object",
+          "additionalProperties": { "type": ["integer", "string"] }
+        },
+        "compose": { "type": "boolean" },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/field" }
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "required": ["family", "circuit", "device", "id", "label", "members"],
+      "additionalProperties": false,
+      "properties": {
+        "family": { "enum": ["program", "fault_history", "fault_counter"] },
+        "circuit": { "type": "string", "minLength": 1 },
+        "device": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "$ref": "#/$defs/localizedString" },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^[a-z0-9_]+/[A-Za-z0-9_]+$" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aghulas/weishaupt-ebus/schemas/fixtures.schema.json",
+  "title": "Weishaupt ebusd definitions fixtures (schema 2)",
+  "description": "Captured bus telegrams and ebusd-verified decoded values released beside the CSV archives. Contract: docs/companion-contract.md.",
+  "type": "object",
+  "required": ["schema", "definitions", "verified", "coverage", "readings"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": 2
+    },
+    "definitions": {
+      "type": "object",
+      "required": ["version", "commit", "messages"],
+      "additionalProperties": false,
+      "properties": {
+        "version": { "type": "string", "minLength": 1 },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "messages": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "verified": {
+      "type": "object",
+      "required": ["by", "release", "loaded"],
+      "additionalProperties": false,
+      "properties": {
+        "by": { "const": "ebusd" },
+        "release": { "type": "string", "minLength": 1 },
+        "loaded": { "type": "string", "minLength": 1 }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "required": [
+        "messages",
+        "covered",
+        "readings",
+        "by_kind",
+        "by_device",
+        "not_covered",
+        "refused_by_ebusd"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "messages": { "type": "integer", "minimum": 1 },
+        "covered": { "type": "integer", "minimum": 0 },
+        "readings": { "type": "integer", "minimum": 0 },
+        "by_kind": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/coverageBucket" }
+        },
+        "by_device": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/coverageBucket" }
+        },
+        "not_covered": { "type": "array", "items": { "type": "string" } },
+        "refused_by_ebusd": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "readings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/reading" }
+    }
+  },
+  "$defs": {
+    "coverageBucket": {
+      "type": "object",
+      "required": ["messages", "covered"],
+      "additionalProperties": false,
+      "properties": {
+        "messages": { "type": "integer", "minimum": 0 },
+        "covered": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "reading": {
+      "type": "object",
+      "required": [
+        "circuit",
+        "message",
+        "device",
+        "type",
+        "qq",
+        "zz",
+        "pbsb",
+        "master",
+        "telegram",
+        "evidence",
+        "date"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "circuit": { "type": "string", "minLength": 1 },
+        "message": { "type": "string", "minLength": 1 },
+        "device": { "type": ["string", "null"] },
+        "type": { "enum": ["read", "write", "passive"] },
+        "qq": { "type": "string", "pattern": "^[0-9a-f]{2}$" },
+        "zz": { "type": "string", "pattern": "^[0-9a-f]{2}$" },
+        "pbsb": { "type": "string", "pattern": "^[0-9a-f]{4}$" },
+        "master": { "type": "string", "pattern": "^([0-9a-f]{2}( [0-9a-f]{2})*)?$" },
+        "slave": { "type": "string", "pattern": "^([0-9a-f]{2}( [0-9a-f]{2})*)?$" },
+        "telegram": { "type": "string", "minLength": 10 },
+        "expect": {
+          "type": "object",
+          "additionalProperties": { "type": ["number", "string", "null"] }
+        },
+        "decoded": {
+          "type": "object",
+          "additionalProperties": { "type": ["number", "string", "null"] }
+        },
+        "text": { "type": "string" },
+        "error": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+        "case": {
+          "enum": ["first-byte-not-zero", "not-available", "no-sensor", "refused"]
+        },
+        "note": { "type": "string" }
+      }
+    }
+  }
+}
