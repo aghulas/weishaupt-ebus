@@ -91,6 +91,7 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 | `evidence` | records under `evidence/` of this repository |
 | `write` | only on a setting a lot writes, see below |
 | `same_as` | key of a message of the same device that reads the same register |
+| `shared_with` | (from 0.5.15) key (`<circuit>/<name>`) of the message on another device that keeps the value: this device answers the message from that device's store, a write there is read here within seconds and a write here is not kept. Set on each member of a family, not on the group; only where an evidence record shows a write on the other device read back here with no telegram in between. A message carrying it has no `write`: the value is written on the message it names. First case: `fs2/HCProgram1<day><slot>` → `fs1/HCProgram1<day><slot>` (21 slots). Seen on one installation; a consumer may check that both read the same before relying on it |
 | `family`, `group`, `position` | for a message of a family, see "Families" |
 | `compose` | for a message with several fields, see "Fields" |
 | `renamed_from` | former key (`<circuit>/<name>`), when a release renames a message. Kept in later releases. First case: `ka/DHWLoadingPriority`, `ka/DHWOperationMode` up to 0.4.3 |

@@ -238,7 +238,14 @@ data point on arbitration with room units).
   setpoints are shared too, curve, flow maximum and circuit type are not. Record
   `evidence/room-units-shared-store.md`; discovery and retest plan closed. For 0.5.15: comments
   on the programs of `75.w.fs2` and a metadata key pointing to `fs1`, wording proposed in
-  `docs/fs2-programs-proposal.md`, **waiting for the owner** before any branch changes.
+  `docs/fs2-programs-proposal.md`. **Done locally 2026-11-20 for heating program 1** (main's
+  request for the companion): H `337c954` (21 comments), J `302916b`, K `2bac01b`, N `1edf9a5`,
+  O `4d439c5` (replayed), L `dc11464` (French, pattern in `scripts/i18n-patterns.py`), M
+  `012d02f` (`shared_with = "fs1/{name}"` on the 21 slots of `fs2`; contract and
+  `scripts/metadata.py` check added); trial `weishaupt-next` `6bc3ae5`, all checks passed, 1 075
+  messages. Open: heating programs 2 and 3, hot water, circulation and the setback / frost
+  setpoints (checks in the record). Nothing pushed; 0.5.15 waits for the second service-tool
+  pass.
 - **Room unit 2 retest and boiler parameters (2026-11-19, prepared, nothing sent).** The owner
   wants the program writes of `75` retried: plan `docs/retest-room-unit-2.md` (four refusals on
   record; new: the 105 program slots of `75` equal those of `35`, and the tool groups units 1 and

@@ -276,6 +276,7 @@ accepted as proposed, except "modulation demand", where the owner chose the alte
 |---|---|---|---|---|
 | [x] | hot-water program stored in the room unit, `<day>` slot `<n>` (21) | programme ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | "stored" has no vendor wording | programme ECS mémorisé dans la commande à distance, … |
 | [x] | circulation program stored in the room unit, `<day>` slot `<n>` (21) | programme de circulation ECS enregistré dans la commande à distance, `<jour>`, plage horaire `<n>` | same | programme de bouclage ECS … (the boiler manual says "bouclage", WTC p. 60) |
+| [ ] | heating program 1, `<day>` slot `<n>`, read only: seen to be the slot of room unit 1, written through 35.w.fs1 (21, `fs2` only, from 0.5.15) | programme de chauffe 1, `<jour>`, plage horaire `<n>`, en lecture seule : vue comme la plage de la commande à distance 1, écrite via 35.w.fs1 | "read only", "written through" have no vendor wording; provisional until the owner reads it | … , à modifier sur 35.w.fs1 |
 | [x] | fault history slot `<n>` (6) | mémoire de défauts, emplacement `<n>` | the display numbers the faults by age (WTC p. 88); a slot is a place in memory | mémoire de défauts, défaut `<n>` |
 | [x] | slot of a weekly program, all 126 program strings | plage horaire | vendor term of the system manager (KA p. 48, 106) and of the older room unit; the French screens of the WCM-FS 2.0 are not at hand | cycle (FB p. 13, 16); période |
 

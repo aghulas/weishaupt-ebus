@@ -1,4 +1,11 @@
-# Programs of room unit 2: wording for 0.5.15 (waits for the owner)
+# Programs of room unit 2: wording for 0.5.15
+
+**Superseded 2026-11-20.** Done on the lots, locally, for heating program 1 only (the program a
+write proved shared): comments on lot H, French on lot L, `shared_with` on lot M (the shape the
+companion asked for: on each slot, `<circuit>/<name>`, no `write`), contract and check in this
+repository. Heating programs 2 and 3, hot water, circulation and the two setpoints stay without
+marker until the checks of `evidence/room-units-shared-store.md` ("Not established"). The text
+below is the proposal as it was.
 
 Evidence: [evidence/room-units-shared-store.md](../evidence/room-units-shared-store.md). On the
 test installation `75` answers its weekly programs from the store of `35`: a slot written to

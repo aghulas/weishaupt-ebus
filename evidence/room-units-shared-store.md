@@ -10,9 +10,11 @@ read back at once, with the same value, at `75`, and a program slot written to `
 store: `75` keeps its own heating curve, flow maximum and circuit type, while the setback and
 frost-protection room setpoints written to `35` are read at `75` too.
 
-No definition changes with this record. It is the reason the program messages of
-`75.w.fs2` stay read only (lot H) and what a comment on them, or the metadata, may say
-(proposal: [docs/fs2-programs-proposal.md](../docs/fs2-programs-proposal.md)).
+Use in the definitions (0.5.15, local, 2026-11-20): the 21 messages of heating program 1 of
+`75.w.fs2` keep no write and their comment says they are written through `35.w.fs1` (lot H);
+in the metadata each of them carries `shared_with = "fs1/<same name>"` (lot M). Heating
+programs 2 and 3, the hot-water and circulation programs and the two setpoints carry no
+marker: see "Not established".
 
 ## How it was established
 
@@ -135,6 +137,20 @@ is kept (batch 1, eleven settings, each read back), unlike a write to `75` of a 
 
 ## Not established
 
+- **The setback and frost-protection setpoints, by the strict rule.** The three writes of 5
+  were followed at `75` within 3 s, but the export that shows them holds only `50 22`, `50 23`,
+  `09 02` and `09 03` telegrams: a copy to `75` through another service is not excluded the way
+  the full log of step 1 excludes it for the program slot. Read-only check that settles it: an
+  export of **all** telegrams of the telegram log for 2026-11-18 20:12:39 to 20:12:43 and
+  2026-11-19 15:54:14 to 15:54:15 and 15:58:35 to 15:58:38; if nothing but ebusd's reads goes
+  to `75` and nothing leaves `30` or `70` in those seconds, they are shared as the programs are
+  and take the marker (their `write` on `fs2` then goes, the value being written on `fs1`).
+- **Heating programs 2 and 3, hot water, circulation of `75`.** No write of these on `35` was
+  followed by a read of `75` (the writes of 2026-11-18 21:12 to 21:13 on `35` had no read of
+  `75` in between). Without a write from here: the next change of one of their slots on `35`
+  (by the owner), followed by a read of the same slot on `75` within a minute and an export of
+  all telegrams of that minute.
+
 - **One physical room unit or two.** One unit with two bus identities (slaves `35` / `75`,
   masters `30` / `70`) fits: the room temperature agrees in every pair read within seconds,
   the identification answers are byte for byte equal, the vendor tool shows one window
@@ -145,8 +161,6 @@ is kept (batch 1, eleven settings, each read back), unlike a write to `75` of a 
 - **Which other settings share the store**: the seven numeric settings, the holiday level
   and dates and the control variation listed in 5. A write on one address and a
   read of the other within the same minute would tell, per setting.
-- **Whether the hot-water and circulation programs and heating programs 2 and 3 share the
-  store** rests on equal values and the same register scheme, not on a write.
 - **Whether this holds elsewhere.** On an installation where `75` is a room unit of its own
   for circuit 2, its programs are presumably its own. The record is of one installation.
 
@@ -159,4 +173,4 @@ all with software 2726. `75` drives heating circuit 2 (module `51`), `f5` circui
 
 ## Date
 
-2026-11-19.
+2026-11-19; use in the definitions 2026-11-20.

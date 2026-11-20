@@ -30,6 +30,8 @@ check fails (exit 1) when
   - an entry of a value list of the lot files has no label in every language, or a label
     names an entry no value list has, or a weekday is labelled in [values] as well as [days];
   - the sidecar repeats a range the CSV already has;
+  - shared_with names a message that does not exist, or one of the same device, or sits on a
+    message with write conditions;
   - the status says accepted without the day of the acceptance.
 
 The polling class of a message is the one a record establishes (`poll` on its entry); failing
@@ -377,6 +379,14 @@ def resolve(side, msgs):
                     bad.append(f"{key}: absent on the entry needs a message of one field; put it on the field set")
                 if "same_as" in e and e["same_as"].format(circuit=c, name=m["name"]) not in msgs:
                     bad.append(f"{key}: same_as names a message that does not exist")
+                if "shared_with" in e:
+                    t = e["shared_with"].format(circuit=c, name=m["name"])
+                    if t not in msgs:
+                        bad.append(f"{key}: shared_with names a message that does not exist")
+                    elif device_of.get(t.split("/")[0]) == dev:
+                        bad.append(f"{key}: shared_with must name a message of another device (use same_as)")
+                    if w is not None:
+                        bad.append(f"{key}: shared_with, so no write conditions: the value is written on {t}")
                 # fields
                 real = [f for f in m["fields"] if not f["type"].startswith("IGN")]
                 if fs is None:
@@ -477,6 +487,8 @@ def assemble(side, msgs, resolved, langs):
             o["compose"] = bool(e.get("compose", False))
         if "same_as" in e:
             o["same_as"] = e["same_as"].format(circuit=m["circuit"], name=m["name"])
+        if "shared_with" in e:
+            o["shared_with"] = e["shared_with"].format(circuit=m["circuit"], name=m["name"])
         if "renamed_from" in e:
             o["renamed_from"] = e["renamed_from"]
         if e.get("family"):

@@ -22,6 +22,7 @@ DAY = "(?P<day>" + "|".join(DAYS) + ")"
 
 # English pattern, name of the phrase. Order matters: the first match wins.
 PATTERNS = [
+    (rf"heating program (?P<n>\d+), {DAY} slot (?P<m>\d+), read only: seen to be the slot of room unit 1, written through 35\.w\.fs1", "heating_shared"),
     (rf"heating program (?P<n>\d+), {DAY} slot (?P<m>\d+)", "heating"),
     (rf"hot-water program stored in the room unit, {DAY} slot (?P<m>\d+)", "dhw_stored"),
     (rf"circulation program stored in the room unit, {DAY} slot (?P<m>\d+)", "circ_stored"),
@@ -32,6 +33,7 @@ PATTERNS = [
 LANGS = {
     "fr": {
         "days": ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+        "heating_shared": "programme de chauffe {n}, {day}, plage horaire {m}, en lecture seule : vue comme la plage de la commande à distance 1, écrite via 35.w.fs1",
         "heating": "programme de chauffe {n}, {day}, plage horaire {m}",
         "dhw_stored": "programme ECS enregistré dans la commande à distance, {day}, plage horaire {m}",
         "circ_stored": "programme de circulation ECS enregistré dans la commande à distance, {day}, plage horaire {m}",
