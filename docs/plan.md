@@ -41,9 +41,9 @@ exists, the notice states in its first lines that the definitions were checked o
    ebusd and the add-on with expected output; the write-capable build for both and a check of
    which ebusd runs (both verified in containers, nothing sent); how to write; counts with their
    source; glossary. Front `README.md` the same. Published as `weishaupt-0.6.1`, the first
-   normal release, with the companion's README of v0.10.1 (2026-11-20). Open: the front page of
-   `aghulas/ha-addons` (proposal `out/proposal-ha-addons-readme.md`, owner), and a second cold
-   read of the published notices before 1.0.*
+   normal release, with the companion's README of v0.10.1 (2026-11-20). The front page of
+   `aghulas/ha-addons` (branch `weishaupt`) now says what the add-on is and how to install it
+   (owner's word, 2026-11-20). Open: a second cold read of the published notices before 1.0.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
    of a shared program), then request HACS default store on the owner's word.
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
