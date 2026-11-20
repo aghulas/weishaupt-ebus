@@ -90,8 +90,9 @@ python3 "$ROOT/scripts/fixtures.py" build "$ROOT/evidence/fixtures.toml" \
   "$ROOT/out/csv/@ebusd/ebus-typespec" "$FIXT" --version "$VERSION" \
   --commit "$commit" --sidecar "$SIDE" --ebusd "$ROOT/out/ebusd-$EBUSD-$arch" --release "$EBUSD"
 
-python3 "$ROOT/scripts/validate-schema.py" "$ROOT/schemas/metadata.schema.json" "$META"
-python3 "$ROOT/scripts/validate-schema.py" "$ROOT/schemas/fixtures.schema.json" "$FIXT"
+# Strict: a release is not built on the basic check of a machine without the jsonschema package.
+python3 "$ROOT/scripts/validate-schema.py" "$ROOT/schemas/metadata.schema.json" "$META" --require-jsonschema
+python3 "$ROOT/scripts/validate-schema.py" "$ROOT/schemas/fixtures.schema.json" "$FIXT" --require-jsonschema
 
 assets="$assets weishaupt-metadata-$VERSION.json weishaupt-fixtures-$VERSION.json"
 # shellcheck disable=SC2086

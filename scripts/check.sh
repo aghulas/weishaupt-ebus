@@ -139,7 +139,7 @@ checkconfig() {
       fi
     else echo "FAIL: could not start the workflow (gh auth status?)"; cfail=1; fi
   fi
-  [ -s "$log" ] && ! grep -Eq '\[(main|bus|update|network|mqtt) error\]|\bERR:' "$log" && [ "$cfail" -eq 0 ]
+  [ -s "$log" ] && ! grep -Eq '\[(main|network|bus|device|update|other) error\]|\bERR:' "$log" && [ "$cfail" -eq 0 ]
 }
 
 [ -d "$CFG/src/$LOT" ] || { echo "no $CFG/src/$LOT — run scripts/setup.sh, or set LOT_DIR"; exit 2; }

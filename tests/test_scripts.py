@@ -245,5 +245,33 @@ class TestSchemas(unittest.TestCase):
             self.assertEqual(doc["$schema"], "https://json-schema.org/draft/2020-12/schema")
 
 
+class TestCheckconfigErrorFilter(unittest.TestCase):
+    """The filter that fails the check on an error line of ebusd --checkconfig: the same in the
+    local check and in the workflow, and one that knows every log facility of ebusd."""
+    FACILITIES = ("main", "network", "bus", "device", "update", "other")  # s_facilityNames, log.cpp
+
+    def _filters(self):
+        import re
+        found = {}
+        for rel in ("scripts/check.sh", ".github/workflows/checkconfig.yml"):
+            with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
+                m = re.search(r"grep -Eq '([^']*error[^']*)'", f.read())
+            self.assertIsNotNone(m, rel)
+            found[rel] = m.group(1)
+        return found
+
+    def test_same_filter_in_check_and_workflow(self):
+        self.assertEqual(len(set(self._filters().values())), 1)
+
+    def test_filter_matches_every_facility(self):
+        pattern = next(iter(self._filters().values()))
+        for facility in self.FACILITIES:
+            line = f"2026-01-01 00:00:00.000 [{facility} error] something failed"
+            out = subprocess.run(["grep", "-Eq", pattern], input=line, text=True)
+            self.assertEqual(out.returncode, 0, facility)
+        notice = "2026-01-01 00:00:00.000 [main notice] found messages: 1073"
+        self.assertNotEqual(subprocess.run(["grep", "-Eq", pattern], input=notice, text=True).returncode, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
