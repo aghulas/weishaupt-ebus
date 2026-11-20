@@ -29,7 +29,7 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 3 | `HcMode` fields `Opmode_4` … `Opmode_7` → `Ukn3_4` … `Ukn3_7` | do in 0.6 |
 | 4 | `LegionellaStartTime` (`ka`): number of quarter hours → time of day (`TTQ`) | do in 0.6 |
 | 5 | Metadata: a carrier for renamed fields (`renamed_from` on a field), needed if 3 is done | do in 0.6 (compatible addition, schema 1) |
-| 6 | `HolidayStartThird`, `HolidayEndThird` (three room units): rename to `...Year` if the display test shows a year, else keep | owner |
+| 6 | `HolidayStartThird`, `HolidayEndThird` (three room units): keep `...Third` | leave for good (owner, 2026-11-20) |
 | 7 | Circuit `em1` (address `50`, the system manager's own circuit) → another circuit name | leave for good (the vendor's circuit numbers, see 7) |
 | 8 | `HcMode` fields `Ink1_*`, `Ink2_*` → `Ukn1_*`, `Ukn2_*` (taste) | owner (only together with 3) |
 | 9 | `DHWExceeded` (`ka`) → `DHWExcessTemp`, unit K | owner |
@@ -54,8 +54,8 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 28 | Identification `W` in the file names | leave for good |
 | 29 | Metadata structure: schema 2 | leave for good (not needed) |
 
-Count: **do in 0.6: 5** (1–5, of which 5 is a compatible addition that 3 needs); **owner: 3**
-(6, 8, 9); **leave for good: 21** (7, 10–29). Not breaking, listed at the end: enum names against the
+Count: **do in 0.6: 5** (1–5, of which 5 is a compatible addition that 3 needs); **owner: 2**
+(8, 9); **leave for good: 22** (6, 7, 10–29). Not breaking, listed at the end: enum names against the
 style guide, and comment fixes.
 
 ## Do in 0.6
@@ -103,7 +103,7 @@ stays 1. Needed only if a field is renamed.
 
 ## Owner
 
-**6. `HolidayStartThird`, `HolidayEndThird`** (lot C, three room units). Third register of the
+**Decided by the owner on 2026-11-20 (« Non, garder Third »): the names stay `...Third` for good; no display test before 0.6.** **6. `HolidayStartThird`, `HolidayEndThird`** (lot C, three room units). Third register of the
 holiday start and end dates; took 0 and 24 and read them back; "meaning not established"
 (`evidence/holiday-dates.md`). Its meaning is likely the year (the batch plan of
 `choice-date-program-writes.md` calls it "year"), but no source establishes it. If it is the year and the name stays, the
