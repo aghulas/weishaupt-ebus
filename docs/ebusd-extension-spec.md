@@ -1,9 +1,10 @@
 # Specification: two generic extensions of ebusd
 
-Status: **proposal, for the owner's approval.** Nothing is built. It follows the decision of
-2026-11-20 in [design-register-layer.md](design-register-layer.md) (option 2: a generic
-extension of ebusd, maintained in the fork `aghulas/ebusd` until the maintainer merges it). The
-facts of the bus are in [ebus-protocol.md](ebus-protocol.md).
+Status: **approved by the owner on 2026-11-20 with the recommendations of section 7; implemented
+the same day on local branches, nothing pushed** (see "Implementation" at the end). It follows
+the decision of 2026-11-20 in [design-register-layer.md](design-register-layer.md) (option 2: a
+generic extension of ebusd, maintained in the fork `aghulas/ebusd` until the maintainer merges
+it). The facts of the bus are in [ebus-protocol.md](ebus-protocol.md).
 
 Two features, independent of each other, each one pull request upstream:
 
@@ -577,3 +578,74 @@ naming the Weishaupt case as one example among others:
 Nothing is opened, retargeted or commented upstream without the owner's word (rule 8). Three
 pull requests of this project are open and unanswered; these wait their turn the same way, and
 the fork does not wait for them.
+
+---
+
+## Implementation (2026-11-20)
+
+Local branches only, built and tested in an Alpine container (the build of upstream `master` does
+not compile on macOS). Nothing pushed, no release, no pull request.
+
+### `aghulas/ebusd`, cut from upstream `master` `38db2d28`
+
+| Branch | Commit | Content |
+|---|---|---|
+| `checksum` | `1c9fe724` | A: attribute `crc` (A1 and A2 in one commit) |
+| `wcrc-alias` | `7a1e649b` (on `checksum`) | A3: `[WCRC]` and `wcrc=1` as aliases, fork only |
+| `long-id` | `aec9d6ae` | C: IDs longer than 7 bytes |
+| `composite` | `c62b2112`, `e8d42d7d` | B1+B2 (carriers fill targets), B3+B4 (not published, polled for their targets) |
+| `weishaupt-next` | `33d1e93a` … `0c2588fd` | upstream `master` + the five commits above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
+
+Differences from the text above, decided while building:
+
+- A checksum mismatch makes the telegram not match the message, wherever the byte is (ID or
+  field): it is logged as an unknown telegram, not as a decode error.
+- The CRC is computed bit by bit (no table): one byte per bit shift, negligible.
+- Targets of `fills` are active read messages only (not passive `u` messages).
+- C is a bug fix as much as a feature: in a stock ebusd a 9-byte ID can be found for the
+  telegram of a 1-byte ID with the same folded bytes (and adding it reports a duplicate). The
+  unit test fails on upstream `master` and passes with the fix.
+- A carrier whose answer does not decode, or whose poll fails, is marked failed: its targets are
+  polled directly until the carrier is answered again (e.g. seen on the bus) or the definitions
+  change.
+
+Checks:
+
+- Unit tests (`test_message`): 379 checks pass on `weishaupt-next`, among them 39 for A, 7 for
+  C, 36 for B (vectors of section 2.2, Wolf write of #167, eBUS frame CRC, holiday date of 4.3,
+  memory carrier with verified first byte, every load and resolution error of 4.4).
+- Offline, the built ebusd with a fake adapter (sends SYN, echoes, never answers), a local
+  broker and injected telegrams: one 3-register and one 4-register carrier telegram publish the
+  topics of the 3 and 4 single messages and no carrier topic; `read` of each single message
+  answers from the cache; polls go out as the carrier telegram, then as single telegrams after
+  the carrier's poll failed; `write -c fs1 HolidayStartDay 2` sends `50 23 05 dc 1b 01 02 00`
+  (checksum of the value, not of the address).
+- Stock ebusd 26.1 loads definitions with the `crc` column and `fills` fields (same message
+  count); with a 4-register carrier its `--checkconfig` fails on the ID length, the fork's
+  passes.
+- KNX is not built in the test container (as in the release build); its data sink is fed by the
+  same loop that skips carriers.
+
+### `aghulas/ebus-typespec`, branch `typespec-ext`
+
+`51053ce` on `wcrc-decorator` (T1–T3 in one commit): `@attr` on a model (message attribute column,
+only in files that use it), `@crc` and `@wcrc` set `crc=crc8;poly=<poly>` (`@wcrc` keeps the
+`[WCRC]` marker for the transition), `@fills(Message)` (field column `fills`, only in files that
+use it; a target in another namespace is a compile error). 93 tests pass.
+
+### Effect on the definitions
+
+`aghulas/ebusd-configuration` `weishaupt` (`8c7ec27`) compiled with this library: 7 files of
+`src/wolf` change, by the added `crc` column only (688 rows, all `crc8;poly=5c`), checked row by
+row by script; stock ebusd 26.1 and the fork build load the same 14 002 messages as before. No
+carrier is defined yet (D2): each needs its evidence record first.
+
+### Not done, needs the owner (rule 8)
+
+1. Push the branches to `aghulas/ebusd` and `aghulas/ebus-typespec`; force-push `weishaupt` of
+   `aghulas/ebusd` to `weishaupt-next`.
+2. Tag `v26.1-weishaupt.2` (release workflow), then the add-on bump in `aghulas/ha-addons`.
+3. Library release `v0.31.0-weishaupt.2`, library pin in `ebusd-configuration`, first carriers
+   (D2) with evidence.
+4. Upstream: new pull request for A (closing #167, superseding #1825), one for C, one for B, one
+   for `ebus-typespec`.
