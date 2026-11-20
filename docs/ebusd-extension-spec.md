@@ -593,13 +593,15 @@ not compile on macOS). Nothing pushed, no release, no pull request.
 
 ### `aghulas/ebusd`, cut from upstream `master` `38db2d28`
 
-| Branch | Commit | Content |
+| Branch | Commits | Content |
 |---|---|---|
-| `checksum` | `1c9fe724` | A: attribute `crc` (A1 and A2 in one commit) |
-| `wcrc-alias` | `7a1e649b` (on `checksum`) | A3: `[WCRC]` and `wcrc=1` as aliases, fork only |
-| `long-id` | `aec9d6ae` | C: IDs longer than 7 bytes |
-| `composite` | `c62b2112`, `e8d42d7d` | B1+B2 (carriers fill targets), B3+B4 (not published, polled for their targets) |
-| `weishaupt-next` | `33d1e93a` … `0c2588fd` | upstream `master` + the five commits above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
+| `checksum` | `d06e924a` A1, `3c6a7536` A2 | A1: the computed byte (parser, CRC-8), no behaviour change; A2: attribute `crc` in messages |
+| `wcrc-alias` | `953b348a` (on `checksum`) | A3: `[WCRC]` and `wcrc=1` as aliases, fork only |
+| `long-id` | `aec9d6ae` | C1: IDs longer than 7 bytes |
+| `composite` | `59020b45` B1, `26b2f78c` B2, `0dc15e18` B3, `55f04f61` B4 | B1: `fills` parsed and resolved; B2: carriers fill their targets; B3: carriers not published; B4: polled for their targets |
+| `weishaupt-next` | `e9ec4f57` … `74e85a8c` (9 commits) | upstream `master` + the commits above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
+
+The fork's `weishaupt` (`d4ececb3`) and `crc` (`492867d9`) are left as they are.
 
 Differences from the text above, decided while building:
 
@@ -616,9 +618,16 @@ Differences from the text above, decided while building:
 
 Checks:
 
-- Unit tests (`test_message`): 379 checks pass on `weishaupt-next`, among them 39 for A, 7 for
-  C, 36 for B (vectors of section 2.2, Wolf write of #167, eBUS frame CRC, holiday date of 4.3,
-  memory carrier with verified first byte, every load and resolution error of 4.4).
+- Every commit of every branch builds without a warning in the changed files and passes the four
+  unit test suites (`ctest`), checked with a script that stops on a build error and runs a
+  freshly built `test_message`. Checks of `test_message`: 347 on upstream `master`; A1 adds 21,
+  A2 39, A3 4, C1 7, B1 12, B2 28, B4 32; 429 at the head of `weishaupt-next`. The vectors of
+  section 2.2, the Wolf write of #167, the eBUS frame CRC, the holiday date of 4.3, the memory
+  carrier with a verified first byte, and every load and resolution error of 4.4 are among them.
+  A first assembly of `weishaupt-next` had a unit test file broken by a merge (two functions
+  nested) and was tested with a stale binary; the count of 379 given for it earlier was the
+  `composite` branch's. The branch was rebuilt with the test file regenerated from the feature
+  branches.
 - Offline, the built ebusd with a fake adapter (sends SYN, echoes, never answers), a local
   broker and injected telegrams: one 3-register and one 4-register carrier telegram publish the
   topics of the 3 and 4 single messages and no carrier topic; `read` of each single message
@@ -633,7 +642,7 @@ Checks:
 
 ### `aghulas/ebus-typespec`, branch `typespec-ext`
 
-`51053ce` on `wcrc-decorator` (T1–T3 in one commit): `@attr` on a model (message attribute column,
+`51053ce` on `wcrc-decorator` (T1–T3 in one commit, done before the order of work was set; nothing of it is used by the fork of ebusd): `@attr` on a model (message attribute column,
 only in files that use it), `@crc` and `@wcrc` set `crc=crc8;poly=<poly>` (`@wcrc` keeps the
 `[WCRC]` marker for the transition), `@fills(Message)` (field column `fills`, only in files that
 use it; a target in another namespace is a compile error). 93 tests pass.
