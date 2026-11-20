@@ -52,10 +52,9 @@ archive() {
   cp "$csv"/*.csv "$REL/$name/"
   # The devices scan as manufacturer Kromschroeder; upstream keeps their files in the Wolf folder.
   cp -r "$csv/wolf" "$REL/$name/kromschroeder"
-  sed -e "s|@VERSION@|$VERSION|g" -e "s|@COMMIT@|$commit|g" -e "s|@NAME@|$name|g" -e "s|@BASE@|$NAME|g" \
-      -e "s|@COUNT@|$count|g" -e "s|@EBUSD@|$EBUSD|g" -e "s|@LIB@|$lib|g" \
-      -e "s|@PROVISIONAL@|${provisional:-none}|g" \
-      "$ROOT/docs/release-readme.md" >"$REL/$name/README.md"
+  python3 "$ROOT/scripts/render-notice.py" "$ROOT/docs/release-readme.md" \
+      "VERSION=$VERSION" "COMMIT=$commit" "NAME=$name" "BASE=$NAME" "COUNT=$count" "EBUSD=$EBUSD" \
+      "LIB=$lib" "PROVISIONAL=$provisional" >"$REL/$name/README.md"
   (cd "$REL/$name" && find . -type f ! -name sha256sums.txt | sort | sed 's|^\./||' | xargs shasum -a 256 >sha256sums.txt)
   # Fixed order, owner, timestamps and gzip header: the same input gives the same archive.
   find "$REL/$name" -exec touch -t "$touch_ts" {} +

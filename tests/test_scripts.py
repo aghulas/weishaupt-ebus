@@ -27,6 +27,7 @@ def load_module(name, filename):
 md = load_module("metadata", "metadata.py")
 fx = load_module("fixtures", "fixtures.py")
 i18n = load_module("i18n_keys", "i18n-keys.py")
+notice = load_module("render_notice", "render-notice.py")
 
 
 SAMPLE_CSV_KA = """type,circuit,level,name,comment,qq,zz,pbsb,id,*name,part,type,divisor/values,range,unit,comment
@@ -275,3 +276,27 @@ class TestCheckconfigErrorFilter(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestRenderNotice(unittest.TestCase):
+    KEYS = {"VERSION": "9.9.9", "COMMIT": "abc1234", "NAME": "n", "BASE": "b", "COUNT": "1",
+            "EBUSD": "e", "LIB": "l"}
+
+    def test_no_provisional_sentence_when_empty(self):
+        out = notice.render("one.@PROVISIONAL_SENTENCE@ Two.", {**self.KEYS, "PROVISIONAL": ""})
+        self.assertEqual(out, "one. Two.")
+
+    def test_provisional_sentence_when_listed(self):
+        out = notice.render("one.@PROVISIONAL_SENTENCE@ Two.", {**self.KEYS, "PROVISIONAL": "A, B"})
+        self.assertEqual(out, "one. Still provisional: A, B. Two.")
+
+    def test_token_left_fails(self):
+        with self.assertRaises(ValueError):
+            notice.render("@VERSION@ @UNKNOWN@", {"VERSION": "1"})
+
+    def test_release_notice_renders(self):
+        with open(os.path.join(ROOT, "docs", "release-readme.md"), encoding="utf-8") as f:
+            out = notice.render(f.read(), {**self.KEYS, "PROVISIONAL": ""})
+        self.assertNotIn("Still provisional", out)
+        self.assertNotIn("@", out.replace("@ebusd", ""))
+        self.assertIn("9.9.9", out)

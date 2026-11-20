@@ -58,8 +58,8 @@ change for an installation that used other definitions before (MQTT topics, auto
    On the test installation `scan result` lists twelve addresses, for example
    `15;Kromschroeder;W ;6618;-` (system manager) and `08;Kromschroeder;W?;1104;0501` (boiler
    automat): nine get a file (`08`, `18`, `15`, `50`, `51`, `52`, `35`, `75`, `f5`), three none
-   (`05`, `0c`, `f6`), which is expected. `ERR: element not found` on a read means the file of that device was not loaded
-   (see "Device identification" under Known limits).
+   (`05`, `0c`, `f6`), which is expected. `ERR: element not found` on a read means the file of
+   that device was not loaded (see "Device identification" under Known limits).
 
 ### Read with the Home Assistant ebusd add-on
 
@@ -110,18 +110,14 @@ write lines of these files but sends a wrong checksum. Use the build
   (MQTT, no TLS, no KNX). Check them against its `sha256sums.txt` and run the one of your
   machine in place of `ebusd`, with the same options.
 
-**Which ebusd runs.** In `ebusctl info` the build shows `version: ebusd 26.1.p20261029`; a stock
-26.1 shows another string (for example `26.1.26.1`). The certain check asks ebusd to match a
-write telegram under a circuit name no file uses, so that nothing is sent:
-
-```sh
-ebusctl write -c probe -h 15502305cc25000200   # build: ERR: invalid argument   stock: ERR: element not found
-ebusctl write -c probe -h 155023054c25000200   # build: ERR: element not found  stock: ERR: invalid argument
-```
-
-The first telegram is `ka BlockingTime` = 2 with its correct checksum (`cc`), the second the same
-with the checksum a stock ebusd uses (`4c`). "invalid argument" means: matched a write line,
-refused because of the circuit name.
+**Which ebusd runs.** The first line of `ebusctl info` is the version of the running ebusd: the
+build shows `version: ebusd 26.1.p20261029`; a stock 26.1 shows another string (for example
+`26.1.26.1`). Which one you started: in Home Assistant, the add-on's Info page names **eBUSd
+(Weishaupt CRC)** with a version ending in `-weishaupt.1`; on a plain install, the executable
+you start is the one whose checksum matches the release's `sha256sums.txt`
+(`sha256sum $(command -v ebusd)`). The Home Assistant integration tells the two builds apart by
+itself, without sending anything: the attribute `run_time_checksum` of its write switch reads
+`present` with the build and `absent` with a stock ebusd.
 
 **How to write.**
 
@@ -213,6 +209,9 @@ Counts, and where each comes from:
   installation, read back with the new value and restored; for the programs, one slot of each of
   the 12 was, the others follow the same register scheme. These writes went through ebusd with
   the files loaded, which sent each telegram only after matching it to a write line of the files.
+  The Home Assistant integration offers 83 of the 92: it leaves out the nine without a range,
+  `ControlVariation`, `HolidayStartThird` and `HolidayEndThird` of the three room units, whose
+  values have no established meaning.
 
 The release also holds `weishaupt-metadata-@VERSION@.json` and `weishaupt-fixtures-@VERSION@.json`
 for user interfaces built on these definitions (labels, menus, write conditions; captured
@@ -223,8 +222,8 @@ telegrams with their decoded values), and `sha256sums-@VERSION@.txt`. ebusd need
 One archive per language, with the same files, message, field and circuit names, value-list
 entries (e.g. `BurnerInOperation`) and units: `@BASE@.tar.gz` with English comments, the same
 name ending in `-fr` with French comments. `read`, `write`, MQTT topics and automations work the
-same with either. French terms follow the vendor's French manuals where they print one; still
-provisional: @PROVISIONAL@. Wolf messages and the general files keep their English comments.
+same with either. French terms follow the vendor's French manuals where they print
+one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their English comments.
 
 ## Glossary
 
