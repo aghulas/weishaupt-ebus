@@ -63,7 +63,7 @@ other files are the same. 1 073 messages (two write lines fewer).
   the named fields are unchanged. *ebusd / MQTT:* the field names in the JSON of `HcMode`
   change; nothing else. *Companion:* none of them is shown (`skip`); each field carries its
   former name in `renamed_from` (new in the metadata, schema still 1).
-- Comments and French strings follow; the new French strings are provisional until read.
+- Comments and French strings follow.
 - Labels in the metadata: `LegionellaStartTime` loses "(quarter hours)", `DHWExcessTemp` reads
   "Hot water excess".
 
