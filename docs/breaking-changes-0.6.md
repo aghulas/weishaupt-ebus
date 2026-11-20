@@ -31,7 +31,7 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 5 | Metadata: a carrier for renamed fields (`renamed_from` on a field), needed if 3 is done | do in 0.6 (compatible addition, schema 1) |
 | 6 | `HolidayStartThird`, `HolidayEndThird` (three room units): keep `...Third` | leave for good (owner, 2026-11-20) |
 | 7 | Circuit `em1` (address `50`, the system manager's own circuit) → another circuit name | leave for good (the vendor's circuit numbers, see 7) |
-| 8 | `HcMode` fields `Ink1_*`, `Ink2_*` → `Ukn1_*`, `Ukn2_*` (taste) | owner (only together with 3) |
+| 8 | `HcMode` fields `Ink1_*`, `Ink2_*` → `Ukn1_*`, `Ukn2_*` | do in 0.6, with 3 (owner, 2026-11-20) |
 | 9 | `DHWExceeded` (`ka`) → `DHWExcessTemp`, unit K | do in 0.6 (owner, 2026-11-20) |
 | 10 | `CalorifierExcessTemp`, `CalorifierSwitchDiff` (`ka`) → `Buffer...` | leave for good |
 | 11 | `DHWSetValue` (`ka`) → `DHWSetTemp` | leave for good (comment fix, compatible) |
@@ -54,8 +54,8 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 28 | Identification `W` in the file names | leave for good |
 | 29 | Metadata structure: schema 2 | leave for good (not needed) |
 
-Count: **do in 0.6: 6** (1–5 and 9; 5 is a compatible addition that 3 needs); **owner: 1**
-(8); **leave for good: 22** (6, 7, 10–29). Not breaking, listed at the end: enum names against the
+Count: **do in 0.6: 7** (1–5, 8, 9; 5 is a compatible addition that 3 and 8 need); **owner:
+none left**; **leave for good: 22** (6, 7, 10–29). Not breaking, listed at the end: enum names against the
 style guide, and comment fixes.
 
 ## Do in 0.6
@@ -142,7 +142,7 @@ share, for 67 message keys. Keep. What is worth fixing is not breaking: the comm
 system manager)", and those of `fs1` / `fs2` "room unit #1+2, circuit 1 / circuit 2" rather
 than "room unit 1 / room unit 2" (labels: owner's acceptance, compatible).
 
-**8. `HcMode` fields `Ink1_1` … `Ink2_8`** (lot A). Unknown bits named `Ink`, where the other
+**Decided by the owner on 2026-11-20 (« Oui, avec Opmode »): rename in 0.6, in the same change as 3, so that every unknown bit of `HcMode` is `Ukn<byte>_<bit>`.** **8. `HcMode` fields `Ink1_1` … `Ink2_8`** (lot A). Unknown bits named `Ink`, where the other
 unknown fields of the lots are `Ukn`. Proposed: `Ukn1_*`, `Ukn2_*`, together with 3 so that
 `HcMode` has one scheme. Taste (the names are not wrong, only different); no companion impact
 (`skip`); breaks the JSON field names of `HcMode`. Worth doing only in the same release as 3.
