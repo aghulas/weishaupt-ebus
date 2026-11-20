@@ -179,13 +179,12 @@ one. Restores (2026-11-18 21:05:24, 2026-11-19 15:58:02 and 15:59:05) were follo
   (by the owner), followed by a read of the same slot on `75` within a minute and an export of
   all telegrams of that minute.
 
-- **One physical room unit or two.** One unit with two bus identities (slaves `35` / `75`,
-  masters `30` / `70`) fits: the room temperature agrees in every pair read within seconds,
-  the identification answers are byte for byte equal, the vendor tool shows one window
-  "FS#1+2", and the room unit's manual (83277504, pages 11 and 105) has an address
-  "WTC-Chauf.#1 + EM-Chauf.#2" for one room unit that controls two heating circuits. Two
-  units in one room sharing a program store would also fit the bus. The owner's look at the
-  installation settles it.
+- **One physical room unit or two: settled 2026-11-20.** The owner reports the room units
+  configured as "#1+2" and "#3". The room unit and module manual (83277504, p. 11 and p. 105)
+  describes the address "WTC-Chauf.#1+EM-Chauf.#2": one room unit that runs heating circuits 1
+  and 2 in one room. `35` (master `30`) and `75` (master `70`) are that one unit's two bus
+  identities, one per circuit; this is why the programs and the setpoints it keeps once are
+  answered at both, while what is per circuit (curve, flow maximum, circuit type) is not.
 - **Which other settings share the store**: the seven numeric settings, the holiday level
   and dates and the control variation listed in 5. A write on one address and a
   read of the other within the same minute would tell, per setting.

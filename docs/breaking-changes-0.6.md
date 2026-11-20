@@ -30,7 +30,7 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 4 | `LegionellaStartTime` (`ka`): number of quarter hours → time of day (`TTQ`) | do in 0.6 |
 | 5 | Metadata: a carrier for renamed fields (`renamed_from` on a field), needed if 3 is done | do in 0.6 (compatible addition, schema 1) |
 | 6 | `HolidayStartThird`, `HolidayEndThird` (three room units): rename to `...Year` if the display test shows a year, else keep | owner |
-| 7 | Circuit `em1` (address `50`, the system manager's own circuit) → another circuit name | owner (lean: leave) |
+| 7 | Circuit `em1` (address `50`, the system manager's own circuit) → another circuit name | leave for good (the vendor's circuit numbers, see 7) |
 | 8 | `HcMode` fields `Ink1_*`, `Ink2_*` → `Ukn1_*`, `Ukn2_*` (taste) | owner (only together with 3) |
 | 9 | `DHWExceeded` (`ka`) → `DHWExcessTemp`, unit K | owner |
 | 10 | `CalorifierExcessTemp`, `CalorifierSwitchDiff` (`ka`) → `Buffer...` | leave for good |
@@ -54,8 +54,8 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 28 | Identification `W` in the file names | leave for good |
 | 29 | Metadata structure: schema 2 | leave for good (not needed) |
 
-Count: **do in 0.6: 5** (1–5, of which 5 is a compatible addition that 3 needs); **owner: 4**
-(6–9); **leave for good: 20** (10–29). Not breaking, listed at the end: enum names against the
+Count: **do in 0.6: 5** (1–5, of which 5 is a compatible addition that 3 needs); **owner: 3**
+(6, 8, 9); **leave for good: 21** (7, 10–29). Not breaking, listed at the end: enum names against the
 style guide, and comment fixes.
 
 ## Do in 0.6
@@ -114,14 +114,33 @@ step B); if the value is the year (or year − 2000), rename to `HolidayStartYea
 renamed): six messages (read and write) × three circuits; companion covered by
 `renamed_from`. The test needs the owner at a display.
 
-**7. Circuit `em1`** (file `50.w.em1`, 67 messages). `em` reads as the WCM-EM heating module;
-`50` is the system manager's own direct circuit, the same device as `15`
-(`evidence/heating-modules-reads.md`). Proposed, if wanted: a circuit name that says so (for
-example `hc1`, or `ka1`). Breaks: every key of the file (ebusd `-c em1`, MQTT `ebusd/em1/…`,
-67 companion entities; `renamed_from` can carry all 67 message keys, the circuit itself has no
-carrier). Lean: **leave**. The metadata already puts `em1` under the device `manager` with its
-own labels, the name is a label of the address, and the cost is the largest of the list. But
-it is the one rename that is impossible after 1.0 short of 2.0, so it needs the owner's word.
+**7. Circuit `em1`** (file `50.w.em1`, 67 messages) — **leave for good** (owner's question of
+2026-11-20, answered from the manuals). `em` reads as the WCM-EM heating module, and `50` is
+the system manager's own direct circuit, the same device as `15`
+(`evidence/heating-modules-reads.md`). But the number is the vendor's circuit number, and the
+three files `em1`, `em2`, `em3` and `fs1`, `fs2`, `fs3` follow it:
+
+- The room unit and module manual (83277504) numbers the heating circuits 1 to 8: circuit 1 is
+  the direct circuit ("WTC-Chauf.#1", p. 9 and p. 105), circuits 2 to 8 are driven by modules
+  EM#2 to EM#8, whose address switch is the circuit number (p. 103: position 1 "function not
+  defined", 2 to 8 "EM#2 (heating circuit 2)" … "EM#8"). A room unit takes the address of its
+  circuit (P312, p. 105): "WTC-Chauf.#1", "EM-Chauff.#2" … "#8", or
+  "WTC-Chauf.#1+EM-Chauf.#2" for one room unit that runs circuits 1 and 2 in one room (p. 11).
+- The cascade manager's manual (83258404) calls circuit 1 the "direct circuit #1" ("HK#1"),
+  run either by the KA itself or, deactivated in the KA, by a room unit with address #1
+  (p. 17).
+- On the bus: `50` answers for circuit 1 (the KA's HK#1), `51` is EM#2, `52` is EM#3; the room
+  units answer `35` (#1), `75` (#2), `f5` (#3). The owner reports the installation configured
+  as "#1+2" and "#3": one room unit for circuits 1 and 2, one for circuit 3 — which is why
+  `35` and `75` share their programs and two setpoints
+  (`evidence/room-units-shared-store.md`).
+
+So `em1` is "circuit 1" in the vendor's numbering, as `em2` and `em3` are circuits 2 and 3. A
+name such as `hc1` would be more exact for `50` but would break the numbering the three files
+share, for 67 message keys. Keep. What is worth fixing is not breaking: the comment of
+`50.w.em1` and the device labels of the metadata can say "circuit 1 (direct circuit of the
+system manager)", and those of `fs1` / `fs2` "room unit #1+2, circuit 1 / circuit 2" rather
+than "room unit 1 / room unit 2" (labels: owner's acceptance, compatible).
 
 **8. `HcMode` fields `Ink1_1` … `Ink2_8`** (lot A). Unknown bits named `Ink`, where the other
 unknown fields of the lots are `Ukn`. Proposed: `Ukn1_*`, `Ukn2_*`, together with 3 so that
@@ -134,8 +153,11 @@ participle and lacks the `...Temp` its neighbours have (`DeCoupleExcessTemp`,
 Proposed: `DHWExcessTemp`, unit K (a unit change alone is compatible). The source of the name
 is the operator's earlier configuration; no manual parameter is matched to it
 (`evidence/ka-reads.md`). Breaks: one message key; companion covered by `renamed_from`. Partly
-taste; the owner decides whether one more rename is worth it. Lean: rename only if a manual
-parameter is found for it before 0.6.
+taste; the owner decides whether one more rename is worth it. Lead found on 2026-11-20 (one
+source, not yet evidence): the KA manual's P576 "Elévation ECS" (83258404 p. 98), the boiler
+flow temperature above the hot-water setpoint during loading, 10.0 to 30.0 K, factory 15.0 K;
+the register reads 10.0, inside that range. If a second source confirms it, the name to take is
+`DHWBoostTemp` or `DHWExcessTemp` and the unit K.
 
 ## Leave for good
 
@@ -143,7 +165,11 @@ parameter is found for it before 0.6.
 storage excess (P561, KA p. 92); the comment says so since 0.5.15. But "calorifier" is the
 vendor's own English word for the buffer storage (WTC-en p. 25, where the French edition says
 "stock tampon"; `evidence/terms.md`), and the metadata labels say "buffer". The second is
-written from `ff`; renaming it would break writes for a word the vendor uses. Keep both.
+written from `ff`; renaming it would break writes for a word the vendor uses. Keep both. Lead
+found on 2026-11-20 (one source): the KA's "Tampon" menu has P561 "Surch Accu" (p. 92) and
+P562 "Diff Accu", the buffer switching differential, 1.0 to 7.0 K, factory 2.0 K (p. 93);
+`CalorifierSwitchDiff` reads 2.0 and the lot's range is 1 to 20. Its comment can name P562 once
+a second source agrees, and the lot's range would then be too wide (compatible either way).
 
 **11. `DHWSetValue`** (`15.w.ka`, live). It is the hot-water setpoint in effect (it follows the
 manager's program, `modules-programs.md`); `DHWSetpoint` is the setting. Same comment on both
