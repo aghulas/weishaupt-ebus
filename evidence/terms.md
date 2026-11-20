@@ -304,7 +304,7 @@ accepted as proposed, except "modulation demand", where the owner chose the alte
 | [x] | "hors-gel" | "antigel" (labels of FS and KA) |
 | [x] | "programme de chauffe" | "programme de chauffage" (FS p. 83) |
 | [x] | "bouteille casse-pression" | "bouteille de découplage" (WTC p. 58) |
-| [ ] | "anti-légionelle" | "anti-légionnelle" (FS) |
+| [x] | "anti-légionelle" (the owner's choice, 2026-11-20, « ok »: kept in all the strings) | "anti-légionnelle" (FS) |
 | [x] | "circulateur" for the boiler pump, "pompe de circulation ECS" for the circulation | "pompe" (FS), "circulateur de bouclage ECS" (WTC p. 48) |
 | [x] | "puissance du brûleur" for burner load | "modulation", "degré de modulation" (KA) |
 | [x] | "différentiel de température" (changed by the owner; the choice was "écart de température") | "écart de température" (KA p. 97) |
@@ -464,9 +464,11 @@ Findings on content, for the owner:
   word**: the comment says i46 (lot E, `3e9347f`).
 - **`CalorifierSwitchDiff`**: no parameter of KA prints 1 to 20 K. "Calorifier" appears in
   the vendor's English only as an info value (FSU-en p. 11) and once in WTC-en (p. 25), where
-  the French edition says "stock tampon". The French uses that word, provisionally; if the
-  register is the differential of the hot-water tank, the French term is "préparateur ECS"
-  (FS p. 9).
+  the French edition says "stock tampon". The French uses that word, accepted by the owner on
+  2026-11-20 (« ok »), supported by the "Tampon" menu of the KA manual (83258404 p. 92–93,
+  P561 "Surch Accu" and P562 "Diff Accu"). Which parameter the register is stays a lead from
+  one source: P562, the buffer switching differential, 1.0 to 7.0 K, factory 2.0 K, where the
+  register reads 2.0.
 - **`ChangeOverTime`** and **`DeCoupleMinTemp`**: the ranges of the lot (0 to 250 h, 0 to
   50 °C) are not those the manual prints for 532 (1 to 400 h) and 552 (8 to 78 °C).
 - **Sensor B22**: KA names B22 as the lot does (separator, or exchanger secondary side), with
