@@ -74,9 +74,10 @@ host (the prefix depends on the add-on repository; `ls /addon_configs/` shows it
 
 **A shell inside the add-on**, for the checks below: install the add-on **Advanced SSH & Web
 Terminal** (community add-ons), switch its **Protection mode** off on its own Info page, open it,
-then `docker ps` shows the ebusd add-on's container, whose name ends in `_ebusd`; every command
-below runs as `docker exec <container> <command>`. (The ebusd add-on's **Open Web UI** shows
-ebusd's web page on the test installation, not a shell.)
+then `docker ps` shows the ebusd add-on's container (`app_<prefix>_ebusd` on the test
+installation); every command below runs as `docker exec <container> <command>` (prefix both with
+`sudo` if your user needs it). This is the route used on the test installation. The ebusd add-on's
+own documentation also offers a terminal under **Open Web UI**; that page was not opened there.
 
 1. Copy the unpacked folder `@NAME@` into `/addon_configs/<prefix>_ebusd/` (Samba share
    `addon_configs`, the Studio Code Server add-on, or SSH).
