@@ -18,6 +18,40 @@ no review and outside pull requests there have waited from three weeks to five m
 What this costs: the fork is a distribution to maintain (releases, following upstream version
 bumps).
 
+## Road to 1.0
+
+Decided by the owner on 2026-11-20. 1.0 is a promise of stability, not of completeness: from
+1.0 on, a message or field name, a type and the structure of the metadata change only with a
+new first number, and someone outside can install the release without help from here.
+
+**A second installation is not a condition.** 1.0 does not wait for a report from another
+heating system. Until one exists, the notice of every release says in its first lines that the
+definitions were checked on one installation, and names its equipment.
+
+What 1.0 needs, in this order:
+
+1. **0.6: the last breaking changes, in one release.** Every rename, removal or retyping still
+   wanted goes here (list to draw up from the lots; known candidate: the write lines of the
+   setback and frost setpoints of `75.w.fs2`, shared with `35.w.fs1`). After 0.6 the names are
+   frozen.
+2. **Nothing provisional left.** The French strings noted provisional in `evidence/terms.md`,
+   the label still provisional in the metadata (`ForcedVenting`), each either accepted by the
+   owner or reworded.
+3. **Known doubts settled or stated.** The other programs of room unit 2 (heating 2 and 3, hot
+   water, circulation: shared or not), the participant at `00` / `05`: settled by evidence, or
+   written in the notice as not established. Neither blocks 1.0 if stated.
+4. **An installation notice someone else can follow**, start to end: files, the ebusd build for
+   writes, the companion. Read once by someone without the context of this repository.
+5. **Companion.** The two checks never made on site (the view of a user who is not an
+   administrator, the dashboard card of a shared program), then the request for the HACS
+   default store, on the owner's word. The companion takes 1.0 with the definitions.
+6. **First release not marked pre-release**: 1.0 itself. A release candidate before it only if
+   0.6 leaves something to try.
+
+Out of 1.0, compatible additions for 1.x: the boiler installer parameters (P10 to P71) and the
+rest of the register catalogue, which wait for the vendor service tool; the vendor serial
+adapter. Not a condition either: the upstream merges (see "Direction").
+
 ## Current state
 
 ### Lots
