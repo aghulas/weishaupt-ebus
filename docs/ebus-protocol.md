@@ -84,8 +84,11 @@ build of this project (`v26.1-weishaupt.1`, john30/ebusd#1825) computes it when 
 checks it when receiving, for messages marked `[WCRC]` or with the attribute `wcrc`. In the
 definitions those messages carry, in place of the checksum, the checksum of the address alone,
 so reads stay valid on a stock ebusd. Since the controllers above do not check the checksum, a
-stock ebusd should write their settings as well; that has not been run end to end with the
-definitions (see "Open questions").
+stock ebusd should write their settings as well. Offline, a stock ebusd 26.1 with the
+definitions sends for `write -s ff -c ka BlockingTime 2` exactly `ff 15 50 23 05 4c 25 00 02 00`:
+the checksum of the address (`4c`), not the right one (`cc`), whatever the value (seen on a
+simulated adapter that records the bytes, 2026-11-20). Not yet run on the bus (see "Open
+questions").
 
 ## 4. Reading registers: `50 22`
 
@@ -123,7 +126,7 @@ before and after).
 |---|---|---|
 | Boilers `08`, `18` | 4 on both, 8 on `08` | not tried |
 | System manager `15`, room unit `35` | 4 | 5 and 6: acknowledged with an empty answer; 8: no answer |
-| Room units `75`, `f5`, heating modules `51`, `52` | 4 | not tried |
+| Room units `75`, `f5`, heating modules `51`, `52` | 4 | 5 and 6: empty answer; 8: no answer |
 
 Two contiguous registers of a boiler:
 
@@ -140,6 +143,31 @@ reports "max message ID length exceeded" and exits with an error as soon as an I
 **7 bytes** (`src/ebusd/main.cpp`). A read of 4 registers (9 bytes) exceeds it; 3 registers
 (7 bytes) do not. A definition that must pass the project's check can group **3 registers** at
 most, which is what a date needs. A running ebusd does use 4-register IDs.
+
+### Single and grouped reads in ebusd and MQTT
+
+Tried offline on 2026-11-20 (stock ebusd 26.1 in Docker, a local MQTT broker, telegrams injected
+as already seen): three single messages for the registers of a holiday start date, and one
+message reading the three registers at once.
+
+- **Topics differ.** Each message publishes its own topic, named after the message:
+  `ebusd/ka/HolidayStartDay`, `…Month`, `…Third` for the singles; one topic
+  `ebusd/ka/HolidayStart` with three fields for the grouped one (with `--mqttjson`:
+  `{"day": {"value": 30}, "month": {"value": 10}, "third": {"value": 0}}`; without: `30;10;0`).
+- **A telegram only updates its own message.** ebusd matches a telegram to a definition by its
+  ID, and a grouped read has another ID (and checksum) than the single ones: the grouped telegram
+  updates only the grouped topic, the single telegrams only the single topics.
+- **Home Assistant discovery follows the messages**: the grouped message gives three sensors on
+  one state topic (`value_json["day"].value`…), the singles three sensors on three topics; with
+  the add-on's stock MQTT file, discovery is published only for messages ebusd has seen, so a
+  definition never read gets no entity.
+- **A 4-register definition** (9-byte ID) fails `--checkconfig`, but a running ebusd decodes and
+  publishes it.
+- Value topics are not retained.
+
+So grouping is a choice of names: an MQTT user or an automation sees other topics and other
+entities. Defining grouped reads beside the single ones gives both, at the cost of two names
+for one value; replacing singles by groups would be a breaking change.
 
 ### `09 02`: the same read without checksum
 
@@ -299,8 +327,9 @@ Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 
 
 ## 8. Open questions
 
-1. **Writing with a stock ebusd.** The controllers ignore the write checksum, so a stock ebusd
-   with these definitions should write their settings. Not run end to end. If it holds, the
+1. **Writing with a stock ebusd.** The controllers ignore the write checksum, and a stock ebusd
+   with these definitions sends the write with the checksum of the address (established
+   offline). Not yet run on the bus. If it holds, the
    notice, the companion's write requirement and the upstream write lots change.
 2. **The boiler automats**: whether they check the checksum and take `09 03` (the operator
    recalls: yes and no); not tested, and the project does not write to them.
@@ -308,10 +337,13 @@ Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 
    October and November. The operator thinks it is the year, coded otherwise than in clear. To
    test on site: a holiday period of another year entered on a room unit's display, then read.
 4. **Why some registers take `31`**: known register by register, no general rule.
-5. **More than 4 registers** on the heating modules and the other room units; more than 8 on the
-   boilers: not tried.
-6. **The participant at `00` / `05`**: answers the scan as Kromschröder and scans the bus; what
-   it is, is not known.
+5. **More than 8 registers** on the boilers: not tried. (Every WCM device, 15, 35, 75, f5, 51
+   and 52, stops at 4.)
+6. **The participant at `00` / `05`**: a device type of its own (version registers 0x0199 =
+   0x009c, 0x019a = 0x0018); master `00` sends only identification requests (`07 04`), a cycle
+   of 37 addresses about every 10 minutes, keeping a list of the devices present
+   (`master-00-slave-05.md`). Most likely a communication module or gateway; the product is not
+   known.
 7. **Room unit `35` / `75`**: what is shared is known for heating program 1 and two setpoints;
    the other programs are not established.
 
