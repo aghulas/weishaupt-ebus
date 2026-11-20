@@ -52,7 +52,7 @@ installation with separate room units, and upstream merges.
 | `aghulas/ebusd-configuration` | `weishaupt` `f7309e6` (`weishaupt-0.6.0`, pre-release) | 129 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions (1 073 messages loaded, 669 in metadata, 92 writable settings, 252 writable program slots), `src/fr.yaml`, `metadata/weishaupt.toml`, library pin |
 | `aghulas/ebus-typespec` | `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc` and `@wcrc` decorators |
 | `aghulas/ebusd` | `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum |
-| `aghulas/ha-weishaupt` | `v0.10.0` (pre-release) | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
+| `aghulas/ha-weishaupt` | `v0.10.0` (Latest) | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
@@ -72,8 +72,9 @@ from `weishaupt` when the maintainer responds.
 
 ### Needs the owner
 
-- **Test `0.6.0` on site** with `ha-weishaupt` v0.10.0 (not installed yet; test installation still
-  runs `0.5.15` + companion `0.9.1`).
+- *Done (2026-11-20):* `0.6.0` and `ha-weishaupt` v0.10.0 run on the test installation: nine files
+  loaded, no repair, the same number of entities, `LegionellaStartTime` read `08:30`, `DHWExcessTemp`
+  10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.
 - **Provisional strings & labels** (item 2 of Road to 1.0): accept or reword `ForcedVenting` and
   any provisional entries in `evidence/terms.md`.
 - **Clock automation**: remove or adjust the Home Assistant start trigger that sends
