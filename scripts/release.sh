@@ -27,6 +27,9 @@ REL="$ROOT/out/release"
 LANGS="${RELEASE_LANGS-fr}"
 TERMS="$ROOT/evidence/terms.md"
 
+# The scripts that build the release are tested first: no archive from a broken workbench.
+(cd "$ROOT" && python3 -m unittest discover -s tests -q) || { echo "unit tests failed: no archive"; exit 1; }
+
 "$ROOT/scripts/integrate.sh" | tee "$ROOT/out/integrate.log"
 grep -q '^ALL CHECKS PASSED$' "$ROOT/out/integrate.log" || { echo "check failed: no archive"; exit 1; }
 count=$(grep -o 'found messages: [0-9]*' "$ROOT/out/integrate.log" | grep -o '[0-9]*' | tail -1)
