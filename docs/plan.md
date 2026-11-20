@@ -285,18 +285,21 @@ assumption from `docs/service-tool-protocol.md`, not a comparison.
   only; G `47868da` the 18 unknown bits of `HcMode` named `Ukn<byte>_<bit>`; O `a01ad23`
   `MixerPump` off / on, `9085b01` `LegionellaStartTime` as a time (`TTQ`, `08:30`), `3c1afa8`
   `DHWExceeded` → `DHWExcessTemp`, unit K (last commit of O, droppable alone with M
-  `1ceac65`); L `20897da` French; M `d809a4f` field `renamed_from` of the `HcMode` bits and the
-  legionella label, `1ceac65` `DHWExcessTemp` (`renamed_from = "ka/DHWExceeded"`). Heads A
-  `4cd5a54`, E `9d20b57`, D `71094a2`, F `b0526d3`, C `81e6c00`, G `47868da`, H `3b6311f`, J
-  `52c9f41`, K `677249d`, N `6fcf93f`, O `3c1afa8`, L `20897da`, M `1ceac65`, `weishaupt`
-  `f644643`. 1 073 messages (two write lines fewer); the CSV differ from 0.5.15 in exactly 20
+  `509529e` and L `a1e9401`); L `9d1fe57` French, `fc960ca` the accepted heading of
+  `fr.yaml`, `a1e9401` French of `DHWExcessTemp`; M `44fa02c` field `renamed_from` of the
+  `HcMode` bits and the legionella label, `509529e` `DHWExcessTemp` (`renamed_from =
+  "ka/DHWExceeded"`). Heads A `4cd5a54`, E `9d20b57`, D `71094a2`, F `b0526d3`, C `81e6c00`, G
+  `47868da`, H `3b6311f`, J `52c9f41`, K `677249d`, N `6fcf93f`, O `3c1afa8`, L `a1e9401`, M
+  `509529e`, `weishaupt` `f7309e6`. Dropping the rename: the last commit of O, L and M, and the
+  fixture line of `DHWExcessTemp` back to `DHWExceeded` (checked: the stack without the three
+  commits passes but for that line). 1 073 messages (two write lines fewer); the CSV differ from 0.5.15 in exactly 20
   lines of five files, English and French, all of them the seven changes. Check with
   `METADATA=required` and hygiene passed; fixtures 949 readings (the four captured writes to
   `fs2` of the two setpoints leave them), `LegionellaStartTime` decodes to `08:30` in ebusd.
   Files in `out/release/` (0.6.0). Workbench `cab1873`: field `renamed_from` in the contract and
   checked by `scripts/metadata.py`; notice "Changes from 0.5.15 to 0.6.0", names frozen from
-  it. To be read by the owner before publication: the new French strings (provisional in
-  `evidence/terms.md`) and the two changed labels (`LegionellaStartTime`, `DHWExcessTemp`).
+  it. The new French strings and the two changed labels were accepted by the owner on
+  2026-11-20 (`evidence/terms.md`). Waits for a companion release that accepts 0.6.
   The companion needs a release that accepts 0.6 (0.9.1 accepts `>=0.5.3, <0.6`).
 - **0.5.15 published on 2026-11-20 (prepared locally; the owner decided it is finished without the
   vendor service tool, which is not available).** Scope, all on the lot branches since 0.5.14:
