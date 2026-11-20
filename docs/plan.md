@@ -25,12 +25,15 @@ exists, the notice states in its first lines that the definitions were checked o
 
 1. **0.6: last breaking changes, in one release.** *Done (2026-11-20, `weishaupt-0.6.0`).*
    Seven changes (`docs/breaking-changes-0.6.md`), 1 073 messages; names are frozen towards 1.0.
-2. **Nothing provisional left.** Review and accept or reword any remaining provisional French
-   strings in `evidence/terms.md` and the provisional label `ForcedVenting` in
-   `metadata/weishaupt.toml`.
-3. **Known doubts settled or stated.** The other programs of room unit 2 (heating 2 and 3, hot
-   water, circulation: shared or not) and the participant at `00` / `05`: settled by evidence or
-   stated in `docs/release-readme.md` as not established.
+2. **Nothing provisional left.** *Done (2026-11-20, for 0.6.1).* Every French string and the
+   wording choices accepted by the owner; the label of `ForcedVenting` kept as "Ventilation
+   forcée" (« je préfère Ventilation forcée »): the wording, not the meaning, which stays not
+   established. `evidence/terms.md` and `metadata/weishaupt.toml` hold nothing provisional.
+3. **Known doubts settled or stated.** *Done (2026-11-20, for 0.6.1).* Stated as not
+   established in "Known limits" of `docs/release-readme.md`: the sharing of heating programs 2
+   and 3 and the hot-water and circulation programs of `75.w.fs2`, the participant at `00` /
+   `05`, and what phase 9 (`ForcedVenting`) is. 0.6.1 (compatible) waits for the cold read of
+   the notice (item 4).
 4. **An installation notice someone else can follow**, start to end (`docs/release-readme.md`):
    files, ebusd build for writes, companion. Read once without workbench context.
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card

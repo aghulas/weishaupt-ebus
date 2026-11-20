@@ -130,7 +130,11 @@ and metadata schema are frozen towards 1.0:
 - **`DHWLoadingPriority`:** values `0` (`Priority`) and `2` (`Parallel`) are established; `1`
   (`Sliding`) follows by elimination. Read only.
 - **`ForcedVenting` (operating phase 9):** not in any manual at hand and never seen on the bus;
-  its metadata label is provisional.
+  what the phase is, is not established. Its label ("Forced venting", « Ventilation forcée »)
+  keeps the name, not a confirmed meaning.
+- **Participant at master `00` / slave `05`:** answers the identification as Kromschröder with
+  an empty ID (software `0120`) and scans the bus from master `00`. What device it is, is not
+  established (most likely a communication module); no file is defined for it.
 - **Absent temperature sensors:** reported as an ordinary number (-100.0 on manager / modules,
   -40.0 on boilers), not the eBUS replacement value. The metadata marks affected fields with
   `absent`.

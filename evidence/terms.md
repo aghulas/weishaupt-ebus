@@ -381,7 +381,7 @@ written the same day, with the form recommended for each choice. Status as in th
 | Burner in operation | Brûleur en service | operating phase 6 (`BurnerInOperation`) | WTC p. 46, 89 | vendor |
 | Gas valve check | Contrôle vannes gaz | operating phase 7 (`GasValveCheck`) | WTC p. 89 (p. 46 prints a longer form) | vendor |
 | Post purge | Post-ventilation | operating phase 8 (`PostPurge`) | the word is the vendor's (WTC p. 46, 89); the manual prints a two-step phrase, the short form was accepted by the owner | owner |
-| Forced venting | Ventilation forcée | operating phase 9 (`ForcedVenting`) | none: no manual lists a phase 9, no record shows the value or the origin of the name | provisional |
+| Forced venting | Ventilation forcée | operating phase 9 (`ForcedVenting`) | none: no manual lists a phase 9, no record shows the value or the origin of the name | owner (2026-11-20, « je préfère Ventilation forcée », against a neutral "Phase 9"): the wording, not the meaning |
 | Fault | Défaut | fault kind 0 (`fault`) | WTC p. 87 | vendor |
 | Warning | Alarme | fault kind 1 (`warning`) | WTC p. 86 | vendor |
 | Off | Arrêt | on / off 0 (`off`) | KA p. 103; FS p. 47 | vendor |
@@ -411,11 +411,13 @@ written the same day, with the form recommended for each choice. Status as in th
 | November | Novembre | month 11 (`November`) | same | owner |
 | December | Décembre | month 12 (`December`) | same | owner |
 
-22 `vendor`, 15 `owner`, 1 `provisional`. The forms chosen where the vendor prints two: the
+22 `vendor`, 16 `owner`, none `provisional`. The forms chosen where the vendor prints two: the
 short "Contrôle vannes gaz" for phase 7, phases 2 and 4 as printed, "Marche" / "Arrêt" for
-on and off, the months and every label with a capital. The label of `ForcedVenting` stays
-`provisional` until a source says what phase 9 is (the fan running, or air bled from the
-water side); the value itself is kept in the list (finding below). "Marche" / "Arrêt" suit
+on and off, the months and every label with a capital. The label of `ForcedVenting` was
+`provisional` until 2026-11-20, when the owner chose to keep "Ventilation forcée" rather than a
+neutral "Phase 9" (« je préfère Ventilation forcée »). That accepts the wording only: what
+phase 9 is (the fan running, or air bled from the water side) is still not established; the
+value itself is kept in the list (finding below). "Marche" / "Arrêt" suit
 the bits that are outputs; an interface should word the bits that are facts (flame, fault,
 service) itself rather than through this label.
 
@@ -484,7 +486,8 @@ Findings on content, for the owner:
   `evidence/` shows the value 9 on the bus, and the origin of the name is not recorded; the
   phases seen on the bus are 0 and 6. The entry is kept (a list entry that is never received
   decodes nothing wrongly, and removing it would retype the field), with this line as its
-  record: not established. Its label is `provisional`.
+  record: not established. Its label's wording was accepted by the owner on 2026-11-20; its
+  meaning was not.
 - **Hot-water loading priority (was `DHWOperationMode`).** The glossary row "hot water
   operating mode" (WTC p. 42, KA p. 32: the hot-water mode of the user level) had been
   applied to register `23 00` of the system manager, which is the parameter "DHW operation"
