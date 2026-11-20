@@ -32,7 +32,7 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 6 | `HolidayStartThird`, `HolidayEndThird` (three room units): keep `...Third` | leave for good (owner, 2026-11-20) |
 | 7 | Circuit `em1` (address `50`, the system manager's own circuit) → another circuit name | leave for good (the vendor's circuit numbers, see 7) |
 | 8 | `HcMode` fields `Ink1_*`, `Ink2_*` → `Ukn1_*`, `Ukn2_*` (taste) | owner (only together with 3) |
-| 9 | `DHWExceeded` (`ka`) → `DHWExcessTemp`, unit K | owner |
+| 9 | `DHWExceeded` (`ka`) → `DHWExcessTemp`, unit K | do in 0.6 (owner, 2026-11-20) |
 | 10 | `CalorifierExcessTemp`, `CalorifierSwitchDiff` (`ka`) → `Buffer...` | leave for good |
 | 11 | `DHWSetValue` (`ka`) → `DHWSetTemp` | leave for good (comment fix, compatible) |
 | 12 | `ControlVariation` (room units): number → value list | leave for good |
@@ -54,8 +54,8 @@ ebus-typespec, the evidence records named, the metadata of 0.5.15.
 | 28 | Identification `W` in the file names | leave for good |
 | 29 | Metadata structure: schema 2 | leave for good (not needed) |
 
-Count: **do in 0.6: 5** (1–5, of which 5 is a compatible addition that 3 needs); **owner: 2**
-(8, 9); **leave for good: 22** (6, 7, 10–29). Not breaking, listed at the end: enum names against the
+Count: **do in 0.6: 6** (1–5 and 9; 5 is a compatible addition that 3 needs); **owner: 1**
+(8); **leave for good: 22** (6, 7, 10–29). Not breaking, listed at the end: enum names against the
 style guide, and comment fixes.
 
 ## Do in 0.6
@@ -147,7 +147,9 @@ unknown fields of the lots are `Ukn`. Proposed: `Ukn1_*`, `Ukn2_*`, together wit
 `HcMode` has one scheme. Taste (the names are not wrong, only different); no companion impact
 (`skip`); breaks the JSON field names of `HcMode`. Worth doing only in the same release as 3.
 
-**9. `DHWExceeded`** (lot A, `15.w.ka`, read; value 10.0, `UIN/10 °C`). The name is a past
+**Decided by the owner on 2026-11-20 (« Oui, renommer »): rename in 0.6 to `DHWExcessTemp`,
+unit K, with `renamed_from = "ka/DHWExceeded"` in the metadata. The comment keeps the parameter
+open (P576 is a lead from one source) until a second source agrees.** **9. `DHWExceeded`** (lot A, `15.w.ka`, read; value 10.0, `UIN/10 °C`). The name is a past
 participle and lacks the `...Temp` its neighbours have (`DeCoupleExcessTemp`,
 `CalorifierExcessTemp`); the value looks like an excess (a difference, K), not a temperature.
 Proposed: `DHWExcessTemp`, unit K (a unit change alone is compatible). The source of the name
