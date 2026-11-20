@@ -101,9 +101,9 @@ from `weishaupt` when the maintainer responds.
   notice of 0.6.1 no longer carries the line.
 - **Clock automation**: remove or adjust the Home Assistant start trigger that sends
   `Broadcast/Datetime` late after a restart (outside the definitions).
-- **Local cleanup (optional)**: once satisfied with the trunk-based `weishaupt` workflow, old
-  stacked branches (`weishaupt-A`..`weishaupt-O` except `weishaupt-pr`, and `backup/*`) can be
-  deleted locally (and on the fork on the owner's word, rule 8).
+- *Done (2026-11-20):* old lot branches and `backup/*` deleted locally and on the fork, merged
+  companion branches and `service-tool` deleted; commits kept in a verified bundle under
+  `out/branch-backup-2026-11-20/` (not versioned). Kept: `weishaupt-pr`, `upstream/*`, `maint-0.1`.
 - **GitHub support request**: text in `out/github-support-request.md` to purge pre-rewrite commits.
 
 ### Needs the maintainer
