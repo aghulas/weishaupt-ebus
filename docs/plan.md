@@ -101,6 +101,10 @@ from `weishaupt` when the maintainer responds.
   needed for these devices), the companion's write requirement (1.1, guard change), the upstream
   write lots (no dependency on john30/ebusd#1825). Before changing the notice: one end-to-end write
   with the stock add-on on a room unit and a heating module.
+- **ebusd extensions (option 2 of `docs/design-register-layer.md`): specification to approve.**
+  `docs/ebusd-extension-spec.md` (2026-11-20): computed checksum bytes (attribute `crc`,
+  generalising `[WCRC]`), message IDs longer than 7 bytes, composite reads (field attribute
+  `fills`). Open choices in its section 7. No code in the fork before approval.
 - *Done (2026-11-20):* `0.6.0` and `ha-weishaupt` v0.10.0 run on the test installation: nine files
   loaded, no repair, the same number of entities, `LegionellaStartTime` read `08:30`, `DHWExcessTemp`
   10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.
