@@ -344,8 +344,9 @@ Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 
    of 37 addresses about every 10 minutes, keeping a list of the devices present
    (`master-00-slave-05.md`). Most likely a communication module or gateway; the product is not
    known.
-7. **Room unit `35` / `75`**: what is shared is known for heating program 1 and two setpoints;
-   the other programs are not established.
+7. **Room unit `35` / `75`**: shared, established by writing `35` and reading `75` 3 s later
+   (`room-units-shared-store.md`): heating programs 1 and 2, the hot-water and circulation
+   programs, the setback and frost setpoints. Heating program 3 is the only one not tried.
 
 ## Records
 
