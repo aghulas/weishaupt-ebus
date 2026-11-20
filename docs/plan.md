@@ -176,9 +176,17 @@ remain in the local clone.
 | john30/ebusd#1825 (run-time checksum) | `aghulas:crc` `492867d9` | open, mergeable, no review, no comment |
 | john30/ebus-typespec#8 (lot B) | `aghulas:wcrc-decorator` `75c7d58` | opened on 2026-11-17, mergeable, no review, no comment |
 
-Comments posted on 2026-11-17, no answer yet: john30/ebusd-configuration#616 (points another
-contributor working on Weishaupt files to #717) and john30/ebusd#1814 (this installation as a
-data point on arbitration with room units).
+Comment posted on 2026-11-17, no answer yet: john30/ebusd#1814 (this installation as a data point
+on arbitration with room units).
+
+john30/ebusd-configuration#616: the comment of 2026-11-17 (points another contributor working on
+Weishaupt files to #717) was answered on 2026-11-19. That contributor is converting the CSV files
+of the repository `J0EK3R/ebusd-configuration-weishaupt` (reads `09 02`, writes `09 03`, boiler
+`50 00`; last change 2023) to TypeSpec and plans a pull request of his own; nothing of it is public
+yet. Reply posted on 2026-11-20: what the `weishaupt` branch of the fork covers, release
+`weishaupt-0.5.14`, and a request to share his branch so that the two efforts become one set. No
+answer yet. Until his branch is seen, the overlap (same registers under `09 02` and `50 22`) is an
+assumption from `docs/service-tool-protocol.md`, not a comparison.
 
 ## Open
 
