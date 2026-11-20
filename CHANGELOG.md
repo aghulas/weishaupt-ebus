@@ -3,6 +3,19 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 0.6.1 (2026-11-20)
+
+First release not flagged pre-release. No message, field or type changes: 1 073 messages loaded
+by ebusd, as in 0.6.0.
+
+- Installation notice rewritten after a cold read by someone without context: use with a plain
+  ebusd and with the Home Assistant add-on, each ending in a check with its expected answer; the
+  write-capable ebusd and how to tell which one runs; how to write; known limits; counts with
+  their origin; glossary.
+- Label of operating phase 9 (`ForcedVenting`) accepted for its wording; nothing is provisional.
+- Stated as not established: whether the other programs of `75.w.fs2` are shared with `35.w.fs1`,
+  and what the participant at master `00` / slave `05` is.
+
 ## 0.6.0 (2026-11-20, pre-release)
 
 **Last breaking release before 1.0.** Names of messages and fields, types and metadata schema are
