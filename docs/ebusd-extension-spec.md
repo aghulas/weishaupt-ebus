@@ -705,3 +705,27 @@ carrier is defined yet (D2): each needs its evidence record first.
    (D2) with evidence.
 4. Upstream: new pull request for A (closing #167, superseding #1825), one for C, one for B, one
    for `ebus-typespec`.
+
+### First run of `v26.1-weishaupt.2-rc1` (built from `weishaupt-next` `6a3fd7ac`)
+
+Read only on the test installation with the definitions 0.6.0, no regression (`out/ha-deploy-log.md`,
+Task 60), except one `poll bc1 BurnerServiceHours failed: ERR: invalid argument` during the scan,
+the next poll of the same message answered. Explained offline, not a defect of these branches:
+
+- `BurnerServiceHours` is a plain `50 22` read (`0abc02`): no `[WCRC]`, no `crc`, no `fills`, so
+  none of the new code applies to it, and a failure there before sending would be logged as
+  "prepare poll message", not "poll … failed".
+- "poll … failed" carries the result of the bus protocol. `protocol_direct.cpp` returns
+  `RESULT_ERR_INVALID_ARG` when a byte is handled in a sending state without being one ebusd sent:
+  after ebusd wins arbitration, a further byte already buffered from the adapter in the same read
+  is handled that way. The bus code is identical in upstream `master`, `v26.1-weishaupt.1` and
+  rc1.
+- Reproduced with a simulated adapter (plain protocol) that sends one foreign byte (`10`, as from
+  another master) right behind ebusd's echoed address: both rc1 and `v26.1-weishaupt.1` log exactly
+  `poll bc1 BurnerServiceHours failed: ERR: invalid argument` once, then poll normally. The
+  enhanced protocol of the installation's adapter was not simulated.
+
+So a bus collision or buffered byte at that instant (likely just after the switch between the two
+add-ons, during the scan), handled by upstream code as any build would; the request is retried by
+the next poll. No change and no rc2 needed for it. That upstream reports such a collision as
+"invalid argument" rather than as a lost bus could be raised with the maintainer some day.
