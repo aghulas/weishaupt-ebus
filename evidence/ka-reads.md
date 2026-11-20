@@ -173,3 +173,15 @@ device whose setting is parallel or sliding (a heating circuit of a room unit, P
 if the register exists there), or after the operator has changed the setting; neither was
 done, and changing a setting is the operator's (rule 7). The message is read only in every
 lot, so no value of the list is ever sent.
+
+## Note of 2026-11-20 — DHWExceeded renamed DHWExcessTemp (0.6.0)
+
+Decided by the owner of the test installation: the name was a past participle without the
+`Temp` of its neighbours, and the value (10.0) is an excess, so the unit becomes K. Register
+`2d 00`, ID `14 2d 00`, unsigned type unchanged. **A lead from one source, not evidence:** the
+KA manual (83258404 p. 98) has parameter 576 "Elévation ECS", the boiler flow temperature
+above the hot-water setpoint while loading, 10.0 to 30.0 K, factory 15.0 K; the register reads
+10.0, inside that range. The comment says that the parameter is not established. Lot O, last
+commit of the lot (`kromschroeder: DHWExceeded of the system manager renamed DHWExcessTemp`),
+with its metadata as the last commit of lot M (`renamed_from = "ka/DHWExceeded"`), so that both
+can be dropped alone.

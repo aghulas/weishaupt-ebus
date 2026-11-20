@@ -270,6 +270,16 @@ accepted as proposed, except "modulation demand", where the owner chose the alte
 | [x] | control variation of the heating circuit (parameter 315): 0 constant flow temperature, 1 outside temperature | variante de régulation du circuit de chauffage (paramètre 315) : 0 température de départ constante, 1 en fonction de la température extérieure | the manual names the parameter "Ty régul" and its settings "Const. Dép" and "Extérieur" (FS p. 50); the comment spells them out. Accepted by the owner on 2026-11-19 (« Oui, comme proposé ») | « … : 0 Const. Dép, 1 Extérieur » (display abbreviations) |
 | [x] | request state: power requested (0x66, 0xee) or not (0x55, 0x00) from the cascade manager; 0xbb or 0x55 from a room unit | état de la demande : puissance demandée (0x66, 0xee) ou non (0x55, 0x00) par le manager de cascade ; 0xbb ou 0x55 d'une commande à distance | the telegram is not described in a manual; the codes are those of ten days of telegrams (`heat-demand`). Accepted by the owner on 2026-11-19 (« Oui, valide le libellé ») | « état de la demande, valeurs non établies » (0.5.9 to 0.5.12) |
 
+| [ ] | setback room temperature setpoint / room temperature setpoint of the frost protection, read only: seen to be the setpoint of room unit 1, written through 35.w.fs1 (`fs2`, from 0.6.0) | consigne de température ambiante réduite / hors-gel, en lecture seule : vue comme la consigne de la commande à distance 1, écrite via 35.w.fs1 | same wording as the programs of `fs2` (row below); provisional until the owner reads it | … , à modifier sur 35.w.fs1 |
+| [ ] | hot water excess over its setpoint, as a temperature difference; which parameter it is is not established (`ka`, from 0.6.0) | surélévation de l'ECS au-dessus de sa consigne, en différence de température ; le paramètre correspondant n'est pas établi | "surélévation" is the KA manual's word (P576, p. 98), but the parameter is a lead only | surélévation de température ECS (the former string) |
+| [x] | state of the mixer-circuit pump; start time of the legionella protection (parameter 581) (from 0.6.0) | état de la pompe du circuit mélangé ; heure de démarrage de la fonction anti-légionelle (paramètre 581) | the accepted strings without ", 1 = on" / "in quarter hours", which the new types make useless | none |
+
+**Labels changed in 0.6.0, to be read by the owner** (metadata, accepted labels): `ka/LegionellaStartTime`
+"Legionella start time (quarter hours)" / « Heure anti-légionelle (quarts d'heure) » →
+"Legionella start time" / « Heure anti-légionelle » (the value is now a time of day);
+`ka/DHWExcessTemp` "Hot water exceed temperature" → "Hot water excess" (French unchanged,
+« Surélévation de température ECS »).
+
 ### Patterned comments
 
 | | English pattern | French proposal | Why | Alternative |

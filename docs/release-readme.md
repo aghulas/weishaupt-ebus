@@ -4,6 +4,10 @@ eBUS message definitions for Weishaupt WTC condensing boilers and their Kromschr
 controllers (system manager KA, heating modules EM, room units FS), compiled to ebusd CSV.
 These devices identify themselves on the bus as manufacturer `Kromschroeder`.
 
+**Checked on one installation:** two WTC-GB condensing boilers in cascade behind a WCM-KA
+system manager, two WCM-EM heating modules and two WCM-FS room units (one of them addressed
+for circuits 1 and 2), three heating circuits. Other equipment may answer differently.
+
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established is recorded in
 https://github.com/aghulas/weishaupt-ebus under `evidence/`. The same definitions are proposed
@@ -12,19 +16,58 @@ to the official ebusd configuration; this archive exists so that they can be use
 ## Content
 
 - `kromschroeder/` — one file per device address: `08.w.bc1`, `18.w.bc2` (boilers), `15.w.ka`
-  (system manager), `35.w.fs1`, `75.w.fs2`, `f5.w.fs3` (room units), `50.w.em1`, `51.w.em2`,
-  `52.w.em3` (heating modules), and the broadcast messages. It also holds the Wolf files of the official configuration, which
+  (system manager), `50.w.em1` (heating circuit 1, the system manager's direct circuit),
+  `51.w.em2`, `52.w.em3` (heating modules EM#2 and EM#3, circuits 2 and 3), `35.w.fs1`,
+  `75.w.fs2`, `f5.w.fs3` (the room-unit addresses of circuits 1, 2 and 3), and the broadcast
+  messages. The numbers are the vendor's circuit numbers. It also holds the Wolf files of the official configuration, which
   share the folder.
 - `broadcast.csv`, `memory.csv` — the general files of the official configuration.
 - `sha256sums.txt`
 
-@COUNT@ messages. Reads only, except what is read and written: 94 settings of `15.w.ka`,
-`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`, `51.w.em2` and `52.w.em3` (89 numbers, 5
+@COUNT@ messages. Reads only, except what is read and written: 92 settings of `15.w.ka`,
+`35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`, `51.w.em2` and `52.w.em3` (87 numbers, 5
 choices), 252 program slots (the five programs of `35.w.fs1` and of `f5.w.fs3`, the
 hot-water and circulation programs of `50.w.em1`), and the date and time broadcast. More than half of the messages are the weekly programs of the room units, one
 message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 
-## Changes since 0.5.14
+## Changes from 0.5.15 to 0.6.0
+
+**Breaking release, the last before 1.0.** Five definitions change name, type or write; from
+this release the names of messages and fields, their types and the structure of the metadata
+are frozen towards 1.0: after 0.6.0 they change only with a new first number. Each change
+below gives the old and the new form and what to do. Nothing else differs from 0.5.15: the
+CSV of five files differ in exactly the lines named here (20 lines), English and French; the
+other files are the same. 1 073 messages (two write lines fewer).
+
+- **`75.w.fs2` `RoomSetbackTemp`, `RoomFrostProtectionTemp`: read only.** Their write lines
+  go. On the test installation `75` answers both from the store of `35` (one room unit for
+  circuits 1 and 2): a write to `35.w.fs1` is read at `75` within seconds. *ebusd / MQTT:*
+  `write -c fs2 RoomSetbackTemp …` and the MQTT `set` of these two no longer exist; write the
+  same name on `fs1`. The reads are unchanged. *Companion:* nothing (no write was offered there
+  since 0.5.15).
+- **`51.w.em2`, `52.w.em3` `MixerPump`: `0` / `1` → `off` / `on`.** The pump state takes the
+  value list of the other pump fields. *ebusd / MQTT:* the published value is `off` or `on`
+  instead of `0` or `1`; adjust any automation comparing with a number. *Companion:* the same
+  key becomes a two-state value.
+- **`15.w.ka` `LegionellaStartTime`: `34` → `08:30`.** A time of day (quarter hours), no longer
+  a count of quarter hours. *ebusd / MQTT:* the value is `hh:mm`. *Companion:* the same key
+  becomes a time.
+- **`15.w.ka` `DHWExceeded` → `DHWExcessTemp`, unit °C → K.** The name said "exceeded" for a
+  temperature excess; the value (10.0) is a difference. Which vendor parameter it is remains
+  open. *ebusd / MQTT:* new name and topic `ebusd/ka/DHWExcessTemp`; the old one is gone.
+  *Companion:* the metadata carries `renamed_from = "ka/DHWExceeded"`; an interface that
+  follows it keeps the entity.
+- **`HcMode` (`50.w.em1`, `51.w.em2`, `52.w.em3`): 18 unknown bits renamed.** `ink1_n` →
+  `ukn1_n`, `ink2_n` → `ukn2_n`, `opmode_4` … `opmode_7` → `ukn3_4` … `ukn3_7` (these four
+  are bits of the byte that holds `pump` and the valves, not of `opmode`). Positions, types and
+  the named fields are unchanged. *ebusd / MQTT:* the field names in the JSON of `HcMode`
+  change; nothing else. *Companion:* none of them is shown (`skip`); each field carries its
+  former name in `renamed_from` (new in the metadata, schema still 1).
+- Comments and French strings follow; the new French strings are provisional until read.
+- Labels in the metadata: `LegionellaStartTime` loses "(quarter hours)", `DHWExcessTemp` reads
+  "Hot water excess".
+
+## Changes from 0.5.14 to 0.5.15
 
 - **Heating program 1 of room unit 2 is changed on room unit 1.** On the test installation the
   room unit at `75` answers heating program 1 from the store of the one at `35`: a slot written
@@ -283,11 +326,12 @@ those translated here (for example `temperature`).
 
 ## Known limits
 
-- One room unit of the test installation (`75.w.fs2`) acknowledges program-slot writes and keeps
-  none; its programs are read only here. Heating program 1 is shown to be the one of `35.w.fs1`
-  (see "Changes since 0.5.14"); whether one room unit answers at both addresses there, and
-  whether `75` behaves the same on another installation, is not established. The two other
-  room units keep their slot writes.
+- On the test installation one room unit is addressed for circuits 1 and 2 and answers at `35`
+  and `75`; `75` answers heating program 1 and the setback and frost setpoints from the store of
+  `35`, and keeps no write of its own there, so they are read only in `75.w.fs2` and written
+  through `35.w.fs1`. Its heating programs 2 and 3 and its hot-water and circulation programs
+  are read only too; whether they are shared the same way is not established. A room unit at
+  `75` on another installation, addressed for circuit 2 alone, may keep its own.
 - Checked on one installation: two WTC boilers in cascade (automat software 11.04), system
   manager, three heating circuits. Other models and software versions may differ.
 - The files are named with the identification the devices answer to the scan (`W`), for

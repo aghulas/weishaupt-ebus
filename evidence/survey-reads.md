@@ -177,3 +177,14 @@ exchanger, three WCM-FS room units (327.26), two WCM-EM heating modules (372.03)
 - The circuit types 0, 1, 4, 5; the summer-time registers on the room units (read by the tool,
   `25 / 3`, `25 / 10` on `35`, not yet by the survey; not defined there).
 - `RoomSetpointTemp` while a unit is in normal operation (its normal setpoint expected).
+
+## Addition of 2026-11-20 — types in 0.6.0
+
+- `MixerPump` (`em2`, `em3`): the value list off / on of the other pump fields replaces the
+  number. Basis: the rows above, `01 00` on `52` with the tool's "mixer pump on", `00 00` on
+  `51`. Lot O, `kromschroeder: MixerPump of the heating modules as off / on`.
+- `LegionellaStartTime` (`ka`): the low byte is the time in quarter hours (`22` = 34 = 08:30,
+  the tool's P581), the high byte `00`; the field becomes the quarter-hour time type with the
+  high byte ignored, ebusd shows `08:30`. Checked by the fixtures: the reading `22 00` decodes
+  to `08:30` in ebusd. Lot O, `kromschroeder: legionella start time of the system manager as a
+  time of day`.

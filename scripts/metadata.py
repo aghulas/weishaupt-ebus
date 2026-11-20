@@ -30,6 +30,8 @@ check fails (exit 1) when
   - an entry of a value list of the lot files has no label in every language, or a label
     names an entry no value list has, or a weekday is labelled in [values] as well as [days];
   - the sidecar repeats a range the CSV already has;
+  - a field's renamed_from (a template on the key of a field set, groups as \\1) does not give
+    a field name, or gives one the message still has;
   - shared_with names a message that does not exist, or one of the same device, or sits on a
     message with write conditions (a write line of the CSV may stay: the consumer writes the
     message named);
@@ -400,6 +402,13 @@ def resolve(side, msgs):
                     if len(ks) != 1:
                         bad.append(f"{key}: field {f['name']} matches {len(ks)} keys of field set {fs}")
                     hit_keys.update(ks)
+                    rf = fieldsets[fs][ks[0]].get("renamed_from") if len(ks) == 1 else None
+                    if rf is not None:
+                        old = re.fullmatch(ks[0], f["name"]).expand(rf) if isinstance(rf, str) else ""
+                        if not re.fullmatch(r"[a-z][a-z0-9_]*", old):
+                            bad.append(f"{key}: field {f['name']}: renamed_from must give a field name, got '{old}'")
+                        elif old in {g["name"] for g in m["fields"]}:
+                            bad.append(f"{key}: field {f['name']}: renamed_from '{old}' is a field the message still has")
                 for k in set(fieldsets[fs]) - hit_keys:
                     bad.append(f"{key}: field set {fs} has '{k}', the message has no such field")
     for key in msgs:
@@ -466,6 +475,8 @@ def assemble(side, msgs, resolved, langs):
                 else:
                     o["label"] = fmt(meta["label"], mm.groupdict(), days)
                     o["kind"] = meta.get("kind", e["kind"])
+                if meta.get("renamed_from"):
+                    o["renamed_from"] = mm.expand(meta["renamed_from"])
                 if meta.get("guard"):
                     o["guard"] = True
                 if meta.get("absent") is not None:

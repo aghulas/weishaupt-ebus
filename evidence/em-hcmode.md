@@ -129,3 +129,13 @@ Kromschröder WCM-FS heating modules (room units) on eBUS, `MF=Kromschröder`, t
 - `BoilerMCBoostTemp`, `SupplyHCMaxTemp`, `SupplyHCMinTemp` were seen at a single operating
   point only.
 - Modelled passively (observed), not actively polled, to stay read-only towards the system.
+
+## Addition of 2026-11-20 — field names in 0.6.0
+
+The bits not interpreted keep their positions and types and take the scheme `Ukn<byte>_<bit>`
+of `Boiler1Status`: `Ink1_n` → `Ukn1_n`, `Ink2_n` → `Ukn2_n` (the two flag bytes the room
+controller sends), and `Opmode_4` … `Opmode_7` → `Ukn3_4` … `Ukn3_7`: they are bits 3 to 6 of
+the answer's flag byte that holds `Pump`, `ValveClosing`, `ValveOpening`, not bits of the byte
+`Opmode`, which their former name suggested. No meaning is claimed for any of them. Lot G,
+`kromschroeder: unknown bits of HcMode named Ukn<byte>_<bit>`; the metadata gives each its former
+name (`renamed_from` on the field).

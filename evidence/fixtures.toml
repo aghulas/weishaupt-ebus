@@ -202,10 +202,8 @@ where = "row"
 readings = [
   { message = "RoomNormalTemp", master = "88 05 00 cd 00", slave = "", expect = { value = 20.5 } },
   { message = "RoomNormalTemp", master = "a8 05 00 d2 00", slave = "", expect = { value = 21.0 } },
-  { message = "RoomSetbackTemp", master = "78 08 00 87 00", slave = "", expect = { value = 13.5 } },
-  { message = "RoomSetbackTemp", master = "c4 08 00 8c 00", slave = "", expect = { value = 14.0 } },
-  { message = "RoomFrostProtectionTemp", master = "d0 14 0a 4b 00", slave = "", expect = { value = 7.5 } },
-  { message = "RoomFrostProtectionTemp", master = "dc 14 0a 50 00", slave = "", expect = { value = 8.0 } },
+  # 0.6.0: the setback and frost setpoints of fs2 are read only (written through fs1); their four
+  # captured writes stay in settings-writes.md, without a definition to decode them here.
   { message = "GradientCurve", master = "a0 0e 01 c3 00", slave = "", expect = { value = 19.5 } },
   { message = "GradientCurve", master = "1c 0e 01 c8 00", slave = "", expect = { value = 20.0 } },
   { message = "SummerWinterChangeOverTemp", master = "10 16 01 91 00", slave = "", expect = { value = 14.5 } },
@@ -739,7 +737,7 @@ readings = [
   { message = "DHWLoadingPriority", master = "d8 23 00", slave = "00 00", expect = { value = "Priority" } },
   { message = "SupplyMaxTemp", master = "64 28 00", slave = "34 03", expect = { value = 82.0 } },
   { message = "ModulationStatus", master = "48 2c 00", slave = "08 00", expect = { value = 8 } },
-  { message = "DHWExceeded", master = "14 2d 00", slave = "64 00", expect = { value = 10.0 } },
+  { message = "DHWExcessTemp", master = "14 2d 00", slave = "64 00", expect = { value = 10.0 } },
 ]
 
 # room-units-reads, point 4: the system manager answered the outside registers in the same minutes
@@ -1946,7 +1944,7 @@ readings = [
   { message = "BoilerSequence2First", master = "e9 d4 fd", slave = "01 00", expect = { value = "B" } },
   { message = "BoilerSequence2Second", master = "b5 d5 fd", slave = "00 00", expect = { value = "A" } },
   { message = "DHWSetbackTemp", master = "12 8a 02", slave = "50 00", expect = { value = 8.0 } },
-  { message = "LegionellaStartTime", master = "d5 f4 fd", slave = "22 00", expect = { value = 34 } },
+  { message = "LegionellaStartTime", master = "d5 f4 fd", slave = "22 00", expect = { value = "08:30" } },
   { message = "PlateExchangerPrimaryTemp", master = "72 40 0a", slave = "51 02", expect = { value = 59.3 } },
 ]
 
@@ -2058,6 +2056,6 @@ date = "2026-11-19"
 circuit = "em3"
 where = "row"
 readings = [
-  { message = "MixerPump", master = "70 52 00", slave = "01 00", expect = { value = 1 } },
+  { message = "MixerPump", master = "70 52 00", slave = "01 00", expect = { value = "on" } },
   { message = "CirculationReturnSetTemp", master = "cc a9 04", slave = "2c 01", expect = { value = 30.0 } },
 ]

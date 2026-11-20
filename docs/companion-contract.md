@@ -94,7 +94,7 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 | `shared_with` | (from 0.5.15) key (`<circuit>/<name>`) of the message on another device that keeps the value: this device answers the message from that device's store, a write there is read here within seconds and a write here is not kept. Set on each member of a family, not on the group; only where an evidence record shows a write on the other device read back here with no telegram in between. A message carrying it has no `write`: the value is written on the message it names, even where the CSV keeps a write line for it (the device accepts that write; an interface does not offer it). Cases: `fs2/HCProgram1<day><slot>` → `fs1/HCProgram1<day><slot>` (21 slots, no write line); `fs2/RoomSetbackTemp`, `fs2/RoomFrostProtectionTemp` → the same names on `fs1` (write line kept in the CSV). Seen on one installation; a consumer may check that both read the same before relying on it |
 | `family`, `group`, `position` | for a message of a family, see "Families" |
 | `compose` | for a message with several fields, see "Fields" |
-| `renamed_from` | former key (`<circuit>/<name>`), when a release renames a message. Kept in later releases. First case: `ka/DHWLoadingPriority`, `ka/DHWOperationMode` up to 0.4.3 |
+| `renamed_from` | former key (`<circuit>/<name>`), when a release renames a message. Kept in later releases. First case: `ka/DHWLoadingPriority`, `ka/DHWOperationMode` up to 0.4.3; second: `ka/DHWExcessTemp`, `ka/DHWExceeded` up to 0.5.15 |
 | `fields` | list, in the order of the telegram |
 
 `kind` on the message is the default for its fields; a field may carry its own.
@@ -122,6 +122,14 @@ value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, 
   states that value for that read.
 - A field matched by a pattern carries `group`, the numbers of its name (`code57` gives
   `{ "n": 57 }`).
+- `renamed_from` (from 0.6.0) on a field: its former name, when a release renames a field and
+  keeps the message. Kept in later releases. A consumer that identifies an entity by circuit,
+  message and field moves the entity of the former field name to the new one. In the sidecar
+  it is a template on the key of the field set, `\1`, `\2` for the groups of the key's pattern
+  (`"ukn([12])_(\d)" = { …, renamed_from = "ink\1_\2" }`); `scripts/metadata.py` checks that
+  it gives a field name the message no longer has. First case: the 18 unknown bits of
+  `HcMode` (`em1`, `em2`, `em3`), `ink1_n` → `ukn1_n`, `ink2_n` → `ukn2_n`, `opmode_n` →
+  `ukn3_n`, all `skip: true`.
 
 **Labels of the value-list entries** (from release 0.5.0 on). A field that has `values` also
 has `value_labels`, with the same raw values as keys:

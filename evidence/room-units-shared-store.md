@@ -10,7 +10,10 @@ read back at once, with the same value, at `75`, and a program slot written to `
 store: `75` keeps its own heating curve, flow maximum and circuit type, while the setback and
 frost-protection room setpoints written to `35` are read at `75` too.
 
-Use in the definitions (0.5.15, local, 2026-11-20): the 21 messages of heating program 1 of
+In 0.6.0 (local, 2026-11-20) `RoomSetbackTemp` and `RoomFrostProtectionTemp` of `75.w.fs2`
+become read only (their write lines go; lot C, `kromschroeder: setback and frost setpoints of
+room unit 2 read only`); their four captured writes to `75` stay in
+[settings-writes.md](settings-writes.md) and leave the fixtures. Use in the definitions (0.5.15, local, 2026-11-20): the 21 messages of heating program 1 of
 `75.w.fs2` keep no write and their comment says they are written through `35.w.fs1` (lot H);
 in the metadata each of them carries `shared_with = "fs1/<same name>"` (lot M). So do
 `RoomSetbackTemp` and `RoomFrostProtectionTemp` of `fs2`, which lose their write conditions
