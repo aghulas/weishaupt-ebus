@@ -35,7 +35,14 @@ exists, the notice states in its first lines that the definitions were checked o
    `05`, and what phase 9 (`ForcedVenting`) is. 0.6.1 (compatible) waits for the cold read of
    the notice (item 4).
 4. **An installation notice someone else can follow**, start to end (`docs/release-readme.md`):
-   files, ebusd build for writes, companion. Read once without workbench context.
+   files, ebusd build for writes, companion. Read once without workbench context. *Cold read of
+   0.6.0 done (2026-11-20, `out/cold-read-0.6.0.md`): reading yes, add-on by guessing, writing no.
+   Notice rewritten for 0.6.1 (definitions side): use and limits first; walk-throughs for a plain
+   ebusd and the add-on with expected output; the write-capable build for both and a check of
+   which ebusd runs (both verified in containers, nothing sent); how to write; counts with their
+   source; glossary. Front `README.md` the same. Open: the companion's README (its session), the
+   front page of `aghulas/ha-addons` (proposal `out/proposal-ha-addons-readme.md`, owner), and a
+   second cold read of the new notice before 1.0.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
    of a shared program), then request HACS default store on the owner's word.
 6. **Release 1.0.0** (first non-pre-release), tagging both `aghulas/ebusd-configuration` and

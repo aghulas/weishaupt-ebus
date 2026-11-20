@@ -303,7 +303,8 @@ written). The order of the list has no meaning.
 - Keys and field names are those of the metadata of the same release; `coverage` says which
   messages have a reading (`not_covered` is empty in 0.5.0: 528 of 528).
 - The bytes are real captures of one installation: two boilers in cascade, a system manager,
-  two heating modules, three room units. They show what these devices answered on the day
+  two heating modules, two room units (one of them addressed for circuits 1 and 2, so three
+  room-unit addresses). They show what these devices answered on the day
   given, not what another installation holds, and not the whole range of a value.
 - Not to rely on: the number of readings per message, their order, the values of `note`.
   New readings are added without a change of schema; `schema` changes when a key is renamed,
