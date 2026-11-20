@@ -49,15 +49,16 @@ change for an installation that used other definitions before (MQTT topics, auto
 4. Check, once the scan has run (a minute or two):
 
    ```sh
-   ebusctl scan result                 # one line per device: address, Kromschroeder, ID W, software
-   ebusctl info                        # one "address …" line per device, with the file it got
+   ebusctl scan result                 # one line per device: address;manufacturer;ID;software;hardware
+   ebusctl info                        # version, signal, then one "address …" line per device
    ebusctl read -c ka OutsideTemp      # a temperature in °C
    ebusctl read -c ka LegionellaStartTime   # a time, e.g. 08:30
    ```
 
-   On the test installation the scan finds nine devices with a file (`08`, `18`, `15`, `50`,
-   `51`, `52`, `35`, `75`, `f5`) and logs "no file" for three others (`05`, `0c`, `f6`): that is
-   expected. `ERR: element not found` on a read means the file of that device was not loaded
+   On the test installation `scan result` lists twelve addresses, for example
+   `15;Kromschroeder;W ;6618;-` (system manager) and `08;Kromschroeder;W?;1104;0501` (boiler
+   automat): nine get a file (`08`, `18`, `15`, `50`, `51`, `52`, `35`, `75`, `f5`), three none
+   (`05`, `0c`, `f6`), which is expected. `ERR: element not found` on a read means the file of that device was not loaded
    (see "Device identification" under Known limits).
 
 ### Read with the Home Assistant ebusd add-on
@@ -77,11 +78,18 @@ host (the prefix depends on the add-on repository; `ls /addon_configs/` shows it
    --configpath=/config/@NAME@
    ```
 
-3. Optional dry check before the restart: **Open Web UI** on the add-on's Info page opens a shell
-   inside the add-on, where `ebusd -f --checkconfig --configpath=/config/@NAME@` prints
-   `found messages: @COUNT@ (…)`.
-4. Restart the add-on, wait for the scan, then in **Open Web UI** run the `ebusctl` commands of
-   step 4 above, with the same expected answers.
+3. Restart the add-on and wait for the scan (a minute or two).
+4. Check with the `ebusctl` commands of step 4 above, run inside the add-on, with the same
+   expected answers. The add-on's documentation offers a shell there under **Open Web UI**; where
+   that page shows ebusd's web page instead, use the SSH add-on (with its protection mode off):
+   `docker ps` shows the add-on's container (its name ends in `_ebusd`), then
+   `docker exec <container> ebusctl scan result`. In the same shell, before a restart,
+   `ebusd -f --checkconfig --configpath=/config/@NAME@` is the dry check (`found messages:
+   @COUNT@ (…)`).
+
+Home Assistant integrations reach the add-on's ebusd by its internal host name (`<prefix>-ebusd`,
+port 8888) without publishing a port. Publishing 8888 on the add-on's **Network** page opens
+ebusd's command port, writes included, to your whole network.
 
 With the MQTT integration file the add-on seeds (`mqtt-hassio.cfg`, `filter-direction = r|u`),
 Home Assistant gets read-only entities; writable messages become entities only if you change
@@ -241,6 +249,8 @@ The history of every release is in `CHANGELOG.md` of https://github.com/aghulas/
 
 - No message, field or type changes (@COUNT@ messages, as in 0.6.0). Names have been frozen
   since 0.6.0: they change only with a new first number.
+- No longer flagged pre-release: from 0.6.1 the releases are normal releases (names frozen,
+  0.6.0 running on the test installation). 1.0 remains the promise of stability.
 - The label of operating phase 9 is no longer provisional: nothing is provisional any more.
 - This notice is rewritten for installation: use with a plain ebusd and with the add-on, the
   write-capable build and how to check it, how to write, limits, counts, glossary.

@@ -45,8 +45,11 @@ exists, the notice states in its first lines that the definitions were checked o
    second cold read of the new notice before 1.0.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
    of a shared program), then request HACS default store on the owner's word.
-6. **Release 1.0.0** (first non-pre-release), tagging both `aghulas/ebusd-configuration` and
-   `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`.
+6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
+   `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. Releases are no longer flagged pre-release from
+   0.6.1 on (owner, 2026-11-20, « Oui, dès la 0.6.1 »): the stable companion requires them, the
+   names are frozen and 0.6.0 runs on the installation. Every notice still says in its first
+   lines that the definitions were checked on one installation.
 
 Out of 1.0 (compatible additions for 1.x): boiler installer parameters P10–P71
 (`docs/boiler-parameters-proposal.md`), remaining register-survey candidates
@@ -128,12 +131,14 @@ from `weishaupt` when the maintainer responds.
   `scripts/release.sh`.
 - **Fixtures.** `evidence/fixtures.toml` transcribes telegrams already recorded in `evidence/*.md`
   and is decoded by the real `ebusd` binary (`--inject=stop`).
-- **Versions.** Before 1.0, breaking changes bump the second number; from 1.0 on, breaking changes
-  bump the first number. Renames carry `renamed_from` in metadata.
+- **Versions.** Up to 0.6.0, breaking changes bumped the second number. Names, types and the
+  metadata structure are frozen since 0.6.0: a breaking change now needs a new first number.
+  Renames carry `renamed_from` in metadata.
 - **Release.** `scripts/release.sh <version>` builds reproducible archives (`weishaupt-ebusd-config-<version>.tar.gz` and `-fr.tar.gz`), `weishaupt-metadata-<version>.json`,
   `weishaupt-fixtures-<version>.json` and `sha256sums-<version>.txt` under `out/release/`. On the
   owner's word: push `weishaupt`, tag both `ebusd-configuration` and `weishaupt-ebus` as
-  `weishaupt-<version>`, publish the release, re-download and verify against official ebusd.
+  `weishaupt-<version>`, publish the release (a normal release from 0.6.1 on, not a
+  pre-release), re-download and verify against official ebusd.
 - **Writes use source `ff`.** Definitions never hardcode `@qq`; callers pass `-s ff` where
   required and never write while the vendor service tool is connected.
 - **Commit identity & toolchain.** All repos use the account's GitHub noreply address; no mention

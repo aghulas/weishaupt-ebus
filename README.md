@@ -7,8 +7,8 @@ official project in parallel.
 **To use the definitions**, go to the latest release
 [weishaupt-0.6.0](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-0.6.0)
 of the fork: its notice (also the `README.md` inside each archive) explains how to install them
-with ebusd or the Home Assistant ebusd add-on, how to write settings, and their limits. The
-releases are marked pre-release until 1.0; they are the versions to install.
+with ebusd or the Home Assistant ebusd add-on, how to write settings, and their limits. Releases
+up to 0.6.0 were flagged pre-release; from 0.6.1 they are normal releases.
 
 The definitions cover Weishaupt WTC condensing boilers and their Kromschröder WCM controllers:
 the system manager (WCM-KA, also called cascade manager), the heating modules (WCM-EM) and the
