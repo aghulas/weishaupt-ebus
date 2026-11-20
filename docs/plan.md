@@ -30,7 +30,7 @@ definitions were checked on one installation, and names its equipment.
 
 What 1.0 needs, in this order:
 
-1. **0.6: the last breaking changes, in one release.** Every rename, removal or retyping still
+1. **0.6: the last breaking changes, in one release.** *Prepared locally on 2026-11-20 as 0.6.0 (list closed in `docs/breaking-changes-0.6.md`; see "0.6.0 prepared" under "Open").* Every rename, removal or retyping still
    wanted goes here (list to draw up from the lots; known candidate: the write lines of the
    setback and frost setpoints of `75.w.fs2`, shared with `35.w.fs1`). After 0.6 the names are
    frozen.
@@ -278,6 +278,26 @@ assumption from `docs/service-tool-protocol.md`, not a comparison.
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
+- **0.6.0 prepared (local, 2026-11-20; nothing pushed, nothing released; published by the main
+  session on the owner's word).** The seven changes of `docs/breaking-changes-0.6.md`, one
+  topic per commit, on lots above F (lot A, the open pull request #717, is not touched; its
+  names stay as they are upstream): C `81e6c00` the setback and frost setpoints of `fs2` read
+  only; G `47868da` the 18 unknown bits of `HcMode` named `Ukn<byte>_<bit>`; O `a01ad23`
+  `MixerPump` off / on, `9085b01` `LegionellaStartTime` as a time (`TTQ`, `08:30`), `3c1afa8`
+  `DHWExceeded` → `DHWExcessTemp`, unit K (last commit of O, droppable alone with M
+  `1ceac65`); L `20897da` French; M `d809a4f` field `renamed_from` of the `HcMode` bits and the
+  legionella label, `1ceac65` `DHWExcessTemp` (`renamed_from = "ka/DHWExceeded"`). Heads A
+  `4cd5a54`, E `9d20b57`, D `71094a2`, F `b0526d3`, C `81e6c00`, G `47868da`, H `3b6311f`, J
+  `52c9f41`, K `677249d`, N `6fcf93f`, O `3c1afa8`, L `20897da`, M `1ceac65`, `weishaupt`
+  `f644643`. 1 073 messages (two write lines fewer); the CSV differ from 0.5.15 in exactly 20
+  lines of five files, English and French, all of them the seven changes. Check with
+  `METADATA=required` and hygiene passed; fixtures 949 readings (the four captured writes to
+  `fs2` of the two setpoints leave them), `LegionellaStartTime` decodes to `08:30` in ebusd.
+  Files in `out/release/` (0.6.0). Workbench `cab1873`: field `renamed_from` in the contract and
+  checked by `scripts/metadata.py`; notice "Changes from 0.5.15 to 0.6.0", names frozen from
+  it. To be read by the owner before publication: the new French strings (provisional in
+  `evidence/terms.md`) and the two changed labels (`LegionellaStartTime`, `DHWExcessTemp`).
+  The companion needs a release that accepts 0.6 (0.9.1 accepts `>=0.5.3, <0.6`).
 - **0.5.15 published on 2026-11-20 (prepared locally; the owner decided it is finished without the
   vendor service tool, which is not available).** Scope, all on the lot branches since 0.5.14:
   the comment of `CalorifierExcessTemp` (buffer storage, parameter 561), the 21 comments of
