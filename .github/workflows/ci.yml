@@ -1,0 +1,45 @@
+# Runs workbench unit tests, JSON Schema meta-validation and commit hygiene on push / PR.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  workbench:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 25
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install schema validator dependency
+        run: pip install --quiet jsonschema
+
+      - name: Unit tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Validate JSON Schemas (Draft 2020-12)
+        run: |
+          python3 - <<'EOF'
+          import json, glob, jsonschema
+          for path in sorted(glob.glob("schemas/*.schema.json")):
+              with open(path, encoding="utf-8") as f:
+                  schema = json.load(f)
+              jsonschema.Draft202012Validator.check_schema(schema)
+              print(f"schema valid: {path}")
+          EOF
+
+      - name: Commit hygiene
+        run: |
+          EXPECT_NAME="$(git log -1 --format=%an)" \
+          EXPECT_EMAIL="$(git log -1 --format=%ae)" \
+          WORKBENCH_ONLY=1 scripts/check.sh hygiene

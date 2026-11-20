@@ -142,6 +142,16 @@ checkconfig() {
   [ -s "$log" ] && ! grep -Eq '\[(main|network|bus|device|update|other) error\]|\bERR:' "$log" && [ "$cfail" -eq 0 ]
 }
 
+if [ "$only" = hygiene ] && [ "${WORKBENCH_ONLY:-0}" = 1 ]; then
+  echo "== 1/1 commit hygiene (workbench only, AGENTS.md rules 4 and 9)"
+  if git -C "$ROOT" rev-parse -q --verify origin/main >/dev/null; then
+    git -C "$ROOT" rev-list origin/main..HEAD | hygiene "workbench (origin/main..HEAD)" "$ROOT" yes || fail=1
+  fi
+  git -C "$ROOT" rev-list -n "${HYGIENE_LAST:-20}" HEAD | hygiene "workbench (last ${HYGIENE_LAST:-20})" "$ROOT" no || fail=1
+  [ "$fail" -eq 0 ] && echo "HYGIENE PASSED" || echo "HYGIENE FAILED"
+  exit "$fail"
+fi
+
 [ -d "$CFG/src/$LOT" ] || { echo "no $CFG/src/$LOT — run scripts/setup.sh, or set LOT_DIR"; exit 2; }
 mkdir -p "$OUT"
 cd "$CFG" || exit 2
