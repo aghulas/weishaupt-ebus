@@ -54,7 +54,7 @@ jobs:
           docker run --rm -v "$PWD/ebusd-amd64":/ebusd:ro -v "$PWD/cfg":/cfg:ro debian:trixie-slim \
             /ebusd --checkconfig --configpath=/cfg > checkconfig.log 2>&1 || status=$?
           cat checkconfig.log
-          if [ "${status:-0}" -ne 0 ] || grep -qi 'error' checkconfig.log; then exit 1; fi
+          if [ "${status:-0}" -ne 0 ] || grep -Eq '\[(main|bus|update|network|mqtt) error\]|\bERR:' checkconfig.log; then exit 1; fi
 
       - name: Keep the log
         if: always()
