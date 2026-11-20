@@ -87,8 +87,11 @@ so reads stay valid on a stock ebusd. Since the controllers above do not check t
 stock ebusd should write their settings as well. Offline, a stock ebusd 26.1 with the
 definitions sends for `write -s ff -c ka BlockingTime 2` exactly `ff 15 50 23 05 4c 25 00 02 00`:
 the checksum of the address (`4c`), not the right one (`cc`), whatever the value (seen on a
-simulated adapter that records the bytes, 2026-11-20). Not yet run on the bus (see "Open
-questions").
+simulated adapter that records the bytes, 2026-11-20). **On the bus, the same day**: the stock
+eBUSd add-on (ebusd 26.1.26.1) with the definitions 0.6.0 sent that telegram, the system manager
+acknowledged it and took the value (read back 2), and the restore to 1 was taken the same way
+(`write-methods.md`). **For the system manager, the room units and the heating modules, a stock
+ebusd writes the settings of these definitions**; the project's build is not needed for them.
 
 ## 4. Reading registers: `50 22`
 
@@ -327,10 +330,10 @@ Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 
 
 ## 8. Open questions
 
-1. **Writing with a stock ebusd.** The controllers ignore the write checksum, and a stock ebusd
-   with these definitions sends the write with the checksum of the address (established
-   offline). Not yet run on the bus. If it holds, the
-   notice, the companion's write requirement and the upstream write lots change.
+1. **Writing with a stock ebusd: settled.** It works on the system manager (one register written
+   and restored on the bus, 2026-11-20); the room units and heating modules ignore the checksum
+   the same way. What follows for the installation notice, the companion's write requirement
+   and the upstream write lots is a decision still to take.
 2. **The boiler automats**: whether they check the checksum and take `09 03` (the operator
    recalls: yes and no); not tested, and the project does not write to them.
 3. **The third register of the holiday dates**: reads 0 on the three room units for dates in
