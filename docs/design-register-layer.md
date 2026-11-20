@@ -1,6 +1,6 @@
 # Design note: a register layer, apart from the telegrams
 
-Status: proposal for discussion, 2026-11-20. Nothing is built. Facts are in
+Status: **decided by the owner on 2026-11-20: option 2** (below), a generic extension of ebusd. Nothing is built yet. Facts are in
 [ebus-protocol.md](ebus-protocol.md).
 
 ## The problem
@@ -93,6 +93,17 @@ Two features, both useful beyond Weishaupt:
 Option 1 in the companion first, for Home Assistant users, with a stock ebusd and `hex`; the
 definitions stay as they are for MQTT users. Option 2 proposed upstream as generic features,
 without waiting for it.
+
+## Decision
+
+The owner chose **option 2** (2026-11-20): he integrates platforms through MQTT, the common
+denominator of his work on eBUS beyond these devices, so the improvement must reach MQTT users,
+not only the Home Assistant companion. The features are to be generic, not Weishaupt-specific.
+The fork `aghulas/ebusd` and the add-on "eBUSd (Weishaupt CRC)" are maintained as
+"ebusd-weishaupt" until the features reach john30's main branch; the companion consumes the
+result like any other client.
+
+The analysis below is kept as written.
 
 ## Recommendation
 
