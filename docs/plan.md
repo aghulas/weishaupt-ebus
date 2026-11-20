@@ -123,6 +123,8 @@ from `weishaupt` when the maintainer responds.
 
 ### Needs the maintainer
 
+- **Home Assistant forum topic** posted by the owner on 2026-11-20 (category Share your Projects ›
+  Custom Integrations, without screenshots), awaiting the forum's review.
 - **Replies posted 2026-11-20** (owner's word): john30/ebusd#167 (the generic checksum proposal,
   following the owner's comments of March) and john30/ebusd-configuration#461 (the maintainer's
   "integrate weishaupt": what exists, #717, coordination with #616, call for testers).
