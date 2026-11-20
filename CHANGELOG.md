@@ -3,7 +3,7 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
-## 0.6.2 (not released yet)
+## 0.6.2 (2026-11-20)
 
 Documentation only: the same definitions as 0.6.1, 1 073 messages loaded by ebusd. Changes to the
 installation notice after a second cold read:
