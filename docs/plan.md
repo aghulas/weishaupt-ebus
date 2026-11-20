@@ -119,6 +119,10 @@ from `weishaupt` when the maintainer responds.
 
 ### Needs the maintainer
 
+- **Discussion john30/ebusd#1835** (opened 2026-11-20, owner's word): the protocol in short, what is
+  published, and the three proposals of `docs/ebusd-extension-spec.md` (computed checksum bytes,
+  composite reads, IDs longer than 7 bytes), with four questions to the maintainer and a call for
+  testers. Answers there may change the spec before the ebusd code is reviewed.
 - Review of #717, #1825, #8.
 - Clarification on Wolf device scan identification (asked in #717) and `de.yaml` expectations.
 
