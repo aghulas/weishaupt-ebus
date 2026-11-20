@@ -123,6 +123,9 @@ from `weishaupt` when the maintainer responds.
 
 ### Needs the maintainer
 
+- **Replies posted 2026-11-20** (owner's word): john30/ebusd#167 (the generic checksum proposal,
+  following the owner's comments of March) and john30/ebusd-configuration#461 (the maintainer's
+  "integrate weishaupt": what exists, #717, coordination with #616, call for testers).
 - **Discussion john30/ebusd#1835** (opened 2026-11-20, owner's word): the protocol in short, what is
   published, and the three proposals of `docs/ebusd-extension-spec.md` (computed checksum bytes,
   composite reads, IDs longer than 7 bytes), with four questions to the maintainer and a call for
