@@ -78,8 +78,8 @@ from `weishaupt` when the maintainer responds.
 - *Done (2026-11-20):* `0.6.0` and `ha-weishaupt` v0.10.0 run on the test installation: nine files
   loaded, no repair, the same number of entities, `LegionellaStartTime` read `08:30`, `DHWExcessTemp`
   10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.
-- **Provisional strings & labels** (item 2 of Road to 1.0): accept or reword `ForcedVenting` and
-  any provisional entries in `evidence/terms.md`.
+- *Done (2026-11-20):* provisional strings and labels (item 2 of Road to 1.0): none left; the
+  notice's line "Still provisional" will read "none" in 0.6.1.
 - **Clock automation**: remove or adjust the Home Assistant start trigger that sends
   `Broadcast/Datetime` late after a restart (outside the definitions).
 - **Local cleanup (optional)**: once satisfied with the trunk-based `weishaupt` workflow, old
