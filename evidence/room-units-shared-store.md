@@ -12,9 +12,11 @@ frost-protection room setpoints written to `35` are read at `75` too.
 
 Use in the definitions (0.5.15, local, 2026-11-20): the 21 messages of heating program 1 of
 `75.w.fs2` keep no write and their comment says they are written through `35.w.fs1` (lot H);
-in the metadata each of them carries `shared_with = "fs1/<same name>"` (lot M). Heating
-programs 2 and 3, the hot-water and circulation programs and the two setpoints carry no
-marker: see "Not established".
+in the metadata each of them carries `shared_with = "fs1/<same name>"` (lot M). So do
+`RoomSetbackTemp` and `RoomFrostProtectionTemp` of `fs2`, which lose their write conditions
+there (they are written on `fs1`; the write lines of the CSV stay), after the full log of 6.
+Heating programs 2 and 3 and the hot-water and circulation programs carry no marker: see "Not
+established".
 
 ## How it was established
 
@@ -121,6 +123,39 @@ whether a write on one changes the other is **not known** from the records. Each
 on both addresses in turn and both read back the written value. A write to `75` of a setting
 is kept (batch 1, eleven settings, each read back), unlike a write to `75` of a program slot.
 
+### 6. The full telegram log of the three setpoint writes (exported 2026-11-20)
+
+Every telegram of the telegram log, unfiltered, for the three windows of 5 (27, 21 and 28
+telegrams; installation data, not in this repository). The writes are logged without their
+source byte (ebusd's own sends from the operator's client, source `ff` in its log); their
+bytes, from the target on:
+
+| window | write (target, `50 23`, data) | register ← value | setting | read of `75` that shows it |
+|---|---|---|---|---|
+| 2026-11-18 20:12:35–20:12:45 | 20:12:39.948 `35 50 23 05 ac 14 0a 55 00`, ack `00` | `0x0a14` ← `0x0055` (8.5) | `RoomFrostProtectionTemp` | 20:12:42.075 `31 75 50 22 03 96 14 0a` → `02 55 00`; `35` read 20:12:37.944 → `50 00`, 20:12:41.940 → `55 00` |
+| 2026-11-19 15:54:10–15:54:20 | 15:54:14.346 `35 50 23 05 78 08 00 87 00`, ack `00` | `0x0008` ← `0x0087` (13.5) | `RoomSetbackTemp` | 15:54:14.849 `31 75 50 22 03 58 08 00` → `02 87 00`; `75` read 15:51:21 → `8c 00` (14.0) before; `35` read 15:54:10.347 → `8c 00`, 15:54:16.356 → `87 00` |
+| 2026-11-19 15:58:30–15:58:39 | 15:58:35.104 `35 50 23 05 ac 14 0a 55 00`, ack `00` | `0x0a14` ← `0x0055` (8.5) | `RoomFrostProtectionTemp` | 15:58:37.394 `31 75 50 22 03 96 14 0a` → `02 55 00`; `75` read 15:54:10.484 → `50 00` before; `35` read 15:58:33.223 → `50 00`, 15:58:37.060 → `55 00` |
+
+Checked in each window, between the write and the read of `75`:
+
+- **No telegram to `75`** but ebusd's reads from `31`; in the three windows no master other
+  than `31` sends to `75`.
+- **Masters `30` and `70`** (the room units' masters) send only what they send every few
+  seconds: `30 → 50` and `70 → 51` `50 14`, `30 → f1` and `70 → f1` `05 07` (heat demand),
+  `70 → 51` `09 02` reads of `0c 0a` and `29 0a`, and `70 → 51` `09 03` writes of `20 0a` = 0 and
+  `85 02` = 0. These two `09 03` are the ones step 1 found every 20 s for ten days; none carries
+  `0x0a14`, `0x0008` or the new value, so none forwards the change, and none is addressed to
+  `75`.
+- The other telegrams are the cascade manager's broadcasts (`f1 → fe` `50 0a`, and `09 03` of
+  register `0x0076` and `0x0078`, every 10 s in every export), the boilers' exchange with their
+  automats (`10`, `13`, `03`), module `52` and its master `f0`, and ebusd's reads. In the 15:58
+  window two lines of the log are fragments without a source (`20` and `51 50 22 03 81 2b`, a
+  read of `51`); neither is to `75`.
+
+Each setpoint has a window of its own: the frost-protection setpoint two, the setback setpoint
+one. Restores (2026-11-18 21:05:24, 2026-11-19 15:58:02 and 15:59:05) were followed at `75` too
+(section 5), from the filtered export only.
+
 ## Established
 
 - The weekly programs of `75` are those of `35`: a write on `35` is answered at `75` within
@@ -129,7 +164,8 @@ is kept (batch 1, eleven settings, each read back), unlike a write to `75` of a 
   equal on both addresses, and the four writes `75` did not keep were all in heating
   program 1.
 - The setback and frost-protection room setpoints are shared the same way: written to `35`,
-  read at `75` within 3 s (three writes, see 5).
+  read at `75` 0.5 to 2.5 s later with no telegram to `75` in between (three writes, the full
+  log of 6).
 - `75` is not a mirror of `35`: the heating curve, the flow maximum and the circuit type
   differ or stay apart, and `75` runs heating circuit 2 itself (it writes its settings into
   module `51` with `09 03` and sends the circuit's heat demand, `70 → f1`, see
@@ -137,14 +173,6 @@ is kept (batch 1, eleven settings, each read back), unlike a write to `75` of a 
 
 ## Not established
 
-- **The setback and frost-protection setpoints, by the strict rule.** The three writes of 5
-  were followed at `75` within 3 s, but the export that shows them holds only `50 22`, `50 23`,
-  `09 02` and `09 03` telegrams: a copy to `75` through another service is not excluded the way
-  the full log of step 1 excludes it for the program slot. Read-only check that settles it: an
-  export of **all** telegrams of the telegram log for 2026-11-18 20:12:39 to 20:12:43 and
-  2026-11-19 15:54:14 to 15:54:15 and 15:58:35 to 15:58:38; if nothing but ebusd's reads goes
-  to `75` and nothing leaves `30` or `70` in those seconds, they are shared as the programs are
-  and take the marker (their `write` on `fs2` then goes, the value being written on `fs1`).
 - **Heating programs 2 and 3, hot water, circulation of `75`.** No write of these on `35` was
   followed by a read of `75` (the writes of 2026-11-18 21:12 to 21:13 on `35` had no read of
   `75` in between). Without a write from here: the next change of one of their slots on `35`
@@ -173,4 +201,4 @@ all with software 2726. `75` drives heating circuit 2 (module `51`), `f5` circui
 
 ## Date
 
-2026-11-19; use in the definitions 2026-11-20.
+2026-11-19; full log of the setpoint writes and use in the definitions 2026-11-20.

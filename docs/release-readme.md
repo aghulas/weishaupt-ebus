@@ -36,15 +36,21 @@ message per switch-time slot (heating programs 1 to 3, hot water, circulation).
 - **`shared_with` in the metadata** (new key, described in the contract of the companion): on
   each of these 21 slots, the key of the slot of `35.w.fs1` that keeps the value
   (`fs2/HCProgram1Mon1` → `fs1/HCProgram1Mon1`). An interface shows the slot read only with a
-  pointer to room unit 1 and reads it again after a write there. Heating programs 2 and 3, the
-  hot-water and circulation programs and the setpoints of `75.w.fs2` carry no marker: their
-  sharing is not proven.
+  pointer to room unit 1 and reads it again after a write there.
+- **The setback and frost-protection room setpoints of room unit 2 are those of room unit 1**
+  (`RoomSetbackTemp`, `RoomFrostProtectionTemp` of `75.w.fs2`): a write to `35.w.fs1` is read
+  at `75` within seconds. They carry `shared_with` too and lose their write conditions in the
+  metadata: an interface changes them on room unit 1, where they keep theirs. The CSV keeps
+  their write lines (the device takes such a write and room unit 1 shows it as well).
+- Heating programs 2 and 3 and the hot-water and circulation programs of `75.w.fs2` carry no
+  marker: their sharing is not proven.
 - `CalorifierExcessTemp` of `15.w.ka`: the comment names the buffer storage (parameter 561), not
   the hot water; name, register and value unchanged.
-- **Users of 0.5.14 lose nothing.** Same 1 075 messages, same names, fields, types and writes; no
-  write added or removed. The CSV of `15.w.ka` and `75.w.fs2` differ in comments only, English
-  and French: ebusd shows the new comments after a start with the new files, and reads and
-  publishes the same values meanwhile. An interface takes the metadata with a reload.
+- **Users of 0.5.14 lose nothing.** Same 1 075 messages, same names, fields, types and write
+  lines in the CSV; the CSV of `15.w.ka` and `75.w.fs2` differ in comments only, English and
+  French: ebusd shows the new comments after a start with the new files, and reads, writes and
+  publishes as before. In the metadata, the two setpoints of room unit 2 move their write to
+  room unit 1, where the same value is written; an interface takes the metadata with a reload.
 
 ## Changes from 0.5.13 to 0.5.14
 

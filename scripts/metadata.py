@@ -31,7 +31,8 @@ check fails (exit 1) when
     names an entry no value list has, or a weekday is labelled in [values] as well as [days];
   - the sidecar repeats a range the CSV already has;
   - shared_with names a message that does not exist, or one of the same device, or sits on a
-    message with write conditions;
+    message with write conditions (a write line of the CSV may stay: the consumer writes the
+    message named);
   - the status says accepted without the day of the acceptance.
 
 The polling class of a message is the one a record establishes (`poll` on its entry); failing
@@ -358,7 +359,7 @@ def resolve(side, msgs):
                     bad.append(f"{where}: {err}"); continue
                 resolved[key] = r
                 # write conditions follow the CSV, both ways
-                if m["write"] and w is None:
+                if m["write"] and w is None and "shared_with" not in e:
                     bad.append(f"{key}: written in the lot, no write conditions in the metadata")
                 if w is not None and not m["write"]:
                     bad.append(f"{key}: write conditions, but the lot does not write it")
@@ -500,7 +501,7 @@ def assemble(side, msgs, resolved, langs):
                 "family": e["family"], "circuit": m["circuit"], "device": r["device"],
                 "id": r["group_id"], "label": r.get("group_label", r["label"]), "members": []})
             g["members"].append(key)
-        if m["write"]:
+        if m["write"] and "write" in e:  # shared_with: written on the message it names
             w = e["write"]
             o["write"] = {"source": w["source"], "runtime_checksum": m["wcrc"], "risk": w["risk"],
                           "proof": w["proof"], "open": w.get("open", [])}

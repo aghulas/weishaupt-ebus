@@ -236,18 +236,18 @@ data point on arbitration with room units).
   vendor service tool, which is not available).** Scope, all on the lot branches since 0.5.14:
   the comment of `CalorifierExcessTemp` (buffer storage, parameter 561), the 21 comments of
   heating program 1 of `75.w.fs2` and their French, and `shared_with` on those 21 slots in the
-  metadata (contract and check). No message added, renamed, removed or retyped, no write
-  added or removed: 1 075 messages as 0.5.14. Heads A `4cd5a54`, E `9d20b57`, D `71094a2`, F
+  metadata (contract and check), and (2026-11-20, after the full telegram log of three
+  windows) `shared_with` on `RoomSetbackTemp` and `RoomFrostProtectionTemp` of `fs2`, whose write
+  conditions move to `fs1` (CSV write lines kept). No message added, renamed, removed or
+  retyped, no CSV write line added or removed: 1 075 messages as 0.5.14. Heads A `4cd5a54`, E `9d20b57`, D `71094a2`, F
   `b0526d3`, C `197ff7a`, G `b06e738`, H `337c954`, J `302916b`, K `2bac01b`, N `1edf9a5`, O
   `4d439c5`, L `dc11464`, M `012d02f`, `weishaupt` `6bc3ae5` (rebuilt from the lots; differs
   from tag `weishaupt-0.5.14` in `15.w.ka.tsp`, `75.w.fs2.tsp`, `src/fr.yaml`,
   `metadata/weishaupt.toml` only); `scripts/check.sh` with `METADATA=required` passed, hygiene
   passed. Notice "Changes since 0.5.14" in `docs/release-readme.md`. The French of the 21
   comments is provisional until the owner reads it (`evidence/terms.md`). Publishing: main
-  session, on the owner's word. Pending without blocking it: the full export of three windows
-  that may add `shared_with` to the setback and frost setpoints of `fs2`
-  (`evidence/room-units-shared-store.md`); if it comes before publication, a change of lot M
-  only.
+  session, on the owner's word. Lot M is now `f15e462` (the setpoints); `weishaupt` rebuilt
+  from it, files in `out/release/` (see the newest heads in the report of 2026-11-20).
 - **What the next pass of the vendor service tool must settle (moved out of 0.5.15).** The
   boiler installer parameters P10 to P71 (`docs/boiler-parameters-proposal.md`: 8 registers with
   one candidate, the rest by the displayed values of both boilers); the register-survey
