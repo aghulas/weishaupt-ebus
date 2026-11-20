@@ -52,6 +52,8 @@ and M are rebased and the sidecar
 gets its entries. Lot C needs lot B to compile and #1825 to send. For a pull request
 upstream, C, G and H are cut again on lot A.
 
+**0.5.15 released (2026-11-20)** from `weishaupt` `a40ccc6`, on the owner's word (« Oui, publie »): lot branches H to O, L, M and `weishaupt` pushed with leases, five files published as a pre-release. `shared_with` on 23 messages of room unit 2 (the 21 slots of heating program 1, the setback and frost room setpoints), their comments in English and French, the corrected comment of `CalorifierExcessTemp`; same 1 075 messages as 0.5.14. Finished without the second pass of the vendor service tool. Downloaded again: the four checksums right, 1 075 messages without error in the official ebusd, both archives.
+
 **0.5.14 released (2026-11-19)** from `weishaupt` `fe82952`, on the owner's word (« Oui, les deux »): lot branches G to N, L, M and `weishaupt` forced with leases, new branch `weishaupt-O`, five files published as a pre-release. 99 new reads (lot O: system manager, room units, heating modules, the boilers' `EventCounters`), established by the register survey with the vendor service tool's screens or a manual page as second source; the clock fields of `50.w.em1` without duration units; parameter 538 as `ModulationDiffTemp`. Downloaded again: the four checksums right, 1 075 messages without error in the official ebusd, both archives.
 
 **0.5.13 released (2026-11-19)** from `weishaupt` `c1cf595`, on the owner's word (« Oui, valide le libellé »): lot branches C to N and `weishaupt` forced with leases, five files published as a pre-release. Comments only: the PowerDemand request state (settled from ten days of telegrams) and ControlVariation values 0 and 1 (parameter 315 of the room unit manual), both accepted by the owner. Downloaded again: the four checksums right, 976 messages without error in the official ebusd, both archives.
@@ -120,7 +122,7 @@ again after publication: checksums right, 586 messages without error in the offi
 `weishaupt-0.3.0` (tag on `bd35b2c`): an English archive and a French one
 (`weishaupt-ebusd-config-0.3.0-fr`), made by `scripts/release.sh 0.3.0`. Both downloaded again
 after publication: checksums right, 586 messages without error in the official ebusd 26.1.
-`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3`, `weishaupt-0.5.4` `weishaupt-0.5.5`, `weishaupt-0.5.6`, `weishaupt-0.5.7`, `weishaupt-0.5.8`, `weishaupt-0.5.9`, `weishaupt-0.5.11`, `weishaupt-0.5.12`, `weishaupt-0.5.13` and `weishaupt-0.5.14` are the releases online.
+`weishaupt-0.2.0`, `weishaupt-0.3.0`, `weishaupt-0.3.1`, `weishaupt-0.3.2`, `weishaupt-0.4.0`, `weishaupt-0.4.1`, `weishaupt-0.4.2` and `weishaupt-0.4.3` were deleted from the fork on the owner's request once superseded, with their tags (kept in the local clone); `weishaupt-0.5.0`, `weishaupt-0.5.1`, `weishaupt-0.5.2`, `weishaupt-0.5.3`, `weishaupt-0.5.4` `weishaupt-0.5.5`, `weishaupt-0.5.6`, `weishaupt-0.5.7`, `weishaupt-0.5.8`, `weishaupt-0.5.9`, `weishaupt-0.5.11`, `weishaupt-0.5.12`, `weishaupt-0.5.13`, `weishaupt-0.5.14` and `weishaupt-0.5.15` are the releases online.
 
 **Comments corrected on 2026-11-17 (evening).** After the reading of the vendor manuals
 (`evidence/terms.md`, "Findings") and on the owner's word: `BlockingTime` in lot A (one new
@@ -139,7 +141,7 @@ fork heads compared after the push, equal.
 
 | Repository | Release | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt-0.5.14` (pre-release) | as 0.5.13, 99 reads of lot O and the clock-field units. Downloaded again after publication: checksums right, 1 075 messages without error in the official ebusd. |
+| `aghulas/ebusd-configuration` | `weishaupt-0.5.15` (pre-release) | as 0.5.14, `shared_with` on 23 messages of room unit 2 and comments. Downloaded again after publication: checksums right, 1 075 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.12` (pre-release) | as 0.5.11 (same CSV); in the metadata, the `absent` marker of 22 temperatures and the new labels of the modulation limits. Downloaded again after publication: checksums right, 976 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.11` (pre-release) | as 0.5.9, plus holiday dates, control variation and modulation limits written (94 writable settings), and the metadata step 0.5.10. Downloaded again after publication: checksums right, 976 messages without error in the official ebusd. |
 | `aghulas/ebusd-configuration` | `weishaupt-0.5.9` (pre-release) | as 0.5.8, plus the heat demand telegrams `05 07` (lot N). Downloaded again after publication: checksums right, 930 messages without error in the official ebusd. |
@@ -232,7 +234,7 @@ data point on arbitration with room units).
   files, the companion a reload). Was held (owner, 2026-11-19, « Oui, comme proposé »): not published
   alone, it rides with the next real definitions change; its French string is accepted
   (`evidence/terms.md`).
-- **0.5.15 ready to publish (local, 2026-11-20; the owner decided it is finished without the
+- **0.5.15 published on 2026-11-20 (prepared locally; the owner decided it is finished without the
   vendor service tool, which is not available).** Scope, all on the lot branches since 0.5.14:
   the comment of `CalorifierExcessTemp` (buffer storage, parameter 561), the 21 comments of
   heating program 1 of `75.w.fs2` and their French, and `shared_with` on those 21 slots in the
