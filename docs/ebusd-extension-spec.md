@@ -1,7 +1,12 @@
 # Specification: two generic extensions of ebusd
 
-Status: **approved by the owner on 2026-11-20 with the recommendations of section 7; implemented
-the same day on local branches, nothing pushed** (see "Implementation" at the end). It follows
+Status: **approved by the owner on 2026-11-20** (« Oui, comme recommandé »): the eight choices of
+section 7 as recommended — names `crc` and `fills`; the carrier not published; polling through
+the carrier by default; a target's own telegram on a cache miss; strict receive check plus
+`ignore`; 3-register carriers first, 4 once C1 is in the build the check uses; for A, a new
+generic pull request later with #1825 closed with a pointer, **nothing upstream for now**; the
+full set of `crc` keys. Implemented the same day on local branches, nothing pushed, `weishaupt`
+and `crc` of the fork left as they are (see "Implementation" at the end). It follows
 the decision of 2026-11-20 in [design-register-layer.md](design-register-layer.md) (option 2: a
 generic extension of ebusd, maintained in the fork `aghulas/ebusd` until the maintainer merges
 it). The facts of the bus are in [ebus-protocol.md](ebus-protocol.md).
