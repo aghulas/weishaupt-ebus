@@ -27,8 +27,9 @@ Taken from `guidelines.md` of `john30/ebusd-configuration` and the style guide o
 
 ## Before a pull request
 
-- [ ] Branch rebased on upstream `master` (`main` for `ebus-typespec`); a lot stacked on other
-      lots of the fork is cut again on what is merged upstream
+- [ ] Branch rebased on upstream `master` (`main` for `ebus-typespec`); cut on demand from
+      `weishaupt` onto what is merged upstream, without `src/fr.yaml`, `metadata/weishaupt.toml`
+      or the library pin commit
 - [ ] One topic, reviewable in one sitting
 - [ ] Does not depend on an unmerged pull request, or says so in its first line
 - [ ] Description states what was verified on a live bus and what was not

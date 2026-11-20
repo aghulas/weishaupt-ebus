@@ -32,8 +32,9 @@ live in the forks, cloned under `repos/` (not versioned here, see `scripts/setup
 
 The Home Assistant integration (`aghulas/ha-weishaupt`) is a separate project and is out of scope.
 What it needs from here is one generated file per release, the metadata asset: its source is
-`metadata/weishaupt.toml` on the top branch of the configuration fork, its format is in
-`docs/companion-contract.md`, and rules 3 and 4 apply to it as to a definition.
+`metadata/weishaupt.toml` on `weishaupt` in the configuration fork, its format is in
+`docs/companion-contract.md` (with JSON Schemas under `schemas/`), and rules 3 and 4 apply to it
+as to a definition.
 
 ## Rules
 
@@ -42,18 +43,17 @@ What it needs from here is one generated file per release, the metadata asset: i
 2. **Upstream form from the first commit.** English only. Follow `guidelines.md` of
    `ebusd-configuration` and the style guide of `ebus-typespec`. Run `scripts/check.sh` before every
    commit; a change is not ready while it reports a failure.
-3. **Evidence for every definition.** A register, codec or value list enters the integration branch
-   or a lot branch only with a record under `evidence/` showing how it was established (bus read,
-   manual page, comparison with the vendor service tool). No evidence, no definition.
+3. **Evidence for every definition.** A register, codec or value list enters `weishaupt` only with
+   a record under `evidence/` showing how it was established (bus read, manual page, comparison
+   with the vendor service tool). No evidence, no definition.
 4. **Nothing site-specific.** No building, organisation or person names, no IP addresses, host names,
    credentials or serial numbers, in files, commit messages or pull request texts. Describe the test
    site only by its equipment.
-5. **Small, reviewable lots.** A definition enters the integration branch as part of a lot (see
-   `docs/plan.md`): one topic, useful on its own, one pull request upstream when it is proposed. A lot
-   may build on another lot of the fork; it never waits for an upstream merge.
-6. **Branches stay rebased** on upstream `master`, with a clean history: one topic per commit,
-   message explaining what was observed and how. The integration branch is rebuilt from the lot
-   branches, not edited directly.
+5. **Small, reviewable commits.** Work lands directly on `weishaupt` (one topic per commit, useful
+   on its own, never waiting for an upstream merge). Upstream pull request branches
+   (`upstream/<topic>`) are cut on demand from `weishaupt` when proposed.
+6. **Branch stays rebased** on upstream `master`, with a clean history: one topic per commit,
+   message explaining what was observed and how.
 7. **Read-only towards the heating system.** Work in this repository may read from a live bus. It
    never writes to a boiler or controller. Write tests belong to the operator of the installation.
 8. **Ask before anything visible outside**: upstream, opening, retargeting or force-pushing a pull
@@ -65,8 +65,10 @@ What it needs from here is one generated file per release, the metadata asset: i
 ## Working loop
 
 1. Pick the next open item in `docs/plan.md`, or the oldest entry in `docs/discoveries.md`.
-2. Write or change the TypeSpec in the fork, on the lot branch named in the plan.
-3. Add or update the evidence record.
-4. Run `scripts/check.sh`. Fix until it is clean.
-5. Rebuild the integration branch from the lot branches and check it the same way.
-6. Update `docs/plan.md` (status, branch, commit) in the same session.
+2. Write or change the TypeSpec (and `src/fr.yaml` / `metadata/weishaupt.toml`) on `weishaupt` in
+   the fork.
+3. Add or update the evidence record and `evidence/fixtures.toml`.
+4. Run `scripts/integrate.sh` (which runs `scripts/check.sh` with `METADATA=required` in a clean
+   worktree) and `python3 -m unittest discover -s tests -v` when workbench scripts or schemas
+   change. Fix until clean.
+5. Update `docs/plan.md` (and `CHANGELOG.md` on release) in the same session.

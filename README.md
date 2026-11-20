@@ -10,17 +10,20 @@ and checked on a live installation with two WTC 250 boilers in cascade and three
 
 ## What is here
 
-- `docs/plan.md` — the plan, lot by lot: what is in the fork, what is proposed upstream
+- `docs/plan.md` — current state, road to 1.0, conventions
+- `CHANGELOG.md` — release history
 - `docs/upstream-checklist.md` — what a change must satisfy before it enters the fork or is proposed upstream
-- `docs/discoveries.md` — findings from the field that are not yet in a lot branch
-- `evidence/` — how each definition was established
-- `docs/companion-contract.md` — the metadata file released with the definitions, for user interfaces built on them
-- `scripts/` — setup, checks (commit hygiene, format, compile, `ebusd --checkconfig`), integration branch, release archive
+- `docs/discoveries.md` — findings from the field that are not yet in definitions
+- `evidence/` — how each definition was established, and `evidence/fixtures.toml`
+- `docs/companion-contract.md` — the metadata and fixtures files released with the definitions
+- `schemas/` — JSON Schemas (Draft 2020-12) for metadata (schema 1) and fixtures (schema 2)
+- `scripts/` — setup, checks (commit hygiene, format, compile, `ebusd --checkconfig`, translations, metadata, fixtures, schema validation), integration worktree check, release archive
+- `tests/` — unit tests for the workbench scripts and schemas
 - `AGENTS.md` — instructions for coding agents working in this repository
 
-The definitions themselves are not here. They are written in TypeSpec in a fork of
-[ebusd-configuration](https://github.com/john30/ebusd-configuration), which carries them on an
-integration branch and from which the pull requests are opened.
+The definitions themselves are not here. They are written in TypeSpec on the `weishaupt` branch
+of a fork of [ebusd-configuration](https://github.com/john30/ebusd-configuration), from which
+releases are published and upstream pull requests are cut on demand.
 
 ## Releases
 
@@ -41,9 +44,10 @@ integration branch and from which the pull requests are opened.
 
 ```sh
 scripts/setup.sh   # clones the forks under repos/
-scripts/check.sh   # commit hygiene, format check, compile, ebusd --checkconfig
-scripts/integrate.sh   # rebuilds the integration branch from the lots and checks it
-scripts/release.sh <version>   # builds the CSV release archive under out/release/, publishes nothing
+scripts/check.sh   # commit hygiene, format check, compile, ebusd --checkconfig, i18n, metadata, fixtures
+scripts/integrate.sh   # checks `weishaupt` in a clean worktree (out/integration)
+scripts/release.sh <version>   # builds reproducible CSV archives, JSON assets and checksums under out/release/
+python3 -m unittest discover -s tests -v   # unit tests for workbench scripts and schemas
 ```
 
 Requires Node.js (LTS major pinned in `.nvmrc`), Docker and the GitHub CLI.

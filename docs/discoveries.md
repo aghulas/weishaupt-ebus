@@ -1,130 +1,26 @@
-# Discoveries not yet in a lot branch
+# Discoveries not yet in definitions
 
-Add an entry when something is learned on a live bus. Remove it when it has landed in a branch
-listed in `plan.md`. Oldest first.
+Add an entry when something is learned on a live bus. Remove it when it has landed on `weishaupt`
+(or been explicitly closed). Oldest first.
 
-| Date | Finding | Established by | Target lot |
+| Date | Finding | Established by | Status / target |
 |---|---|---|---|
-| 2026-10-30 | The Weishaupt CRC does not depend on the source address. WTC automats require it on reads; EM modules do not check it on writes. | bus test | A, C |
-| 2026-10-30 | Date and time are set only by the standard broadcast `fe 0700`, sent at second 00. | bus test | A (comment) |
-| 2026-11-08 | `HolidayTempLevel` (`3d01`) is a choice (0 = antifreeze, 1 = setback), not a temperature. | bus read and write | C (was in the former #717, now only on `backup/weishaupt-pr-717-big`) |
-| 2026-11-15 | Hydraulic decoupling / buffer registers (`e2fd`–`e9fd`) are in tenths. `e2fd` and `e7fd` have landed in lot C; the others have no captured write. | bus read | C (left out, see `evidence/settings-writes.md`) |
-| 2026-11-15 | Info values of the service tool readable through `5022`, ID = CRC, register, bank. Hours since last service has landed in lot E, eight more in lot K (five temperatures, hydraulic separator, two software versions); those that need a running burner have not. | bus read, CRC checked offline | K (rest: needs a boiler in operation) |
-| 2026-11-15 | Burner totals (starts, operating hours) answer `0x8000` (not available) on WTC firmware 11.0e. | bus read, both boilers | E (comment) |
-| 2026-11-16 | `FloorDryingTemp` and `RoomThermostatTemp` were typed `temp1` (`D1C`) on 16-bit registers in the former #717; suspect. (`ChangeOverTime`, same case, has landed in lot C as hours with factor 1, read `32 00` = 50.) | to verify by bus read | not in a lot yet |
-| 2026-11-17 | In cascade operation the automat's "Sup./Mod setpoint" (RAM `6e`) holds the modulation demand of the cascade manager in percent (2 and 0, as in `05 07`), not a flow setpoint. | bus read, both boilers | F (left out) |
-| 2026-11-17 | Automat RAM `70` reads 13 while firing and 32 when idle: a state, but not the operating phase of the status telegram. Output byte RAM `2b` reads `fd` firing and `80` idle; valves and pump agree with the status telegram, bits not told apart yet. | bus read, both boilers | F (left out) |
-| 2026-11-17 | The de-couple maximum of the system manager (`e6fd`) does not take 78.5: written from `ff` and from `31` on 2026-11-15 (telegram log), both acknowledged, read 78.0 after both. Possibly above the device's own bound; a lower value from `ff` is the next try. | passive capture, bus read, telegram log | C (left out, see `evidence/settings-writes.md`) |
-| 2026-11-17 | ebusd reads four registers in one `5022` telegram on this bus (`<crc>` over the eight address bytes, eight data bytes back); the checksum routine holds for them. | passive capture, CRC checked offline | not in a lot yet |
-| 2026-11-17 | A room unit and its heating module answer the same setting registers (`05 00`, `08 00`, `14 0a`, `0e 01`, `16 01`, `10 01`, `be 02`) with different values; only the flow limits (`28 00`, `2b 01`) agree, which the room unit writes to the module with `09 03`. Which copy the regulation uses is not known. | bus read, three circuits | G (not verified, see `evidence/room-units-reads.md`) |
-| 2026-11-17 | The device at `50` has the software version of the system manager and answers every register read on both with the value of `15`: one device at two addresses: the owner confirmed on 2026-11-18 that two heating modules are installed, so `50` is the direct circuit of the system manager. | bus read, owner | G (landed as a comment in `50.w.em1`) |
-| 2026-11-17 | Heat demand (`02 00`) of the heating modules: `51` gives the demand of its room unit plus the boost offset, `52` gives flow maximum plus boost (76.0) while its room unit asks 45.8. The boost offset (`11 01`) of the third circuit is 2.0 K on the room unit and 1.0 K on the module and in `50 14`. | bus read and passive capture | G (left out) |
-| 2026-11-17 | Weekly programs outside the room units, all 525 slots read: `15`, `50` and `f6` answer identical bytes (heating programs 06:00 to 22:00 and variants, hot water 09:00 to 16:00 on four weekdays, circulation disabled); `51` and `52` hold the heating programs of `15` and the hot-water and circulation programs of the room units; no module mirrors its room unit. Applied copies: hot water follows the program of the system manager (set value 50.0 inside 09:00 to 16:00, 8.0 outside while the room-unit program is still on); on the third circuit the heating follows the room unit, the module `52` follows it and not its own programs. First and second circuit not told apart yet (read on a Tuesday between 22:05 and 22:25). | bus read, 525 slots, and before / after reads around a switch time | no lot: nothing to define that lot A (`50`) and lot H do not already give (see `evidence/modules-programs.md`, "Why no definition") |
-| 2026-11-17 | Program selector `12 01`: 11 selects heating program 1 (sub-byte `14`) on the room units, by the 18:00 switch (the third unit went to setback, the other two did not, all three read 11). 12 and 13 not proven; `51` and `52` read 12 but do not apply their programs. At `50` and `f6` the register changes at every read, at `15` it is a stable 11: the three addresses are not a plain alias of one another on this register, although all 105 program slots and every other value compared are equal. | bus read | not in a lot yet (one proven value; needs a unit set to another program) |
-| 2026-11-18 | Metadata contract, gap found by the companion: the rule "pointer to most recent entry" of the fault history (`FaultHistoryPointer` is the address of the last byte written; slot n ends at `0x0201 + 8 n`) is in `evidence/bc-fault-history.md` but not in the metadata file; the companion carries it in its own code. | first build of the companion against the metadata of 0.4.3 | M (metadata) |
-| 2026-11-18 | Metadata contract, gap: the "sensor not fitted" values (-40.0 on the boilers, -100.0 on the heating modules) are only in the evidence records; no key per field says which value means "not connected", so a consumer shows them as temperatures. | same | M (metadata) |
-| 2026-11-18 | Metadata contract, gap: nothing explicit says that a group of programs is stored without being followed (hot water and circulation of the room units), apart from a group id ending in `_stored` and its label. | same | M (metadata) |
-| 2026-11-18 | Metadata contract, gap: no hint for a user interface — the class of a two-state value (fault, running, flame) and which diagnostics deserve to be enabled by default; the section "Home Assistant hints, with overrides" of the scoping does not exist yet. | same | M (metadata) |
-| 2026-11-18 | A weekly program slot is written with `50 23` from `31` and taken: `fs1` heating program 1, Tuesday slot 1 (`20 14`), changed twice (2026-11-10, 2026-11-17), each read back (telegram log). Lot H defines the read side only. | telegram log | H (write side, not in a lot yet) |
-| 2026-11-18 | Moving an installation from a hand-made ebusd configuration to the release loses what the release does not define: the power demand each boiler and circuit sends (`PowerDemand`, `05 07`), the `H1Status` register of the heating modules, and every value that only the old configuration's polling brought (for example room temperature of a room unit, hot-water temperature and weighted outside temperature of the system manager): the release polls nothing. The owner accepted these losses for the switch. | migration study and deployment check of the installation's dashboards and automations | `PowerDemand`: landed in lot N (2026-11-19); `H1Status`: needs a read and its meaning; polling: a matter for the client (companion or ebusd `read -p`), not for the definitions |
-| 2026-11-18 | **Closed 2026-11-19 (owner): nothing to define, whatever device `07` is.** With `--scanconfig`, ebusd scans `0c` (slave of master `07`) and gets a valid but blank answer (`0a ff ff ff 00 00 80 ff ff ff ff`, logged as `scan 0c: ID=??`). Master `07` has been on the bus since at least 2026-10-29 and only reads the register `99 01` of `50`, `f6` and `52` about once a minute, never of `51` (with `09 02`, not `50 22`, ebusd's grab buffer of 2026-11-19: answers `0a 01` from `50` and `f6`, `74 01` from `52`; `f6` read twice as often): most likely the heating module at `51` using `07` as its master address. No data behind it; the log line is expected. | passive capture and the scan answer | no lot: nothing to define |
-| 2026-11-18 | Registers whose function is not used on the installation answer `0x8000`: the room influence P and I (`0f 01`, `71 09`) and the adaptation (`15 01`) of the three room units, and the H1 relay (`29 0a`) of `50`, read on 2026-11-18. None is defined; if one is, its value list should map `0x8000` to "not used". | bus read | not in a lot (no definition) |
-| 2026-11-18 | **Closed 2026-11-19 (step 2 of `docs/retest-room-unit-2.md`): `75` answers its weekly programs, its setback and its frost-protection room setpoints from the store of `35`; a slot written to `35` is read at `75` within 3 s, a program write to `75` is not kept. Curve, flow maximum and circuit type stay apart. One physical unit or two: not established (`evidence/room-units-shared-store.md`).** Room unit 2 (`75`) acknowledges every program-slot write and keeps none: an unused slot from `31` (2026-11-18 21:13, 2026-11-19 08:43) and from `ff` (21:42), a slot in use from `31` (2026-11-19 08:46); room units 1 and 3 keep the same telegrams. Same software, no differing setting among 205 registers read, no program lock in the manuals. Open: its role (installer parameter P312, address of the room unit) or a setting not read; the display of the unit to be looked at. | writes captured on site, telegram log, manuals | H (programs of fs2 read only) |
-| 2026-11-18 | 167 of 520 date and time broadcasts of `31` are followed within 3 s by a broadcast of the clock master; 129 of them carry a time 59 s ahead, and its next regular broadcast is normal. **Explained 2026-11-19** (same log): the clock master answers a broadcast at once with the date, hour and minute it received and the second of its own clock. Its clock runs about a second behind, so when `31` sends hh:mm:00 its second is still 59 (121 of the 129 answers carry second 59; the others 58, 49, 47 or 37, each about the clock master's own second, estimated from its previous regular broadcast), giving hh:mm:59. When its second has already rolled over (38 answers) the answer is normal. Which broadcasts it answers (167 of 520) is not explained. | telegram log | not in a lot |
-| 2026-11-19 | After a restart of ebusd, its list of participants once gave room unit 2 (`75`) `SW=7203`, the software of the heating modules; every captured identification answer of `75` (2026-10-29 to 2026-11-19) and ebusd's list ten minutes later give `SW=2726`, as room units 1 and 3. Probably an identification broadcast answering ebusd's inquiry of existence, filed under the sender's slave address; the sender is not in the captures. The file chosen (`75.w.fs2`) does not depend on it. | captures, ebusd info | not in a lot (export of the `07 04` / `07 fe` telegrams of the restart to settle it) |
-| 2026-11-19 | The system manager's register `e9 fd` reads 10.0 (`64 00`, tenths), the modulation differential the heat demand to the boilers implies; that it is parameter 538 (KA p. 87–88, 5 to 20 K) rests on the value only. The primary sensor of the plate exchanger B24 is readable at `15` as register `40 0a` (checksum `72`), signed tenths; no definition. | bus read, comparison with `05 07` | not in a lot yet (`evidence/heat-demand.md`) |
-| 2026-11-19 | In `05 07` the cascade manager sent the first boiler byte 1 `66` with a modulation demand of 31 to 39 % and byte 9 other than `ff` (`81` to `8e`), seen only in ebusd's grab buffer between 11:10 and 11:28, times not kept; the second boiler gets `ee` when asked for power. Meaning of `66`, of byte 2 and of byte 9 not established. | passive capture | N (unnamed) |
-| 2026-11-19 | Register `27 02` of the boiler automats (`50 22`, checksum `f6`) is the burner-start counter divided by 256: 731 on `08` and 543 on `18` (`evidence/bc-info-values.md`) equal the upper 16 bits of the starts lot D reads from EEPROM (`bc-counters`: 187 226 → 731, 139 017 → 543; ebusd's cache on 2026-11-19: 187 277 and 139 101, still 731 and 543). Two boilers, two dates; a read of `08` once its starts pass 187 392 (expected 732) would confirm it. Not defined: lot D has the full counter. | comparison of reads, lot D counters in ebusd's cache | not in a lot (duplicate of lot D) |
-
-## Review of 2026-11-19 (read only, nothing sent)
-
-Each open entry against what is now kept: the telegram log export (`out/`, installation data),
-ebusd's grab buffer and cache (read over HTTP), the captures of the evidence records.
-
-| Entry | Settled by what we have? | Next step |
-|---|---|---|
-| 2026-10-30 CRC, 2026-10-30 date and time, 2026-11-15 info values, 2026-11-15 `0x8000` totals, 2026-11-17 `50` = `15`, 2026-11-18 slot write from `31`, 2026-11-18 migration (`PowerDemand`) | landed in the lots named | remove when this file is next cleaned |
-| 2026-11-08 `HolidayTempLevel` | landed in lot C (0.5.6, choice written) | remove |
-| 2026-11-15 `e2fd`–`e9fd` tenths; 2026-11-17 `e6fd` not taking 78.5 | no new capture | a write from `ff` of a lower value, with the numeric campaign |
-| 2026-11-16 `FloorDryingTemp`, `RoomThermostatTemp` | no; not read since | a read of the two registers (no write) |
-| 2026-11-17 RAM `6e`, RAM `70` and `2b` | no | captures while a boiler fires |
-| 2026-11-17 four registers in one `50 22` | yes as a fact (CRC checked); nothing to define | none |
-| 2026-11-17 two copies of a setting; heat demand `02 00` of the modules | no | the 0.5 K test on a room unit's display (owner, "Needs the owner") |
-| 2026-11-17 programs outside the room units; program selector `12 01` | no | a room unit set to another program (owner) |
-| 2026-11-18 four gaps of the metadata contract | partly closed by later schemas; not checked here | the companion's next review |
-| 2026-11-18 device at `0c` | no: `07` reads with `09 02` (corrected above), never `51`, which fits `51` but proves nothing | on site, owner's call: unplug the bus of the module at `51` for two minutes; if the `07` reads stop, `07` is `51`. Risk low but not known: the module is off the bus for two minutes, its circuit's behaviour meanwhile not observed. No telegram sent. |
-| 2026-11-18 `0x8000` registers | yes as a fact; nothing to define | none |
-| 2026-11-18 room unit 2 keeps no slot | **yes (2026-11-19, step 2)**: one program store with `35` | the owner's look: one unit or two; a comment on the programs of `fs2` (`docs/fs2-programs-proposal.md`) |
-| 2026-11-18 167 broadcasts, `f1` 59 s ahead | **the 59 s is explained** from the log (updated above); the choice of answered broadcasts is not | none on the bus; another export after the owner's automation is changed |
-| 2026-11-19 `SW=7203` once on `75` | no: the `07 04` / `07 fe` telegrams of that restart are not in any export | an export of those telegrams at the next restart of ebusd |
-| 2026-11-19 `e9 fd`, B24 at `40 0a` | no | the manual's value of P538 on the display of the system manager (owner) |
-| 2026-11-19 `PowerDemand` byte 1 (0, 85, 102, 187, 238), byte 2, byte 9 | no: the grab buffer keeps only the last telegram of each kind (13:56: `55` to `08`, `ee` to `18`, `bb` from the three room units, as recorded); `evidence/heat-demand.md` already shows the values are codes, not flags | none on the bus: the history of `status` against `modulation` in Home Assistant over a few days (read only) |
-| 2026-11-19 register `27 02` (new) | **yes, from the data**: burner starts / 256 | the one confirming read above, when convenient (risk none) |
-| `ForcedVenting` (operating phase 9, `evidence/broadcast-kastatus.md`) | no: phase 9 never seen, no manual lists it | no bus test can provoke it safely; it stays provisional until a source is found |
-
-## Second pass, 2026-11-19 (after 0.5.12)
-
-Each finding still open, taken as far as the data and the manuals go, with batch G (reads and
-owner-assisted display steps, no bus write) and the owner's checklist:
-`evidence/open-findings-batch.md`, `docs/owner-checklist-room-units.md`.
-
-- **Control variation 0: settled** (manual of the room unit, parameter 315: 0 constant flow,
-  1 outside temperature; `evidence/room-units-control-variation.md`), in trial 0.5.13 as the
-  comment of `ControlVariation`. Values 2 and 3: batch G, step C.
-- **`27 02`**: step A reads `26 02`, which should hold the low 16 bits of the starts.
-- **`0c`**: nothing to define whatever `07` is; closed on the owner's word (2026-11-19).
-- **Third holiday register**: step B, a future period entered on a display, read by ebusd.
-- **`fs2` and programs**: checklist items 1 to 3 (P312 "Adresse FS", P335 "Config. FS", a slot
-  changed on the display).
-- **`PowerDemand` bytes, clock master answers, `SW=7203`**: exports D1 to D3, read only.
-- **`ForcedVenting`**: no test; checklist item 6 if the vendor tool is on site.
-
-## Batch G, steps A and D (2026-11-19, read only)
-
-- **`27 02`**: read again 731 / 543 with starts 187 277 / 139 104; `26 02`, `25 02` and `28 02`
-  answer 0x8000, so it is no 16-bit window. Stays "starts / 256", not defined (lot D has the
-  full counter); one read when `08` passes 187 392 starts confirms it.
-- **`PowerDemand` byte 1: settled for the boilers** over ten days (`evidence/heat-demand.md`):
-  `66` / `ee` exactly while power is requested, `55` / `00` otherwise; in trial 0.5.13 as the
-  comment of the field. Room units: `55` likely setback, not established. Bytes 2 and 9: not
-  named. New: three telegrams `10 → fc` (`05 07`), unanswered, an address no device has.
-- **Clock master**: it answers a broadcast whose time is ahead of its own clock, not one that is
-  behind (`evidence/choice-date-program-writes.md`); the entry of 2026-11-18 is settled as far
-  as the bus shows.
-- **`SW=7203` on `75`**: not reproduced; after the restart of 2026-11-19 14:17 `75` answered
-  `SW=2726`, as `35` and `f5`. The identification answers also show that `f5` gives the ID
-  bytes `57 02 00 08 00` where `35` and `75` give `57 02 00 18 00` (the heating modules give
-  `57 03 00 08 00`): room unit 3, not room unit 2, is the one that differs here. Meaning not known.
-
-## A participant at master `00` / slave `05` (recorded 2026-11-19, read only)
-
-From the deploy session's reading of ebusd's log and the telegram log; nothing sent to the bus.
-
-- **`05` answers an identification request** (`07 04`) with `0a 50 00 00 00 00 00 01 20 00 98`:
-  manufacturer 0x50 (Kromschröder), an empty ID, software 01.20, hardware 00.98 (ebusd:
-  `scan 05: ;Kromschroeder;;0120;0098`). `05` is the slave address of master `00`.
-- **Master `00` is active every day** since the telegram log begins (2026-11-09), about 10 000
-  telegrams a day: lone `00` bytes and `07 04` identification requests to `16`, `1c`, `24`, `3c`,
-  `44`, `53`, `54` and others, 248 times each on 2026-11-19. It scans the bus itself.
-- **It is not the vendor's interface**: the service tool (source `ff`) addressed `05` at 20:07:32
-  (`09 02`, register `59 03`, four timeouts) and reports its own version as 156.24. The system
-  manager's other address `f6` answers W, 66.18 (as `ka`); `0c` answers `ff` bytes.
-- **"First answered on 2026-11-18 at 12:43" is our change, not a new device.** Until the switch to
-  the definitions release that morning, ebusd ran without `--scanconfig` (deploy log, 2026-11-18,
-  "Switch of ebusd": the options before had no `--scanconfig`); it was added at 12:35, and the first
-  full scan of every address followed. So ebusd first *asked* `05` at 12:43. Before, the only
-  telegrams to `05` were the system manager's (`f1 → 05`, on 11-10, 11-16, 11-17), which timed out;
-  `05` answers identification but not those. One scan since (2026-11-19 08:27) did not list `05`:
-  it does not answer every time. Master `00` itself was already in the log on 2026-11-15 (noted in the
-  deploy log of 2026-11-18 18:40).
-- **Earlier traces in this repository**: none of the evidence records names `05` or master `00`;
-  the three telegrams `10 → fc` (heat demand to an address no device has, `evidence/heat-demand.md`)
-  are a different address (`fc` is the slave of master `f7`) and unrelated as far as the data go.
-
-**What would establish it**: the equipment list of the installation (a Kromschröder / Weishaupt
-module with bus access that is not one of the boilers, the system manager, the room units or the
-heating modules: a gateway, remote-access or display module), then, once named, a register read
-of `05` (`50 22`) against its manual's parameter list. Nothing to define until then.
-
-**Most likely**: a Kromschröder communication module of the WCM family (a gateway or remote-access
-unit) that keeps a list of the bus participants by scanning them from master `00`.
+| 2026-11-15 | Hydraulic decoupling / buffer registers (`e2fd`–`e9fd`) are in tenths. `e2fd` and `e7fd` are writable; the others have no captured write. | bus read | `evidence/settings-writes.md` (1.x) |
+| 2026-11-15 | Boiler info values needing a running burner (i11 power, i22 pump, i23 fan, i32 ionisation, i30 eSTB, i42 burner starts) are not yet captured. | bus read, CRC checked offline | needs capture while firing (1.x) |
+| 2026-11-16 | `FloorDryingTemp` and `RoomThermostatTemp` were typed `temp1` (`D1C`) on 16-bit registers in the former #717; suspect. | to verify by bus read | needs read (1.x) |
+| 2026-11-17 | In cascade operation the automat's "Sup./Mod setpoint" (RAM `6e`) holds the modulation demand of the cascade manager in percent (as in `05 07`), not a flow setpoint. | bus read, both boilers | left out (already in `PowerDemand`) |
+| 2026-11-17 | Automat RAM `70` reads 13 while firing and 32 when idle; output byte RAM `2b` reads `fd` firing and `80` idle (bits not told apart yet). | bus read, both boilers | needs capture while firing (1.x) |
+| 2026-11-17 | System manager de-couple maximum (`e6fd`) did not take 78.5 from `ff` or `31` (read 78.0 after both); likely above the device's own bound. | telegram log | needs lower value from `ff` (1.x) |
+| 2026-11-17 | ebusd reads four registers in one `50 22` telegram on this bus (`<crc>` over the 8 address bytes, 8 data bytes back); checksum routine holds. | passive capture, CRC checked offline | fact only; nothing to define |
+| 2026-11-17 | A room unit and its heating module answer the same setting registers (`05 00`, `08 00`, `14 0a`, `0e 01`, `16 01`, `10 01`, `be 02`) with different values; only flow limits (`28 00`, `2b 01`) agree. Which copy the regulation uses is not established. | bus read, three circuits | `copy-in-use` in metadata; needs 0.5 K display test |
+| 2026-11-17 | Heat demand (`02 00`) of heating modules: `51` gives room-unit demand + boost, `52` gives flow maximum + boost (76.0) while its room unit asks 45.8. | bus read and passive capture | left out |
+| 2026-11-17 | Program selector `12 01`: `11` selects heating program 1 on room units; `12` and `13` not proven. At `50` and `f6` the register changes at every read; at `15` it is stable `11`. | bus read | needs a room unit set to another program (1.x) |
+| 2026-11-18 | Metadata contract gaps noted by companion: fault-history pointer rule (`0x0201 + 8*n`), linked bounds (`write.below` / `write.above`), explicit flag for stored-only programs, UI hints for two-state facts. | companion build | compatible 1.x contract extensions |
+| 2026-11-18 | Unused-function registers answer `0x8000`: room influence P/I (`0f 01`, `71 09`), adaptation (`15 01`) on room units, H1 relay (`29 0a`) on `50`. | bus read | fact only; map `0x8000` if ever defined |
+| 2026-11-18 | `H1Status` register of heating modules (present in pre-switch hand-made config) has no captured read or established meaning. | migration study | needs read and meaning (1.x) |
+| 2026-11-19 | `PowerDemand` (`05 07`): boiler `status` settled (`66`/`ee` requesting, `55`/`00` idle); room-unit `55` likely setback (not established); bytes 2, 5–6, 9 unnamed. Three unanswered `10 → fc` telegrams observed. | 10-day telegram export | kept neutral (`ukn*`) |
+| 2026-11-19 | `27 02` on boiler automats (`50 22`, CRC `f6`) equals burner starts / 256 (`731`/`543`); adjacent registers answer `0x8000`. | read comparison | not defined (duplicate of full counter in `Counters`) |
+| 2026-11-19 | `ForcedVenting` (operating phase 9): never seen on bus, no manual lists it. | manuals, bus captures | provisional label in metadata (Road to 1.0 item 2) |
+| 2026-11-19 | Identification answers: `f5` returns ID bytes `57 02 00 08 00` while `35` and `75` return `57 02 00 18 00` (modules return `57 03 00 08 00`). Meaning unknown. | scan captures | fact only |
+| 2026-11-19 | Participant at master `00` / slave `05`: answers `07 04` as Kromschröder, empty ID, SW `0120`, HW `0098`; master `00` scans bus addresses ~248 times/day. Most likely a WCM communication / gateway module. | ebusd scan & telegram log | needs installation equipment list (1.x) |
+| 2026-11-20 | `75.w.fs2` heating programs 2 and 3 and hot-water / circulation programs: sharing with `35.w.fs1` not proven (heating program 1 and setback / frost setpoints are proven shared). | bus captures | stated as known limit in `docs/release-readme.md` |
