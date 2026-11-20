@@ -595,13 +595,45 @@ not compile on macOS). Nothing pushed, no release, no pull request.
 
 | Branch | Commits | Content |
 |---|---|---|
-| `checksum` | `d06e924a` A1, `05e398ce` A2 | A1: the computed byte (parser, CRC-8), no behaviour change; A2: attribute `crc` in messages |
-| `wcrc-alias` | `0363a6ef` (on `checksum`) | A3: `[WCRC]` and `wcrc=1` as aliases, fork only |
+| `checksum` | `d06e924a` A1, `05e398ce` A2, `c7e9be02` lookup precedence, `ca26887c` duplicate check, `e7e5999f` chained test, `69040d90` test resolver | A: the computed byte and attribute `crc`, with the review fixes |
+| `wcrc-alias` | `2a57d162` (on `checksum`) | A3: `[WCRC]` (at the start of the comment) and `wcrc=1` turned into `crc` when loading, fork only |
 | `long-id` | `aec9d6ae` | C1: IDs longer than 7 bytes |
-| `composite` | `59020b45` B1, `26b2f78c` B2, `0dc15e18` B3, `55f04f61` B4 | B1: `fills` parsed and resolved; B2: carriers fill their targets; B3: carriers not published; B4: polled for their targets |
-| `weishaupt-next` | `830ba9c8` … `de9f4a79` (9 commits) | upstream `master` + the commits above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
+| `composite` | `59020b45` B1, `26b2f78c` B2, `0dc15e18` B3, `55f04f61` B4, `df13fc92` destination, `893df457` stale links, `8bc556b9` locking, `fd1d398f` unsendable carriers, `0c5e8f67` failed carriers, `0c7eb936` ChangeLog | B with the review fixes |
+| `weishaupt-tests` | `4977569b` | test of carriers with a computed byte; needs A and B, used in `weishaupt-next` only |
+| `weishaupt-next` | `91f1a5a2` … `6a3fd7ac` (20 commits) | upstream `master` + the branches above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
 
 The fork's `weishaupt` (`d4ececb3`) and `crc` (`492867d9`) are left as they are.
+
+Review of 2026-11-20 (an independent read of the first `weishaupt-next`), each fix with a test that
+fails before it:
+
+1. Lookup precedence: the key without the computed byte was tried only after the whole lookup down
+   to ID length 0, so a shorter or empty ID of the same PB SB won. Now tried at each ID length.
+2. A carrier without destination filled a target of 15 from a telegram to 08. A target with a
+   destination is now filled only from a telegram to it.
+3. A carrier that could not be sent (no destination, master data needing input, false condition)
+   was chosen for polling and the target was then never polled. Not chosen any more; a failed
+   prepare marks the carrier failed and polls the target.
+4. Use after free: after a target was removed, the invalidation after a write read the old link
+   (shown by AddressSanitizer). Stale links are resolved first.
+5. The new map functions run on the bus thread: they now hold the map's (recursive) lock. No test
+   (threading).
+6. (a) A carrier is failed only if none of its targets could be filled, and stays failed until it
+   is answered again or the definitions are reloaded (no longer cleared by every addition).
+   (b) Duplicate check independent of the placeholder: a message with a computed byte is never the
+   same as one without (the latter is found for its exact ID); two with one are compared without
+   it. The reviewer's other reading (plain `4c2500` beside `crc` `4c2500` as duplicates) is not
+   implemented: they are in different key buckets, and the plain one is found first.
+   (c) The aliases are turned into `crc` when loading, with the same checks; `[WCRC]` counts only
+   at the start of the comment. (d) ChangeLog: a carrier's own fields without `fills` are never
+   published.
+
+All 42 commits of the five branches and of `weishaupt-next` build without a warning in the changed
+files and pass `ctest`; `test_message` has 472 checks at the head of `weishaupt-next`.
+AddressSanitizer (Debian build) is clean on the heads of `wcrc-alias`, `long-id`, `composite` and
+`weishaupt-next`. Offline polling: a target whose carrier has no destination is polled directly; a
+target with a sendable carrier is polled through it (computed byte `d9` sent for placeholder 00),
+then directly after the carrier failed.
 
 Differences from the text above, decided while building:
 
