@@ -94,6 +94,13 @@ from `weishaupt` when the maintainer responds.
 
 ### Needs the owner
 
+- **Writes with a stock ebusd (decision deferred by the owner, 2026-11-20).** A stock ebusd with
+  the definitions wrote and restored a setting of the system manager on the bus; the system
+  manager, room units and heating modules ignore the write checksum (`docs/ebus-protocol.md`,
+  `evidence/write-methods.md`). To decide later: the installation notice (the build no longer
+  needed for these devices), the companion's write requirement (1.1, guard change), the upstream
+  write lots (no dependency on john30/ebusd#1825). Before changing the notice: one end-to-end write
+  with the stock add-on on a room unit and a heating module.
 - *Done (2026-11-20):* `0.6.0` and `ha-weishaupt` v0.10.0 run on the test installation: nine files
   loaded, no repair, the same number of entities, `LegionellaStartTime` read `08:30`, `DHWExcessTemp`
   10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.
