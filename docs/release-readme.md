@@ -19,7 +19,9 @@ your heating installer.
 ## Use
 
 What you need: an eBUS adapter connected to the bus of the WCM controllers, and ebusd (any 26.1
-build reads; writing needs the build named under "Write").
+build reads; writing needs the build named under "Write"). **If you mean to write, start with
+that build** (in Home Assistant, the add-on **eBUSd (Weishaupt CRC)**) rather than install the
+stock one and switch later: a second add-on has its own folder, options and host name.
 
 The files are installed by pointing ebusd at the unpacked folder with `--configpath`. ebusd then
 uses these files instead of the definitions it would fetch online: message and entity names
@@ -39,8 +41,9 @@ change for an installation that used other definitions before (MQTT topics, auto
 2. Optional dry check, without a bus: `ebusd -f --checkconfig --configpath=/path/to/@NAME@`
    prints `found messages: @COUNT@ (…)` and no error.
 
-3. Start ebusd on the folder, with a scan so that each device gets its file, and keep your other
-   options (adapter, MQTT, address):
+3. Start ebusd on the folder, with a scan so that each device gets its file (the scan asks every
+   device for its identification), and keep your other options (adapter, MQTT, and `--address`
+   if you set one):
 
    ```sh
    ebusd --scanconfig --configpath=/path/to/@NAME@ --device=<your adapter> …
@@ -57,7 +60,8 @@ change for an installation that used other definitions before (MQTT topics, auto
 
    On the test installation `scan result` lists twelve addresses, for example
    `15;Kromschroeder;W ;6618;-` (system manager) and `08;Kromschroeder;W?;1104;0501` (boiler
-   automat): nine get a file (`08`, `18`, `15`, `50`, `51`, `52`, `35`, `75`, `f5`), three none
+   automat; ebusd prints the identification as the devices send it, `W` and a second character
+   that differs): nine get a file (`08`, `18`, `15`, `50`, `51`, `52`, `35`, `75`, `f5`), three none
    (`05`, `0c`, `f6`), which is expected. `ERR: element not found` on a read means the file of
    that device was not loaded (see "Device identification" under Known limits).
 
@@ -68,24 +72,29 @@ The steps are the same for the stock add-on "eBUSd" and for "eBUSd (Weishaupt CR
 host (the prefix depends on the add-on repository; `ls /addon_configs/` shows it): not the
 `/config` folder of Home Assistant.
 
+**A shell inside the add-on**, for the checks below: install the add-on **Advanced SSH & Web
+Terminal** (community add-ons), switch its **Protection mode** off on its own Info page, open it,
+then `docker ps` shows the ebusd add-on's container, whose name ends in `_ebusd`; every command
+below runs as `docker exec <container> <command>`. (The ebusd add-on's **Open Web UI** shows
+ebusd's web page on the test installation, not a shell.)
+
 1. Copy the unpacked folder `@NAME@` into `/addon_configs/<prefix>_ebusd/` (Samba share
    `addon_configs`, the Studio Code Server add-on, or SSH).
 2. In the add-on's **Configuration**, **Additional ebusd options (one flag per entry)**, add two
-   entries, each in a field of its own, and keep the others (`--mqttjson`, your address):
+   entries, each in a field of its own, and keep the others (`--mqttjson`, and `--address=…` if
+   one is there):
 
    ```text
    --scanconfig
    --configpath=/config/@NAME@
    ```
 
-3. Restart the add-on and wait for the scan (a minute or two).
-4. Check with the `ebusctl` commands of step 4 above, run inside the add-on, with the same
-   expected answers. The add-on's documentation offers a shell there under **Open Web UI**; where
-   that page shows ebusd's web page instead, use the SSH add-on (with its protection mode off):
-   `docker ps` shows the add-on's container (its name ends in `_ebusd`), then
-   `docker exec <container> ebusctl scan result`. In the same shell, before a restart,
-   `ebusd -f --checkconfig --configpath=/config/@NAME@` is the dry check (`found messages:
-   @COUNT@ (…)`).
+3. Dry check, before the restart: `docker exec <container> ebusd -f --checkconfig
+   --configpath=/config/@NAME@` prints `found messages: @COUNT@ (…)` and exits; it reads the
+   files only and opens no adapter.
+4. Restart the add-on and wait for the scan (a minute or two).
+5. Check with the `ebusctl` commands of step 4 above, each as `docker exec <container> ebusctl …`,
+   with the same expected answers.
 
 Home Assistant integrations reach the add-on's ebusd by its internal host name (`<prefix>-ebusd`,
 port 8888) without publishing a port. Publishing 8888 on the add-on's **Network** page opens
@@ -103,19 +112,28 @@ write lines of these files but sends a wrong checksum. Use the build
 [@EBUSD@](https://github.com/aghulas/ebusd/releases/tag/@EBUSD@):
 
 - **Home Assistant:** in the add-on store, ⋮ → Repositories, add
-  `https://github.com/aghulas/ha-addons#weishaupt` and install **eBUSd (Weishaupt CRC)**. Stop
-  the stock eBUSd (one adapter, one add-on) and set the new one up as above: it has its own
-  `/addon_configs/<prefix>_ebusd/` folder, so copy the definitions there too.
-- **Plain ebusd:** the release holds two static executables, `ebusd-aarch64` and `ebusd-amd64`
-  (MQTT, no TLS, no KNX). Check them against its `sha256sums.txt` and run the one of your
-  machine in place of `ebusd`, with the same options.
+  `https://github.com/aghulas/ha-addons#weishaupt`. That form is for the add-on store only: in a
+  browser it opens the default branch `main`, not this add-on; the page to read is
+  `https://github.com/aghulas/ha-addons/tree/weishaupt`. Install **eBUSd (Weishaupt CRC)**; it is
+  built on your machine at install (there is no prebuilt image), so the install takes a while.
+  If the stock eBUSd runs, stop it (one adapter, one add-on) and set the new one up as above: its
+  folder, options and host name are its own, nothing carries over, so copy the definitions and
+  enter the options again.
+- **Plain ebusd:** the release holds two static executables, `ebusd-aarch64` (64-bit ARM) and
+  `ebusd-amd64` (64-bit x86); no other machine is built for (no 32-bit ARM). They have MQTT, no
+  TLS, no KNX. Check yours against its `sha256sums.txt`, make it executable (`chmod +x`), and
+  start it by its own path with your usual options. Keep it apart from a packaged ebusd (for
+  example `/usr/local/bin/ebusd-weishaupt`, with the service pointed at it): an update of the
+  package replaces a packaged `ebusd` with the stock build. In Docker, mount it into the official
+  image and start it as the entry point: `docker run --entrypoint /ebusd-weishaupt -v
+  /path/to/ebusd-amd64:/ebusd-weishaupt:ro … john30/ebusd:v26.1 <your options>`.
 
 **Which ebusd runs.** The first line of `ebusctl info` is the version of the running ebusd: the
 build shows `version: ebusd 26.1.p20261029`; a stock 26.1 shows another string (for example
 `26.1.26.1`). Which one you started: in Home Assistant, the add-on's Info page names **eBUSd
 (Weishaupt CRC)** with a version ending in `-weishaupt.1`; on a plain install, the executable
 you start is the one whose checksum matches the release's `sha256sums.txt`
-(`sha256sum $(command -v ebusd)`). The Home Assistant integration tells the two builds apart by
+(`sha256sum /path/to/ebusd`). The Home Assistant integration tells the two builds apart by
 itself, without sending anything: the attribute `run_time_checksum` of its write switch reads
 `present` with the build and `absent` with a stock ebusd.
 
@@ -124,19 +142,24 @@ itself, without sending anything: the attribute `run_time_checksum` of its write
 - **Before:** read the value and note it (`ebusctl read -f -c ka BlockingTime`). **After:** read it
   again with `-f` (from the device, not ebusd's cache); only that read shows that the value was
   taken. To restore, write the noted value.
+- **The command** is `ebusctl write -s ff -c <circuit> <name> <value>`, with the circuit, name
+  and range of the table "What can be written" below. `ebusctl find -w -c <circuit>` lists the
+  writable names of a circuit, without their range.
 - **Source address.** The devices acknowledge a write from any address but take most settings
-  only from `ff`, the address of the vendor's service tool: `ebusctl write -s ff -c ka
-  BlockingTime 2`. Taken from ebusd's own address (no `-s`): the flow limits `SupplyMaxTemp` and
-  `SupplyMinTemp` of `51.w.em2` and `52.w.em3` (from `ff` as well), every program slot, and the
-  date and time broadcast. A wrong source is acknowledged and not taken: only the read-back shows
-  it.
+  only from `ff`, the address of the vendor's service tool, hence `-s ff`. Taken from ebusd's own
+  address (no `-s`): the flow limits `SupplyMaxTemp` and `SupplyMinTemp` of `51.w.em2` and
+  `52.w.em3` (the column "Source" of the table) and every program slot. A wrong source is
+  acknowledged and not taken: only the read-back shows it.
 - **Not while the vendor's service tool is connected** to the bus: it uses `ff` too.
-- **Program slots** take four values, end first: `ebusctl write -c fs1 HCProgram1Tue1
-  "18:00;Enabled;06:30;Enabled"` is Tuesday, slot 1, 06:30 to 18:00 (the field order of the
-  message: `totime`, `toenabled`, `fromtime`, `fromenabled`).
-- **Date and time** (`ebusctl write -c Broadcast Datetime "<outside>;<hh:mm:ss>;<dd.mm.yyyy>"`):
-  send it at second 00 of the minute it carries; a late broadcast sets the installation late
-  until the next one.
+- **Program slots** (`ebusctl write -c <circuit> <HCProgram…> "<end>;Enabled;<start>;Enabled"`)
+  take four values, end first: the field order of the message is `totime`, `toenabled`,
+  `fromtime`, `fromenabled`, times in quarter hours (`06:30`, `18:00`). Written programs: the five
+  of `35.w.fs1` and of `f5.w.fs3`, the hot-water and circulation programs of `50.w.em1`.
+- **Date and time** (`Broadcast/Datetime`): not given here as a command. Its first field is an
+  outside temperature; the clock master replaces it with its own sensor within a minute, but what
+  the other controllers do with the value sent meanwhile is not established. The Home Assistant
+  integration sends it, with the outside temperature the clock master last sent, at second 00 of
+  the minute it carries: a late broadcast sets the installation late until the next one.
 - **Settings to treat with care:** `ControlVariation` of the room units (while 0 was set on site,
   the heating modules raised their flow setpoint, on one circuit to its maximum); the third
   holiday registers `HolidayStartThird` and `HolidayEndThird`, whose meaning is not established;
@@ -150,6 +173,64 @@ itself, without sending anything: the attribute `run_time_checksum` of its write
 The Home Assistant integration [ha-weishaupt](https://github.com/aghulas/ha-weishaupt) does all
 this for you (build check, source address, read-back, a confirmation for the settings that act
 on the regulation).
+
+### What can be written
+
+The 92 settings by circuit and message name. *Values*: the range ebusd refuses to leave (`ERR:
+argument value out of valid range`, nothing sent), or the value list (an unknown entry: `ERR:
+element not found`). `*`: the range is in the metadata only (the CSV cannot carry it); ebusd does
+not refuse a value outside it. `none`: no range and no established meaning (see "Settings to
+treat with care"); the Home Assistant integration does not offer these nine. *Step*: the step of
+the setting; ebusd does not refuse a value off the step. *Source*: `ff` = `-s ff`, `31` = ebusd's
+own address. Generated from `weishaupt-metadata-@VERSION@.json` by `scripts/settings-table.py` of
+the workbench.
+
+<!-- SETTINGS-TABLE-BEGIN -->
+| Circuits | Message | Values | Step | Unit | Source |
+|---|---|---|---|---|---|
+| ka | `BlockingTime` | 0 to 30 | 1 | min | `ff` |
+| ka | `CalorifierSwitchDiff` | 1 to 20 | 0.5 | K | `ff` |
+| ka | `ChangeOverTime` | 0 to 250 | 1 | h | `ff` |
+| ka | `CircWithLegionella` | off, on |  |  | `ff` |
+| ka | `DHWLegionellaDay` | off, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday |  |  | `ff` |
+| ka | `DHWLoadTime` | 0 to 180 | 10 | min | `ff` |
+| ka, fs1, fs2, fs3 | `DHWSetpoint` | 40 to 60 | 0.5 | °C | `ff` |
+| ka | `DHWSwitchDiff` | -10 to -1 | 0.5 | K | `ff` |
+| ka | `DeCoupleMinTemp` | 0 to 50 | 0.5 | °C | `ff` |
+| ka | `LegionellaCirculationTime` | 180 to 1200 | 60 | s | `ff` |
+| ka | `LegionellaSetpoint` | 40 to 80 | 0.5 | °C | `ff` |
+| ka | `ModulationMax` | 30 to 100 | 1 | % | `ff` |
+| ka | `ModulationMin` | 30 to 100 | 1 | % | `ff` |
+| ka | `RegulationI` | 10 to 200 | 1 |  | `ff` |
+| ka | `RegulationP` | 10 to 300 | 1 |  | `ff` |
+| ka, em1, fs1, fs2, fs3 | `SupplyMaxTemp` | 8 to 82 | 0.5 | °C | `ff` |
+| em1, em2, em3, fs1, fs2, fs3 | `GradientCurve` | 2.5 to 40 * | 0.5 |  | `ff` |
+| em1, em2, em3, fs1, fs3 | `RoomFrostProtectionTemp` | 4 to 16 | 0.5 | °C | `ff` |
+| em1, em2, em3, fs1, fs2, fs3 | `RoomNormalTemp` | 16 to 35 | 0.5 | °C | `ff` |
+| em1, em2, em3, fs1, fs3 | `RoomSetbackTemp` | 10 to 21.5 * | 0.5 | °C | `ff` |
+| em1, em2, em3, fs1, fs2, fs3 | `SummerWinterChangeOverTemp` | 8 to 30 | 0.5 | °C | `ff` |
+| em1, fs1, fs2, fs3 | `SupplyMinTemp` | 8 to 82 | 0.5 | °C | `ff` |
+| em2, em3 | `SupplyMaxTemp` | 8 to 82 | 0.5 | °C | `31` |
+| em2, em3 | `SupplyMinTemp` | 8 to 82 | 0.5 | °C | `31` |
+| fs1, fs2, fs3 | `BoilerMCBoostTemp` | 0 to 20 | 0.5 | K | `ff` |
+| fs1, fs2, fs3 | `ControlVariation` | none |  |  | `ff` |
+| fs1, fs2, fs3 | `FrostProtectionLimitTemp` | -20 to 0 | 0.5 | °C | `ff` |
+| fs1, fs2, fs3 | `HolidayEndDay` | 1 to 31 | 1 |  | `ff` |
+| fs1, fs2, fs3 | `HolidayEndMonth` | 1 to 12 | 1 |  | `ff` |
+| fs1, fs2, fs3 | `HolidayEndThird` | none |  |  | `ff` |
+| fs1, fs2, fs3 | `HolidayStartDay` | 1 to 31 | 1 |  | `ff` |
+| fs1, fs2, fs3 | `HolidayStartMonth` | 1 to 12 | 1 |  | `ff` |
+| fs1, fs2, fs3 | `HolidayStartThird` | none |  |  | `ff` |
+| fs1, fs2, fs3 | `HolidayTempLevel` | Antifreeze, Setback |  |  | `ff` |
+| fs1, fs2, fs3 | `SwitchOnRuntime` | 0 to 10 | 1 | min | `ff` |
+<!-- SETTINGS-TABLE-END -->
+
+### Report a problem
+
+On https://github.com/aghulas/weishaupt-ebus/issues, with: the release you use, the output of
+`ebusctl scan result` and of `ebusctl info` (replace the adapter's address and any host name),
+what you ran and what it answered. A device that answers another identification than those
+above, or gets no file, is worth a report: it is how the definitions reach another installation.
 
 ## Known limits
 
@@ -235,6 +316,14 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 - **Vendor's service tool:** Weishaupt's installer software (WCM-Diagnose) with its bus interface.
 - **The build** (with the run-time checksum): ebusd @EBUSD@. **Stock ebusd:** any official build.
   `[WCRC]` at the start of a comment marks a message whose checksum the build computes.
+- **Register:** a numbered value inside a device that ebusd reads (`50 22`) or writes (`50 23`); a
+  setting is one register. **Scan:** ebusd asks each device for its identification and, with
+  `--scanconfig`, loads the file named after it. **Master / slave:** a device that sends
+  requests on the bus (ebusd at `31`, the tool at `ff`) / one that answers them (`08`, `15` …).
+  **Wolf file:** a file of the official configuration for Wolf devices, which share the folder.
+- **Protection mode:** a switch on the Info page of a Home Assistant add-on; off, the add-on may
+  run `docker` commands. **MQTT integration file** (`mqtt-hassio.cfg`): tells ebusd which values to
+  publish as Home Assistant entities; its `filter-direction` says reads only or writes too.
 - **Telegram:** one exchange on the bus. **Slot:** one period of a weekly program (three per day).
   **Store:** the memory a device answers a value from. **Acknowledged / taken:** a device
   acknowledges every well-formed write and takes (stores) the value only from the right source.
@@ -244,19 +333,20 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 
 ## Changes in @VERSION@
 
-The history of every release is in `CHANGELOG.md` of https://github.com/aghulas/weishaupt-ebus.
+The history of every release is in
+[`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- No message, field or type changes (@COUNT@ messages, as in 0.6.0). Names have been frozen
-  since 0.6.0: they change only with a new first number.
-- No longer flagged pre-release: from 0.6.1 the releases are normal releases (names frozen,
-  0.6.0 running on the test installation). 1.0 remains the promise of stability.
-- The label of operating phase 9 is no longer provisional: nothing is provisional any more.
-- This notice is rewritten for installation: use with a plain ebusd and with the add-on, the
-  write-capable build and how to check it, how to write, limits, counts, glossary.
+- Documentation only: the same definitions as 0.6.1 (CSV, metadata and fixtures alike, @COUNT@
+  messages). Names have been frozen since 0.6.0: they change only with a new first number.
+- This notice: no live write command as an example (placeholders); the table "What can be
+  written", with what ebusd enforces; one way to get a shell in the add-on; the browsable address
+  of the add-on repository; start with the write-capable add-on when you mean to write; the date
+  and time broadcast left to the integration; the plain ebusd with the build (executable bit,
+  machines, packages, Docker); where to report a problem; more terms in the glossary.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
-(TypeSpec, `src/wolf`). How each definition was established: `evidence/` of
-https://github.com/aghulas/weishaupt-ebus. The definitions are proposed to the official ebusd
+(TypeSpec, `src/wolf`). How each definition was established:
+[`evidence/`](https://github.com/aghulas/weishaupt-ebus/tree/main/evidence) of the workbench. The definitions are proposed to the official ebusd
 configuration as well; this archive lets them be used meanwhile.
 
 ## Checked with

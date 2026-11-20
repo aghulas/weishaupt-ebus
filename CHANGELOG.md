@@ -3,6 +3,25 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 0.6.2 (not released yet)
+
+Documentation only: the same definitions as 0.6.1, 1 073 messages loaded by ebusd. Changes to the
+installation notice after a second cold read:
+
+- No live write command as an example: placeholders, and a table "What can be written" of the 92
+  settings by circuit and name with values, step, unit and source address, generated from the
+  metadata by `scripts/settings-table.py`; what ebusd enforces (the CSV range and the value
+  lists, not the step, not a range kept only in the metadata), verified with the build and no bus.
+- One way to a shell in the add-on (Advanced SSH & Web Terminal, protection mode off, `docker
+  exec`); the dry check as its own step before the restart.
+- The add-on repository's store address next to its browsable one; start with the
+  write-capable add-on when you mean to write; nothing carries over between two add-ons.
+- The date and time broadcast no longer given as a command: what the controllers other than the
+  clock master do with its outside temperature is not established; the integration sends it.
+- Plain ebusd with the build: executable bit, 64-bit ARM and x86 only, packaged ebusd replaced by
+  its updates, the official Docker image.
+- Where to report a problem (issues of `aghulas/weishaupt-ebus`), and more terms in the glossary.
+
 ## 0.6.1 (2026-11-20)
 
 First release not flagged pre-release. No message, field or type changes: 1 073 messages loaded

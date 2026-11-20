@@ -43,7 +43,11 @@ exists, the notice states in its first lines that the definitions were checked o
    source; glossary. Front `README.md` the same. Published as `weishaupt-0.6.1`, the first
    normal release, with the companion's README of v0.10.1 (2026-11-20). The front page of
    `aghulas/ha-addons` (branch `weishaupt`) now says what the add-on is and how to install it
-   (owner's word, 2026-11-20). Open: a second cold read of the published notices before 1.0.*
+   (owner's word, 2026-11-20). *Second cold read of the published 0.6.1 done
+   (`out/cold-read-0.6.1.md`): reading yes; writing yes for one numeric setting after opening the
+   CSV, no for the date and time. Third pass on the owner's « Oui, les trois »: notice and front
+   README for 0.6.2 (documentation only, workbench); the companion's README and the add-on's
+   documentation by their sessions.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
    of a shared program), then request HACS default store on the owner's word.
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
@@ -135,6 +139,9 @@ from `weishaupt` when the maintainer responds.
 - **Versions.** Up to 0.6.0, breaking changes bumped the second number. Names, types and the
   metadata structure are frozen since 0.6.0: a breaking change now needs a new first number.
   Renames carry `renamed_from` in metadata.
+- **Notice table.** The table "What can be written" of `docs/release-readme.md` is the output of
+  `scripts/settings-table.py` on the release's metadata, pasted between its two markers: run it
+  again when a write is added, removed or its range changes.
 - **Release.** `scripts/release.sh <version>` builds reproducible archives (`weishaupt-ebusd-config-<version>.tar.gz` and `-fr.tar.gz`), `weishaupt-metadata-<version>.json`,
   `weishaupt-fixtures-<version>.json` and `sha256sums-<version>.txt` under `out/release/`. On the
   owner's word: push `weishaupt`, tag both `ebusd-configuration` and `weishaupt-ebus` as

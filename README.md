@@ -8,7 +8,10 @@ official project in parallel.
 [weishaupt-0.6.1](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-0.6.1)
 of the fork: its notice (also the `README.md` inside each archive) explains how to install them
 with ebusd or the Home Assistant ebusd add-on, how to write settings, and their limits. Releases
-up to 0.6.0 were flagged pre-release; from 0.6.1 they are normal releases.
+up to 0.6.0 were flagged pre-release; from 0.6.1 they are normal releases. If you mean to write
+settings, start with the write-capable ebusd (in Home Assistant, the add-on "eBUSd (Weishaupt
+CRC)") rather than switch later. Problems and reports from other installations:
+[issues](https://github.com/aghulas/weishaupt-ebus/issues) of this repository.
 
 The definitions cover Weishaupt WTC condensing boilers and their Kromschröder WCM controllers:
 the system manager (WCM-KA, also called cascade manager), the heating modules (WCM-EM) and the
@@ -38,7 +41,7 @@ releases are published and upstream pull requests are cut on demand.
 | Release | Content |
 |---|---|
 | [weishaupt-0.6.1](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-0.6.1) | the definitions: compiled ebusd CSV in English and in French with the installation notice, and the metadata file the Home Assistant integration reads |
-| [ebusd v26.1-weishaupt.1](https://github.com/aghulas/ebusd/releases/tag/v26.1-weishaupt.1) | ebusd with the run-time checksum (john30/ebusd#1825), needed to write settings; two static executables. For Home Assistant the same build is the add-on "eBUSd (Weishaupt CRC)" of the repository `https://github.com/aghulas/ha-addons#weishaupt` |
+| [ebusd v26.1-weishaupt.1](https://github.com/aghulas/ebusd/releases/tag/v26.1-weishaupt.1) | ebusd with the run-time checksum (john30/ebusd#1825), needed to write settings; two static executables. For Home Assistant the same build is the add-on "eBUSd (Weishaupt CRC)": add `https://github.com/aghulas/ha-addons#weishaupt` in the add-on store (that form is for the store only; to read it in a browser, open [`/tree/weishaupt`](https://github.com/aghulas/ha-addons/tree/weishaupt)) |
 | [ebus-typespec 0.31.0-weishaupt.1](https://github.com/aghulas/ebus-typespec/releases/tag/v0.31.0-weishaupt.1) | library build with the `@crc` and `@wcrc` decorators, needed only to compile the definitions from source |
 
 ## Open pull requests

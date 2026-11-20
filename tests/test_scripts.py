@@ -28,6 +28,7 @@ md = load_module("metadata", "metadata.py")
 fx = load_module("fixtures", "fixtures.py")
 i18n = load_module("i18n_keys", "i18n-keys.py")
 notice = load_module("render_notice", "render-notice.py")
+settings_table = load_module("settings_table", "settings-table.py")
 
 
 SAMPLE_CSV_KA = """type,circuit,level,name,comment,qq,zz,pbsb,id,*name,part,type,divisor/values,range,unit,comment
@@ -300,3 +301,33 @@ class TestRenderNotice(unittest.TestCase):
         self.assertNotIn("Still provisional", out)
         self.assertNotIn("@", out.replace("@ebusd", ""))
         self.assertIn("9.9.9", out)
+
+
+class TestSettingsTable(unittest.TestCase):
+    def meta(self):
+        def msg(circuit, name, field, write, kind="setting"):
+            return {"circuit": circuit, "name": name, "kind": kind, "fields": [field], "write": write}
+        ff = {"source": "ff"}
+        return {"messages": [
+            msg("ka", "BlockingTime", {"name": "value", "unit": "min", "min": 0, "max": 30}, ff),
+            msg("fs1", "RoomSetbackTemp", {"name": "value", "divisor": 10, "unit": "°C"},
+                {"source": "ff", "min": 10.0, "max": 21.5, "step": 0.5}),
+            msg("fs3", "RoomSetbackTemp", {"name": "value", "divisor": 10, "unit": "°C"},
+                {"source": "ff", "min": 10.0, "max": 21.5, "step": 0.5}),
+            msg("fs1", "ControlVariation", {"name": "value"}, ff),
+            msg("ka", "CircWithLegionella", {"name": "value", "values": {"1": "on", "0": "off"}}, ff),
+            msg("em2", "SupplyMaxTemp", {"name": "value", "divisor": 10, "unit": "°C", "min": 8, "max": 82,
+                                         "step": 0.5}, {"source": "31"}),
+            msg("fs1", "HCProgram1Mon1", {"name": "totime"}, {"source": "31"}, kind="program_slot"),
+            {"circuit": "fs2", "name": "RoomNormalTemp", "kind": "setting", "fields": [{"name": "value"}]},
+        ]}
+
+    def test_rows_and_count(self):
+        text, count = settings_table.table(self.meta())
+        self.assertEqual(count, 6)  # program slot and read-only message left out
+        self.assertIn("| ka | `BlockingTime` | 0 to 30 | 1 | min | `ff` |", text)
+        self.assertIn("| fs1, fs3 | `RoomSetbackTemp` | 10 to 21.5 * | 0.5 | °C | `ff` |", text)
+        self.assertIn("| fs1 | `ControlVariation` | none |  |  | `ff` |", text)
+        self.assertIn("| ka | `CircWithLegionella` | off, on |  |  | `ff` |", text)
+        self.assertIn("| em2 | `SupplyMaxTemp` | 8 to 82 | 0.5 | °C | `31` |", text)
+        self.assertNotIn("HCProgram", text)
