@@ -595,11 +595,11 @@ not compile on macOS). Nothing pushed, no release, no pull request.
 
 | Branch | Commits | Content |
 |---|---|---|
-| `checksum` | `d06e924a` A1, `3c6a7536` A2 | A1: the computed byte (parser, CRC-8), no behaviour change; A2: attribute `crc` in messages |
-| `wcrc-alias` | `953b348a` (on `checksum`) | A3: `[WCRC]` and `wcrc=1` as aliases, fork only |
+| `checksum` | `d06e924a` A1, `05e398ce` A2 | A1: the computed byte (parser, CRC-8), no behaviour change; A2: attribute `crc` in messages |
+| `wcrc-alias` | `0363a6ef` (on `checksum`) | A3: `[WCRC]` and `wcrc=1` as aliases, fork only |
 | `long-id` | `aec9d6ae` | C1: IDs longer than 7 bytes |
 | `composite` | `59020b45` B1, `26b2f78c` B2, `0dc15e18` B3, `55f04f61` B4 | B1: `fills` parsed and resolved; B2: carriers fill their targets; B3: carriers not published; B4: polled for their targets |
-| `weishaupt-next` | `e9ec4f57` … `74e85a8c` (9 commits) | upstream `master` + the commits above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
+| `weishaupt-next` | `830ba9c8` … `de9f4a79` (9 commits) | upstream `master` + the commits above + the release workflow of `weishaupt`: the candidate to replace `weishaupt` |
 
 The fork's `weishaupt` (`d4ececb3`) and `crc` (`492867d9`) are left as they are.
 
@@ -611,7 +611,13 @@ Differences from the text above, decided while building:
 - Targets of `fills` are active read messages only (not passive `u` messages).
 - C is a bug fix as much as a feature: in a stock ebusd a 9-byte ID can be found for the
   telegram of a 1-byte ID with the same folded bytes (and adding it reports a duplicate). The
-  unit test fails on upstream `master` and passes with the fix.
+  unit test fails on upstream `master` and passes with the fix. No released definition triggers
+  it today: upstream `ebusd-configuration` master (`9c3ed3a`), compiled and dumped by a stock
+  ebusd 26.1 (12 989 messages, IDs up to 12 bytes), has no two messages sharing a key with
+  different ID lengths under the old key (recomputed by script). So C1 is a latent bug, worth a
+  small pull request of its own, not urgent. The same dump shows that upstream's own definitions
+  already exceed the 7-byte limit, so a stock `--checkconfig` of the whole set reports "max
+  message ID length exceeded" and exits with an error today.
 - A carrier whose answer does not decode, or whose poll fails, is marked failed: its targets are
   polled directly until the carrier is answered again (e.g. seen on the bus) or the definitions
   change.
@@ -621,7 +627,9 @@ Checks:
 - Every commit of every branch builds without a warning in the changed files and passes the four
   unit test suites (`ctest`), checked with a script that stops on a build error and runs a
   freshly built `test_message`. Checks of `test_message`: 347 on upstream `master`; A1 adds 21,
-  A2 39, A3 4, C1 7, B1 12, B2 28, B4 32; 429 at the head of `weishaupt-next`. The vectors of
+  A2 40, A3 4, C1 7, B1 12, B2 28, B4 32; 430 at the head of `weishaupt-next`. Among A2's: the
+  writes of `ka BlockingTime` (register 0x0025) recorded on the bus, value 2 → `cc` and value 1 →
+  `28`, sent and matched on receipt, as literal bytes. The vectors of
   section 2.2, the Wolf write of #167, the eBUS frame CRC, the holiday date of 4.3, the memory
   carrier with a verified first byte, and every load and resolution error of 4.4 are among them.
   A first assembly of `weishaupt-next` had a unit test file broken by a merge (two functions
@@ -633,7 +641,9 @@ Checks:
   topics of the 3 and 4 single messages and no carrier topic; `read` of each single message
   answers from the cache; polls go out as the carrier telegram, then as single telegrams after
   the carrier's poll failed; `write -c fs1 HolidayStartDay 2` sends `50 23 05 dc 1b 01 02 00`
-  (checksum of the value, not of the address).
+  (checksum of the value, not of the address): `fs1 HolidayStartDay` of the test file, register
+  0x011b, covered bytes `1b 01 02 00`, `dc` also with the reference routine of
+  [ebus-protocol.md](ebus-protocol.md) (BlockingTime, register 0x0025, gives `cc` for 2).
 - Stock ebusd 26.1 loads definitions with the `crc` column and `fills` fields (same message
   count); with a 4-register carrier its `--checkconfig` fails on the ID length, the fork's
   passes.
