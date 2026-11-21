@@ -281,7 +281,7 @@ if __name__ == "__main__":
 
 class TestRenderNotice(unittest.TestCase):
     KEYS = {"VERSION": "9.9.9", "COMMIT": "abc1234", "NAME": "n", "BASE": "b", "COUNT": "1",
-            "EBUSD": "e", "LIB": "l"}
+            "EBUSD": "e", "LIB": "l", "VARIANT": ""}
 
     def test_no_provisional_sentence_when_empty(self):
         out = notice.render("one.@PROVISIONAL_SENTENCE@ Two.", {**self.KEYS, "PROVISIONAL": ""})

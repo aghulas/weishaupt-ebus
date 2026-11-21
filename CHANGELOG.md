@@ -3,6 +3,21 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 0.7.0 (2026-11-21)
+
+Composite reads: one telegram can answer several registers and update each register's own message,
+so a grouped read keeps one MQTT topic per value instead of adding a combined one under a separate
+name. Three-register carriers (the holiday start date of a room unit) are in the standard set,
+which still loads on a standard ebusd — 1 074 messages, verified on upstream ebusd 26.1.
+
+- Four-register carriers (a boiler information block on each boiler; a survey read on each room
+  unit) use message IDs longer than 7 bytes and ship in a separate extension variant
+  (`weishaupt-ebusd-config-extension-0.7.0`, 1 078 messages) that needs the fork ebusd build
+  v26.1-weishaupt.2 or the matching add-on; a standard ebusd refuses them.
+- Every message now carries a `crc` column (the register checksum), ignored by a standard ebusd.
+- Names, types and the metadata structure are unchanged; the metadata asset is unchanged in content
+  (669 messages, the carriers excluded).
+
 ## 0.6.2 (2026-11-20)
 
 Documentation only: the same definitions as 0.6.1, 1 073 messages loaded by ebusd. Changes to the

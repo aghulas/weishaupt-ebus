@@ -11,7 +11,7 @@ Kromschröder.
 room units, one of them addressed for heating circuits 1 and 2; three heating circuits. Other
 equipment may answer differently.
 
-**Your responsibility.** Reading changes nothing. Writing changes the settings of a gas heating
+@VARIANT@**Your responsibility.** Reading changes nothing. Writing changes the settings of a gas heating
 appliance: do it only if you understand the setting, note its value first, and expect no help
 from the manufacturer for an installation changed this way. When in doubt, leave settings to
 your heating installer.
