@@ -75,6 +75,13 @@ def num(s):
     return int(f) if f == int(f) else f
 
 
+def is_carrier(m):
+    """A composite-read carrier: a message at least one of whose fields fills another message
+    (attribute `fills`). Carriers are not published values, so they are kept out of the metadata
+    and the companion contract."""
+    return any("fills" in f for f in m["fields"])
+
+
 def read_tree(tree):
     """Messages of the lot files: {key: message}, key = <circuit>/<name>, in file order.
     The read and the write line of a setting are one message."""
@@ -93,6 +100,23 @@ def read_tree(tree):
             address, _, circuit = base[:-4].split(".", 2)
         with open(path, newline="", encoding="utf-8") as f:
             rows = list(csv.reader(f))
+        # Field layout is read from the header so that the optional message-level `crc` column
+        # (emitted for every message with a computed checksum) and the optional per-field `fills`
+        # column (carriers only) are handled: the first field is the `*name` column, and one field
+        # group spans from there to the end of the header; its column names give the offsets.
+        header = rows[0] if rows else []
+        fstart = next((i for i, h in enumerate(header) if h.startswith("*")), 9)
+        group = header[fstart:] or ["*name", "part", "type", "divisor/values", "range", "unit", "comment"]
+        stride = len(group)
+
+        def _off(name, default):
+            return group.index(name) if name in group else default
+        o_type = _off("type", 2)
+        o_div = _off("divisor/values", 3)
+        o_rng = _off("range", 4)
+        o_unit = _off("unit", 5)
+        o_cmt = _off("comment", stride - 1)
+        o_fills = group.index("fills") if "fills" in group else None
         for row in rows[1:]:
             if not row or row[0].startswith(("*", "#")) or len(row) < 9:
                 continue
@@ -104,25 +128,27 @@ def read_tree(tree):
             if wcrc:
                 comment = comment[len(MARKER):]
             fields = []
-            for i in range(9, len(row), 7):
-                c = (row[i:i + 7] + [""] * 7)[:7]
-                if not c[0] and not c[2]:
+            for i in range(fstart, len(row), stride):
+                c = (row[i:i + stride] + [""] * stride)[:stride]
+                if not c[0] and not c[o_type]:
                     continue
-                fld = {"name": c[0], "type": c[2]}
-                if "=" in c[3]:
-                    fld["values"] = dict(p.split("=", 1) for p in c[3].split(";"))
-                elif c[3]:
-                    fld["divisor"] = num(c[3])
-                m = RANGE_RE.match(c[4])
+                fld = {"name": c[0], "type": c[o_type]}
+                if "=" in c[o_div]:
+                    fld["values"] = dict(p.split("=", 1) for p in c[o_div].split(";"))
+                elif c[o_div]:
+                    fld["divisor"] = num(c[o_div])
+                m = RANGE_RE.match(c[o_rng])
                 if m:
                     fld["min"], fld["max"] = num(m.group(1)), num(m.group(2))
                     if m.group(3):
                         fld["step"] = num(m.group(3))
-                elif c[4]:
-                    problems.append(f"{base}: {row[3]}.{c[0]}: range '{c[4]}' not understood")
-                if c[5]:
-                    fld["unit"] = c[5]
-                fld["comment"] = c[6].strip()
+                elif c[o_rng]:
+                    problems.append(f"{base}: {row[3]}.{c[0]}: range '{c[o_rng]}' not understood")
+                if c[o_unit]:
+                    fld["unit"] = c[o_unit]
+                if o_fills is not None and c[o_fills]:
+                    fld["fills"] = c[o_fills]
+                fld["comment"] = c[o_cmt].strip()
                 fields.append(fld)
             key = f"{circuit}/{row[3]}"
             kind = row[0][0]
@@ -224,7 +250,10 @@ def group_values(groups, days):
 
 
 def resolve(side, msgs):
-    """Matches entries and messages. Returns ({key: resolved metadata}, problems)."""
+    """Matches entries and messages. Returns ({key: resolved metadata}, problems).
+    Carriers (composite reads) are not published, so they are excluded from matching and from
+    the coverage check."""
+    msgs = {k: v for k, v in msgs.items() if not is_carrier(v)}
     bad = []
     days = side.get("days", {})
     for d, label in days.items():
@@ -576,6 +605,9 @@ def main():
         sys.exit(__doc__)
     side = load(pos[1])
     msgs, lines, problems = read_tree(pos[2])
+    # Carriers (composite reads) are not published values: keep them out of the metadata and the
+    # companion contract. resolve() filters them too; this keeps assemble() and the counts aligned.
+    msgs = {k: v for k, v in msgs.items() if not is_carrier(v)}
     resolved, bad = resolve(side, msgs)
     bad = problems + bad
     name = os.path.basename(pos[1])
@@ -590,6 +622,7 @@ def main():
     for spec in opt.get("lang", []):
         lang, tree = spec.split("=", 1)
         other, _, _ = read_tree(tree)
+        other = {k: v for k, v in other.items() if not is_carrier(v)}
         if set(other) != set(msgs):
             sys.exit(f"{lang}: the tree {tree} does not hold the same messages as the English one")
         langs[lang] = other

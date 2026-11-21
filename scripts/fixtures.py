@@ -378,6 +378,9 @@ def main():
         if len(bad) > 40:
             print(f"  ... and {len(bad) - 40} more")
         sys.exit(1)
+    # Carrier readings are validated above (structure + decode), but carriers are not published
+    # values: drop them before metadata resolution, coverage and the companion asset.
+    msgs = {k: v for k, v in msgs.items() if not md.is_carrier(v)}
     resolved = {}
     if "sidecar" in opt:
         side = md.load(opt["sidecar"][0])
@@ -398,6 +401,8 @@ def main():
         return
     out = []
     for it in items:
+        if it["key"] not in resolved:  # carrier reading: validated, but not part of the asset
+            continue
         o = {k: it[k] for k in ("circuit", "message", "type", "qq", "zz", "pbsb", "master")}
         if it["slave"] is not None:
             o["slave"] = it["slave"]

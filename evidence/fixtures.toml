@@ -2059,3 +2059,14 @@ readings = [
   { message = "MixerPump", master = "70 52 00", slave = "01 00", expect = { value = "on" } },
   { message = "CirculationReturnSetTemp", master = "cc a9 04", slave = "2c 01", expect = { value = 30.0 } },
 ]
+
+# composite-reads: the HolidayStart carrier of room unit 1 reads three registers in one 50 22 and
+# decodes to the three start-date values; the grouped read is the s2-holstart row of grouped-reads.md
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "HolidayStart", master = "d9 1b 01 1c 01 1d 01", slave = "1e 00 0a 00 00 00", expect = { day = 30, month = 10, third = 0 } },
+]

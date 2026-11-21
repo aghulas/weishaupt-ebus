@@ -36,17 +36,29 @@ MARKER = "[WCRC] "
 KEY_RE = re.compile(r"""^(?:"((?:[^"\\]|\\.)*)"|'((?:[^']|'')*)'|([^#'"].*?))\s*:(?:\s+(.*))?$""")
 
 
+def comment_cols(header):
+    """From the CSV header: (message comment index, first field comment index, field stride).
+    Read from the header so the optional message-level `crc` column and the optional per-field
+    `fills` column (which shift the field groups) are handled."""
+    fstart = next((i for i, h in enumerate(header) if h.startswith("*")), 9)
+    group = header[fstart:]
+    stride = len(group) if group else 7
+    cmt = group.index("comment") if "comment" in group else stride - 1
+    return 4, fstart + cmt, stride
+
+
 def comments(path, only=None):
     """Message and field comments of one CSV file, in order; of the named messages if given."""
     out = []
     with open(path, newline="", encoding="utf-8") as f:
         rows = list(csv.reader(f))
+    mc, fc, stride = comment_cols(rows[0]) if rows else (4, 15, 7)
     for row in rows[1:]:
         if not row or row[0].startswith(("*", "#")) or len(row) < 9:
             continue
         if only is not None and row[3] not in only:
             continue
-        cells = [row[4]] + row[15::7]
+        cells = [row[mc]] + row[fc::stride]
         for c in cells:
             c = c.strip()
             if c.startswith(MARKER):
@@ -109,12 +121,13 @@ def compare(tree, other):
         if len(ra) != len(rb):
             bad.append(f"{rel}: {len(ra)} lines in English, {len(rb)} translated")
             continue
+        mc, fc, stride = comment_cols(ra[0]) if ra else (4, 15, 7)
         for n, (x, y) in enumerate(zip(ra, rb), 1):
             if x == y:
                 total += rel in lot
                 continue
             data = n > 1 and x and not x[0].startswith(("*", "#")) and len(x) >= 9
-            where = {4} | set(range(15, max(len(x), len(y)), 7)) if data else set()
+            where = {mc} | set(range(fc, max(len(x), len(y)), stride)) if data else set()
             if len(x) != len(y) or any(p != q and i not in where for i, (p, q) in enumerate(zip(x, y))):
                 bad.append(f"{rel}:{n}: differs outside the comment columns")
             elif any(x[i].startswith(MARKER) != y[i].startswith(MARKER) for i in where if i < len(x)):
