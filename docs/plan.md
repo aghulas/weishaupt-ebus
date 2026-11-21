@@ -63,6 +63,9 @@ exists, the notice states in its first lines that the definitions were checked o
    repairs — nothing on the bus). The deploy session updates the Pi from the beta to 0.12.0. Known limit, since
    v0.5.0: the Configure button opens the panel, so the options flow (bus load/writes, telegram log per ebusd)
    has no UI path — a candidate follow-up to fold into Reconfigure.*
+   *0.12.1 published 2026-11-21 (Latest): that follow-up is done — Reconfigure became a menu (ebusd/mode,
+   bus load & writes, telegram log per ebusd), the options flow kept for the API and tests, both paths sharing
+   the same helpers. The deploy session updates the Pi from the beta straight to 0.12.1.*
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
    `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. Releases are no longer flagged pre-release from
    0.6.1 on (owner, 2026-11-20, « Oui, dès la 0.6.1 »): the stable companion requires them, the
@@ -83,7 +86,7 @@ installation with separate room units, and upstream merges.
 | `aghulas/ebusd-configuration` | `weishaupt` `8c7ec27` (`weishaupt-0.6.1`, `weishaupt-0.6.2`: same definitions, notice only) | 130 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions (1 073 messages loaded, 669 in metadata, 92 writable settings, 252 writable program slots), `src/fr.yaml`, `metadata/weishaupt.toml`, library pin |
 | `aghulas/ebus-typespec` | `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc` and `@wcrc` decorators |
 | `aghulas/ebusd` | `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum |
-| `aghulas/ha-weishaupt` | `v0.12.0` (Latest, 2026-11-21: several ebusd per entry, follow/pin chosen in Reconfigure, build probed at every set-up; trialled read-only on site). `v0.11.0`, `v0.12.0b1` kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
+| `aghulas/ha-weishaupt` | `v0.12.1` (Latest, 2026-11-21: Reconfigure is a menu — ebusd/mode, bus load & writes, telegram log — giving the options a UI path the panel's Configure button shadowed since v0.5.0). `v0.12.0`, `v0.11.0`, `v0.12.0b1` kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
