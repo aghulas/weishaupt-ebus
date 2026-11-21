@@ -83,7 +83,7 @@ installation with separate room units, and upstream merges.
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` `d1797f6` (`weishaupt-0.6.1`, `weishaupt-0.6.2`: same definitions, notice only) | 131 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions (1 074 messages loaded incl. the first composite-read carrier `fs1 HolidayStart`, 669 in metadata — carriers excluded, 92 writable settings, 252 writable program slots), `src/fr.yaml`, `metadata/weishaupt.toml`, library pin on `v0.31.0-weishaupt.2` |
+| `aghulas/ebusd-configuration` | `weishaupt` `f69ce15` (`weishaupt-0.6.1`, `weishaupt-0.6.2`: same definitions, notice only) | 132 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions — **standard set** 1 074 messages (loads on a stock ebusd, incl. the 3-register carrier `fs1 HolidayStart`), **extension set** (`src/main-ext.tsp`, `src/wolf/*.ext.tsp`) 1 078 = +4 four-register carriers (long IDs, fork build only); 669 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml`, library pin on `v0.31.0-weishaupt.2` |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
 | `aghulas/ha-weishaupt` | `v0.12.1` (Latest, 2026-11-21: Reconfigure is a menu — ebusd/mode, bus load & writes, telegram log — giving the options a UI path the panel's Configure button shadowed since v0.5.0). `v0.12.0`, `v0.11.0`, `v0.12.0b1` kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
@@ -113,23 +113,28 @@ from `weishaupt` when the maintainer responds.
   needed for these devices), the companion's write requirement (1.1, guard change), the upstream
   write lots (no dependency on john30/ebusd#1825). Before changing the notice: one end-to-end write
   with the stock add-on on a room unit and a heating module.
-- **ebusd extensions (option 2 of `docs/design-register-layer.md`): B landed, C seeded.**
+- **ebusd extensions (option 2 of `docs/design-register-layer.md`): B and C landed.**
   `docs/ebusd-extension-spec.md`, approved 2026-11-20: computed checksum bytes (attribute `crc`,
   `[WCRC]` kept as alias), message IDs longer than 7 bytes (feature C), composite reads (field
   attribute `fills`, feature B). *Published (2026-11-21, owner's word):* ebusd
   `v26.1-weishaupt.2` (same binary as rc1), the prod add-on bumped, and the TypeSpec library
   `v0.31.0-weishaupt.2` (`@fills` + message attributes). *B landed on `weishaupt` (2026-11-21):*
-  the first composite-read carrier `fs1 HolidayStart` (3 registers, 7-byte ID) with evidence
-  (`evidence/composite-reads.md`) and a fixture; library repinned, `scripts/check.sh` on
-  `v26.1-weishaupt.2`; the workbench scripts (`metadata.py`, `i18n-keys.py`, `fixtures.py`) made
-  header-aware for the new `crc`/`fills` columns; carriers excluded from `metadata/weishaupt.toml`
-  and the companion contract (detected via `fills`). Guardrail held: the full tree loads on a
-  standard ebusd (upstream 26.1 and `v26.1-weishaupt.1`) and the extension build, 1074 messages
-  each. **Remaining for C (full deployment):** the 4-register carrier `BoilerInfoBlock` (9-byte
-  ID, needs feature C) is kept in `out/composite-B-done-C-seeded/` — not committed, because a
-  stock ebusd rejects it (`max message ID length exceeded`), which would break the "reads work on
-  a stock ebusd" guarantee until the add-on/check run the extension build everywhere. Also pending:
-  upstream pull requests (spec, "Implementation").
+  the composite-read carrier `fs1 HolidayStart` (3 registers, 7-byte ID), in the standard set;
+  library repinned, `scripts/check.sh` on `v26.1-weishaupt.2`; the workbench scripts
+  (`metadata.py`, `i18n-keys.py`, `fixtures.py`) made header-aware for the new `crc`/`fills`
+  columns; carriers excluded from `metadata/weishaupt.toml` and the companion contract (detected
+  via `fills`). *C landed on `weishaupt` (2026-11-21):* the four 4-register carriers (9-byte IDs)
+  in an **extension-only variant** (`src/main-ext.tsp` + `src/wolf/*.ext.tsp`, option 1 of
+  `out/.../C-isolation-proposal`), kept out of the standard set so it still loads on a stock
+  ebusd: `BoilerInfoBlock` on `bc1`/`bc2` (boiler info values) and `RegisterSurvey` on
+  `fs2`/`fs3` (a survey grouping, named honestly). `check.sh` now compiles both entry points and
+  checkconfigs the **standard set on a standard ebusd** (`v26.1-weishaupt.1`, rejects long IDs →
+  1074) and the **extension set on the fork build** (`v26.1-weishaupt.2` → 1078). Guarantee
+  confirmed: the standard set loads on upstream ebusd 26.1 and `v26.1-weishaupt.1` (1074); all
+  four carriers distribute to their targets on the extension build. Evidence + fixtures for all
+  four (`evidence/composite-reads.md`, `evidence/fixtures.toml`). **Pending (separate steps):** the
+  release form (extension archives from `release.sh`, to be submitted to the owner), the extension
+  add-on wiring, and the upstream pull requests (spec, "Implementation").
 - *Done (2026-11-20):* `0.6.0` and `ha-weishaupt` v0.10.0 run on the test installation: nine files
   loaded, no repair, the same number of entities, `LegionellaStartTime` read `08:30`, `DHWExcessTemp`
   10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.

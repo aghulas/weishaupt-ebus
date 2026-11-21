@@ -2070,3 +2070,41 @@ where = "row"
 readings = [
   { message = "HolidayStart", master = "d9 1b 01 1c 01 1d 01", slave = "1e 00 0a 00 00 00", expect = { day = 30, month = 10, third = 0 } },
 ]
+
+# composite-reads (feature C): the four-register carriers, extension variant only (9-byte IDs).
+# Grouped reads are the s1-4mixed rows of grouped-reads.md; bytes in evidence/composite-reads.md.
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "BoilerInfoBlock", master = "46 0d 00 16 00 45 01 bc 02", slave = "58 02 12 02 30 02 2c 00", expect = { supply = 60.0, returntemp = 53.0, flue = 56.0, servicehours = 44 } },
+]
+
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "BoilerInfoBlock", master = "46 0d 00 16 00 45 01 bc 02", slave = "26 02 12 02 f4 01 29 00", expect = { supply = 55.0, returntemp = 53.0, flue = 50.0, servicehours = 41 } },
+]
+
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "RegisterSurvey", master = "91 11 00 73 09 0c 0a 3d 01", slave = "1c 01 03 00 72 00 00 00", expect = { room = 28.4, circuittype = 3, outsideweighted = 11.4, holidaylevel = 0 } },
+]
+
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "RegisterSurvey", master = "91 11 00 73 09 0c 0a 3d 01", slave = "20 01 03 00 72 00 00 00", expect = { room = 28.8, circuittype = 3, outsideweighted = 11.4, holidaylevel = 0 } },
+]

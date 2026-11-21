@@ -97,7 +97,11 @@ def read_tree(tree):
         if base == "broadcast.csv":
             circuit, address = "broadcast", "fe"
         else:
-            address, _, circuit = base[:-4].split(".", 2)
+            # ebusd takes the circuit as the component after the scan identifier and ignores any
+            # further suffix, so ZZ.w.<circuit>.ext.csv (extension-only carriers) is circuit
+            # <circuit>, the same as ZZ.w.<circuit>.csv.
+            parts = base[:-4].split(".")
+            address, circuit = parts[0], parts[2]
         with open(path, newline="", encoding="utf-8") as f:
             rows = list(csv.reader(f))
         # Field layout is read from the header so that the optional message-level `crc` column

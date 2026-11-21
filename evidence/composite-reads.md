@@ -52,29 +52,37 @@ r,,,HolidayStart,...,5022,d91b011c011d01,crc8;poly=5c,day,,UIN,,,,HolidayStartDa
 So the carrier reads three registers in one telegram on the extension build, each value keeps one
 name and one MQTT topic, and a stock ebusd ignores `fills` and reads the registers one by one.
 
-## Four registers in one telegram: `BoilerInfoBlock` (circuit `bc1`, boiler `0x08`) — feature C seed
+## Four-register carriers (feature C): message IDs longer than 7 bytes
 
-A four-register carrier needs a message ID longer than 7 bytes (9 ID bytes here), which is feature
-C. It reads four boiler information values in one `50 22` and fills `SupplyTemp` (register `0x000d`),
-`ReturnTemp` (`0x0016`), `FlueGasTemp` (`0x0145`) and `BurnerServiceHours` (`0x02bc`).
+A four-register `50 22` carrier has a 9-byte ID, which a stock ebusd rejects (`max message ID
+length exceeded`). So these carriers are **not** in the standard published set: they are compiled
+only into the extension variant (`src/main-ext.tsp`, files `*.ext.tsp`), loaded by a fork ebusd
+that supports long IDs. The standard set stays loadable by a stock ebusd (verified: it loads on
+upstream ebusd 26.1 and `v26.1-weishaupt.1`, which both reject long IDs). Each carrier is diagnostic
+and not published; its fields are typed to the targets where it reads naturally (the temperatures
+as `otemp10`), the rest kept `UIN` (two bytes, the width each target reads).
 
-- Definition: a read message, PB SB `5022`, ID `460d0016004501bc02` (CRC `46` over the eight
-  address bytes, poly `0x5c`), four `UIN` fields, each `fills` naming its target in circuit `bc1`.
-  The fields are kept `UIN` (two bytes, the width each target reads); the carrier is not published,
-  so its own decoding is diagnostic only — each target applies its own type.
-- Bus basis: the `08` row `s1-4mixed` of [grouped-reads.md](grouped-reads.md) (read-only).
+Bus basis: the `s1-4mixed` rows of [grouped-reads.md](grouped-reads.md) (read-only, 2026-11-20).
+Message bytes as the carrier sends/receives them:
 
-  | message | master (request data) | slave (answer data) |
-  |---|---|---|
-  | BoilerInfoBlock | 46 0d 00 16 00 45 01 bc 02 | 58 02 12 02 30 02 2c 00 |
+| carrier | circuit (ZZ) | master (request data) | slave (answer data) | registers → targets |
+|---|---|---|---|---|
+| BoilerInfoBlock | bc1 (08) | 46 0d 00 16 00 45 01 bc 02 | 58 02 12 02 30 02 2c 00 | 000d SupplyTemp, 0016 ReturnTemp, 0145 FlueGasTemp, 02bc BurnerServiceHours |
+| BoilerInfoBlock | bc2 (18) | 46 0d 00 16 00 45 01 bc 02 | 26 02 12 02 f4 01 29 00 | same four |
+| RegisterSurvey | fs2 (75) | 91 11 00 73 09 0c 0a 3d 01 | 1c 01 03 00 72 00 00 00 | 0011 RoomTemp, 0973 HeatingCircuitType, 0a0c OutsideWeightedTemp, 013d HolidayTempLevel |
+| RegisterSurvey | fs3 (f5) | 91 11 00 73 09 0c 0a 3d 01 | 20 01 03 00 72 00 00 00 | same four |
 
-- `ebusd --checkconfig` on the whole `wolf` lot: the extension build (`v26.1-weishaupt.2-rc1`)
-  loads it (1075 messages, exit 0); the stock build (`v26.1-weishaupt.1`) **rejects** it with
-  `max message ID length exceeded` (exit 1). So a 4-register carrier only enters the published
-  definitions once the check runs the fork build (spec section 7, choice 6).
-- Extension build, carrier telegram injected (no bus): distributes —
-  `filled bc1 SupplyTemp from BoilerInfoBlock: 60.0`, `ReturnTemp 53.0`, `FlueGasTemp 56.0`,
-  `BurnerServiceHours 440` — each target decoded with its own type and scaling.
+`BoilerInfoBlock` groups four boiler information values — a coherent read. `RegisterSurvey` on the
+room units (`fs2`, `fs3`) is **not** a functional block: those four registers merely happened to be
+read together in one `50 22` during the register survey; the name says so, and the carrier exists
+only to spare three extra telegrams, each value still keeping its own message.
 
-This seeds feature C: the four-register carrier is accepted by the fork's `--checkconfig` and
-distributes to its four targets, while a stock `--checkconfig` refuses it on the ID length.
+Proof (local, read-only, 2026-11-21):
+- `ebusd --checkconfig`: the standard set loads on `v26.1-weishaupt.1` (1074 messages) and on
+  upstream ebusd 26.1; the extension set loads on `v26.1-weishaupt.2` (1078 = 1074 + the four
+  carriers) and is **rejected** on `v26.1-weishaupt.1` (`max message ID length exceeded`), which is
+  why it is kept out of the standard set.
+- Extension build, each carrier telegram injected (no bus): all four distribute to their targets,
+  each decoded with its own type — e.g. `filled bc1 SupplyTemp from BoilerInfoBlock: 60.0`,
+  `filled bc2 FlueGasTemp from BoilerInfoBlock: 50.0`, `filled fs2 HeatingCircuitType from
+  RegisterSurvey: Radiator70`, `filled fs3 HolidayTempLevel from RegisterSurvey: Antifreeze`.

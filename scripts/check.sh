@@ -42,6 +42,10 @@ CFG="${CFG_REPO:-$ROOT/repos/ebusd-configuration}"
 LOT="${LOT_DIR:-wolf}"
 OUT="$ROOT/out"
 RELEASE="${EBUSD_RELEASE:-v26.1-weishaupt.2}"
+# The build that checks the standard set: a standard ebusd that rejects message IDs longer than
+# 7 bytes. The standard set must load on it (the "reads work with a standard ebusd" guarantee);
+# the long-ID composite-read carriers of the extension set are checked only with $RELEASE.
+STD_RELEASE="${EBUSD_STD_RELEASE:-v26.1-weishaupt.1}"
 FORK="${EBUSD_FORK:-aghulas/ebusd}"
 WORKBENCH="${CHECK_REPO:-aghulas/weishaupt-ebus}"
 only="${1:-}"
@@ -193,21 +197,45 @@ echo "== 3/7 format"
 if npx tsp format --check "src/$LOT/*.tsp" >"$OUT/format.log" 2>&1; then echo "ok"
 else echo "FAIL: $(grep -oE '[0-9]+ need format' "$OUT/format.log" | head -1), see out/format.log (fix: npx tsp format \"src/$LOT/*.tsp\"; on Windows check core.autocrlf=false first)"; fail=1; fi
 
+# The standard entry (main.tsp) stays loadable by a stock ebusd. When src/main-ext.tsp exists it
+# adds the long-ID composite-read carriers for the fork build: that is the "extension set", and it
+# is the one steps 6-7 use (it holds the carriers that fixtures check). The standard set is always
+# compiled too, and checkconfig'd with a standard ebusd, to hold the guarantee.
+ENTRY=src/main.tsp
+[ -f src/main-ext.tsp ] && ENTRY=src/main-ext.tsp
+compile() {  # <entry> <output dir> <log>
+  npx tsp compile "$1" --emit @ebusd/ebus-typespec \
+    --option @ebusd/ebus-typespec.withMinMax=true --output-dir "$2" >"$3" 2>&1 \
+    && ! grep -qE '^(warning|error) |Found [0-9]+ (warning|error)' "$3"
+}
 echo "== 4/7 compile"
-rm -rf "$OUT/csv"
-if npx tsp compile src/main.tsp --emit @ebusd/ebus-typespec \
-     --option @ebusd/ebus-typespec.withMinMax=true --output-dir "$OUT/csv" >"$OUT/compile.log" 2>&1 \
-   && ! grep -qE '^(warning|error) |Found [0-9]+ (warning|error)' "$OUT/compile.log"; then echo "ok"
-else echo "FAIL: see out/compile.log"; tail -5 "$OUT/compile.log"; fail=1; fi
+rm -rf "$OUT/csv" "$OUT/csv-std"
+ok4=1
+compile src/main.tsp "$OUT/csv-std" "$OUT/compile-std.log" \
+  || { echo "FAIL (standard set): see out/compile-std.log"; tail -5 "$OUT/compile-std.log"; fail=1; ok4=0; }
+if [ "$ENTRY" = src/main-ext.tsp ]; then
+  compile "$ENTRY" "$OUT/csv" "$OUT/compile.log" \
+    || { echo "FAIL (extension set): see out/compile.log"; tail -5 "$OUT/compile.log"; fail=1; ok4=0; }
+else
+  rm -rf "$OUT/csv" && cp -r "$OUT/csv-std" "$OUT/csv"
+fi
+[ "$ok4" = 1 ] && echo "ok"
 
 csv="$OUT/csv/@ebusd/ebus-typespec"
+csvstd="$OUT/csv-std/@ebusd/ebus-typespec"
 mode="${CHECKCONFIG:-}"
 [ -n "$mode" ] || { docker info >/dev/null 2>&1 && mode=local || mode=actions; }
-echo "== 5/7 ebusd --checkconfig ($FORK $RELEASE, $mode)"
+echo "== 5/7 ebusd --checkconfig (standard set on $STD_RELEASE, extension set on $RELEASE, $mode)"
 count=""
+# Guarantee: the standard set must load on a standard ebusd that rejects long IDs.
+if ( RELEASE="$STD_RELEASE"; checkconfig "$csvstd" checkconfig-std ); then
+  scount=$(grep -o 'found messages: [0-9]*' "$OUT/checkconfig-std.log" | tail -1)
+  echo "standard set on $STD_RELEASE: ${scount:-ok}"
+else echo "FAIL: the standard set must load on a standard ebusd — see out/checkconfig-std.log"; tail -5 "$OUT/checkconfig-std.log" 2>/dev/null; fail=1; fi
+# The extension set (standard set + long-ID carriers) on the extension build.
 if checkconfig "$csv" checkconfig; then
   count=$(grep -o 'found messages: [0-9]*' "$OUT/checkconfig.log" | tail -1)
-  echo "${count:-ok}"
+  echo "extension set on $RELEASE: ${count:-ok}"
 else echo "FAIL: see out/checkconfig.log"; tail -5 "$OUT/checkconfig.log" 2>/dev/null; fail=1; fi
 
 echo "== 6/7 translations"
@@ -224,7 +252,7 @@ for y in src/??.yaml; do
   rep=$(python3 "$ROOT/scripts/i18n-keys.py" "$csv" check "$y" $strict) || { echo "$rep"; fail=1; continue; }
   echo "$rep"
   case "$rep" in *" keys, 0 for the "*) continue ;; esac
-  if ! { npx tsp compile src/main.tsp --emit @ebusd/ebus-typespec \
+  if ! { npx tsp compile "$ENTRY" --emit @ebusd/ebus-typespec \
            --option @ebusd/ebus-typespec.withMinMax=true \
            --option "@ebusd/ebus-typespec.translations=$y" --output-dir "$OUT/csv.$lang" >"$OUT/compile.$lang.log" 2>&1 \
          && ! grep -qE '^(warning|error) |Found [0-9]+ (warning|error)' "$OUT/compile.$lang.log"; }; then
