@@ -54,6 +54,10 @@ exists, the notice states in its first lines that the definitions were checked o
    paper, without a heating system.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
    of a shared program), then request HACS default store on the owner's word.
+   *0.12.0b1 (pre-release, 2026-11-21): choice of the ebusd (`out/companion-ebusd-choice-proposal.md`,
+   approved as recommended). Next: the on-site read-only checks listed in
+   `out/ha-weishaupt-0.12.0-release-notes.md`, by the deploy session on the owner's word in its window,
+   then 0.12.0.*
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
    `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. Releases are no longer flagged pre-release from
    0.6.1 on (owner, 2026-11-20, « Oui, dès la 0.6.1 »): the stable companion requires them, the
@@ -74,7 +78,7 @@ installation with separate room units, and upstream merges.
 | `aghulas/ebusd-configuration` | `weishaupt` `8c7ec27` (`weishaupt-0.6.1`, `weishaupt-0.6.2`: same definitions, notice only) | 130 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions (1 073 messages loaded, 669 in metadata, 92 writable settings, 252 writable program slots), `src/fr.yaml`, `metadata/weishaupt.toml`, library pin |
 | `aghulas/ebus-typespec` | `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc` and `@wcrc` decorators |
 | `aghulas/ebusd` | `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum |
-| `aghulas/ha-weishaupt` | `v0.10.2` (Latest) | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
+| `aghulas/ha-weishaupt` | `v0.11.0` (Latest), `v0.12.0b1` (pre-release, 2026-11-21: several ebusd per entry, follow or pin, build probed at every set-up; not yet tried on site) | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
