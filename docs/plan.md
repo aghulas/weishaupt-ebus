@@ -108,6 +108,30 @@ computed checksum, and that the `1.0.0` metadata fields behave as intended. Logg
 Across the four: write path confirmed on **three device types** (room unit 35 with shared store,
 system manager 15, heating module 51) and both risk classes. Nothing left applied; Writes off.
 
+## `weishaupt-1.3.0` — landed on `weishaupt`, ready to release
+
+Landed on `weishaupt` (tip `7462afb`), fork-only, nothing pushed or upstream. From today's on-site
+1.x test series (`out/ha-deploy-log.md`, 2026-11-22, items 1–4). `scripts/integrate.sh` green end
+to end (2026-11-22, Docker): `ebusd --checkconfig` 1 099 messages on both `v26.1-weishaupt.1`
+(stock) and `v26.1-weishaupt.2`; translations fr/de 1 099; metadata 687 messages / 210 entries;
+fixtures 1 025 readings of 683 messages decoded by `v26.1-weishaupt.2`.
+
+- `b24a3b5` — `FloorDryingTemp` / `RoomThermostatTemp` (`13 0a` / `1d 0a`) re-added read-only as
+  16-bit (`otemp10`) on `fs1` and `em2`: raw reads on `35` and `51` answered `02 0080`
+  (`0x8000` = sensor not connected), settling the width against the dropped #717 one-byte typing
+  (`evidence/room-thermostat-floor-drying.md`).
+- `7462afb` — `75.w.fs2` heating program 3 documented shared with `35.w.fs1` (write on 35, read on
+  75 within 3 s), like programs 1 and 2; its metadata entry merged into the shared
+  heating-program group (`evidence/room-units-shared-store.md`, section 5).
+
+Evidence-only, no definition change, from the same series (folded into
+`evidence/settings-writes.md`): `DeCoupleMinTemp` write path confirmed (writable from `ff`,
+regulation two-screen confirmation, 0–50 bound enforced; `DeCoupleMaxTemp` stays read-only) and
+`copy-in-use` shown independent in both directions (the `open` marker kept).
+
+**Next step — release.** `weishaupt-1.3.0` is ready to prepare (`scripts/release.sh 1.3.0`) and
+publish on the owner's word (rule 8). Nothing pushed or tagged.
+
 ## `weishaupt-1.1.0` — landed on `weishaupt`, ready to release
 
 Landed on `weishaupt` (tip `2e9c0bc`), fork-only, nothing pushed or upstream. `scripts/integrate.sh`
@@ -132,16 +156,19 @@ and compatible.
 
 ### Deferred (compatible 1.x, not in 1.1.0)
 
-- `FloorDryingTemp` `13 0a` / `RoomThermostatTemp` `1d 0a` suspected 16-bit typing — needs a raw read
-  (temp defs on the Pi ebusd + reload, or the next service-tool pass).
+- *Done 1.3.0:* `FloorDryingTemp` `13 0a` / `RoomThermostatTemp` `1d 0a` re-added read-only as 16-bit
+  (`otemp10`): raw reads on room unit 35 and module 51 answered `02 0080` (0x8000, sensor not
+  connected), settling the width against the former #717 one-byte typing.
 - Program selector `12 01` values 12/13 — not reachable through the companion / Pi ebusd (register
   undefined and unpolled, no entity); owner action via the service tool.
-- `e6fd` de-couple maximum lower value — `DeCoupleMaxTemp` is read-only in the companion (no `[WCRC]`);
-  a raw `ff` write via the service tool / operator.
-- `copy-in-use`: 2026-11-22 showed the unit (`fs1`/35) and module (`em1`/50) copies are independent and
-  the room-unit entity writes the unit copy; which copy the regulation follows is still open (a
-  disambiguating write, unit → a value ≠ module, would settle propagation). `75.w.fs2` heating
-  program 3 also still unproven.
+- `e6fd` de-couple maximum lower value — `DeCoupleMaxTemp` stays read-only (no `[WCRC]`); a raw `ff`
+  write via the service tool / operator. (`DeCoupleMinTemp` `e7fd` confirmed writable from `ff` with
+  its 0–50 bound enforced, 1.3.0.)
+- *Done 1.3.0:* `75.w.fs2` heating program 3 shown shared with `35.w.fs1` (write on 35, read on 75
+  within 3 s) and documented read-only, like programs 1 and 2. `copy-in-use`: 2026-11-22 the
+  disambiguating write showed the unit (`fs1`/35) and module (`em1`/50) copies independent in both
+  directions; which copy the regulation itself follows is still open, so the metadata
+  `open = ["copy-in-use"]` marker stays.
 - **D — vendor service-tool pass: done 2026-11-22** (display only, both boilers; the tool was
   left disconnected). Landed on `weishaupt` as `4dac6af`, not pushed, not released:
   - *Boiler heating-specialist parameters*: `InstallerParameters1`–`5` on `bc1`, `bc2`, five

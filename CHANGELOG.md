@@ -3,6 +3,31 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 1.3.0 (2026-11-22)
+
+Compatible additions on top of 1.2.0 (no breaking changes): two re-added read-only messages and a
+sharing clarification. 1 099 messages, 687 in metadata; loaded on both `v26.1-weishaupt.1` (stock)
+and `v26.1-weishaupt.2`.
+
+- **`FloorDryingTemp` / `RoomThermostatTemp` (re-added reads):** the floor-drying (`13 0a`) and
+  room-thermostat (`1d 0a`) temperatures on the room unit `fs1` and the heating module `em2`,
+  read-only, 16-bit (`otemp10`). Raw reads on `35` and `51` answered `02 0080` (`0x8000`, the
+  no-value code a device returns when the sensor is not connected), settling the width against the
+  former #717 one-byte typing that had caused them to be dropped
+  (`evidence/room-thermostat-floor-drying.md`).
+- **`75.w.fs2` heating program 3 shared:** shown shared with `35.w.fs1` the same way as programs 1
+  and 2 (a slot written to `35` was read at `75` within 3 s) and documented read-only, written
+  through `35.w.fs1` (`evidence/room-units-shared-store.md`, section 5). All five `fs2` program
+  stores (heating 1/2/3, hot water, circulation) now carry the `shared_with` marker.
+- **`DeCoupleMinTemp` write path confirmed (no definition change):** writable from `ff`, a
+  regulation-class setting (two-screen confirmation), with its 0–50 °C bound enforced before the
+  bus; `DeCoupleMaxTemp` stays read-only (`evidence/settings-writes.md`).
+- **`copy-in-use` refined (no definition change):** a disambiguating write showed the room-unit and
+  heating-module copies of the shared setting registers independent in both directions; the
+  `open = ["copy-in-use"]` marker stays until the copy the regulation follows is identified.
+- **Fixtures:** `weishaupt-fixtures-1.3.0.json` — 1 025 readings of 683 messages, verified against
+  `v26.1-weishaupt.2`.
+
 ## 1.2.0 (2026-11-22)
 
 Compatible additions on top of 1.1.0 (no breaking changes): ten read-only messages. 1 095
