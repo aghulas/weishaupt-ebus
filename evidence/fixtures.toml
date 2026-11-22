@@ -1454,6 +1454,18 @@ readings = [
   { message = "Operation", master = "d1 03 b2 03 d5 01 ed", slave = "00 19 5f 33", expect = { firstbyte = 0, load = 25, ionisation = 9.5, pumpspeed = 51 } },
 ]
 
+# boiler-firing-values: second boiler (bc2) fan, idle then a heating-mode fire (ignition, firing)
+[[block]]
+evidence = "boiler-firing-values"
+date = "2026-11-22"
+circuit = "bc2"
+where = "text"
+readings = [
+  { message = "FanOperation", master = "56 03 de 01 77 01 7e", slave = "00 00 00 00", expect = { firstbyte = 0, fanspeedset = 0, fanspeedactual = 0, fanpwm = 0 } },
+  { message = "FanOperation", master = "56 03 de 01 77 01 7e", slave = "00 28 22 35", expect = { firstbyte = 0, fanspeedset = 40, fanspeedactual = 34, fanpwm = 53 } },
+  { message = "FanOperation", master = "56 03 de 01 77 01 7e", slave = "00 17 17 1b", expect = { firstbyte = 0, fanspeedset = 23, fanspeedactual = 23, fanpwm = 27 } },
+]
+
 # bc-fault-counters: the seven requests as written
 [[block]]
 evidence = "bc-fault-counters"
