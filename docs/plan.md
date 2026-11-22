@@ -148,9 +148,9 @@ and compatible.
     read-only memory reads (the tool's own telegrams), 17 fields: P12, P18, P30, P31, P33, P35–P38,
     P41, P42, P44–P46, P48, P50, P70 (`evidence/bc-installer-parameters.md`). Left out, with the
     reason in the record: P20, P34 (display 0), P23, P32, P40, P43, P47, P49, P51, P71 (no byte
-    established), P10, P11, P13–P17 (option bytes). **For the owner:** the new menu "Heating
-    specialist parameters" / « Paramètres chauffagiste », the field labels and the French strings
-    were written without being put to the owner first; the first read of the five telegrams from
+    established), P10, P11, P13–P17 (option bytes). The new menu "Heating specialist parameters" / « Paramètres chauffagiste »,
+    the field labels and the French strings were accepted by the owner on 2026-11-22
+    (« Accept, prepare 1.2.0 »). Still to look at: the first read of the five telegrams from
     ebusd's own address is to be looked at when a release with them is deployed.
   - *Single-source register-survey candidates*: every candidate with two sources was already
     defined (1.0.0, 1.1.0). The rest share their value with a neighbour on the same screen, so a
@@ -160,8 +160,10 @@ and compatible.
     system, no definition (`evidence/master-00-slave-05.md`). Notice "Known limits" updated for
     the next release.
   `scripts/integrate.sh` green (2026-11-22): 1 095 messages on both ebusd builds, 683 in
-  metadata / 209 entries, 1 021 fixture readings of 679 messages. A `weishaupt-1.2.0` (compatible:
-  ten read-only messages) can be cut on the owner's word once the labels are accepted.
+  metadata / 209 entries, 1 021 fixture readings of 679 messages. **`weishaupt-1.2.0` prepared
+  locally** (2026-11-22, `scripts/release.sh 1.2.0`, archives and assets under `out/release/`,
+  schemas valid, `CHANGELOG.md` and the notice updated). Next, on the owner's word (rule 8): push
+  `weishaupt` and the workbench, tag both `weishaupt-1.2.0`, publish, re-download and verify.
 - **E — upstream, in parallel** (owner's word): follow-ups / reviews of #717, #1825, #8.
 
 ## Current state
