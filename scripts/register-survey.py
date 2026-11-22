@@ -53,25 +53,27 @@ def defined(csvdir, zz):
     regs = set()
     files = [FILES[zz]] + (["50.w.em1"] if zz == "15" else [])  # 50 is the same device as 15
     for name in files:
-        for row in csv.reader(open(os.path.join(csvdir, name + ".csv"), encoding="utf-8")):
-            if len(row) > 8 and row[7] == "5022" and len(row[8]) == 6:
-                regs.add(int(row[8][4:6] + row[8][2:4], 16))
+        with open(os.path.join(csvdir, name + ".csv"), encoding="utf-8") as fh:
+            for row in csv.reader(fh):
+                if len(row) > 8 and row[7] == "5022" and len(row[8]) == 6:
+                    regs.add(int(row[8][4:6] + row[8][2:4], 16))
     return regs
 
 
 def catalogue_extra(path):
     """Registers of the vendor-software catalogue on the installation, outside the pass-1 ranges."""
     out = {}
-    for c in csv.DictReader(open(path, encoding="utf-8")):
-        if c["access"] != "register" or c["status"] != "on-installation" or not c["register"].isdigit():
-            continue
-        if c["read_at"].startswith("address"):
-            continue  # read at a master address, not a slave: not a 50 22 register of a device
-        typ = ("manager" if c["device"].startswith("system manager") else
-               "module" if c["read_at"] == "module" else "room")
-        reg = int(c["register"])
-        if not any(a <= reg < b for a, b in RANGES[typ]):
-            out.setdefault(typ, set()).add(reg)
+    with open(path, encoding="utf-8") as fh:
+        for c in csv.DictReader(fh):
+            if c["access"] != "register" or c["status"] != "on-installation" or not c["register"].isdigit():
+                continue
+            if c["read_at"].startswith("address"):
+                continue  # read at a master address, not a slave: not a 50 22 register of a device
+            typ = ("manager" if c["device"].startswith("system manager") else
+                   "module" if c["read_at"] == "module" else "room")
+            reg = int(c["register"])
+            if not any(a <= reg < b for a, b in RANGES[typ]):
+                out.setdefault(typ, set()).add(reg)
     return out
 
 

@@ -73,10 +73,10 @@ exists, the notice states in its first lines that the definitions were checked o
    update is the only open item — blocked on the owner accepting the Marketplace one-time warning in HA,
    after which the deploy session finishes it.*
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
-   `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. Releases are no longer flagged pre-release from
-   0.6.1 on (owner, 2026-11-20, « Oui, dès la 0.6.1 »): the stable companion requires them, the
-   names are frozen and 0.6.0 runs on the installation. Every notice still says in its first
-   lines that the definitions were checked on one installation.
+   `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. *Prepared 2026-11-22* (0.8.0 + `ha-weishaupt`
+   `v0.13.0` validated live on site; 668/668 readable messages covered by fixtures; awaiting owner's
+   word to push and publish). Every notice still says in its first lines that the definitions were
+   checked on one installation.
 
 Out of 1.0 (compatible additions for 1.x): boiler installer parameters P10–P71
 (`docs/boiler-parameters-proposal.md`), remaining register-survey candidates

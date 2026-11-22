@@ -3,6 +3,20 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 1.0.0 (2026-11-22)
+
+**First stable release.** Message names, field names, types, and the companion metadata / fixtures
+JSON Schemas (schema 1 and schema 2) are stable; breaking changes require a new major version.
+
+- **Definitions (1 081 messages, 669 in metadata):** identical to `0.8.0`, validated live on the
+  test installation with `v26.1-weishaupt.2` and `ha-weishaupt` `v0.13.0` (all eight 3-register
+  composite-read carriers verified distributing to their single-register targets on the bus).
+- **100% readable fixture coverage:** 1 008 bus-captured readings covering all 668 readable
+  messages across all 9 devices (`evidence/remaining-reads.md`, `evidence/fixtures.toml`); only
+  the write-only `broadcast/Datetime` has no read fixture.
+- **Installation notice (`docs/release-readme.md`):** updated *Known limits* to reflect that
+  `75.w.fs2` `HCProgram2`, `DHWProgram` and `CircProgram` are proven shared with `35.w.fs1`.
+
 ## 0.8.0 (2026-11-22)
 
 Unified single CSV tree and completed metadata contract (schema 1).

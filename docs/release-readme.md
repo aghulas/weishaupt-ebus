@@ -242,11 +242,11 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
   values are then decoded with another manufacturer's definitions. `ebusctl info` shows which file
   each address got.
 - **Room unit 2 (`75.w.fs2`).** On the test installation one room unit is addressed for circuits
-  1 and 2 and answers at `35` and `75`. `75` answers heating program 1 and the setback and frost
-  setpoints from the store of `35`: they are read only in `75.w.fs2` and written through
-  `35.w.fs1`. Its heating programs 2 and 3 and its hot-water and circulation programs are read
-  only too; whether they are shared the same way is not established. A room unit at `75`
-  addressed for circuit 2 alone may keep its own.
+  1 and 2 and answers at `35` and `75`. `75` answers heating programs 1 and 2, the stored
+  hot-water and circulation programs, and the setback and frost setpoints from the store of `35`:
+  they are read only in `75.w.fs2` and written through `35.w.fs1`. Heating program 3 is read only
+  too; whether it is shared the same way is not established. A room unit at `75` addressed for
+  circuit 2 alone may keep its own.
 - **Two copies of each circuit setting.** A room unit and its heating module answer the same
   setting registers, sometimes with different values; which copy the regulation applies is not
   established. A change of one copy may show no effect on the heating.
@@ -337,13 +337,14 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 The history of every release is in
 [`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- Documentation only: the same definitions as 0.6.1 (CSV, metadata and fixtures alike, @COUNT@
-  messages). Names have been frozen since 0.6.0: they change only with a new first number.
-- This notice: no live write command as an example (placeholders); the table "What can be
-  written", with what ebusd enforces; one way to get a shell in the add-on; the browsable address
-  of the add-on repository; start with the write-capable add-on when you mean to write; the date
-  and time broadcast left to the integration; the plain ebusd with the build (executable bit,
-  machines, packages, Docker); where to report a problem; more terms in the glossary.
+- First stable release (`1.0.0`): message names, field names, types and the metadata / fixtures
+  schemas (schema 1 and schema 2) are stable.
+- Unified CSV archive (@COUNT@ messages, 669 in metadata): includes eight three-register
+  composite-read carriers with 7-byte IDs (`HolidayStart` and `HolidayEnd` on `fs1`–`fs3`;
+  `InfoTemperatures` on `bc1`–`bc2`), loading cleanly on both stock `ebusd 26.1` and `@EBUSD@`.
+- Complete companion metadata: linked bounds (`write.below` / `write.above`), `stored_only` on
+  room-unit DHW/circulation programs, `pointer` on boiler fault histories, and `shared_with` on
+  `fs2` `HCProgram1`, `HCProgram2`, `DHWProgram` and `CircProgram`.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established:

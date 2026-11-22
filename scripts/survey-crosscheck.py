@@ -30,10 +30,12 @@ def main():
     res_path = sys.argv[1]
     cat_path = sys.argv[2] if len(sys.argv) > 2 else "evidence/register-candidates.csv"
     results = collections.defaultdict(dict)
-    for r in csv.DictReader(open(res_path, encoding="utf-8")):
-        if r["status"] == "ok":
-            results[r["zz"]][int(r["reg_dec"])] = r
-    catalogue = list(csv.DictReader(open(cat_path, encoding="utf-8")))
+    with open(res_path, encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            if r["status"] == "ok":
+                results[r["zz"]][int(r["reg_dec"])] = r
+    with open(cat_path, encoding="utf-8") as fh:
+        catalogue = list(csv.DictReader(fh))
     known = collections.defaultdict(set)
     counts = collections.Counter()
     print("| Device | Register | Vendor | Meaning | Type, factor, unit, range | Survey | Value |")
