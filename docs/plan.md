@@ -73,10 +73,9 @@ exists, the notice states in its first lines that the definitions were checked o
    update is the only open item — blocked on the owner accepting the Marketplace one-time warning in HA,
    after which the deploy session finishes it.*
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
-   `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. *Prepared 2026-11-22* (0.8.0 + `ha-weishaupt`
-   `v0.13.0` validated live on site; 668/668 readable messages covered by fixtures; awaiting owner's
-   word to push and publish). Every notice still says in its first lines that the definitions were
-   checked on one installation.
+   `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. *Published 2026-11-22* (alongside `ha-weishaupt`
+   `v1.0.0`; 1 081 messages, 669 in metadata, 668/668 readable messages covered by 1 008 fixtures).
+   Every notice still says in its first lines that the definitions were checked on one installation.
 
 Out of 1.0 (compatible additions for 1.x): boiler installer parameters P10–P71
 (`docs/boiler-parameters-proposal.md`), remaining register-survey candidates
@@ -115,10 +114,12 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
 - **Writes with a stock ebusd (decision deferred by the owner, 2026-11-20).** A stock ebusd with
   the definitions wrote and restored a setting of the system manager on the bus; the system
   manager, room units and heating modules ignore the write checksum (`docs/ebus-protocol.md`,
-  `evidence/write-methods.md`). To decide later: the installation notice (the build no longer
-  needed for these devices), the companion's write requirement (1.1, guard change), the upstream
-  write lots (no dependency on john30/ebusd#1825). Before changing the notice: one end-to-end write
-  with the stock add-on on a room unit and a heating module.
+  `evidence/write-methods.md`). Protocol ready in `docs/test-stock-ebusd-writes.md` for the
+  remaining two checks (one room unit and one heating module with the stock add-on).
+- *Done (2026-11-22):* **Clock automation** verified on site (`weishaupt_clock_sync` triggers only
+  every 30 min, no HA start trigger; preserves outside temperature from `f1fe070009`).
+- **GitHub support request**: text ready in `out/github-support-request.md` to purge pre-rewrite
+  commits on the four repositories.
 - **ebusd extensions (option 2 of `docs/design-register-layer.md`): unified 3-register carriers landed.**
   `docs/ebusd-extension-spec.md`, approved 2026-11-20: computed checksum bytes (attribute `crc`,
   `[WCRC]` kept as alias), message IDs longer than 7 bytes (feature C), composite reads (field
@@ -137,12 +138,9 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
   10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.
 - *Done (2026-11-20):* provisional strings and labels (item 2 of Road to 1.0): none left; the
   notice of 0.6.1 no longer carries the line.
-- **Clock automation**: remove or adjust the Home Assistant start trigger that sends
-  `Broadcast/Datetime` late after a restart (outside the definitions).
 - *Done (2026-11-20):* old lot branches and `backup/*` deleted locally and on the fork, merged
   companion branches and `service-tool` deleted; commits kept in a verified bundle under
-  `out/branch-backup-2026-11-20/` (not versioned). Kept: `weishaupt-pr`, `upstream/*`, `maint-0.1`.
-- **GitHub support request**: text in `out/github-support-request.md` to purge pre-rewrite commits.
+  `out/branch-backup-2026-11-20/` (not versioned). Kept: `weishaupt-pr`, `maint-0.1`.
 
 ### Needs the maintainer
 
@@ -158,12 +156,12 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
 - Review of #717, #1825, #8.
 - Clarification on Wolf device scan identification (asked in #717) and `de.yaml` expectations.
 
-### Deferred to 1.x (next vendor service tool pass)
+### Deferred to 1.x (next vendor service tool pass — checklist in `docs/next-service-tool-session.md`)
 
 - Boiler installer parameters P10–P71 (`docs/boiler-parameters-proposal.md`).
 - Single-source register-survey candidates (`evidence/register-survey-findings.md`).
 - Participant at master `00` / slave `05` (`docs/discoveries.md`).
-- Which copy (`fs` vs `em`) the regulation uses (`docs/retest-room-unit-2.md`, `copy-in-use`).
+- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`).
 
 ## Conventions
 
