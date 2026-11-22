@@ -1466,6 +1466,35 @@ readings = [
   { message = "FanOperation", master = "56 03 de 01 77 01 7e", slave = "00 17 17 1b", expect = { firstbyte = 0, fanspeedset = 23, fanspeedactual = 23, fanpwm = 27 } },
 ]
 
+# bc-installer-parameters: the five reads of the vendor tool's "Heating specialist" tab, both boilers
+[[block]]
+evidence = "bc-installer-parameters"
+date = "2026-11-22"
+circuit = "bc1"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "InstallerParameters1", master = "df b2 1b", slave = "00 50 08 44 00 0c 0a 02 3c 00 28 5c 25", expect = { firstbyte = 0, supplymaxtemp = 80, supplymintemp = 8, specialleveltemp = 60, serviceinterval = 4000, ignitionload = 37 } },
+  { message = "InstallerParameters2", master = "e3 b2 27", slave = "00 19 e0 78 78 01 21 17 17 64 32 32 64", expect = { firstbyte = 0, fluegassafetytemp = 120, loadmin = 23, loadmaxheating = 100, pumploadmin = 50, pumploadmax = 100 } },
+  { message = "InstallerParameters3", master = "f7 b2 33", slave = "00 62 25 14 28 19 01 3c 1e 50 0a 17 17", expect = { firstbyte = 0, flowreturndifftemp = 20, pumprunonheating = 1, dhwboosttemp = 10 } },
+  { message = "InstallerParameters4", master = "fb b2 3f", slave = "00 64 64 03 09 08 0d 21 a1 41 22 a7 19", expect = { firstbyte = 0, loadmaxdhw = 100, pumploaddhw = 100, pumprunondhw = 3 } },
+  { message = "InstallerParameters5", master = "ab 62 4b 02 44 02 37", slave = "00 c2 01 15 55 0c 4b b8 0d 19", expect = { firstbyte = 0, boileraddress = 1 } },
+]
+
+[[block]]
+evidence = "bc-installer-parameters"
+date = "2026-11-22"
+circuit = "bc2"
+qq = "ff"
+where = "row"
+readings = [
+  { message = "InstallerParameters1", master = "df b2 1b", slave = "00 50 08 44 00 0c 0a 02 3c 00 28 5c 25", expect = { firstbyte = 0, supplymaxtemp = 80, supplymintemp = 8, specialleveltemp = 60, serviceinterval = 4000, ignitionload = 37 } },
+  { message = "InstallerParameters2", master = "e3 b2 27", slave = "00 19 e0 78 78 01 21 17 17 64 32 32 64", expect = { firstbyte = 0, fluegassafetytemp = 120, loadmin = 23, loadmaxheating = 100, pumploadmin = 50, pumploadmax = 100 } },
+  { message = "InstallerParameters3", master = "f7 b2 33", slave = "00 62 25 14 28 19 01 3c 1e 50 0a 17 17", expect = { firstbyte = 0, flowreturndifftemp = 20, pumprunonheating = 1, dhwboosttemp = 10 } },
+  { message = "InstallerParameters4", master = "fb b2 3f", slave = "00 64 64 03 09 08 0d 21 a1 41 22 a7 19", expect = { firstbyte = 0, loadmaxdhw = 100, pumploaddhw = 100, pumprunondhw = 3 } },
+  { message = "InstallerParameters5", master = "ab 62 4b 02 44 02 37", slave = "00 c2 02 15 45 0c 4b c8 0d 19", expect = { firstbyte = 0, boileraddress = 2 } },
+]
+
 # bc-fault-counters: the seven requests as written
 [[block]]
 evidence = "bc-fault-counters"

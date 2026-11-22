@@ -8,6 +8,12 @@ depends on it.
 service tool is connected (`QQ = ff` conflict). Capture telegrams passively (`ebusd` telegram log /
 `ebusd_trames` snapshots before and after opening each screen).
 
+> **Pass of 2026-11-22.** Sections 1 to 3 were run (display only): the boiler parameters are
+> defined as `InstallerParameters1`–`5` (`evidence/bc-installer-parameters.md`), the participant
+> at `00` / `05` is the vendor's bus interface (`evidence/master-00-slave-05.md`), and the
+> remaining single-source candidates cannot be separated by a display (`docs/discoveries.md`).
+> Section 4 (`copy-in-use`) is the only part still open.
+
 ## 1. Boiler installer parameters P10–P71 (for `1.1.0`)
 
 Reference: [docs/boiler-parameters-proposal.md](boiler-parameters-proposal.md).

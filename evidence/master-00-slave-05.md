@@ -43,9 +43,36 @@ of values of its own: a device type of its own, not a copy of a known one. The t
 - Other masters address `00`/`05` only rarely: the vendor service tool (`ff`) sent `09 02` to `00` and to `05`
   on 2026-11-19 20:06–20:07 (no answer), and ebusd identified `05` today.
 
+## Identified: the vendor's bus interface (2026-11-22)
+
+The vendor service tool's connection dialog (Extras, Options, Interface, entry of the vendor
+interface), shown on 2026-11-22 at 21:04:38 with the tool connected: direct connection, serial
+port 3, PC bus address `ff` selected (`00` offered beside it, greyed), state "connected",
+**version 156.24**. After `Disconnect` the version field is empty: the figure is read from the
+interface when the tool connects (the same 156.24 was noted on 2026-11-19,
+`evidence/service-tool-ui-exploration.md`, "Program and connection").
+
+| Source | Major | Minor |
+|---|---|---|
+| Registers `99 01`, `9a 01` of slave `05`, read by ebusd on 2026-11-20 (above) | `0x009c` = 156 | `0x0018` = 24 |
+| Version the tool displays for its interface | 156 | 24 |
+
+On the room units and the heating modules the same two registers hold the software version the
+tool shows in the window title (327.26, 372.03). So slave `05` answers its version registers
+with the version of the vendor's bus interface: **master `00` / slave `05` is the vendor's
+eBUS interface of the service PC** (the adapter the tool calls "W-EA"), which stays on the bus
+and keeps scanning it every ten minutes whether the tool is connected or not. `00` is the
+interface's own address; the tool itself sends as `ff` through it. The tool's bus scan lists it
+in no entry of its own (its tree starts with a "PC" entry, then the heating devices).
+
+- Not a part of the heating system: no definition, and nothing to read from it.
+- An installation without the service interface connected has no participant at `00` / `05`.
+- Not verified: the 2026-11-20 read was not repeated on 2026-11-22; the scan answer
+  (`SW=0120;HW=0098`) is not explained by the dialog (it shows only 156.24).
+
 ## Reading
 
 Master `00` / slave `05` is a Kromschröder WCM-family device that polls the identity of every bus address every
 ten minutes and does nothing else on the bus: the behaviour of a gateway or remote-access module that keeps a list
 of present devices (for example a WCM communication module). It holds no value the heating needs from it.
-Its exact product is still to be found on the installation's equipment list.
+This reading of 2026-11-20 is settled by the section above: it is the vendor's bus interface.

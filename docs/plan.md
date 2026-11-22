@@ -142,9 +142,26 @@ and compatible.
   the room-unit entity writes the unit copy; which copy the regulation follows is still open (a
   disambiguating write, unit → a value ≠ module, would settle propagation). `75.w.fs2` heating
   program 3 also still unproven.
-- **D — next vendor service-tool pass** (`docs/next-service-tool-session.md`): boiler installer
-  parameters P10–P71 (`docs/boiler-parameters-proposal.md`), single-source register-survey candidates
-  (`evidence/register-survey-findings.md`), participant master `00` / slave `05` identification.
+- **D — vendor service-tool pass: done 2026-11-22** (display only, both boilers; the tool was
+  left disconnected). Landed on `weishaupt` as `4dac6af`, not pushed, not released:
+  - *Boiler heating-specialist parameters*: `InstallerParameters1`–`5` on `bc1`, `bc2`, five
+    read-only memory reads (the tool's own telegrams), 17 fields: P12, P18, P30, P31, P33, P35–P38,
+    P41, P42, P44–P46, P48, P50, P70 (`evidence/bc-installer-parameters.md`). Left out, with the
+    reason in the record: P20, P34 (display 0), P23, P32, P40, P43, P47, P49, P51, P71 (no byte
+    established), P10, P11, P13–P17 (option bytes). **For the owner:** the new menu "Heating
+    specialist parameters" / « Paramètres chauffagiste », the field labels and the French strings
+    were written without being put to the owner first; the first read of the five telegrams from
+    ebusd's own address is to be looked at when a release with them is deployed.
+  - *Single-source register-survey candidates*: every candidate with two sources was already
+    defined (1.0.0, 1.1.0). The rest share their value with a neighbour on the same screen, so a
+    display-only pass cannot separate them; closed as such in `docs/discoveries.md`.
+  - *Participant `00` / `05`*: identified as the vendor's bus interface of the service PC
+    (interface version 156.24 in the tool = its version registers); not a part of the heating
+    system, no definition (`evidence/master-00-slave-05.md`). Notice "Known limits" updated for
+    the next release.
+  `scripts/integrate.sh` green (2026-11-22): 1 095 messages on both ebusd builds, 683 in
+  metadata / 209 entries, 1 021 fixture readings of 679 messages. A `weishaupt-1.2.0` (compatible:
+  ten read-only messages) can be cut on the owner's word once the labels are accepted.
 - **E — upstream, in parallel** (owner's word): follow-ups / reviews of #717, #1825, #8.
 
 ## Current state
@@ -153,7 +170,7 @@ and compatible.
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` (tip `2e9c0bc`; released `weishaupt-1.0.0`) | 136 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 085 messages (1 077 single-register/memory messages + 8 three-register composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` and `HolidayEnd` on `fs1`, `fs2`, `fs3`, `InfoTemperatures` on `bc1`, `bc2`); 673 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, and `shared_with` on `fs2` `HCProgram1`/`HCProgram2`/`DHWProgram`/`CircProgram`), library pin on `v0.31.0-weishaupt.2`; 1.1.0 additions on top of 1.0.0: `H1Status` (module H1 input `29 0a` on em2/em3), `FanOperation` (boiler fan speeds read while the burner fires, `bc1`/`bc2`, `@ext`), and fs2 heating program 2 / stored hot-water / circulation documented as written through `35.w.fs1` |
+| `aghulas/ebusd-configuration` | `weishaupt` (tip `4dac6af`, local, not pushed: `InstallerParameters1`–`5` on top of `2e9c0bc`, 1 095 messages; released `weishaupt-1.0.0`) | 137 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 085 messages (1 077 single-register/memory messages + 8 three-register composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` and `HolidayEnd` on `fs1`, `fs2`, `fs3`, `InfoTemperatures` on `bc1`, `bc2`); 673 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, and `shared_with` on `fs2` `HCProgram1`/`HCProgram2`/`DHWProgram`/`CircProgram`), library pin on `v0.31.0-weishaupt.2`; 1.1.0 additions on top of 1.0.0: `H1Status` (module H1 input `29 0a` on em2/em3), `FanOperation` (boiler fan speeds read while the burner fires, `bc1`/`bc2`, `@ext`), and fs2 heating program 2 / stored hot-water / circulation documented as written through `35.w.fs1` |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
 | `aghulas/ha-weishaupt` | `v1.1.0` (Latest, 2026-11-22: UI only — global search, quick filters, program editor; PR #3). `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (consumes the 0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept. On the Pi, verified loaded | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
@@ -223,9 +240,9 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
 
 ### Deferred to 1.x (next vendor service tool pass — checklist in `docs/next-service-tool-session.md`)
 
-- Boiler installer parameters P10–P71 (`docs/boiler-parameters-proposal.md`).
-- Single-source register-survey candidates (`evidence/register-survey-findings.md`).
-- Participant at master `00` / slave `05` (`docs/discoveries.md`).
+- *Done 2026-11-22 (see "Deferred", item D):* boiler heating-specialist parameters landed
+  (`4dac6af`); the remaining single-source survey candidates closed for a display-only pass;
+  participant `00` / `05` identified (the vendor's bus interface).
 - Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`). *Partly answered 2026-11-22: the
   system manager's DHW setpoint (device 15) is independent of the room-unit copy (ka→fs direction);
   the 0.5 K display test on a room unit vs its module is still open.*

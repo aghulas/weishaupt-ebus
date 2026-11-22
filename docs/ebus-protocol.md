@@ -342,11 +342,11 @@ Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 
 4. **Why some registers take `31`**: known register by register, no general rule.
 5. **More than 8 registers** on the boilers: not tried. (Every WCM device, 15, 35, 75, f5, 51
    and 52, stops at 4.)
-6. **The participant at `00` / `05`**: a device type of its own (version registers 0x0199 =
-   0x009c, 0x019a = 0x0018); master `00` sends only identification requests (`07 04`), a cycle
-   of 37 addresses about every 10 minutes, keeping a list of the devices present
-   (`master-00-slave-05.md`). Most likely a communication module or gateway; the product is not
-   known.
+6. *Settled 2026-11-22.* **The participant at `00` / `05`** is the vendor's bus interface of
+   the service PC: its version registers 0x0199 = 0x009c, 0x019a = 0x0018 are the version
+   156.24 the vendor tool displays for its interface; master `00` sends only identification
+   requests (`07 04`), a cycle of 37 addresses about every 10 minutes
+   (`master-00-slave-05.md`). Not a part of the heating system.
 7. **Room unit `35` / `75`**: shared, established by writing `35` and reading `75` 3 s later
    (`room-units-shared-store.md`): heating programs 1 and 2, the hot-water and circulation
    programs, the setback and frost setpoints. Heating program 3 is the only one not tried.

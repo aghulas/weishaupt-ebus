@@ -259,8 +259,10 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
 - **`ForcedVenting` (operating phase 9):** in no manual at hand and never seen on the bus; what the
   phase is, is not established. Its label keeps the name, not a confirmed meaning.
 - **Participant at master `00` / slave `05`:** answers the scan as Kromschröder with an empty ID
-  (software `0120`) and scans the bus from master `00`. What device it is, is not established
-  (most likely a communication module); no file is defined for it.
+  (software `0120`) and scans the bus from master `00`. On the test installation it is the bus
+  interface of the vendor's service tool, left connected (its version registers hold the version
+  the tool displays for its interface); it is not a part of the heating system and no file is
+  defined for it.
 - **Absent temperature sensors** read as an ordinary number (-100.0 on the system manager and the
   modules, -40.0 on the boilers), not the eBUS replacement value.
 - **Memory reads (`50 00`), field `firstbyte`:** `0` in a normal answer. Rarely the boiler returns

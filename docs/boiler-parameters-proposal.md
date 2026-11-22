@@ -1,5 +1,11 @@
 # Boiler installer parameters: proposal for a lot (waits for the displayed values)
 
+> **Superseded on 2026-11-22.** The second pass of the vendor tool showed both boilers set alike,
+> so the `50 22` registers below that share a value stay ambiguous. The parameters were defined
+> instead from the EEPROM bytes the tool itself reads (`InstallerParameters1`–`5`,
+> `evidence/bc-installer-parameters.md`), where each address is named by the tool. The register
+> table is kept as a record of the survey.
+
 The register survey read the boiler automats' registers `0x0000`–`0x03ff` (both boilers; the
 parameter registers below read the same on both, except the boiler address); the vendor tool's "Heating specialist" tab displayed
 P10–P71 of boiler A, and its developer window the EEPROM bytes behind them
