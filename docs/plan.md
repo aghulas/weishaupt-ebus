@@ -1,6 +1,6 @@
 # Plan
 
-State verified against the repositories on 2026-11-20. When this file and a repository disagree,
+State verified against the repositories on 2026-11-22. When this file and a repository disagree,
 the repository is right: correct this file. Release history is in `CHANGELOG.md`.
 
 ## Direction
@@ -69,18 +69,73 @@ exists, the notice states in its first lines that the definitions were checked o
    *0.12.1 published 2026-11-21 (Latest): that follow-up is done — Reconfigure became a menu (ebusd/mode,
    bus load & writes, telegram log per ebusd), the options flow kept for the API and tests, both paths sharing
    the same helpers. The deploy session updates the Pi from the beta straight to 0.12.1.*
-   *Companion closed 2026-11-22: stays a custom repository (HACS default store not pursued). Pi 0.12.1
-   update is the only open item — blocked on the owner accepting the Marketplace one-time warning in HA,
-   after which the deploy session finishes it.*
+   *Companion closed 2026-11-22: stays a custom repository (HACS default store not pursued). The Pi
+   update is done and the companion has moved on past it: the deploy session installed, through the
+   Marketplace under its own service user (connector PR #15), `0.13.0`, then `1.0.0`, then `1.1.0`,
+   each verified loaded on the Pi (last: v1.1.0 installed, integration `loaded`, panel checked in the
+   browser — search, quick filters, program editor). `1.1.0` (2026-11-22) is UI only, no definitions
+   change. Definitions metadata fields added for the companion (linked bounds, `stored_only`, fault
+   pointer, `shared_with`) are now exercised end-to-end on the installation (see On-site write
+   validation below).*
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
    `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. *Published 2026-11-22* (alongside `ha-weishaupt`
    `v1.0.0`; 1 081 messages, 669 in metadata, 668/668 readable messages covered by 1 008 fixtures).
    Every notice still says in its first lines that the definitions were checked on one installation.
 
-Out of 1.0 (compatible additions for 1.x): boiler installer parameters P10–P71
-(`docs/boiler-parameters-proposal.md`), remaining register-survey candidates
-(`evidence/register-survey-findings.md`), write lines on `75.w.fs2` if proven on a second
-installation with separate room units, and upstream merges.
+### On-site write validation (2026-11-22)
+
+Four guarded, reversible write tests on the installation, each on the owner's yes in the deploy
+session's own window, through `ha-weishaupt` (0.13.0→1.0.0) on the extension build
+(`v26.1-weishaupt.2`). They prove the companion writes settings from source `ff` with the run-time
+computed checksum, and that the `1.0.0` metadata fields behave as intended. Logged in
+`out/ha-deploy-log.md`; evidence to fold into `evidence/write-methods.md` /
+`evidence/settings-writes.md` for the next release.
+
+1. **Shared program (room unit 35 → 75).** A heating program slot written on `fs1` read back
+   identical on `fs2` within 3 s; exactly two `50 23` from `ff`, none to `75`. Confirms the
+   `shared_with` store, write path proven.
+2. **Linked bounds (setback, 35).** Valid value taken; out-of-bound value **rejected by the entity
+   before any bus write** ("outside valid range"), nothing emitted; sibling bound constrains the
+   range. Confirms `write.below`/`write.above`.
+3. **System manager DHW setpoint (device 15, first write to 15).** Taken on `15`; the room unit's
+   `fs1` DHW setpoint stayed put — so this setpoint is **independent** of the room-unit copy
+   (advances `copy-in-use`, ka→fs direction). Two `50 23` to `15`.
+4. **Regulation-class write (heating module 51, Maximum flow temperature).** Regulation write path
+   validated end-to-end with its **two-screen confirmation** (caution note + "Write to the
+   controller"); two `50 23` to `51`. Comfort writes are immediate, regulation ones need the second
+   screen.
+
+Across the four: write path confirmed on **three device types** (room unit 35 with shared store,
+system manager 15, heating module 51) and both risk classes. Nothing left applied; Writes off.
+
+## Next release — `weishaupt-1.1.0` (candidates, compatible 1.x additions)
+
+Recommended focus: ship a tight **A + a few B** now; **C** waits for the heating season, **D** for the
+next vendor service-tool pass, **E** runs in parallel on the owner's word.
+
+**A — Ready / proof already in hand** (write-up + evidence, no new bus read):
+- **Widen `75.w.fs2` write lines.** Heating program 2, hot water and circulation are proven shared
+  with `35.w.fs1` (write on 35, read on 75 < 3 s, `evidence/room-units-shared-store.md`): add their
+  write lines, all but heating program 3 (never written).
+- **Buffer / hydraulic-decoupling writable registers** `e2fd` and `e7fd` (tenths, writable) →
+  `evidence/settings-writes.md`.
+
+**B — Small bus read needed** (no service tool):
+- `FloorDryingTemp` / `RoomThermostatTemp` suspected typing (16-bit) — confirm by read.
+- Program selector `12 01` values 12/13 (set a room unit to another program).
+- `H1Status` of heating modules — no captured read or meaning.
+- `copy-in-use` 0.5 K display test (room unit vs module); ka→fs direction already answered (test 3).
+- De-couple maximum `e6fd` — a lower value from `ff`.
+
+**C — Needs the burner firing** (opportunistic, winter): boiler info i11/i22/i23/i32/i30/i42, and
+automat RAM `70` / output `2b` bits while firing.
+
+**D — Next vendor service-tool pass** (`docs/next-service-tool-session.md`): boiler installer
+parameters P10–P71 (`docs/boiler-parameters-proposal.md`), single-source register-survey candidates
+(`evidence/register-survey-findings.md`), participant master `00` / slave `05` identification (needs
+the installation equipment list).
+
+**E — Upstream, in parallel** (owner's word): follow-ups / reviews of #717, #1825, #8.
 
 ## Current state
 
@@ -91,7 +146,7 @@ installation with separate room units, and upstream merges.
 | `aghulas/ebusd-configuration` | `weishaupt` (`weishaupt-0.7.0`, `weishaupt-0.6.2`) | 133 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 081 messages (1 073 single-register/memory messages + 8 three-register composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` and `HolidayEnd` on `fs1`, `fs2`, `fs3`, `InfoTemperatures` on `bc1`, `bc2`); 669 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, and `shared_with` on `fs2` `HCProgram1`/`HCProgram2`/`DHWProgram`/`CircProgram`), library pin on `v0.31.0-weishaupt.2` |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
-| `aghulas/ha-weishaupt` | `v0.12.1` (Latest, 2026-11-21: Reconfigure is a menu — ebusd/mode, bus load & writes, telegram log — giving the options a UI path the panel's Configure button shadowed since v0.5.0). `v0.12.0`, `v0.11.0`, `v0.12.0b1` kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
+| `aghulas/ha-weishaupt` | `v1.1.0` (Latest, 2026-11-22: UI only — global search, quick filters, program editor; PR #3). `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (consumes the 0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept. On the Pi, verified loaded | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
@@ -161,7 +216,9 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
 - Boiler installer parameters P10–P71 (`docs/boiler-parameters-proposal.md`).
 - Single-source register-survey candidates (`evidence/register-survey-findings.md`).
 - Participant at master `00` / slave `05` (`docs/discoveries.md`).
-- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`).
+- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`). *Partly answered 2026-11-22: the
+  system manager's DHW setpoint (device 15) is independent of the room-unit copy (ka→fs direction);
+  the 0.5 K display test on a room unit vs its module is still open.*
 
 ## Conventions
 
