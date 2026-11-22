@@ -3,6 +3,29 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 0.8.0 (2026-11-22)
+
+Unified single CSV tree and completed metadata contract (schema 1).
+
+- **Unified composite-read carriers (1 081 messages):** replaced the separate 4-register extension
+  variant (`src/main-ext.tsp`, 9-byte IDs rejected by stock ebusd) with the eight proven
+  3-register composite-read carriers (7-byte IDs, `@crc(0x5c, ...)` + `@fills`) in `src/main.tsp`:
+  `HolidayStart` and `HolidayEnd` on `fs1`, `fs2`, `fs3`, and `InfoTemperatures` (`OutsideTemp`,
+  `SupplyTemp`, `DHWTemp`) on `bc1`, `bc2`. One single pair of archives (English and French) now
+  loads cleanly on both stock `ebusd 26.1` / `v26.1-weishaupt.1` and `v26.1-weishaupt.2`.
+- **Metadata contract additions (backward-compatible in schema 1, 669 messages):**
+  - Linked bounds `write.below` / `write.above` on writable bound pairs (`ModulationMax` /
+    `ModulationMin` on `ka`; `RoomNormalTemp` / `RoomSetbackTemp` and `SupplyMaxTemp` /
+    `SupplyMinTemp` on `em1`–`em3`, `fs1`–`fs3`).
+  - `stored_only: true` on the room units' stored `DHWProgram` and `CircProgram` groups
+    (`fs1`, `fs2`, `fs3`).
+  - `pointer` metadata (`FaultHistoryPointer`, field `value`, base `513`, step `8`) on the boiler
+    `fault_history` groups (`bc1`, `bc2`).
+  - `shared_with: "fs1/{name}"` extended to `fs2` `HCProgram2`, `DHWProgram` and `CircProgram`
+    (84 shared program slots total).
+- **Schema validation:** `weishaupt-metadata-0.8.0.json` and `weishaupt-fixtures-0.8.0.json` are
+  validated against `schemas/metadata.schema.json` and `schemas/fixtures.schema.json`.
+
 ## 0.7.0 (2026-11-21)
 
 Composite reads: one telegram can answer several registers and update each register's own message,
