@@ -3,6 +3,22 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 1.1.0 (2026-11-22)
+
+Compatible additions on top of 1.0.0 (no breaking changes): two new reads and a documentation
+clarification. 1 085 messages, 673 in metadata; loaded on both `v26.1-weishaupt.1` (stock) and
+`v26.1-weishaupt.2`, with the published archive re-verified on stock ebusd.
+
+- **`FanOperation` (new read):** the boiler fan speeds (set, actual, PWM) read while the burner
+  fires, on `bc1` and `bc2` (`@ext` composite read, 7-byte ID), captured on a heating cycle
+  (`evidence/boiler-firing-values.md`); `i11` / `i22` / `i32` confirmed with a live flame.
+- **`H1Status` (new read):** the heating modules' H1 digital input (`29 0a`) on `em2` / `em3`,
+  on/off, renamed from the former (wrong) "solar collector" label.
+- **`75.w.fs2` sharing clarified:** heating program 2 and the stored hot-water and circulation
+  programs are documented read-only, written through `35.w.fs1` (a direct write to `75` is not kept).
+- **Fixtures:** `weishaupt-fixtures-1.1.0.json` — 1 011 readings of 669 messages, including the
+  `FanOperation` firing captures, verified against `v26.1-weishaupt.2`.
+
 ## 1.0.0 (2026-11-22)
 
 **First stable release.** Message names, field names, types, and the companion metadata / fixtures
