@@ -284,7 +284,7 @@ Counts, and where each comes from:
 
 - **@COUNT@ messages** loaded by ebusd (`--checkconfig`): every read, write and passive line of the
   folder, the Wolf and general files included.
-- **669 messages** in the metadata file: the Weishaupt messages by name, a read and a write line of
+- **683 messages** in the metadata file: the Weishaupt messages by name, a read and a write line of
   the same name counting once.
 - **Written: 92 settings** of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`,
   `51.w.em2` and `52.w.em3` (87 numbers, 5 choices), **252 program slots** (the five programs of
@@ -339,14 +339,13 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 The history of every release is in
 [`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- First stable release (`1.0.0`): message names, field names, types and the metadata / fixtures
-  schemas (schema 1 and schema 2) are stable.
-- Unified CSV archive (@COUNT@ messages, 669 in metadata): includes eight three-register
-  composite-read carriers with 7-byte IDs (`HolidayStart` and `HolidayEnd` on `fs1`–`fs3`;
-  `InfoTemperatures` on `bc1`–`bc2`), loading cleanly on both stock `ebusd 26.1` and `@EBUSD@`.
-- Complete companion metadata: linked bounds (`write.below` / `write.above`), `stored_only` on
-  room-unit DHW/circulation programs, `pointer` on boiler fault histories, and `shared_with` on
-  `fs2` `HCProgram1`, `HCProgram2`, `DHWProgram` and `CircProgram`.
+- Compatible additions on top of `1.1.0`, no breaking change (@COUNT@ messages, 683 in metadata).
+- **`InstallerParameters1` to `InstallerParameters5` (new reads)** on `bc1` and `bc2`: the
+  parameters of the heating-specialist level of the boiler (P12, P18, P30, P31, P33, P35 to P38,
+  P41, P42, P44 to P46, P48, P50, P70 of the boiler manual), read only, 17 fields in five memory
+  reads. The other parameters of that level are not defined.
+- **Participant at `00` / `05`** (Known limits): identified on the test installation as the bus
+  interface of the vendor's service tool; not a part of the heating system.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established:

@@ -3,6 +3,21 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 1.2.0 (2026-11-22)
+
+Compatible additions on top of 1.1.0 (no breaking changes): ten read-only messages. 1 095
+messages, 683 in metadata; loaded on both `v26.1-weishaupt.1` (stock) and `v26.1-weishaupt.2`.
+
+- **`InstallerParameters1`–`5` (new reads):** the heating-specialist parameters of the boiler
+  automat on `bc1` and `bc2`, five memory reads of EEPROM `0x1b` to `0x51`, 17 fields: P12 boiler
+  address, P18, P30, P31, P33, P35–P38, P41, P42, P44–P46, P48, P50, P70. Established with the
+  vendor service tool on both boilers (`evidence/bc-installer-parameters.md`); the other
+  parameters of that level are left out until their byte is established. New metadata menu
+  `specialist` for the boilers.
+- **Participant at master `00` / slave `05`:** identified as the bus interface of the vendor's
+  service tool (`evidence/master-00-slave-05.md`); the notice's *Known limits* say so.
+- **Fixtures:** `weishaupt-fixtures-1.2.0.json` — 1 021 readings of 679 messages.
+
 ## 1.1.0 (2026-11-22)
 
 Compatible additions on top of 1.0.0 (no breaking changes): two new reads and a documentation
