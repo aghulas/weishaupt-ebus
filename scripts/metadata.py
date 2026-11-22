@@ -110,6 +110,7 @@ def read_tree(tree):
         # group spans from there to the end of the header; its column names give the offsets.
         header = rows[0] if rows else []
         fstart = next((i for i, h in enumerate(header) if h.startswith("*")), 9)
+        o_crc = header.index("crc") if "crc" in header and header.index("crc") < fstart else None
         group = header[fstart:] or ["*name", "part", "type", "divisor/values", "range", "unit", "comment"]
         stride = len(group)
 
@@ -131,6 +132,7 @@ def read_tree(tree):
             wcrc = comment.startswith(MARKER)
             if wcrc:
                 comment = comment[len(MARKER):]
+            has_crc = o_crc is not None and len(row) > o_crc and bool(row[o_crc].strip())
             fields = []
             for i in range(fstart, len(row), stride):
                 c = (row[i:i + stride] + [""] * stride)[:stride]
@@ -172,7 +174,7 @@ def read_tree(tree):
                 msg["passive"] = True
             else:
                 msg["read"] = True
-            msg["wcrc"] = msg["wcrc"] or wcrc
+            msg["wcrc"] = msg["wcrc"] or wcrc or (kind == "w" and has_crc)
     return out, lines, problems
 
 
@@ -356,6 +358,19 @@ def resolve(side, msgs):
                 bad.append(f"{where}: write.min must be below write.max")
             if any(k in w for k in WRITE_RANGE) and not w.get("range_source"):
                 bad.append(f"{where}: write range without write.range_source (record, document and page)")
+            for bk in ("below", "above"):
+                if bk in w and (not isinstance(w[bk], str) or not w[bk].strip()):
+                    bad.append(f"{where}: write.{bk} must be a message name on the same circuit")
+        if "stored_only" in e:
+            if not isinstance(e["stored_only"], bool) or e.get("family") != "program":
+                bad.append(f"{where}: stored_only is a boolean for program families only")
+        if "pointer" in e:
+            p = e["pointer"]
+            if (not isinstance(p, dict) or e.get("family") != "fault_history"
+                    or not isinstance(p.get("message"), str) or not isinstance(p.get("field"), str)
+                    or isinstance(p.get("base"), bool) or not isinstance(p.get("base"), int)
+                    or isinstance(p.get("step"), bool) or not isinstance(p.get("step"), int) or p.get("step", 0) <= 0):
+                bad.append(f"{where}: pointer must be {{message, field, base, step}} on a fault_history family")
         fs = e.get("fields")
         if fs is not None and fs not in fieldsets:
             bad.append(f"{where}: field set '{fs}' does not exist"); fs = None
@@ -401,6 +416,15 @@ def resolve(side, msgs):
                 if w is not None and w.get("proof") == "family" and (
                         f"{c}/{w.get('proof_slot')}" not in msgs or rx is None or not rx.fullmatch(w.get("proof_slot", ""))):
                     bad.append(f"{key}: write.proof_slot must name a slot of the same entry and circuit")
+                if w is not None:
+                    for bk in ("below", "above"):
+                        if bk in w and (f"{c}/{w[bk]}" not in msgs or w[bk] == m["name"]):
+                            bad.append(f"{key}: write.{bk} '{w[bk]}' must name another message in circuit {c}")
+                if "pointer" in e and isinstance(e["pointer"], dict):
+                    pm = f"{c}/{e['pointer'].get('message')}"
+                    pf = e["pointer"].get("field")
+                    if pm not in msgs or not any(f["name"] == pf for f in msgs[pm]["fields"]):
+                        bad.append(f"{key}: pointer {pm}.{pf} does not exist in circuit {c}")
                 if w is not None and m["write"] and not any(
                         re.search(rf"\b{re.escape(m['name'])}\b", t) for t in texts):
                     bad.append(f"{key}: written, but none of its evidence records ({', '.join(ev)}) names it")
@@ -544,6 +568,10 @@ def assemble(side, msgs, resolved, langs):
             g = groups.setdefault((e["family"], m["circuit"], r["group_id"]), {
                 "family": e["family"], "circuit": m["circuit"], "device": r["device"],
                 "id": r["group_id"], "label": r.get("group_label", r["label"]), "members": []})
+            if e.get("stored_only"):
+                g["stored_only"] = True
+            if "pointer" in e:
+                g["pointer"] = dict(e["pointer"])
             g["members"].append(key)
         if m["write"] and "write" in e:  # shared_with: written on the message it names
             w = e["write"]
@@ -554,6 +582,9 @@ def assemble(side, msgs, resolved, langs):
                     o["write"][k] = w[k]
             if "range_source" in w:
                 o["write"]["range_source"] = w["range_source"]
+            for bk in ("below", "above"):
+                if bk in w:
+                    o["write"][bk] = w[bk]
             if w["proof"] == "family" and key.split("/")[1] == w.get("proof_slot"):
                 o["write"]["proof"] = "change-observed"  # the captured slot itself
             elif w["proof"] == "family":

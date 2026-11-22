@@ -7,39 +7,64 @@ not published. The extension is in `aghulas/ebusd` (`v26.1-weishaupt.2-rc1`); th
 `@fills(Target)` is in `aghulas/ebus-typespec` `typespec-ext`. See
 [../docs/ebusd-extension-spec.md](../docs/ebusd-extension-spec.md) section 4.
 
-## The carrier: `HolidayStart` of a room unit (circuit `fs1`, slave `0x35`)
+## The carriers: three-register `50 22` composite reads (7-byte IDs)
 
-The holiday start date is three consecutive registers — `0x011b` day, `0x011c` month, `0x011d`
-third (meaning not established) — already defined and read one by one as `HolidayStartDay`,
-`HolidayStartMonth`, `HolidayStartThird`. The carrier reads all three in one `50 22` and fills
-those three messages.
+A three-register `50 22` carrier has a 7-byte ID (the Weishaupt CRC-8 over the six address bytes,
+poly `0x5c`, attribute `crc8;poly=5c`, followed by the three little-endian 16-bit register
+addresses). Unlike four-register `50 22` reads (9-byte IDs, which stock `ebusd` rejects with `max
+message ID length exceeded`), a three-register carrier loads cleanly on both stock `ebusd 26.1`
+(`v26.1-weishaupt.1`) and the extension build (`v26.1-weishaupt.2`), so all eight proven
+three-register carriers live in the single unified definition tree (`src/main.tsp`).
 
-- Definition: a read message, PB SB `5022`, ID `d91b011c011d01` (the Weishaupt CRC-8 `d9` over
-  the six address bytes, poly `0x5c`, attribute `crc8;poly=5c`), three `UIN` fields `day` /
-  `month` / `third`, each with `fills` naming its target in the same circuit.
-- Bus basis: the grouped read is the `35` row `s2-holstart` of
-  [grouped-reads.md](grouped-reads.md) (read-only, 2026-11-20). Reproduced here with the message
-  bytes as the definition sends and receives them:
+### Holiday start and end dates on the room units (`fs1` `0x35`, `fs2` `0x75`, `fs3` `0xf5`)
 
-  | message | master (request data) | slave (answer data) | decodes to |
-  |---|---|---|---|
-  | HolidayStart | d9 1b 01 1c 01 1d 01 | 1e 00 0a 00 00 00 | day 30, month 10, third 0 |
+The holiday start date (`0x011b` day, `0x011c` month, `0x011d` third) and holiday end date
+(`0x011e` day, `0x011f` month, `0x0120` third) are already defined and read/written one by one as
+`HolidayStartDay` / `HolidayStartMonth` / `HolidayStartThird` and `HolidayEndDay` /
+`HolidayEndMonth` / `HolidayEndThird`. The carriers `HolidayStart` and `HolidayEnd` read all three
+registers of each date in one `50 22` telegram and fill those three messages.
 
-  The three single reads of the same registers, surrounding the grouped read, returned the same
-  values (day 30 `0d 1b 01` → `1e 00`, month 10 `c5 1c 01` → `0a 00`, third 0 `99 1d 01` →
-  `00 00`), as recorded in [grouped-reads.md](grouped-reads.md).
+Bus basis: rows `s2-holstart` and `s2-holend` on `35`, `75` and `f5` of
+[grouped-reads.md](grouped-reads.md) (read-only, 2026-11-20). Message bytes as the definitions send
+and receive them:
 
-## End-to-end proof (local, 2026-11-21, read-only; nothing sent to the bus)
+| message | circuit (ZZ) | master (request data) | slave (answer data) | decodes to |
+|---|---|---|---|---|
+| HolidayStart | fs1 (35) | d9 1b 01 1c 01 1d 01 | 1e 00 0a 00 00 00 | day 30, month 10, third 0 |
+| HolidayEnd | fs1 (35) | 0d 1e 01 1f 01 20 01 | 01 00 0b 00 00 00 | day 1, month 11, third 0 |
+| HolidayStart | fs2 (75) | d9 1b 01 1c 01 1d 01 | 1e 00 0a 00 00 00 | day 30, month 10, third 0 |
+| HolidayEnd | fs2 (75) | 0d 1e 01 1f 01 20 01 | 01 00 0b 00 00 00 | day 1, month 11, third 0 |
+| HolidayStart | fs3 (f5) | d9 1b 01 1c 01 1d 01 | 1e 00 0a 00 00 00 | day 30, month 10, third 0 |
+| HolidayEnd | fs3 (f5) | 0d 1e 01 1f 01 20 01 | 01 00 0b 00 00 00 | day 1, month 11, third 0 |
 
-TypeSpec compiled to CSV with the `typespec-ext` library (`@fills` emits the `fills` column):
+### Boiler information temperatures (`bc1` `0x08`, `bc2` `0x18`)
+
+The three consecutive boiler information temperatures `0x000c` (`OutsideTemp`, i33), `0x000d`
+(`SupplyTemp`, i35) and `0x000e` (`DHWTemp`, i34) are read in one `50 22` telegram by the carrier
+`InfoTemperatures` and distributed to `OutsideTemp`, `SupplyTemp` and `DHWTemp`.
+
+Bus basis: row `s2-3consec` on `08` and `18` of [grouped-reads.md](grouped-reads.md) (read-only,
+2026-11-20). Message bytes as the definition sends and receives them:
+
+| message | circuit (ZZ) | master (request data) | slave (answer data) | decodes to |
+|---|---|---|---|---|
+| InfoTemperatures | bc1 (08) | f0 0c 00 0d 00 0e 00 | 78 00 58 02 70 fe | outside 12.0, supply 60.0, dhw -40.0 |
+| InfoTemperatures | bc2 (18) | f0 0c 00 0d 00 0e 00 | 70 fe 26 02 70 fe | outside -40.0, supply 55.0, dhw -40.0 |
+
+## End-to-end proof (local, read-only; nothing sent to the bus)
+
+TypeSpec compiled to CSV with the `typespec-ext` library (`@fills` emits the `fills` column, and
+`@crc(0x5c, ...)` emits `crc8;poly=5c` in the `crc` column without `[WCRC]` in the comment):
 
 ```
 r,,,HolidayStart,...,5022,d91b011c011d01,crc8;poly=5c,day,,UIN,,,,HolidayStartDay,,month,,UIN,,,,HolidayStartMonth,,third,,UIN,,,,HolidayStartThird,
+r,,,HolidayEnd,...,5022,0d1e011f012001,crc8;poly=5c,day,,UIN,,,,HolidayEndDay,,month,,UIN,,,,HolidayEndMonth,,third,,UIN,,,,HolidayEndThird,
+r,,,InfoTemperatures,...,5022,f00c000d000e00,crc8;poly=5c,outside,,SIN,10,°C,,OutsideTemp,,supply,,SIN,10,°C,,SupplyTemp,,dhw,,SIN,10,°C,,DHWTemp,
 ```
 
 - `ebusd --checkconfig` on the whole `wolf` lot: loads with both the extension build
-  (`v26.1-weishaupt.2-rc1`) and a stock build (`v26.1-weishaupt.1`), 1074 messages each (the
-  carrier is the one added message); no error. A stock ebusd keeps `fills` as an unknown
+  (`v26.1-weishaupt.2`) and a stock build (`v26.1-weishaupt.1`), 1081 messages each (1073 base
+  messages + the 8 three-register carriers); no error. A stock ebusd keeps `fills` as an unknown
   attribute.
 - Extension build, carrier telegram injected (`--inject=stop`, no bus): ebusd decodes the carrier
   (`received read fs1 HolidayStart QQ=31: 30;10;0`) and distributes —
@@ -49,40 +74,6 @@ r,,,HolidayStart,...,5022,d91b011c011d01,crc8;poly=5c,day,,UIN,,,,HolidayStartDa
 - Stock build, same injected carrier: the carrier decodes under its own name, but `read` of a
   target falls back to the target's own telegram (no distribution) — today's behaviour, unchanged.
 
-So the carrier reads three registers in one telegram on the extension build, each value keeps one
-name and one MQTT topic, and a stock ebusd ignores `fills` and reads the registers one by one.
-
-## Four-register carriers (feature C): message IDs longer than 7 bytes
-
-A four-register `50 22` carrier has a 9-byte ID, which a stock ebusd rejects (`max message ID
-length exceeded`). So these carriers are **not** in the standard published set: they are compiled
-only into the extension variant (`src/main-ext.tsp`, files `*.ext.tsp`), loaded by a fork ebusd
-that supports long IDs. The standard set stays loadable by a stock ebusd (verified: it loads on
-upstream ebusd 26.1 and `v26.1-weishaupt.1`, which both reject long IDs). Each carrier is diagnostic
-and not published; its fields are typed to the targets where it reads naturally (the temperatures
-as `otemp10`), the rest kept `UIN` (two bytes, the width each target reads).
-
-Bus basis: the `s1-4mixed` rows of [grouped-reads.md](grouped-reads.md) (read-only, 2026-11-20).
-Message bytes as the carrier sends/receives them:
-
-| carrier | circuit (ZZ) | master (request data) | slave (answer data) | registers → targets |
-|---|---|---|---|---|
-| BoilerInfoBlock | bc1 (08) | 46 0d 00 16 00 45 01 bc 02 | 58 02 12 02 30 02 2c 00 | 000d SupplyTemp, 0016 ReturnTemp, 0145 FlueGasTemp, 02bc BurnerServiceHours |
-| BoilerInfoBlock | bc2 (18) | 46 0d 00 16 00 45 01 bc 02 | 26 02 12 02 f4 01 29 00 | same four |
-| RegisterSurvey | fs2 (75) | 91 11 00 73 09 0c 0a 3d 01 | 1c 01 03 00 72 00 00 00 | 0011 RoomTemp, 0973 HeatingCircuitType, 0a0c OutsideWeightedTemp, 013d HolidayTempLevel |
-| RegisterSurvey | fs3 (f5) | 91 11 00 73 09 0c 0a 3d 01 | 20 01 03 00 72 00 00 00 | same four |
-
-`BoilerInfoBlock` groups four boiler information values — a coherent read. `RegisterSurvey` on the
-room units (`fs2`, `fs3`) is **not** a functional block: those four registers merely happened to be
-read together in one `50 22` during the register survey; the name says so, and the carrier exists
-only to spare three extra telegrams, each value still keeping its own message.
-
-Proof (local, read-only, 2026-11-21):
-- `ebusd --checkconfig`: the standard set loads on `v26.1-weishaupt.1` (1074 messages) and on
-  upstream ebusd 26.1; the extension set loads on `v26.1-weishaupt.2` (1078 = 1074 + the four
-  carriers) and is **rejected** on `v26.1-weishaupt.1` (`max message ID length exceeded`), which is
-  why it is kept out of the standard set.
-- Extension build, each carrier telegram injected (no bus): all four distribute to their targets,
-  each decoded with its own type — e.g. `filled bc1 SupplyTemp from BoilerInfoBlock: 60.0`,
-  `filled bc2 FlueGasTemp from BoilerInfoBlock: 50.0`, `filled fs2 HeatingCircuitType from
-  RegisterSurvey: Radiator70`, `filled fs3 HolidayTempLevel from RegisterSurvey: Antifreeze`.
+So the eight carriers read three registers in one telegram on the extension build, each value keeps
+one name and one MQTT topic, and a stock ebusd loads the exact same CSV tree and reads the registers
+one by one.

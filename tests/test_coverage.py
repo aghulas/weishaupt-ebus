@@ -215,6 +215,33 @@ class TestMetadataRich(unittest.TestCase):
         self.assertEqual(opts["version"], ["1.0"])
         self.assertEqual(opts["lang"], ["fr=/tmp/fr"])
 
+    def test_linked_bounds_stored_only_and_pointer(self):
+        good = RICH_SIDECAR.replace(
+            'proof = "change-observed"',
+            'proof = "change-observed"\nbelow = "HcMode"',
+        ).replace(
+            'group = "hc1"',
+            'group = "hc1"\nstored_only = true',
+        )
+        with open(self.sidecar, "w", encoding="utf-8") as f:
+            f.write(good)
+        msgs, _, _ = md.read_tree(self.en)
+        side = md.load(self.sidecar)
+        resolved, problems = md.resolve(side, msgs)
+        self.assertEqual(problems, [])
+        doc = md.assemble(side, msgs, resolved, {})
+        self.assertEqual(doc["messages"]["ka/BlockingTime"]["write"]["below"], "HcMode")
+        self.assertTrue(doc["groups"][0]["stored_only"])
+
+        bad = RICH_SIDECAR.replace(
+            'proof = "change-observed"',
+            'proof = "change-observed"\nabove = "MissingMsg"',
+        )
+        with open(self.sidecar, "w", encoding="utf-8") as f:
+            f.write(bad)
+        _, problems = md.resolve(md.load(self.sidecar), msgs)
+        self.assertTrue(any("MissingMsg" in p for p in problems), problems)
+
 
 class TestFixturesInProcess(unittest.TestCase):
     def setUp(self):

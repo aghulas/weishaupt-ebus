@@ -93,7 +93,7 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 | `evidence` | records under `evidence/` of this repository |
 | `write` | only on a setting a lot writes, see below |
 | `same_as` | key of a message of the same device that reads the same register |
-| `shared_with` | (from 0.5.15) key (`<circuit>/<name>`) of the message on another device that keeps the value: this device answers the message from that device's store, a write there is read here within seconds and a write here is not kept. Set on each member of a family, not on the group; only where an evidence record shows a write on the other device read back here with no telegram in between. A message carrying it has no `write`: the value is written on the message it names, even where the CSV keeps a write line for it (the device accepts that write; an interface does not offer it). Cases: `fs2/HCProgram1<day><slot>` → `fs1/HCProgram1<day><slot>` (21 slots, no write line); `fs2/RoomSetbackTemp`, `fs2/RoomFrostProtectionTemp` → the same names on `fs1` (write line kept in the CSV). Seen on one installation; a consumer may check that both read the same before relying on it |
+| `shared_with` | (from 0.5.15) key (`<circuit>/<name>`) of the message on another device that keeps the value: this device answers the message from that device's store, a write there is read here within seconds and a write here is not kept. Set on each member of a family, not on the group; only where an evidence record shows a write on the other device read back here with no telegram in between. A message carrying it has no `write`: the value is written on the message it names, even where the CSV keeps a write line for it (the device accepts that write; an interface does not offer it). Cases: `fs2/HCProgram1<day><slot>`, `fs2/HCProgram2<day><slot>`, `fs2/DHWProgram<day><slot>` and `fs2/CircProgram<day><slot>` → the same names on `fs1` (84 slots, no write line); `fs2/RoomSetbackTemp`, `fs2/RoomFrostProtectionTemp` → the same names on `fs1` (write line kept in the CSV). Seen on one installation; a consumer may check that both read the same before relying on it |
 | `family`, `group`, `position` | for a message of a family, see "Families" |
 | `compose` | for a message with several fields, see "Fields" |
 | `renamed_from` | former key (`<circuit>/<name>`), when a release renames a message. Kept in later releases. First case: `ka/DHWLoadingPriority`, `ka/DHWOperationMode` up to 0.4.3; second: `ka/DHWExcessTemp`, `ka/DHWExceeded` up to 0.5.15 |
@@ -176,6 +176,7 @@ a message of kind `setting` or `program_slot`; the keys are the same.
 | `open` | questions that may still remove the setting; `copy-in-use`: a room unit and its heating module both answer this register, and which copy the regulation uses is not established; `meaning` (from 0.5.11): the write is proven but what the value holds is not (the third register of the holiday dates; the control variation of the room units, a number whose values have no established name), so an interface should not offer it without saying so |
 | `min`, `max`, `step` | (from 0.5.5) range of the write where the field has none: the definitions cannot carry a fractional bound on an integer register (setback room setpoint 10.0 to 21.5, heating curve 2.5 to 40.0). Never present when the field has them |
 | `range_source` | with `min` / `max` / `step`: the document and page the range comes from |
+| `below`, `above` | (from 0.8.0) name of a sibling message on the same circuit whose current value dynamically bounds this setting (`below`: this setting must stay at or below the sibling's value; `above`: at or above). Pairs: `ModulationMax` / `ModulationMin` on `ka`; `RoomNormalTemp` / `RoomSetbackTemp` and `SupplyMaxTemp` / `SupplyMinTemp` on `em1`, `em2`, `em3`, `fs1`, `fs3` (and `RoomNormalTemp` `above: "RoomSetbackTemp"`, `SupplyMaxTemp` / `SupplyMinTemp` on `fs2`) |
 
 Range and step are those of the field (`min`, `max`, `step`), or of the write conditions when
 the field has none. Nothing is written while the vendor service tool is connected: it uses
@@ -195,6 +196,15 @@ pattern in the sidecar and expanded in the JSON: each message is listed, with `f
 per circuit, each group with its label and its members in order: one weekly program is one
 group of 21 messages. An interface shows a group as one object, not one entity per member.
 
+From 0.8.0, a group object in `groups` may carry two optional family-specific keys:
+- `stored_only: true` (on `program` groups): the device stores and answers this weekly program,
+  but the installation does not follow it (the room units' stored `DHWProgram` and
+  `CircProgram`, `dhw_stored` and `circulation_stored` on `fs1`, `fs2`, `fs3`, whereas hot water
+  and circulation follow `em1`).
+- `pointer: { "message": "FaultHistoryPointer", "field": "value", "base": 513, "step": 8 }`
+  (on `fault_history` groups, `bc1` and `bc2`): how to resolve which ring-buffer slot holds the
+  most recent fault from the pointer message on the same circuit (`slot = ((value - base) / step) + 1`).
+
 ## Left empty
 
 Where no record establishes a value, the metadata has none; `open` lists the keys.
@@ -209,11 +219,6 @@ Where no record establishes a value, the metadata has none; `open` lists the key
 - **Step** of the integer registers whose range has no step (`BlockingTime`,
   `ChangeOverTime`, `RegulationP`, `RegulationI`, `SwitchOnRuntime`): one unit of the
   register.
-- **Linked bounds**. The user manual of the room unit shows them (the setback setpoint goes up
-  to the normal one, the normal down to the setback one; the flow setpoints likewise), but the
-  metadata has no key for them yet; a consumer applies them itself. Proposed key, not in the
-  file: `write.below` / `write.above`, the name of the message on the same circuit whose
-  current value bounds this one.
 
 ## Compatibility
 

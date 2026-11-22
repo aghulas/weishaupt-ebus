@@ -89,7 +89,7 @@ installation with separate room units, and upstream merges.
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` `f69ce15` (`weishaupt-0.6.1`, `weishaupt-0.6.2`: same definitions, notice only) | 132 commits on `upstream/master` (`9c3ed3a`): `src/wolf/` definitions — **standard set** 1 074 messages (loads on a stock ebusd, incl. the 3-register carrier `fs1 HolidayStart`), **extension set** (`src/main-ext.tsp`, `src/wolf/*.ext.tsp`) 1 078 = +4 four-register carriers (long IDs, fork build only); 669 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml`, library pin on `v0.31.0-weishaupt.2` |
+| `aghulas/ebusd-configuration` | `weishaupt` (`weishaupt-0.7.0`, `weishaupt-0.6.2`) | 133 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 081 messages (1 073 single-register/memory messages + 8 three-register composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` and `HolidayEnd` on `fs1`, `fs2`, `fs3`, `InfoTemperatures` on `bc1`, `bc2`); 669 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, and `shared_with` on `fs2` `HCProgram1`/`HCProgram2`/`DHWProgram`/`CircProgram`), library pin on `v0.31.0-weishaupt.2` |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
 | `aghulas/ha-weishaupt` | `v0.12.1` (Latest, 2026-11-21: Reconfigure is a menu — ebusd/mode, bus load & writes, telegram log — giving the options a UI path the panel's Configure button shadowed since v0.5.0). `v0.12.0`, `v0.11.0`, `v0.12.0b1` kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
@@ -105,8 +105,8 @@ installation with separate room units, and upstream merges.
 Also posted: john30/ebusd#1814 (arbitration data point) and john30/ebusd-configuration#616
 (coordination with another contributor converting `J0EK3R/ebusd-configuration-weishaupt`).
 
-Eleven local `upstream/<topic>` branches (`docs/pr-<topic>.md`) wait on #717 and can be refreshed
-from `weishaupt` when the maintainer responds.
+Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on demand from
+`weishaupt` when the maintainer responds to #717.
 
 ## Open
 
@@ -119,28 +119,19 @@ from `weishaupt` when the maintainer responds.
   needed for these devices), the companion's write requirement (1.1, guard change), the upstream
   write lots (no dependency on john30/ebusd#1825). Before changing the notice: one end-to-end write
   with the stock add-on on a room unit and a heating module.
-- **ebusd extensions (option 2 of `docs/design-register-layer.md`): B and C landed.**
+- **ebusd extensions (option 2 of `docs/design-register-layer.md`): unified 3-register carriers landed.**
   `docs/ebusd-extension-spec.md`, approved 2026-11-20: computed checksum bytes (attribute `crc`,
   `[WCRC]` kept as alias), message IDs longer than 7 bytes (feature C), composite reads (field
   attribute `fills`, feature B). *Published (2026-11-21, owner's word):* ebusd
-  `v26.1-weishaupt.2` (same binary as rc1), the prod add-on bumped, and the TypeSpec library
-  `v0.31.0-weishaupt.2` (`@fills` + message attributes). *B landed on `weishaupt` (2026-11-21):*
-  the composite-read carrier `fs1 HolidayStart` (3 registers, 7-byte ID), in the standard set;
-  library repinned, `scripts/check.sh` on `v26.1-weishaupt.2`; the workbench scripts
-  (`metadata.py`, `i18n-keys.py`, `fixtures.py`) made header-aware for the new `crc`/`fills`
-  columns; carriers excluded from `metadata/weishaupt.toml` and the companion contract (detected
-  via `fills`). *C landed on `weishaupt` (2026-11-21):* the four 4-register carriers (9-byte IDs)
-  in an **extension-only variant** (`src/main-ext.tsp` + `src/wolf/*.ext.tsp`, option 1 of
-  `out/.../C-isolation-proposal`), kept out of the standard set so it still loads on a stock
-  ebusd: `BoilerInfoBlock` on `bc1`/`bc2` (boiler info values) and `RegisterSurvey` on
-  `fs2`/`fs3` (a survey grouping, named honestly). `check.sh` now compiles both entry points and
-  checkconfigs the **standard set on a standard ebusd** (`v26.1-weishaupt.1`, rejects long IDs →
-  1074) and the **extension set on the fork build** (`v26.1-weishaupt.2` → 1078). Guarantee
-  confirmed: the standard set loads on upstream ebusd 26.1 and `v26.1-weishaupt.1` (1074); all
-  four carriers distribute to their targets on the extension build. Evidence + fixtures for all
-  four (`evidence/composite-reads.md`, `evidence/fixtures.toml`). **Pending (separate steps):** the
-  release form (extension archives from `release.sh`, to be submitted to the owner), the extension
-  add-on wiring, and the upstream pull requests (spec, "Implementation").
+  `v26.1-weishaupt.2`, the prod add-on bumped, and the TypeSpec library `v0.31.0-weishaupt.2`
+  (`@fills` + message attributes). *Unified on `weishaupt` (2026-11-22):* rather than maintaining a
+  separate 4-register extension variant (`src/main-ext.tsp`, 9-byte IDs rejected by stock ebusd),
+  the single unified `src/main.tsp` tree carries all eight proven 3-register composite-read
+  carriers (7-byte IDs, `@crc(0x5c, ...)` + `@fills`): `HolidayStart` and `HolidayEnd` on `fs1`,
+  `fs2`, `fs3`, and `InfoTemperatures` on `bc1`, `bc2`. `scripts/check.sh` verifies that the single
+  compiled CSV tree loads cleanly on both `v26.1-weishaupt.1` (stock 7-byte ID limit → 1 081
+  messages) and `v26.1-weishaupt.2` (extension build → 1 081 messages), and `scripts/release.sh`
+  produces a single pair of archives (EN and FR).
 - *Done (2026-11-20):* `0.6.0` and `ha-weishaupt` v0.10.0 run on the test installation: nine files
   loaded, no repair, the same number of entities, `LegionellaStartTime` read `08:30`, `DHWExcessTemp`
   10.0, `MixerPump` of `em2` `on`. v0.10.0 is Latest since.

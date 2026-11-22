@@ -2060,8 +2060,9 @@ readings = [
   { message = "CirculationReturnSetTemp", master = "cc a9 04", slave = "2c 01", expect = { value = 30.0 } },
 ]
 
-# composite-reads: the HolidayStart carrier of room unit 1 reads three registers in one 50 22 and
-# decodes to the three start-date values; the grouped read is the s2-holstart row of grouped-reads.md
+# composite-reads: the eight three-register 50 22 carriers (7-byte IDs): HolidayStart and
+# HolidayEnd on room units 1, 2 and 3 (s2-holstart and s2-holend of grouped-reads.md), and
+# InfoTemperatures on boilers 1 and 2 (s2-3consec of grouped-reads.md).
 [[block]]
 evidence = "composite-reads"
 date = "2026-11-20"
@@ -2069,26 +2070,7 @@ circuit = "fs1"
 where = "row"
 readings = [
   { message = "HolidayStart", master = "d9 1b 01 1c 01 1d 01", slave = "1e 00 0a 00 00 00", expect = { day = 30, month = 10, third = 0 } },
-]
-
-# composite-reads (feature C): the four-register carriers, extension variant only (9-byte IDs).
-# Grouped reads are the s1-4mixed rows of grouped-reads.md; bytes in evidence/composite-reads.md.
-[[block]]
-evidence = "composite-reads"
-date = "2026-11-20"
-circuit = "bc1"
-where = "row"
-readings = [
-  { message = "BoilerInfoBlock", master = "46 0d 00 16 00 45 01 bc 02", slave = "58 02 12 02 30 02 2c 00", expect = { supply = 60.0, returntemp = 53.0, flue = 56.0, servicehours = 44 } },
-]
-
-[[block]]
-evidence = "composite-reads"
-date = "2026-11-20"
-circuit = "bc2"
-where = "row"
-readings = [
-  { message = "BoilerInfoBlock", master = "46 0d 00 16 00 45 01 bc 02", slave = "26 02 12 02 f4 01 29 00", expect = { supply = 55.0, returntemp = 53.0, flue = 50.0, servicehours = 41 } },
+  { message = "HolidayEnd", master = "0d 1e 01 1f 01 20 01", slave = "01 00 0b 00 00 00", expect = { day = 1, month = 11, third = 0 } },
 ]
 
 [[block]]
@@ -2097,7 +2079,8 @@ date = "2026-11-20"
 circuit = "fs2"
 where = "row"
 readings = [
-  { message = "RegisterSurvey", master = "91 11 00 73 09 0c 0a 3d 01", slave = "1c 01 03 00 72 00 00 00", expect = { room = 28.4, circuittype = 3, outsideweighted = 11.4, holidaylevel = 0 } },
+  { message = "HolidayStart", master = "d9 1b 01 1c 01 1d 01", slave = "1e 00 0a 00 00 00", expect = { day = 30, month = 10, third = 0 } },
+  { message = "HolidayEnd", master = "0d 1e 01 1f 01 20 01", slave = "01 00 0b 00 00 00", expect = { day = 1, month = 11, third = 0 } },
 ]
 
 [[block]]
@@ -2106,5 +2089,24 @@ date = "2026-11-20"
 circuit = "fs3"
 where = "row"
 readings = [
-  { message = "RegisterSurvey", master = "91 11 00 73 09 0c 0a 3d 01", slave = "20 01 03 00 72 00 00 00", expect = { room = 28.8, circuittype = 3, outsideweighted = 11.4, holidaylevel = 0 } },
+  { message = "HolidayStart", master = "d9 1b 01 1c 01 1d 01", slave = "1e 00 0a 00 00 00", expect = { day = 30, month = 10, third = 0 } },
+  { message = "HolidayEnd", master = "0d 1e 01 1f 01 20 01", slave = "01 00 0b 00 00 00", expect = { day = 1, month = 11, third = 0 } },
+]
+
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "bc1"
+where = "row"
+readings = [
+  { message = "InfoTemperatures", master = "f0 0c 00 0d 00 0e 00", slave = "78 00 58 02 70 fe", expect = { outside = 12.0, supply = 60.0, dhw = -40.0 } },
+]
+
+[[block]]
+evidence = "composite-reads"
+date = "2026-11-20"
+circuit = "bc2"
+where = "row"
+readings = [
+  { message = "InfoTemperatures", master = "f0 0c 00 0d 00 0e 00", slave = "70 fe 26 02 70 fe", expect = { outside = -40.0, supply = 55.0, dhw = -40.0 } },
 ]
