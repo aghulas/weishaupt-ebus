@@ -174,13 +174,27 @@ one. Restores (2026-11-18 21:05:24, 2026-11-19 15:58:02 and 15:59:05) were follo
   module `51` with `09 03` and sends the circuit's heat demand, `70 → f1`, see
   [docs/retest-room-unit-2.md](../docs/retest-room-unit-2.md) step 1).
 
+### 4. Heating program 2, hot water and circulation (2026-11-20, 15:28 to 15:29)
+
+On the owner's approval, raw `hex` from `31`; no telegram from the vendor service tool (`ff`) in
+the 15 minutes before. Slot used: Sunday slot 3 (register `72 xx`) of each program. One quarter
+hour changed on `35`, read on `35` and `75` 3 s later, restored on `35`, both read again.
+
+| Program (sub-byte) | Before (35 / 75) | Write to `35` | Answer | +3 s: `35` / `75` | Restore | After (35 / 75) |
+|---|---|---|---|---|---|---|
+| Heating 2 (`15`) | `80 80` / `80 80` | `35 5023 05 f0 72 15 09 08` (02:00–02:15) | `00` | `09 08` / `09 08` | `… 8c 72 15 80 80` | `80 80` / `80 80` |
+| Hot water (`17`) | `80 80` / `80 80` | `35 5023 05 d4 72 17 09 08` | `00` | `09 08` / `09 08` | `… a8 72 17 80 80` | `80 80` / `80 80` |
+| Circulation (`1a`) | `4c 44` / `4c 44` (17:00–19:00) | `35 5023 05 a8 72 1a 4d 44` (17:00–19:15) | `00` | `4d 44` / `4d 44` | `… f4 72 1a 4c 44` | `4c 44` / `4c 44` |
+
+`75` answered the new value within 3 s each time and the restored value after: heating program
+2, the hot-water program and the circulation program of `75` are those of `35`, as heating
+program 1 is. Raw output: installation data, not in this repository.
+
 ## Not established
 
-- **Heating programs 2 and 3, hot water, circulation of `75`.** No write of these on `35` was
-  followed by a read of `75` (the writes of 2026-11-18 21:12 to 21:13 on `35` had no read of
-  `75` in between). Without a write from here: the next change of one of their slots on `35`
-  (by the owner), followed by a read of the same slot on `75` within a minute and an export of
-  all telegrams of that minute.
+- **Heating program 3 of `75`.** Not written: heating program 2, hot water and circulation were
+  shown shared on 2026-11-20 (section 4 below); heating program 3 is the only one left without a
+  write on `35` followed by a read of `75`.
 
 - **One physical room unit or two: settled 2026-11-20.** The owner reports the room units
   configured as "#1+2" and "#3". The room unit and module manual (83277504, p. 11 and p. 105)

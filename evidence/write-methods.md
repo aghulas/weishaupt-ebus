@@ -69,3 +69,26 @@ first, day pair last. Restored with two single writes after each step.
   was taken only because the out-of-range value was itself in the last pair.
 - Conclusion: a grouped `50 23` on the room unit writes one register, the last one; writing a date needs one
   telegram per register.
+
+## A write sent by a stock ebusd (2026-11-20 15:31–15:34)
+
+The same system manager write, sent end to end by an unmodified ebusd from the released definitions: the stock
+eBUSd add-on (ebusd 26.1.26.1, no Weishaupt checksum at run time) with the definitions 0.6.0 in its own config
+folder and the options of the running ebusd (`--address=31`, `--scanconfig`, `--enablehex`), the Weishaupt ebusd
+stopped meanwhile. No vendor-tool telegram in the 30 minutes before. The stock ebusd loaded `15.w.ka` (and all nine
+files of the scan for the devices it reached) as the Weishaupt ebusd does.
+
+| Step | Command | Sent on the bus (ebusd's raw byte log) | Result |
+|---|---|---|---|
+| before | `read -f -c ka BlockingTime` | — | 1 |
+| write | `write -s ff -c ka BlockingTime 2` | `ff 15 50 23 05 4c 25 00 02 00` `6b`, slave ACK `00` | `done` |
+| read back (+3 s) | `read -f -c ka BlockingTime` | — | **2** |
+| restore | `write -s ff -c ka BlockingTime 1` | `ff 15 50 23 05 4c 25 00 01 00` `5d`, ACK `00` | `done` |
+| read back (+3 s) | `read -f -c ka BlockingTime` | — | **1** |
+
+- The stock ebusd sends the checksum byte `4c` (the checksum of the register address alone) whatever the value, as
+  established offline beforehand; the correct byte for value 2 would be `cc`. The system manager takes the value
+  anyway, as the write matrix predicted (the checksum is not checked on `15`).
+- So, for the system manager, a stock ebusd with the released definitions writes end to end; the run-time checksum
+  of the Weishaupt ebusd is not needed there. (Boiler automats not tested; never written.)
+- The stock ebusd also read the boiler automats (`08` BurnerServiceHours answered) during the run.

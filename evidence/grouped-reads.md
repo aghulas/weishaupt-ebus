@@ -171,3 +171,20 @@ addresses in every area, four bytes at 0x00, and the high-address item `06 01` b
   them explain the area 4 and 5 answers.
 - Overall: areas 1, 2, 3 are RAM, EEPROM and XRAM; 4 is an address echo; 5 reads zero; 0 is refused (NAK); 7 does
   not answer; 8 resends the previous answer and disturbs the next exchange; 9–15 not tried.
+
+## Third run: 5, 6 and 8 registers on the heating modules and the room units (2026-11-20 15:21–15:24)
+
+Read only, from `31`, 2.5 s apart; eight registers per device the register survey found answering, read singly
+before and after. Heating modules `51`, `52`: 0x0001 0x0002 0x0009 0x000c 0x000e 0x0010 0x0012 0x0013. Room units
+`75`, `f5`: 0x0001 0x0009 0x000e 0x0010 0x0012 0x0023 0x0058 0x0059.
+
+| Device | 5 registers | 6 registers | 8 registers |
+|---|---|---|---|
+| `51` heating module | `00` (empty) | `00` (empty) | no answer (timeout) |
+| `52` heating module | `00` (empty) | `00` (empty) | no answer (timeout) |
+| `75` room unit | `00` (empty) | `00` (empty) | no answer (timeout) |
+| `f5` room unit | `00` (empty) | `00` (empty) | no answer (timeout) |
+
+Single reads before and after gave the same values (0x0009 counts up by one between them). So every WCM device
+(`15`, `35`, `51`, `52`, `75`, `f5`) answers at most **4 registers** per `50 22`: 5 and 6 give an empty
+acknowledged answer, 8 no answer. Only the boiler automats go further (`08`: 8 registers answered).
