@@ -88,8 +88,8 @@ Four guarded, reversible write tests on the installation, each on the owner's ye
 session's own window, through `ha-weishaupt` (0.13.0→1.0.0) on the extension build
 (`v26.1-weishaupt.2`). They prove the companion writes settings from source `ff` with the run-time
 computed checksum, and that the `1.0.0` metadata fields behave as intended. Logged in
-`out/ha-deploy-log.md`; evidence to fold into `evidence/write-methods.md` /
-`evidence/settings-writes.md` for the next release.
+`out/ha-deploy-log.md`; findings folded into `evidence/settings-writes.md` and
+`evidence/room-units-shared-store.md` (published in `weishaupt-1.3.0`).
 
 1. **Shared program (room unit 35 → 75).** A heating program slot written on `fs1` read back
    identical on `fs2` within 3 s; exactly two `50 23` from `ff`, none to `75`. Confirms the
@@ -108,94 +108,45 @@ computed checksum, and that the `1.0.0` metadata fields behave as intended. Logg
 Across the four: write path confirmed on **three device types** (room unit 35 with shared store,
 system manager 15, heating module 51) and both risk classes. Nothing left applied; Writes off.
 
-## `weishaupt-1.3.0` — landed on `weishaupt`, ready to release
+## `1.1.0` – `1.3.0` (published and deployed, 2026-11-22)
 
-Landed on `weishaupt` (tip `7462afb`), fork-only, nothing pushed or upstream. From today's on-site
-1.x test series (`out/ha-deploy-log.md`, 2026-11-22, items 1–4). `scripts/integrate.sh` green end
-to end (2026-11-22, Docker): `ebusd --checkconfig` 1 099 messages on both `v26.1-weishaupt.1`
-(stock) and `v26.1-weishaupt.2`; translations fr/de 1 099; metadata 687 messages / 210 entries;
-fixtures 1 025 readings of 683 messages decoded by `v26.1-weishaupt.2`.
+Three compatible releases on top of `1.0.0` (no breaking changes), all tagged on both
+`aghulas/ebusd-configuration` and `aghulas/weishaupt-ebus`, verified with `scripts/integrate.sh`
+against both `v26.1-weishaupt.1` (stock 7-byte ID limit) and `v26.1-weishaupt.2`, and deployed up
+to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 
-- `b24a3b5` — `FloorDryingTemp` / `RoomThermostatTemp` (`13 0a` / `1d 0a`) re-added read-only as
-  16-bit (`otemp10`) on `fs1` and `em2`: raw reads on `35` and `51` answered `02 0080`
-  (`0x8000` = sensor not connected), settling the width against the dropped #717 one-byte typing
-  (`evidence/room-thermostat-floor-drying.md`).
-- `7462afb` — `75.w.fs2` heating program 3 documented shared with `35.w.fs1` (write on 35, read on
-  75 within 3 s), like programs 1 and 2; its metadata entry merged into the shared
-  heating-program group (`evidence/room-units-shared-store.md`, section 5).
+- **`weishaupt-1.1.0`** (`2e9c0bc`, 1 085 messages / 673 in metadata / 1 011 fixtures):
+  - `59ab941` — `75.w.fs2` heating program 2 + stored hot-water / circulation documented read-only,
+    written through `35.w.fs1`.
+  - `d6b2000` — `H1Status`: module H1 digital input `29 0a` on `em2`/`em3` (on/off).
+  - `2e9c0bc` — `FanOperation`: boiler fan speeds read while the burner fires (`bc1`, `bc2`, `@ext
+    0x56`, i23; `evidence/boiler-firing-values.md`).
+- **`weishaupt-1.2.0`** (`4dac6af`, 1 095 messages / 683 in metadata / 1 021 fixtures):
+  - `InstallerParameters1`–`5` on `bc1`/`bc2` (17 heating-specialist parameters P12–P70 from the
+    2026-11-22 vendor service-tool pass, `evidence/bc-installer-parameters.md`), new metadata menu
+    `specialist`. First live read by ebusd confirmed on deployment (`InstallerParameters1` / `2`).
+  - Participant `00` / `05` identified as the vendor's bus interface (`evidence/master-00-slave-05.md`);
+    notice *Known limits* updated.
+  - Remaining single-source survey candidates closed for a display-only pass (`docs/discoveries.md`).
+- **`weishaupt-1.3.0`** (`7462afb`, Latest, 1 099 messages / 687 in metadata / 210 entries / 1 025
+  fixtures of 683 messages; deployed on the test installation):
+  - `b24a3b5` — `FloorDryingTemp` (`13 0a`) / `RoomThermostatTemp` (`1d 0a`) re-added read-only as
+    16-bit (`otemp10`) on `fs1` and `em2` (`evidence/room-thermostat-floor-drying.md`).
+  - `7462afb` — `75.w.fs2` heating program 3 documented shared with `35.w.fs1` (`shared_with` now
+    covers all five `fs2` program stores; `evidence/room-units-shared-store.md`, section 5).
+  - Evidence-only additions (`evidence/settings-writes.md`): `DeCoupleMinTemp` write path confirmed
+    (regulation class, 0–50 bound enforced; `DeCoupleMaxTemp` stays read-only) and `copy-in-use`
+    shown independent in both directions (`open = ["copy-in-use"]` kept).
 
-Evidence-only, no definition change, from the same series (folded into
-`evidence/settings-writes.md`): `DeCoupleMinTemp` write path confirmed (writable from `ff`,
-regulation two-screen confirmation, 0–50 bound enforced; `DeCoupleMaxTemp` stays read-only) and
-`copy-in-use` shown independent in both directions (the `open` marker kept).
+### Remaining 1.x candidates (low priority, no release blocked)
 
-**Next step — release.** `weishaupt-1.3.0` is ready to prepare (`scripts/release.sh 1.3.0`) and
-publish on the owner's word (rule 8). Nothing pushed or tagged.
-
-## `weishaupt-1.1.0` — landed on `weishaupt`, ready to release
-
-Landed on `weishaupt` (tip `2e9c0bc`), fork-only, nothing pushed or upstream. `scripts/integrate.sh`
-green end to end (2026-11-22, Docker): `ebusd --checkconfig` 1 085 messages on both `v26.1-weishaupt.1`
-(stock, 7-byte ID limit) and `v26.1-weishaupt.2`; translations fr/de 1 085; metadata 673 messages /
-204 entries; fixtures 1 011 readings of 669 messages decoded by `v26.1-weishaupt.2`.
-
-- `59ab941` — A1: fs2 heating program 2 + stored hot-water / circulation documented read-only,
-  written through `35.w.fs1` (a direct write to `75` is not kept); heating program 3 left unmarked.
-- `d6b2000` — H1Status: module H1 digital input `29 0a` on em2/em3 (on/off), renamed from the wrong
-  "solar collector" label; `28 0a` left out (reads only 0).
-- `2e9c0bc` — FanOperation: boiler fan speeds read while the burner fires (`bc1`, `bc2`, `@ext 0x56`,
-  i23), captured 2026-11-22 (`evidence/boiler-firing-values.md`, `evidence/fixtures.toml`).
-
-A2 (`e2fd`/`e7fd` writable) was already shipped in 1.0.0. Firing values i11/i22/i32 were already
-defined (now confirmed with a flame); i30 / RAM `70` / output `2b` bits stay evidence-only (not
-labelable without the service tool); i42 = burner starts / 256 is covered by the full counter.
-
-**Next step — release.** `weishaupt-1.1.0` is ready to tag and publish (`scripts/release.sh <version>`,
-then push / tag / release on the owner's word, rule 8). The UI-only companion `v1.1.0` is already out
-and compatible.
-
-### Deferred (compatible 1.x, not in 1.1.0)
-
-- *Done 1.3.0:* `FloorDryingTemp` `13 0a` / `RoomThermostatTemp` `1d 0a` re-added read-only as 16-bit
-  (`otemp10`): raw reads on room unit 35 and module 51 answered `02 0080` (0x8000, sensor not
-  connected), settling the width against the former #717 one-byte typing.
 - Program selector `12 01` values 12/13 — not reachable through the companion / Pi ebusd (register
   undefined and unpolled, no entity); owner action via the service tool.
-- `e6fd` de-couple maximum lower value — `DeCoupleMaxTemp` stays read-only (no `[WCRC]`); a raw `ff`
-  write via the service tool / operator. (`DeCoupleMinTemp` `e7fd` confirmed writable from `ff` with
-  its 0–50 bound enforced, 1.3.0.)
-- *Done 1.3.0:* `75.w.fs2` heating program 3 shown shared with `35.w.fs1` (write on 35, read on 75
-  within 3 s) and documented read-only, like programs 1 and 2. `copy-in-use`: 2026-11-22 the
-  disambiguating write showed the unit (`fs1`/35) and module (`em1`/50) copies independent in both
-  directions; which copy the regulation itself follows is still open, so the metadata
-  `open = ["copy-in-use"]` marker stays.
-- **D — vendor service-tool pass: done 2026-11-22** (display only, both boilers; the tool was
-  left disconnected). Landed on `weishaupt` as `4dac6af`, not pushed, not released:
-  - *Boiler heating-specialist parameters*: `InstallerParameters1`–`5` on `bc1`, `bc2`, five
-    read-only memory reads (the tool's own telegrams), 17 fields: P12, P18, P30, P31, P33, P35–P38,
-    P41, P42, P44–P46, P48, P50, P70 (`evidence/bc-installer-parameters.md`). Left out, with the
-    reason in the record: P20, P34 (display 0), P23, P32, P40, P43, P47, P49, P51, P71 (no byte
-    established), P10, P11, P13–P17 (option bytes). The new menu "Heating specialist parameters" / « Paramètres chauffagiste »,
-    the field labels and the French strings were accepted by the owner on 2026-11-22
-    (« Accept, prepare 1.2.0 »). Still to look at: the first read of the five telegrams from
-    ebusd's own address is to be looked at when a release with them is deployed.
-  - *Single-source register-survey candidates*: every candidate with two sources was already
-    defined (1.0.0, 1.1.0). The rest share their value with a neighbour on the same screen, so a
-    display-only pass cannot separate them; closed as such in `docs/discoveries.md`.
-  - *Participant `00` / `05`*: identified as the vendor's bus interface of the service PC
-    (interface version 156.24 in the tool = its version registers); not a part of the heating
-    system, no definition (`evidence/master-00-slave-05.md`). Notice "Known limits" updated for
-    the next release.
-  `scripts/integrate.sh` green (2026-11-22): 1 095 messages on both ebusd builds, 683 in
-  metadata / 209 entries, 1 021 fixture readings of 679 messages. **`weishaupt-1.2.0` prepared
-  locally** (2026-11-22, `scripts/release.sh 1.2.0`, archives and assets under `out/release/`,
-  schemas valid, `CHANGELOG.md` and the notice updated). **Published 2026-11-22** on the
-  owner's word (« Publish 1.2.0 »): `weishaupt` pushed (`4dac6af`), both repositories tagged
-  `weishaupt-1.2.0`, normal release (Latest) with its five assets; re-downloaded, checksums
-  verified, both archives load on the official ebusd 26.1 (1 095 messages, no error). Next: the
-  deploy session installs it on the test installation on the owner's word and looks at the first
-  read of `InstallerParameters1`–`5` by ebusd.
-- **E — upstream, in parallel** (owner's word): follow-ups / reviews of #717, #1825, #8.
+- `e6fd` de-couple maximum lower value — `DeCoupleMaxTemp` stays read-only (no `[WCRC]`); requires
+  a raw `ff` write below 78.0 °C via the service tool / operator.
+- `copy-in-use` (`fs` vs `em` copies) — shown independent in both directions; which copy the
+  regulation itself follows is still open (section 4 of `docs/next-service-tool-session.md`).
+- Upstream follow-ups / reviews of #717, #1825, #8, #1835 (on the maintainer's reply, owner's word).
 
 ## Current state
 
@@ -203,7 +154,7 @@ and compatible.
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` (tip `4dac6af`; released `weishaupt-1.2.0`, 1 095 messages) | 137 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 085 messages (1 077 single-register/memory messages + 8 three-register composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` and `HolidayEnd` on `fs1`, `fs2`, `fs3`, `InfoTemperatures` on `bc1`, `bc2`); 673 in metadata (carriers excluded), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, and `shared_with` on `fs2` `HCProgram1`/`HCProgram2`/`DHWProgram`/`CircProgram`), library pin on `v0.31.0-weishaupt.2`; 1.1.0 additions on top of 1.0.0: `H1Status` (module H1 input `29 0a` on em2/em3), `FanOperation` (boiler fan speeds read while the burner fires, `bc1`/`bc2`, `@ext`), and fs2 heating program 2 / stored hot-water / circulation documented as written through `35.w.fs1` |
+| `aghulas/ebusd-configuration` | `weishaupt` (tip `7462afb`; released `weishaupt-1.3.0`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. Deployed on the test installation (`out/ha-deploy-log.md`) |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
 | `aghulas/ha-weishaupt` | `v1.1.0` (Latest, 2026-11-22: UI only — global search, quick filters, program editor; PR #3). `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (consumes the 0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept. On the Pi, verified loaded | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
@@ -276,9 +227,9 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
 - *Done 2026-11-22 (see "Deferred", item D):* boiler heating-specialist parameters landed
   (`4dac6af`); the remaining single-source survey candidates closed for a display-only pass;
   participant `00` / `05` identified (the vendor's bus interface).
-- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`). *Partly answered 2026-11-22: the
-  system manager's DHW setpoint (device 15) is independent of the room-unit copy (ka→fs direction);
-  the 0.5 K display test on a room unit vs its module is still open.*
+- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`). *Partly answered 2026-11-22: both
+  directions (`fs1`→`em1` and `ka`→`fs1`) are independent stores (`evidence/settings-writes.md`);
+  the +1.0 °C supply-setpoint test in section 4 of `docs/next-service-tool-session.md` is still open.*
 
 ## Conventions
 
