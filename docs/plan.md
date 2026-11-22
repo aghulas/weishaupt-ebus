@@ -53,7 +53,10 @@ exists, the notice states in its first lines that the definitions were checked o
    Open: a third cold read is optional; the remaining doubt is that every reading so far was on
    paper, without a heating system.*
 5. **Companion.** Complete the two remaining checks on site (non-admin user view, dashboard card
-   of a shared program), then request HACS default store on the owner's word.
+   of a shared program). HACS default store not pursued — the companion stays a custom repository
+   (owner, 2026-11-22, « Reste en dépôt personnalisé »): it already installs that way, and the
+   default store would need an original non-trademark icon plus a `home-assistant/brands` PR and a
+   `hacs/default` PR, all owner-driven. Companion thread closed.
    *0.12.0b1 (pre-release, 2026-11-21): choice of the ebusd (`out/companion-ebusd-choice-proposal.md`,
    approved as recommended). Next: the on-site read-only checks listed in
    `out/ha-weishaupt-0.12.0-release-notes.md`, by the deploy session on the owner's word in its window,
@@ -66,6 +69,9 @@ exists, the notice states in its first lines that the definitions were checked o
    *0.12.1 published 2026-11-21 (Latest): that follow-up is done — Reconfigure became a menu (ebusd/mode,
    bus load & writes, telegram log per ebusd), the options flow kept for the API and tests, both paths sharing
    the same helpers. The deploy session updates the Pi from the beta straight to 0.12.1.*
+   *Companion closed 2026-11-22: stays a custom repository (HACS default store not pursued). Pi 0.12.1
+   update is the only open item — blocked on the owner accepting the Marketplace one-time warning in HA,
+   after which the deploy session finishes it.*
 6. **Release 1.0.0**, the promise of stability, tagging both `aghulas/ebusd-configuration` and
    `aghulas/weishaupt-ebus` as `weishaupt-1.0.0`. Releases are no longer flagged pre-release from
    0.6.1 on (owner, 2026-11-20, « Oui, dès la 0.6.1 »): the stable companion requires them, the
