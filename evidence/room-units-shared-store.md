@@ -190,11 +190,22 @@ hour changed on `35`, read on `35` and `75` 3 s later, restored on `35`, both re
 2, the hot-water program and the circulation program of `75` are those of `35`, as heating
 program 1 is. Raw output: installation data, not in this repository.
 
+### 5. Heating program 3 (2026-11-22)
+
+The last program left without a write on `35` followed by a read of `75`. On the owner's
+approval, raw `hex` from `31`; no telegram from the vendor service tool (`ff`) before.
+
+- Slot used: Monday slot 1 of heating program 3 (`fs1.HCProgram3Mon1`). Before: `06:00-22:00`
+  on both `35` and `75`.
+- Written on `35`, start `06:00 → 06:30`; `75` read `06:30` within 3 s — the mirror.
+- Restored to `06:00` (write payload `18 10 16 58 18`); `35` and `75` both back to `06:00`.
+
+Two `50 23`, both `31 → 35`, none to `75`: heating program 3 of `75` is the program of `35`, as
+heating programs 1 and 2 are. Raw output: installation data, not in this repository.
+
 ## Not established
 
-- **Heating program 3 of `75`.** Not written: heating program 2, hot water and circulation were
-  shown shared on 2026-11-20 (section 4 below); heating program 3 is the only one left without a
-  write on `35` followed by a read of `75`.
+- (Heating program 3 of `75` was the one open point here; established on 2026-11-22, section 5.)
 
 - **One physical room unit or two: settled 2026-11-20.** The owner reports the room units
   configured as "#1+2" and "#3". The room unit and module manual (83277504, p. 11 and p. 105)

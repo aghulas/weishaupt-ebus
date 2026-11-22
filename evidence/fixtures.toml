@@ -1036,6 +1036,28 @@ readings = [
   { message = "FrostProtectionLimitTemp", master = "b2 be 02", slave = "00 00", expect = { value = 0.0 } },
 ]
 
+# room-thermostat-floor-drying: both sensors read 0x8000 (no sensor) on the room unit 35 and the
+# heating module 51 on 2026-11-22; the two-byte answer settles the 16-bit typing.
+[[block]]
+evidence = "room-thermostat-floor-drying"
+date = "2026-11-22"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "FloorDryingTemp", master = "5e 13 0a", slave = "00 80", expect = { value = "-" }, case = "not-available" },
+  { message = "RoomThermostatTemp", master = "92 1d 0a", slave = "00 80", expect = { value = "-" }, case = "not-available" },
+]
+
+[[block]]
+evidence = "room-thermostat-floor-drying"
+date = "2026-11-22"
+circuit = "em2"
+where = "row"
+readings = [
+  { message = "FloorDryingTemp", master = "5e 13 0a", slave = "00 80", expect = { value = "-" }, case = "not-available" },
+  { message = "RoomThermostatTemp", master = "92 1d 0a", slave = "00 80", expect = { value = "-" }, case = "not-available" },
+]
+
 # room-units-reads: the fourteen registers of each room unit
 [[block]]
 evidence = "room-units-reads"

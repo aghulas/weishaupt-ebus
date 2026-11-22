@@ -361,6 +361,50 @@ system manager between the change and the restore.
   maximum written at `15` from `ff`, read at `50` too): on `50` / `15` the flow limits are taken
   from `ff` only. The client in service writes them from `31` on `em1` and must use `ff`.
 
+## Captures on site, 2026-11-22
+
+On the owner's approval, through the companion on the write-capable ebusd; the vendor service
+tool disconnected; each value put back afterwards.
+
+### `DeCoupleMinTemp` (`ka`, `e7 fd`): regulation-class write from `ff`, bound 0–50 enforced
+
+- **Write 8.0 → 10.0 from `ff`.** For this register, risk class *regulation*, the plain write
+  only *prepares*: the companion showed the current value, the new value and the range and asked
+  for a second confirmation ("Write to the controller") before anything reached the bus. On that
+  confirmation the value was written and read back 10.0.
+- **Out of range: 55 refused before the bus.** A write of 55 was rejected with "value 55.0
+  outside valid range 0.0 – 50.0"; no telegram was sent. The upper bound 50.0 is enforced at the
+  entity, from the field's own range (`@minValue(0) @maxValue(50) @step(0.5)` in the definition).
+- **Restore 10.0 → 8.0 from `ff`**, through the same regulation confirmation. One `50 23`,
+  `ff → 15`, payload `70 e7 fd 50 00` (= `0x0050` = 80 = 8.0 °C ×10); value back to 8.0. This is
+  the telegram transcribed in `fixtures.toml` (block `settings-writes`, `ka`).
+
+The register's write path and its 0–50 bound are confirmed; the two-screen confirmation is the
+behaviour of every regulation-class setting (a comfort setting is written directly).
+
+**`DeCoupleMaxTemp` (`e6 fd`) stays read-only** in the definitions (no run-time checksum write,
+no `number` entity): a lower value from `ff` could not be tried, so it is left read-only, as
+before. See `docs/discoveries.md`.
+
+### `copy-in-use`: the room-unit and module copies are independent (both directions)
+
+The room unit and its heating module answer the same setting registers with their own value
+(see [room-units-reads.md](room-units-reads.md) / [heating-modules-reads.md](heating-modules-reads.md)).
+A first write on a room unit on 2026-11-18 left room for doubt (the module value happened to
+match). On 2026-11-22 a disambiguating write settled it:
+
+- Before: room unit `fs1`/`35` normal room setpoint `21.0`; module `em1`/`50` `21.5` (already
+  different).
+- Written on `35` to `22.0` (payload `64 05 00 dc 00`, `dc 00` = 220 = 22.0 ×10); `50` read
+  **unchanged `21.5`** afterwards. The room-unit write did not propagate to the module copy.
+- Restored on `35` to `21.0` (`a8 05 00 d2 00`). Two `50 23`, both `ff → 35`, none to `50`.
+
+The other direction was shown the same day (`out/ha-deploy-log.md`): a write to the system
+manager's own hot-water setpoint (device `15`) left the room unit's copy untouched. So the `fs`
+and `em` copies of these registers are independent stores, and the room-unit entity writes the
+`fs` copy. Which copy the regulation itself follows is still not established, so the
+`open = ["copy-in-use"]` note stays on these settings.
+
 ## Equipment
 
 Kromschröder WCM regulators on eBUS, scanning as `MF=Kromschröder`, `ID=W`: system manager at
@@ -371,7 +415,8 @@ boilers in cascade, no calorifier or buffer sensor fitted.
 
 Captures 2026-10-29 and 2026-11-16; record written on 2026-11-17; three settings added and
 the coverage section written on 2026-11-18; telegram log 2026-11-10 to 2026-11-18 read and
-two more settings added on 2026-11-18.
+two more settings added on 2026-11-18; the `DeCoupleMinTemp` regulation-confirm write and the
+`copy-in-use` disambiguating write captured on site on 2026-11-22.
 
 ## Not verified
 
