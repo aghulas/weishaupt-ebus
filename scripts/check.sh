@@ -118,13 +118,13 @@ checkconfig() {
       cfail=1
     else
       chmod +x "$bin" 2>/dev/null
-      rm -rf "$cfg" && mkdir -p "$cfg" && cp "$csv"/*.csv "$cfg/" && cp -r "$csv/$LOT" "$cfg/"
+      rm -rf "$cfg" && mkdir -p "$cfg" && COPYFILE_DISABLE=1 cp "$csv"/*.csv "$cfg/" && COPYFILE_DISABLE=1 cp -r "$csv/$LOT" "$cfg/" && find "$cfg" -name '._*' -delete
       docker run --rm -v "$bin":/ebusd:ro -v "$cfg":/cfg:ro debian:trixie-slim \
         /ebusd --checkconfig --configpath=/cfg >"$log" 2>&1 || cfail=1
     fi
   else
     # CSV root files and the lot folder only, sent as a workflow input: nothing is pushed.
-    payload=$(cd "$csv" && tar czf - ./*.csv "$LOT" | base64 | tr -d '\n')
+    payload=$(cd "$csv" && COPYFILE_DISABLE=1 tar czf - ./*.csv "$LOT" | base64 | tr -d '\n')
     label="$(git branch --show-current)@$(git rev-parse --short HEAD) $(date -u +%Y%m%dT%H%M%SZ)-$RANDOM"
     if gh workflow run checkconfig.yml -R "$WORKBENCH" --ref main -f csv_tgz_b64="$payload" \
          -f label="$label" -f ebusd_fork="$FORK" -f ebusd_release="$RELEASE" >/dev/null; then
