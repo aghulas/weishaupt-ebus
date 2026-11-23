@@ -161,7 +161,7 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 | `aghulas/ebusd-configuration` | `weishaupt` (tip `7462afb`; released `weishaupt-1.3.0`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. Deployed on the test installation (`out/ha-deploy-log.md`) |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
-| `aghulas/ha-weishaupt` | `v1.2.0` (Latest, 2026-11-22: consumes definitions 1.3.0 — specialist parameters, firing fan, H1, `fs2` program 3). `v1.1.0` (UI only — global search, quick filters, program editor; PR #3), `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (consumes the 0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept. On the Pi, verified loaded | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
+| `aghulas/ha-weishaupt` | `v1.3.0` (Latest, 2026-11-23: opt-in **Allow writes on a stock ebusd** for the non-boiler controllers, PR #4; no definitions change). `v1.2.0` (consumes definitions 1.3.0 — specialist parameters, firing fan, H1, `fs2` program 3), `v1.1.0` (UI only — global search, quick filters, program editor; PR #3), `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
@@ -189,9 +189,12 @@ responds to #717; their prepared titles and bodies are in `docs/upstream-topics.
   placeholder/unchecked CRC byte (`evidence/write-methods.md`, section 2026-11-23). With the
   earlier system-manager `15` result, **all non-boiler controllers** (`ka`, `em1`–`em3`,
   `fs1`–`fs3`) can be written end to end by a stock `ebusd 26.1` without `john30/ebusd#1825`; the
-  fork build is needed only for `@fills` composite-read distribution. Unblocks the decision in
-  `docs/test-stock-ebusd-writes.md` (notice wording, `ha-weishaupt` write guard, upstream write
-  PRs) — on the owner's word.
+  fork build is needed only for `@fills` composite-read distribution. The decision in
+  `docs/test-stock-ebusd-writes.md` is carried out: notice wording updated
+  (`docs/release-readme.md`, `README.md`); the `ha-weishaupt` write guard relaxed as an opt-in
+  **Allow writes on a stock ebusd** (PR #4, released `v1.3.0` on the owner's word, 2026-11-23); the
+  upstream write topics prepared to cut without `#1825`/`#8` (`docs/upstream-topics.md`), held until
+  the maintainer responds.
 - *Done (2026-11-22):* **Clock automation** verified on site (`weishaupt_clock_sync` triggers only
   every 30 min, no HA start trigger; preserves outside temperature from `f1fe070009`).
 - **GitHub support request**: text ready in `out/github-support-request.md` to purge pre-rewrite
