@@ -19,9 +19,9 @@ your heating installer.
 ## Use
 
 What you need: an eBUS adapter connected to the bus of the WCM controllers, and ebusd (any 26.1
-build reads; writing needs the build named under "Write"). **If you mean to write, start with
-that build** (in Home Assistant, the add-on **eBUSd (Weishaupt CRC)**) rather than install the
-stock one and switch later: a second add-on has its own folder, options and host name.
+build both reads and writes the settings here — see "Write"; the fork build only adds the
+composite-read distribution). In Home Assistant that is the add-on **eBUSd** (stock) or **eBUSd
+(Weishaupt CRC)** (the fork build); either writes these settings.
 
 The files are installed by pointing ebusd at the unpacked folder with `--configpath`. ebusd then
 uses these files instead of the definitions it would fetch online: message and entity names
@@ -107,10 +107,16 @@ that filter. Do not change it with a stock ebusd (see "Write").
 
 ### Write
 
-**The ebusd build.** Each write telegram carries a checksum over its register and value, which
-ebusd must compute when it sends. The official ebusd cannot yet (john30/ebusd#1825): it loads the
-write lines of these files but sends a wrong checksum. Use the build
-[@EBUSD@](https://github.com/aghulas/ebusd/releases/tag/@EBUSD@):
+**The ebusd build and the checksum.** Each write telegram carries a checksum over its register and
+value. The official `ebusd 26.1` does not compute it yet (john30/ebusd#1825) and sends a
+placeholder; the build [@EBUSD@](https://github.com/aghulas/ebusd/releases/tag/@EBUSD@) computes
+it. Every setting in the table below is on a non-boiler controller — the system manager (`ka`), the
+heating modules (`em1`–`em3`) and the room units (`fs1`–`fs3`) — and these accept the placeholder
+and take the value, so a stock `ebusd 26.1` writes them all end to end (established on the system
+manager, a room unit and a heating module, sources `ff` and `31`; the boiler automats are never
+written). The build stays useful for reads — it distributes the composite reads and
+loads message IDs longer than 7 bytes — but it is not required to write the settings here. To run
+it anyway (for the composite reads, or by preference):
 
 - **Home Assistant:** in the add-on store, ⋮ → Repositories, add
   `https://github.com/aghulas/ha-addons#weishaupt`. That form is for the add-on store only: in a
@@ -167,9 +173,11 @@ itself, without sending anything: the attribute `run_time_checksum` of its write
   the settings of `15.w.ka`, which act on the whole cascade.
 - **Write sparingly.** The devices keep their settings over a power cut; how many writes their
   memory bears is not known.
-- **A wrong checksum** (a stock ebusd) is no safe failure: whether the system manager and the room
-  units ignore it is not established, and an operator's test recorded that the heating modules
-  do not check it. Do not write with a stock ebusd.
+- **A stock ebusd is enough for these writes.** The system manager, the room units and the heating
+  modules take a write with a placeholder checksum (established 2026-11-22/23 on `15`, `35` and
+  `51`, sources `ff` and `31`), so the build's run-time checksum is not needed for them. The boiler
+  automats are never written; whether one would check the checksum is untested, so do not write a
+  boiler with a stock ebusd.
 
 The Home Assistant integration [ha-weishaupt](https://github.com/aghulas/ha-weishaupt) does all
 this for you (build check, source address, read-back, a confirmation for the settings that act

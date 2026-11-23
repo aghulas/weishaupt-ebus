@@ -10,8 +10,11 @@ Two tracks (`AGENTS.md`, "Goal"):
 1. **Fork first (trunk-based).** The definitions, translations (`src/fr.yaml`), metadata sidecar
    (`metadata/weishaupt.toml`) and library pin live on one branch, `weishaupt`, in
    `aghulas/ebusd-configuration`, kept rebased on `upstream/master`. Compiled CSV, metadata and
-   fixtures are published from it as releases. Reads work with a stock ebusd; writes need the
-   ebusd build of the fork until john30/ebusd#1825 is merged.
+   fixtures are published from it as releases. Reads work with a stock ebusd; the non-boiler
+   controllers (`ka`, `em1`–`em3`, `fs1`–`fs3`) also take writes from a stock ebusd end to end
+   (placeholder checksum, proven 2026-11-22/23 on `15`, `35`, `51`), so the fork ebusd build adds
+   the composite-read distribution (`@fills`) and the run-time checksum (john30/ebusd#1825) but is
+   not required to write the settings published here.
 2. **Upstream in parallel.** Small, topic-focused pull requests are kept ready and cut from
    `weishaupt` on demand (`upstream/<topic>` branches). Three pull requests are open; the others
    are proposed one at a time when the maintainer responds, on the owner's word (rule 8).
@@ -178,11 +181,17 @@ responds to #717; their prepared titles and bodies are in `docs/upstream-topics.
 
 ### Needs the owner
 
-- **Writes with a stock ebusd (decision deferred by the owner, 2026-11-20).** A stock ebusd with
-  the definitions wrote and restored a setting of the system manager on the bus; the system
-  manager, room units and heating modules ignore the write checksum (`docs/ebus-protocol.md`,
-  `evidence/write-methods.md`). Protocol ready in `docs/test-stock-ebusd-writes.md` for the
-  remaining two checks (one room unit and one heating module with the stock add-on).
+- *Done (2026-11-23):* **Writes with a stock ebusd.** The two remaining end-to-end checks ran on
+  site (operator present, vendor service tool disconnected, no `ff` telegram in the prior 15 min)
+  with the stock `ebusd 26.1.26.1` (no `-weishaupt` build) and the 1.3.0 definitions: room unit
+  `fs1` (`HolidayStartDay`, source `ff`), heating module `em2` (`SupplyMinTemp`, source `31`;
+  `RoomFrostProtectionTemp`, source `ff`) — all three TAKEN, restored, the controller accepting a
+  placeholder/unchecked CRC byte (`evidence/write-methods.md`, section 2026-11-23). With the
+  earlier system-manager `15` result, **all non-boiler controllers** (`ka`, `em1`–`em3`,
+  `fs1`–`fs3`) can be written end to end by a stock `ebusd 26.1` without `john30/ebusd#1825`; the
+  fork build is needed only for `@fills` composite-read distribution. Unblocks the decision in
+  `docs/test-stock-ebusd-writes.md` (notice wording, `ha-weishaupt` write guard, upstream write
+  PRs) — on the owner's word.
 - *Done (2026-11-22):* **Clock automation** verified on site (`weishaupt_clock_sync` triggers only
   every 30 min, no HA start trigger; preserves outside temperature from `f1fe070009`).
 - **GitHub support request**: text ready in `out/github-support-request.md` to purge pre-rewrite
