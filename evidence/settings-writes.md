@@ -402,8 +402,27 @@ match). On 2026-11-22 a disambiguating write settled it:
 The other direction was shown the same day (`out/ha-deploy-log.md`): a write to the system
 manager's own hot-water setpoint (device `15`) left the room unit's copy untouched. So the `fs`
 and `em` copies of these registers are independent stores, and the room-unit entity writes the
-`fs` copy. Which copy the regulation itself follows is still not established, so the
-`open = ["copy-in-use"]` note stays on these settings.
+`fs` copy.
+
+### `copy-in-use` resolved: the regulation follows the room-unit (`fs`) copy (2026-11-23)
+
+On 2026-11-23, on the operator's approval during an active heating period (baseline `em2/SupplyHCSetTemp` = 58.0 °C,
+`fs2/RoomNormalTemp` = 21.0 °C, `em2/RoomNormalTemp` = 21.5 °C), controlled writes tested which copy drives the flow
+temperature setpoint on circuit 2:
+
+1. **Step A (`em2`, module 51):** written from `ff` to 22.5 °C (`51502305c00500e100`, acknowledged `00`, read-back `22.5`).
+   Observed: `em2/SupplyHCSetTemp` remained unmoved at **58.0 °C**; `fs2/RoomSetpointTemp` remained **21.0 °C**;
+   `fs2.PowerDemand` broadcast remained unchanged (`bbffc203...`). Restored cleanly to 21.5 °C (`51502305d80500d700`,
+   acknowledged `00`, read-back `21.5`).
+2. **Step B (`fs2`, room unit 75):** written from `ff` to 22.0 °C (`75502305640500dc00`, acknowledged `00`, read-back `22.0`).
+   Observed: `fs2/RoomSetpointTemp` immediately changed from 21.0 to **22.0 °C**; `fs2.PowerDemand` immediately increased
+   from `c2 03` (962) to **`ee 03`** (1006); `fs2/SupplyHCSetTemp` jumped from 58.1 to **60.9 °C**; and `em2/SupplyHCSetTemp`
+   jumped from 58.0 to **60.0 °C**. Restored cleanly to 21.0 °C (`75502305a80500d200`, acknowledged `00`, read-back `21.0`),
+   after which `fs2/SupplyHCSetTemp` returned to 58.1 °C and `em2/SupplyHCSetTemp` returned to 58.0 °C.
+
+**Conclusion:** The regulation loop calculates heating demand and target flow temperature exclusively from the room-unit
+(`fs`) copy. The heating module (`em`) copy is a disconnected local store that does not influence regulation when a room unit
+is fitted.
 
 ## Equipment
 
@@ -416,7 +435,8 @@ boilers in cascade, no calorifier or buffer sensor fitted.
 Captures 2026-10-29 and 2026-11-16; record written on 2026-11-17; three settings added and
 the coverage section written on 2026-11-18; telegram log 2026-11-10 to 2026-11-18 read and
 two more settings added on 2026-11-18; the `DeCoupleMinTemp` regulation-confirm write and the
-`copy-in-use` disambiguating write captured on site on 2026-11-22.
+`copy-in-use` disambiguating write captured on site on 2026-11-22; the `copy-in-use` regulation-drive
+write test executed and confirmed on site on 2026-11-23.
 
 ## Not verified
 

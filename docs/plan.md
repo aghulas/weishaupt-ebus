@@ -144,8 +144,9 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
   undefined and unpolled, no entity); owner action via the service tool.
 - `e6fd` de-couple maximum lower value — `DeCoupleMaxTemp` stays read-only (no `[WCRC]`); requires
   a raw `ff` write below 78.0 °C via the service tool / operator.
-- `copy-in-use` (`fs` vs `em` copies) — shown independent in both directions; which copy the
-  regulation itself follows is still open (section 4 of `docs/next-service-tool-session.md`).
+- `copy-in-use` (`fs` vs `em` copies) — resolved 2026-11-23 on circuit 2 during active heating:
+  regulation strictly follows the room-unit (`fs`) copy (`SupplyHCSetTemp` moved from 58.1 to 60.9 °C;
+  module write did not move flow setpoint); `evidence/settings-writes.md`.
 - Upstream follow-ups / reviews of #717, #1825, #8, #1835 (on the maintainer's reply, owner's word).
 
 ## Current state
@@ -227,9 +228,9 @@ Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on de
 - *Done 2026-11-22 (see "Deferred", item D):* boiler heating-specialist parameters landed
   (`4dac6af`); the remaining single-source survey candidates closed for a display-only pass;
   participant `00` / `05` identified (the vendor's bus interface).
-- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`). *Partly answered 2026-11-22: both
-  directions (`fs1`→`em1` and `ka`→`fs1`) are independent stores (`evidence/settings-writes.md`);
-  the +1.0 °C supply-setpoint test in section 4 of `docs/next-service-tool-session.md` is still open.*
+- Which copy (`fs` vs `em`) the regulation uses (`copy-in-use`). *Resolved 2026-11-23: both
+  copies are independent stores; the +1.0 °C supply-setpoint test confirmed the regulation loop
+  calculates exclusively from the room unit (`fs`) copy (`evidence/settings-writes.md`).*
 
 ## Conventions
 

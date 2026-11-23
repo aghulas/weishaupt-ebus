@@ -8,11 +8,13 @@ depends on it.
 service tool is connected (`QQ = ff` conflict). Capture telegrams passively (`ebusd` telegram log /
 `ebusd_trames` snapshots before and after opening each screen).
 
-> **Pass of 2026-11-22.** Sections 1 to 3 were run (display only): the boiler parameters are
-> defined as `InstallerParameters1`–`5` (`evidence/bc-installer-parameters.md`), the participant
-> at `00` / `05` is the vendor's bus interface (`evidence/master-00-slave-05.md`), and the
+> **Pass of 2026-11-22 & 2026-11-23.** Sections 1 to 3 were run on 2026-11-22 (display only): the
+> boiler parameters are defined as `InstallerParameters1`–`5` (`evidence/bc-installer-parameters.md`),
+> the participant at `00` / `05` is the vendor's bus interface (`evidence/master-00-slave-05.md`), and the
 > remaining single-source candidates cannot be separated by a display (`docs/discoveries.md`).
-> Section 4 (`copy-in-use`) is the only part still open.
+> Section 4 (`copy-in-use`) was executed on 2026-11-23 on the operator's approval during active heating:
+> the regulation loop strictly follows the room-unit (`fs`) copy (`evidence/settings-writes.md`). All sections
+> of this checklist are now complete.
 
 ## 1. Boiler installer parameters P10–P71 (for `1.1.0`)
 
@@ -53,17 +55,16 @@ Reference: [evidence/register-survey-findings.md](../evidence/register-survey-fi
   each candidate has two independent sources (bus read + vendor tool display) before entering
   `src/wolf/`.
 
-## 4. `copy-in-use` (`fs` vs `em` circuit settings — optional, after disconnecting the tool)
+## 4. `copy-in-use` (`fs` vs `em` circuit settings — resolved 2026-11-23)
 
-Reference: `open = ["copy-in-use"]` in `metadata/weishaupt.toml`.
+Reference: `open = ["copy-in-use"]` in `metadata/weishaupt.toml`, `evidence/settings-writes.md`.
 
-- **Only after disconnecting WCM-Diagnose** (no `QQ = ff` for 15 min), and on the operator's word:
-  - Pick one heating circuit (e.g. circuit 2: `fs2` `75` and `em2` `51`) during an active heating
-    period.
-  - Record `em2/SupplyHCSetTemp`, `fs2/RoomNormalTemp`, `em2/RoomNormalTemp`.
-  - Change `em2/RoomNormalTemp` by +1.0 °C (from `ff`), wait 2 minutes, observe whether
-    `em2/SupplyHCSetTemp` moves and whether `fs2` overwrites `em2` via `09 03`. Restore `em2`.
-  - Repeat on `fs2/RoomNormalTemp` by +1.0 °C, wait 2 minutes, observe `em2/SupplyHCSetTemp` and
-    `em2/RoomNormalTemp`. Restore `fs2`.
-- Outcome: establishes which copy (`fs` or `em`) the regulation applies, allowing `open =
-  ["copy-in-use"]` to be cleared in `metadata/weishaupt.toml`.
+- **Executed on 2026-11-23 on the operator's word during active heating on circuit 2:**
+  - Baseline: `em2/SupplyHCSetTemp` = 58.0 °C, `fs2/RoomNormalTemp` = 21.0 °C, `em2/RoomNormalTemp` = 21.5 °C.
+  - Step A: `em2/RoomNormalTemp` changed to 22.5 °C. No change in `SupplyHCSetTemp` (stayed 58.0 °C), no change in
+    `RoomSetpointTemp` (21.0 °C), no `09 03` overwrite. Restored to 21.5 °C.
+  - Step B: `fs2/RoomNormalTemp` changed to 22.0 °C. `fs2/RoomSetpointTemp` changed to 22.0 °C immediately;
+    `fs2.PowerDemand` increased (`c2 03` → `ee 03`); `fs2/SupplyHCSetTemp` jumped from 58.1 to 60.9 °C; and
+    `em2/SupplyHCSetTemp` jumped from 58.0 to 60.0 °C. Restored to 21.0 °C (both returned to 58.1 / 58.0 °C).
+- Outcome: establishes unambiguously that the regulation calculates from and applies the room-unit (`fs`) copy.
+  `open = ["copy-in-use"]` can now be cleared from the metadata.
