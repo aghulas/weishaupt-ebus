@@ -18,7 +18,7 @@ service tool is connected (`QQ = ff` conflict). Capture telegrams passively (`eb
 
 ## 1. Boiler installer parameters P10–P71 (for `1.1.0`)
 
-Reference: [docs/boiler-parameters-proposal.md](boiler-parameters-proposal.md).
+Reference: [evidence/bc-installer-parameters.md](../evidence/bc-installer-parameters.md).
 
 - Take a baseline `ebusd_trames` snapshot.
 - Open the **Heating specialist** tab on **boiler A** (`08`) and **boiler B** (`18`), and note all

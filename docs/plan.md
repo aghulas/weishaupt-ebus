@@ -24,7 +24,7 @@ install the release without help from here. A second installation is not a condi
 exists, the notice states in its first lines that the definitions were checked on one installation.
 
 1. **0.6: last breaking changes, in one release.** *Done (2026-11-20, `weishaupt-0.6.0`).*
-   Seven changes (`docs/breaking-changes-0.6.md`), 1 073 messages; names are frozen towards 1.0.
+   Seven changes, 1 073 messages; names are frozen towards 1.0.
 2. **Nothing provisional left.** *Done (2026-11-20, for 0.6.1).* Every French string and the
    wording choices accepted by the owner; the label of `ForcedVenting` kept as "Ventilation
    forcée" (« je préfère Ventilation forcée »): the wording, not the meaning, which stays not
@@ -171,8 +171,8 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 Also posted: john30/ebusd#1814 (arbitration data point) and john30/ebusd-configuration#616
 (coordination with another contributor converting `J0EK3R/ebusd-configuration-weishaupt`).
 
-Upstream topic branches (`upstream/<topic>`, `docs/pr-<topic>.md`) are cut on demand from
-`weishaupt` when the maintainer responds to #717.
+Upstream topic branches (`upstream/<topic>`) are cut on demand from `weishaupt` when the maintainer
+responds to #717; their prepared titles and bodies are in `docs/upstream-topics.md`.
 
 ## Open
 

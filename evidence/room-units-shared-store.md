@@ -52,8 +52,7 @@ identification request from `00` to each, answered with the same bytes by both
 ### 2. Writes on `75` are not kept (2026-11-18 and 2026-11-19)
 
 Four program-slot writes to `75` (`50 23`, from `31` and from `ff`), each acknowledged `00`,
-none read back: [choice-date-program-writes.md](choice-date-program-writes.md) and
-[docs/retest-room-unit-2.md](../docs/retest-room-unit-2.md). The same telegrams to `35`, to
+none read back: [choice-date-program-writes.md](choice-date-program-writes.md). The same telegrams to `35`, to
 room unit 3 (`f5`) and to the system manager's circuit (`50`) were kept.
 
 ### 3. No program write between the two addresses in ten days (2026-11-09 to 2026-11-19)
@@ -171,8 +170,8 @@ one. Restores (2026-11-18 21:05:24, 2026-11-19 15:58:02 and 15:59:05) were follo
   log of 6).
 - `75` is not a mirror of `35`: the heating curve, the flow maximum and the circuit type
   differ or stay apart, and `75` runs heating circuit 2 itself (it writes its settings into
-  module `51` with `09 03` and sends the circuit's heat demand, `70 → f1`, see
-  [docs/retest-room-unit-2.md](../docs/retest-room-unit-2.md) step 1).
+  module `51` with `09 03` and sends the circuit's heat demand, `70 → f1`, shown by the
+  room-unit-2 retest step 1).
 
 ### 4. Heating program 2, hot water and circulation (2026-11-20, 15:28 to 15:29)
 

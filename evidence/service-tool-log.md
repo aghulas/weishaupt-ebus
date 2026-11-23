@@ -135,7 +135,7 @@ Addresses in the constants list (EEPROM), from the `.SYC`:
 
 ## Phase 2 — screens
 
-Date: 2026-11-16, 15:47–15:59. Method: `docs/service-tool-phase2-sheet.md`. Snapshots of the
+Date: 2026-11-16, 15:47–15:59. Method: the phase-2 run sheet following `docs/service-tool-protocol.md`. Snapshots of the
 telegrams grabbed by ebusd before and after each screen; screens read from screenshots. The tool
 sent no write (`50 23`) during the session: every telegram with `QQ=ff` was a `07 04`
 identification, a `09 02` read, a `50 22` read or a `50 00` memory read. No setting was written

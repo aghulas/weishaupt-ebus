@@ -446,7 +446,7 @@ The proposals above would make a later release.
 
 ## What room unit 2 writes into its module (telegram log, 2026-11-09 to 2026-11-19)
 
-From the export of the retest of room unit 2, step 1 ([docs/retest-room-unit-2.md](../docs/retest-room-unit-2.md)):
+From the export of the retest of room unit 2, step 1:
 master `70` (room unit 2) writes module `51` with `09 03 <reg lo> <reg hi> <val lo> <val hi>`,
 the same values for ten days. Each is a third source for the module register of the same number,
 beside the room unit's own register and the survey's read of the module:
