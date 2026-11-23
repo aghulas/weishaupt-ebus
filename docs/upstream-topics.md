@@ -144,11 +144,18 @@ hot-water and circulation programs; the comments say so.
 
 ---
 
-## Writes (require john30/ebusd#1825 and john30/ebus-typespec#8)
+## Writes
 
-With a stock ebusd the write lines load but the device gets a wrong checksum.
+The published settings are all on non-boiler controllers — the system manager (`ka`), the heating
+modules (`em1`–`em3`) and the room units (`fs1`–`fs3`) — which accept a `50 23` write carrying the
+placeholder checksum a stock ebusd sends, and take the value (established on `15`, `35` and `51`,
+sources `ff` and `31`, 2026-11-22/23; `evidence/write-methods.md`). So these write lines load **and
+take effect** on a stock `ebusd 26.1`. john30/ebusd#1825 (run-time checksum) and
+john30/ebus-typespec#8 (`@wcrc`) make the sent checksum correct but are **not required** for these
+controllers to accept the write, so the two write topics below can be cut without waiting on
+#1825/#8. The boiler automats are never written.
 
-### 10. settings-write — depends on room-unit-programs, #1825, #8
+### 10. settings-write — depends on room-unit-programs (#1825/#8 optional, see above)
 
 **Title:** Add Kromschröder/Weishaupt setting writes (50 23, run-time checksum) to src/wolf
 
@@ -168,7 +175,7 @@ with the new value and restored, the telegrams captured; each choice likewise; f
 write from any master but take most settings only from source address 0xff (the comment of each file
 says which).
 
-### 11. programs-write — depends on settings-write, #1825, #8
+### 11. programs-write — depends on settings-write (#1825/#8 optional, see above)
 
 **Title:** Add Kromschröder/Weishaupt weekly-program writes to src/wolf
 
