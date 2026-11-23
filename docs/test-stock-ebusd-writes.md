@@ -18,10 +18,12 @@ boiler automat (`08`, `18`).
 ## Pre-checks
 
 1. Confirm no vendor service tool traffic (`QQ = ff`) in the last 15 minutes.
-2. Unpack `weishaupt-ebusd-config-1.0.0.tar.gz` into the stock `ebusd` add-on config folder.
+2. Unpack `weishaupt-ebusd-config-1.3.0.tar.gz` into the stock `ebusd` add-on config folder.
 3. Stop the Weishaupt `ebusd` add-on, start the stock `ebusd` add-on with
-   `--configpath=/config/weishaupt-ebusd-config-1.0.0 --scanconfig --address=31`.
-4. Confirm `ebusctl info` shows `ebusd 26.1` (stock) and all 9 Kromschröder files loaded.
+   `--configpath=/config/weishaupt-ebusd-config-1.3.0 --scanconfig --address=31`.
+4. Confirm `ebusctl info` shows a stock `ebusd 26.1` (no `-weishaupt` build tag, so no run-time
+   checksum) and all 9 Kromschröder files loaded (`08.w.bc1`, `15.w.ka`, `18.w.bc2`, `35.w.fs1`,
+   `50.w.em1`, `51.w.em2`, `52.w.em3`, `75.w.fs2`, `f5.w.fs3`).
 
 ## Step 1 — Room unit (`35.w.fs1`, `HolidayStartDay`, source `ff`)
 
@@ -66,7 +68,7 @@ restore).
 2. Append the raw telegrams from ebusd's log to `evidence/write-methods.md`.
 3. If Steps 1–3 all return **taken**, then **all non-boiler controllers** (`ka`, `em1`–`em3`,
    `fs1`–`fs3`) can be written end to end by a stock `ebusd 26.1` without `john30/ebusd#1825`.
-   Decision for `1.1.0`:
+   Decision for the next compatible release (`1.x`):
    - Update `docs/release-readme.md` (stock ebusd suffices for reads and non-boiler writes; fork
      build needed only for `@fills` composite-read distribution).
    - Relax the `capability == "present"` write guard in `ha-weishaupt` (optional, opt-in or

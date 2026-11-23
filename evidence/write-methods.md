@@ -92,3 +92,24 @@ files of the scan for the devices it reached) as the Weishaupt ebusd does.
 - So, for the system manager, a stock ebusd with the released definitions writes end to end; the run-time checksum
   of the Weishaupt ebusd is not needed there. (Boiler automats not tested; never written.)
 - The stock ebusd also read the boiler automats (`08` BurnerServiceHours answered) during the run.
+
+## Stock ebusd 26.1 — end-to-end writes on room unit (fs1) and heating module (em2) (2026-11-23)
+
+Stock `ebusd 26.1.26.1` (no `-weishaupt` build tag, no run-time checksum) with the 1.3.0 definitions, address 31,
+over the eBUS adapter (enhanced-protocol TCP). Operator on site, vendor service tool disconnected, 0 telegram from `ff` in the prior
+15 min. Each register written off its nominal value by one step for ~10 s, then restored. All three TAKEN.
+
+| Step | Circuit / register | Source | Read→write→readback→restore→readback | Result |
+|---|---|---|---|---|
+| 1 | fs1 HolidayStartDay | ff | 30 → 29 → **29** → 30 → 30 | TAKEN |
+| 2 | em2 SupplyMinTemp | 31 | 8.0 → 8.5 → **8.5** → 8.0 → 8.0 | TAKEN |
+| 3 | em2 RoomFrostProtectionTemp | ff | 10.0 → 9.5 → **9.5** → 10.0 → 10.0 | TAKEN |
+
+Master telegrams (grab result, restore frames; first data byte = placeholder CRC since stock does not compute the WCRC):
+- `ff 35 5023 05 0d 1b01 1e00 / 00`  (fs1 HolidayStartDay, source ff, CRC placeholder 0d, value 1e00=30)
+- `31 51 5023 05 81 2b01 5000 / 00`  (em2 SupplyMinTemp, source 31, CRC placeholder 81, value 5000=8.0)
+- `ff 51 5023 05 96 140a 6400 / 00`  (em2 RoomFrostProtectionTemp, source ff, CRC placeholder 96, value 6400=10.0)
+
+The controller accepts the write with a placeholder/unchecked CRC byte on both the room unit (35) and the heating
+module (51), from sources ff and 31 — confirming (with the earlier system-manager 15 result) that non-boiler
+controllers can be written end to end by a stock ebusd 26.1 without john30/ebusd#1825.
