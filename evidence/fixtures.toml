@@ -2265,3 +2265,40 @@ readings = [
   { message = "ErrorMonth", master = "7f a2 0b", slave = "09 00", expect = { value = "September" } },
   { message = "ErrorYear", master = "23 a3 0b", slave = "00 00", expect = { value = 0 } },
 ]
+
+# Follow-up 2026-11-24: close the last three readable fixture gaps (100% readable coverage)
+[[block]]
+evidence = "boiler-firing-values"
+date = "2026-11-24"
+circuit = "bc1"
+where = "text"
+readings = [
+  { message = "FanOperation", master = "56 03 de 01 77 01 7e", slave = "00 00 00 00", expect = { firstbyte = 0, fanspeedset = 0, fanspeedactual = 0, fanpwm = 0 } },
+]
+
+[[block]]
+evidence = "boiler-firing-values"
+date = "2026-11-24"
+circuit = "bc2"
+where = "text"
+readings = [
+  { message = "FanOperation", master = "56 03 de 01 77 01 7e", slave = "00 25 25 33", expect = { firstbyte = 0, fanspeedset = 37, fanspeedactual = 37, fanpwm = 51 } },
+]
+
+[[block]]
+evidence = "register-survey-findings"
+date = "2026-11-24"
+circuit = "em2"
+where = "text"
+readings = [
+  { message = "H1Status", master = "32 29 0a", slave = "00 00", expect = { value = "off" } },
+]
+
+[[block]]
+evidence = "register-survey-findings"
+date = "2026-11-24"
+circuit = "em3"
+where = "text"
+readings = [
+  { message = "H1Status", master = "32 29 0a", slave = "00 00", expect = { value = "off" } },
+]

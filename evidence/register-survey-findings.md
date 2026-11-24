@@ -474,3 +474,10 @@ in the same minute.
 ## Date
 
 2026-11-19.
+
+## Follow-up (2026-11-24)
+
+Live `ebusd` reads (`read -f`, read-only) of `H1Status` (`29 0a`, CRC `32`) on both heating modules:
+
+- `em2` (`51`): `31 51 50 22 03 32 29 0a / 02 00 00` → `off`.
+- `em3` (`52`): `31 52 50 22 03 32 29 0a / 02 00 00` → `off`.

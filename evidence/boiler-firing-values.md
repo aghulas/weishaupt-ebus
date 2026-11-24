@@ -160,3 +160,12 @@ operator's concurrent DHW-setpoint test, which did not start the burner).
 - RAM `70` is not a complete value list; only idle/standby/ignition/firing seen, on a DHW fire.
 - eSTB offset above flow not pinned to a displayed figure.
 - All firing values proven on boiler `18` only; `08` stayed idle this window (shared models).
+
+## Follow-up (2026-11-24)
+
+Live `ebusd` reads (`read -f`) captured in the grab buffer (`ebusd` `v26.1-weishaupt.2`, read-only):
+
+- `bc1` (`08`, idle): `31 08 50 00 07 56 03 de 01 77 01 7e / 04 00 00 00 00` → `FanOperation` = `0;0;0;0`
+  (`firstbyte=0`, `fanspeedset=0`, `fanspeedactual=0`, `fanpwm=0`).
+- `bc2` (`18`, firing): `31 18 50 00 07 56 03 de 01 77 01 7e / 04 00 25 25 33` → `FanOperation` = `0;37;37;51`
+  (`firstbyte=0`, `fanspeedset=37`, `fanspeedactual=37`, `fanpwm=51`).
