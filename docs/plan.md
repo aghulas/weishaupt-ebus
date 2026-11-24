@@ -169,6 +169,7 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 | `aghulas/ebusd-configuration` | `weishaupt` (tip `84fe069`; released `weishaupt-1.3.1`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries, `copy-in-use` cleared), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. Deployed at `1.3.0` on the test installation (`out/ha-deploy-log.md`) |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
+| `aghulas/weishaupt2mqtt` | `main` (released `v0.1.2`, Latest, 2026-11-24) | All-in-one functional MQTT bridge (pure Python 3.11+, bundles ebusd with CRC and definitions 1.3.1, guarded level-1/level-2 writes under Option B, program diffs, HA Supervisor MQTT auto-auth). Deployed on the test installation as add-on `09e0ce7c_weishaupt2mqtt` |
 | `aghulas/ha-weishaupt` | `v1.3.0` (Latest, 2026-11-23: opt-in **Allow writes on a stock ebusd** for the non-boiler controllers, PR #4; no definitions change). `v1.2.0` (consumes definitions 1.3.0 — specialist parameters, firing fan, H1, `fs2` program 3), `v1.1.0` (UI only — global search, quick filters, program editor; PR #3), `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
@@ -189,6 +190,13 @@ responds to #717; their prepared titles and bodies are in `docs/upstream-topics.
 
 ### Needs the owner
 
+- *Done (2026-11-24):* **Functional MQTT bridge (`weishaupt2mqtt`).** Architecture deployed on site
+  to make MQTT the single default interface for all operations (replacing raw ebusd TCP):
+  `aghulas/weishaupt2mqtt` created, tested with unit tests and live reversible write tests, and
+  deployed as Home Assistant add-on `09e0ce7c_weishaupt2mqtt` v0.1.2. Legacy `09e0ce7c_ebusd` uninstalled.
+  Option B level separation applied: level 1 user writes on `weishaupt/<circuit>/set`, level 2
+  installer writes on `weishaupt/<circuit>/installer/set` with confirmation, minimal program diffs
+  on `weishaupt/<circuit>/program/<id>/set`. Next: refactor `ha-weishaupt` to consume MQTT directly.
 - *Done (2026-11-23):* **Writes with a stock ebusd.** The two remaining end-to-end checks ran on
   site (operator present, vendor service tool disconnected, no `ff` telegram in the prior 15 min)
   with the stock `ebusd 26.1.26.1` (no `-weishaupt` build) and the 1.3.0 definitions: room unit
