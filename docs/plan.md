@@ -1,6 +1,6 @@
 # Plan
 
-State verified against the repositories on 2026-11-22. When this file and a repository disagree,
+State verified against the repositories on 2026-11-24. When this file and a repository disagree,
 the repository is right: correct this file. Release history is in `CHANGELOG.md`.
 
 ## Direction
@@ -141,6 +141,13 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
     (regulation class, 0–50 bound enforced; `DeCoupleMaxTemp` stays read-only) and `copy-in-use`
     shown independent in both directions (`open = ["copy-in-use"]` kept).
 
+- **`weishaupt-1.3.1`** (prepared locally at `84fe069`, pending owner's word to publish):
+  - `84fe069` — cleared all 50 `open = ["copy-in-use"]` markers in `metadata/weishaupt.toml`
+    following the 2026-11-23 active-heating resolution (`evidence/settings-writes.md`).
+  - Installation notice (`docs/release-readme.md`) aligned on stock `ebusd 26.1` writes,
+    `75.w.fs2` program 3 sharing, `copy-in-use` resolution, and `@EBUSD@`; metadata count
+    parameterized as `@META_COUNT@` in `scripts/release.sh`.
+
 ### Remaining 1.x candidates (low priority, no release blocked)
 
 - Program selector `12 01` values 12/13 — not reachable through the companion / Pi ebusd (register
@@ -158,7 +165,7 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` (tip `7462afb`; released `weishaupt-1.3.0`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. Deployed on the test installation (`out/ha-deploy-log.md`) |
+| `aghulas/ebusd-configuration` | `weishaupt` (tip `84fe069`, `1.3.1` prepared locally; published `weishaupt-1.3.0`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries, `copy-in-use` cleared), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. Deployed at `1.3.0` on the test installation (`out/ha-deploy-log.md`) |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
 | `aghulas/ha-weishaupt` | `v1.3.0` (Latest, 2026-11-23: opt-in **Allow writes on a stock ebusd** for the non-boiler controllers, PR #4; no definitions change). `v1.2.0` (consumes definitions 1.3.0 — specialist parameters, firing fan, H1, `fs2` program 3), `v1.1.0` (UI only — global search, quick filters, program editor; PR #3), `v1.0.0` (definitions 1.0.0, `stored_only` badge), `v0.13.0` (0.8.0 metadata fields: linked bounds, `stored_only`, fault pointer, `shared_with`) kept | Home Assistant companion (out of scope here; consumes `weishaupt-metadata-<version>.json`) |

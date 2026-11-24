@@ -103,7 +103,7 @@ ebusd's command port, writes included, to your whole network.
 
 With the MQTT integration file the add-on seeds (`mqtt-hassio.cfg`, `filter-direction = r|u`),
 Home Assistant gets read-only entities; writable messages become entities only if you change
-that filter. Do not change it with a stock ebusd (see "Write").
+that filter (see "Write" below before enabling writes).
 
 ### Write
 
@@ -138,7 +138,7 @@ it anyway (for the composite reads, or by preference):
 **Which ebusd runs.** The first line of `ebusctl info` is the version of the running ebusd: the
 build shows `version: ebusd 26.1.p20261029`; a stock 26.1 shows another string (for example
 `26.1.26.1`). Which one you started: in Home Assistant, the add-on's Info page names **eBUSd
-(Weishaupt CRC)** with a version ending in `-weishaupt.1`; on a plain install, the executable
+(Weishaupt CRC)** with a version matching `@EBUSD@`; on a plain install, the executable
 you start is the one whose checksum matches the release's `sha256sums.txt`
 (`sha256sum /path/to/ebusd`). The Home Assistant integration tells the two builds apart by
 itself, without sending anything: the attribute `run_time_checksum` of its write switch reads
@@ -250,14 +250,14 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
   values are then decoded with another manufacturer's definitions. `ebusctl info` shows which file
   each address got.
 - **Room unit 2 (`75.w.fs2`).** On the test installation one room unit is addressed for circuits
-  1 and 2 and answers at `35` and `75`. `75` answers heating programs 1 and 2, the stored
+  1 and 2 and answers at `35` and `75`. `75` answers heating programs 1, 2 and 3, the stored
   hot-water and circulation programs, and the setback and frost setpoints from the store of `35`:
-  they are read only in `75.w.fs2` and written through `35.w.fs1`. Heating program 3 is read only
-  too; whether it is shared the same way is not established. A room unit at `75` addressed for
-  circuit 2 alone may keep its own.
+  they are read only in `75.w.fs2` and written through `35.w.fs1`. A room unit at `75` addressed
+  for circuit 2 alone may keep its own.
 - **Two copies of each circuit setting.** A room unit and its heating module answer the same
-  setting registers, sometimes with different values; which copy the regulation applies is not
-  established. A change of one copy may show no effect on the heating.
+  setting registers as independent stores, sometimes with different values. On the test
+  installation (active-heating test on circuit 2), the regulation loop follows the room-unit
+  (`fs`) copy, while changing the heating-module (`em`) copy does not move the flow setpoint.
 - **Room-unit hot-water and circulation programs** are stored only: on the test installation hot
   water follows the system manager's program (`50.w.em1`). The program selector register (`12 01`)
   is not defined.
@@ -292,7 +292,7 @@ Counts, and where each comes from:
 
 - **@COUNT@ messages** loaded by ebusd (`--checkconfig`): every read, write and passive line of the
   folder, the Wolf and general files included.
-- **683 messages** in the metadata file: the Weishaupt messages by name, a read and a write line of
+- **@META_COUNT@ messages** in the metadata file: the Weishaupt messages by name, a read and a write line of
   the same name counting once.
 - **Written: 92 settings** of `15.w.ka`, `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`, `50.w.em1`,
   `51.w.em2` and `52.w.em3` (87 numbers, 5 choices), **252 program slots** (the five programs of
@@ -347,13 +347,14 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 The history of every release is in
 [`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- Compatible additions on top of `1.1.0`, no breaking change (@COUNT@ messages, 683 in metadata).
-- **`InstallerParameters1` to `InstallerParameters5` (new reads)** on `bc1` and `bc2`: the
-  parameters of the heating-specialist level of the boiler (P12, P18, P30, P31, P33, P35 to P38,
-  P41, P42, P44 to P46, P48, P50, P70 of the boiler manual), read only, 17 fields in five memory
-  reads. The other parameters of that level are not defined.
-- **Participant at `00` / `05`** (Known limits): identified on the test installation as the bus
-  interface of the vendor's service tool; not a part of the heating system.
+- Compatible maintenance release on top of `1.3.0`, no breaking change (@COUNT@ messages,
+  @META_COUNT@ in metadata).
+- **Metadata (`copy-in-use` resolved):** removed the 50 `open = ["copy-in-use"]` markers after the
+  active-heating test on circuit 2 established that the regulation loop follows the room-unit
+  (`fs`) copy while the heating module (`em`) keeps an independent local store.
+- **Installation notice:** updated *Use*, *Write* and *Known limits* to reflect that a stock
+  `ebusd 26.1` writes the non-boiler settings end to end, that `75.w.fs2` heating program 3 is
+  shared with `35.w.fs1`, and that the metadata count is now rendered automatically.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established:

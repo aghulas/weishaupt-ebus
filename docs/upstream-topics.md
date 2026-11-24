@@ -13,8 +13,8 @@ are stale: **re-cut each branch from today's `weishaupt` and refresh the metadat
 pull request.** The titles and bodies below carry over; only the plumbing figures need redoing.
 
 The topics form a dependency chain on top of #717. `boiler-faults` is the first read topic; the
-write topics at the end also depend on john30/ebusd#1825 (run-time checksum) and
-john30/ebus-typespec#8 (`@wcrc`). The order below is the stacking order.
+write topics at the end work on a stock `ebusd 26.1` without waiting on john30/ebusd#1825 or
+john30/ebus-typespec#8 (see "Writes" below). The order below is the stacking order.
 
 Each body ends, as in the originals, with: checked with `tsp compile`, `tsp format --check` and
 `ebusd --checkconfig` (no error); one topic per commit; the evidence for each definition (captures
@@ -114,8 +114,8 @@ Builds on the register reads of #717.
   system manager's own circuit (`50.w.em1`).
 
 Every register was read on a live bus through ebusd. A room unit and its heating module answer the
-same setting registers with different values; which copy the regulation uses is not established, and
-the comments say so.
+same setting registers as independent stores; on the test installation (active-heating test on
+circuit 2), the regulation loop follows the room-unit (`fs`) copy.
 
 ### 8. heat-demand-room-units — depends on circuit-reads
 
@@ -157,11 +157,14 @@ controllers to accept the write, so the two write topics below can be cut withou
 
 ### 10. settings-write — depends on room-unit-programs (#1825/#8 optional, see above)
 
-**Title:** Add Kromschröder/Weishaupt setting writes (50 23, run-time checksum) to src/wolf
+**Title:** Add Kromschröder/Weishaupt setting writes (`50 23`) to src/wolf
 
 - A register write is `PBSB 50 23` with master data `<crc> <address> <value>`, the CRC-8 over
-  address and value. The template `crcw` and the decorator `@wcrc` leave the byte to ebusd; the read
-  line of each setting keeps the precomputed address checksum and stays valid on a stock ebusd.
+  address and value. When cut without john30/ebus-typespec#8 (`@wcrc`), the write line uses a
+  placeholder checksum byte accepted by the non-boiler controllers on stock `ebusd 26.1`; if
+  #1825 and #8 are merged first, the template `crcw` and `@wcrc` let ebusd compute the byte at
+  runtime. The read line of each setting keeps the precomputed address checksum and stays valid on
+  a stock ebusd.
 - 89 numeric settings of the system manager, the room units and the heating modules, with ranges
   where the manuals give integer bounds: 66 of the regular settings, the holiday dates of the room
   units (day, month and a third register whose meaning is not established, named so), their control

@@ -281,7 +281,7 @@ if __name__ == "__main__":
 
 class TestRenderNotice(unittest.TestCase):
     KEYS = {"VERSION": "9.9.9", "COMMIT": "abc1234", "NAME": "n", "BASE": "b", "COUNT": "1",
-            "EBUSD": "e", "LIB": "l", "VARIANT": ""}
+            "META_COUNT": "2", "EBUSD": "e", "LIB": "l", "VARIANT": ""}
 
     def test_no_provisional_sentence_when_empty(self):
         out = notice.render("one.@PROVISIONAL_SENTENCE@ Two.", {**self.KEYS, "PROVISIONAL": ""})
@@ -297,10 +297,14 @@ class TestRenderNotice(unittest.TestCase):
 
     def test_release_notice_renders(self):
         with open(os.path.join(ROOT, "docs", "release-readme.md"), encoding="utf-8") as f:
-            out = notice.render(f.read(), {**self.KEYS, "PROVISIONAL": ""})
+            raw = f.read()
+        self.assertIn("@META_COUNT@", raw)
+        self.assertNotIn("-weishaupt.1", raw)
+        out = notice.render(raw, {**self.KEYS, "PROVISIONAL": ""})
         self.assertNotIn("Still provisional", out)
         self.assertNotIn("@", out.replace("@ebusd", ""))
         self.assertIn("9.9.9", out)
+        self.assertIn("**2 messages** in the metadata file", out)
 
 
 class TestSettingsTable(unittest.TestCase):

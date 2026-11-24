@@ -3,6 +3,20 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 1.3.1 (2026-11-24)
+
+Compatible maintenance release on top of 1.3.0 (no breaking changes, same 1 099 messages and 687 in
+metadata):
+
+- **Metadata (`copy-in-use` cleared):** removed all 50 `open = ["copy-in-use"]` markers from
+  `metadata/weishaupt.toml` following the 2026-11-23 active-heating test on circuit 2 establishing
+  that the regulation loop follows the room-unit (`fs`) copy while the heating module (`em`) holds
+  an independent local store (`evidence/settings-writes.md`).
+- **Installation notice (`docs/release-readme.md`):** aligned *Use*, *Write* and *Known limits*
+  with the stock `ebusd 26.1` write results, `75.w.fs2` heating program 3 sharing, `copy-in-use`
+  resolution and `@EBUSD@` (`v26.1-weishaupt.2`); parameterized the metadata message count
+  (`@META_COUNT@`) in `scripts/release.sh` so it no longer drifts.
+
 ## 1.3.0 (2026-11-22)
 
 Compatible additions on top of 1.2.0 (no breaking changes): two re-added read-only messages and a

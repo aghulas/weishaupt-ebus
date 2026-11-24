@@ -56,8 +56,9 @@ archive() {
   # The devices scan as manufacturer Kromschroeder; upstream keeps their files in the Wolf folder.
   cp -r "$csv/wolf" "$REL/$name/kromschroeder"
   python3 "$ROOT/scripts/render-notice.py" "$ROOT/docs/release-readme.md" \
-      "VERSION=$VERSION" "COMMIT=$commit" "NAME=$name" "BASE=$NAME" "COUNT=$count" "EBUSD=$EBUSD" \
-      "LIB=$lib" "PROVISIONAL=$provisional" >"$REL/$name/README.md"
+      "VERSION=$VERSION" "COMMIT=$commit" "NAME=$name" "BASE=$NAME" "COUNT=$count" \
+      "META_COUNT=$meta_count" "EBUSD=$EBUSD" "LIB=$lib" "PROVISIONAL=$provisional" \
+      >"$REL/$name/README.md"
   (cd "$REL/$name" && find . -type f ! -name sha256sums.txt | sort | sed 's|^\./||' | xargs shasum -a 256 >sha256sums.txt)
   # Fixed order, owner, timestamps and gzip header: the same input gives the same archive.
   find "$REL/$name" -exec touch -t "$touch_ts" {} +
@@ -68,24 +69,30 @@ archive() {
   echo "archive: out/release/$name.tar.gz ($count messages), not published"
 }
 
-archive "$NAME" "$ROOT/out/csv/@ebusd/ebus-typespec"
-assets="$NAME.tar.gz"
 langargs=()
 for lang in $LANGS; do
   grep -q "^$lang: found messages: $count, as in English\$" "$ROOT/out/integrate.log" \
     || { echo "$lang: not compiled and checked by scripts/check.sh (no src/$lang.yaml on $BRANCH?): no archive"; exit 1; }
-  archive "$NAME-$lang" "$ROOT/out/csv.$lang/@ebusd/ebus-typespec"
-  assets="$assets $NAME-$lang.tar.gz"
   langargs+=(--lang "$lang=$ROOT/out/csv.$lang/@ebusd/ebus-typespec")
 done
 
-# Metadata and fixtures of the release.
+# Metadata of the release (built before the archives so the notice gets the exact message count).
 SIDE="$ROOT/out/integration/metadata/weishaupt.toml"
 META="$REL/weishaupt-metadata-$VERSION.json"
 FIXT="$REL/weishaupt-fixtures-$VERSION.json"
+mkdir -p "$REL"
 python3 "$ROOT/scripts/metadata.py" build "$SIDE" "$ROOT/out/csv/@ebusd/ebus-typespec" \
   "$META" --version "$VERSION" --commit "$commit" --loaded "$count" \
   ${langargs[@]+"${langargs[@]}"}
+meta_count=$(python3 -c "import json, sys; print(len(json.load(open(sys.argv[1], encoding='utf-8'))['messages']))" "$META")
+
+archive "$NAME" "$ROOT/out/csv/@ebusd/ebus-typespec"
+assets="$NAME.tar.gz"
+for lang in $LANGS; do
+  archive "$NAME-$lang" "$ROOT/out/csv.$lang/@ebusd/ebus-typespec"
+  assets="$assets $NAME-$lang.tar.gz"
+done
+
 case "$(uname -m)" in arm64|aarch64) arch=aarch64 ;; *) arch=amd64 ;; esac
 python3 "$ROOT/scripts/fixtures.py" build "$ROOT/evidence/fixtures.toml" \
   "$ROOT/out/csv/@ebusd/ebus-typespec" "$FIXT" --version "$VERSION" \
