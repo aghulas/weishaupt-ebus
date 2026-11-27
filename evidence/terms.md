@@ -410,8 +410,16 @@ written the same day, with the form recommended for each choice. Status as in th
 | October | Octobre | month 10 (`October`) | same | owner |
 | November | Novembre | month 11 (`November`) | same | owner |
 | December | Décembre | month 12 (`December`) | same | owner |
+| Standby | Standby | operating mode 1 (`Standby`) | gateway manual 83272304 p. 46 (the French edition keeps the English word) | vendor |
+| Heating | Fonctionnement chauffage | operating mode 3 (`HeatingOperation`) | 83272304 p. 46 | vendor |
+| Setback | Fonctionnement réduit | operating mode 4 (`SetbackOperation`) | 83272304 p. 46 | vendor |
+| Holiday / summer | Vacances / Été | operating mode 5 (`HolidaySummer`) | 83272304 p. 46 ("Vacances / Eté") | vendor |
+| Heating program 1, 2, 3 | Programme de chauffage 1, 2, 3 | operating mode 11, 12, 13 (`HeatingProgram1`–`3`) | 83272304 p. 46 | vendor |
 
-22 `vendor`, 16 `owner`, none `provisional`. The forms chosen where the vendor prints two: the
+22 `vendor`, 16 `owner`, none `provisional`. Added on 2026-11-27 with `OperatingMode`
+([operating-mode.md](operating-mode.md)): the eighth list, operating mode, 7 entries, all
+`vendor` (the gateway manual's words); proposed to the owner with the definition, not yet
+accepted. The forms chosen where the vendor prints two: the
 short "Contrôle vannes gaz" for phase 7, phases 2 and 4 as printed, "Marche" / "Arrêt" for
 on and off, the months and every label with a capital. The label of `ForcedVenting` was
 `provisional` until 2026-11-20, when the owner chose to keep "Ventilation forcée" rather than a

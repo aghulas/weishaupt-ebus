@@ -350,6 +350,7 @@ The study listed these as covered by a manual menu. The full menu tables of the 
 - `fs1/RoomSetpointTemp`, `fs2/RoomSetpointTemp`, `fs3/RoomSetpointTemp` (the room setpoint
   in effect), `fs1/FloorDryingTemp`, `em2/FloorDryingTemp` (P442 shows the floor-drying day and
   its setpoint, not a measured temperature, p. 72), `fs1/RoomThermostatTemp`,
+| `fs1`, `fs2`, `fs3`, `em2`, `em3` | OperatingMode | display | added 2026-11-27 with the definition: candidate P111 *Mode Fct Chauf* (83277504 p. 32; the second circuit's heating function also shows 111, p. 98); the tie of register `12 01` to that setting rests on the value 11 ([operating-mode.md](operating-mode.md)). Compare at the display (item 12 of the owner's checklist) |
   `em2/RoomThermostatTemp` (P505 / P506 are switching differentials), `em2/MixerPump`,
   `em3/MixerPump` (the pump state appears only on the output test screen P403 and on the
   module's LEDs) and `em2/H1Status`, `em3/H1Status` (P401 sets the function of H1; its state is

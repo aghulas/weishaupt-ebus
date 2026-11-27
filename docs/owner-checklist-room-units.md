@@ -25,7 +25,7 @@ the deployment session only reads. Prepared on 2026-11-19 (`evidence/open-findin
 Display only, nothing is changed: open the parameter, read, leave with **Fin**. These settle
 the messages the metadata still lists in `open.vendor_codes` (record
 `evidence/vendor-codes.md`, "Left open" and "Still open after lot 2"; 48 messages after the
-1.4.1 draft). Note the parameter number the display prints in the title line of each screen.
+1.4.1 draft, 53 with the five `OperatingMode`). Note the parameter number the display prints in the title line of each screen.
 
 | # | Unit | Menu → parameter | What to note | What it settles |
 |---|---|---|---|---|
@@ -34,7 +34,8 @@ the messages the metadata still lists in `open.vendor_codes` (record
 | 9 | the unit that shows the modules (`em2`, `em3`) | Installer → "Info CircuitChauf." → P523 "Départ#X" and P526 / P527 for module circuits 2 and 3 | the values, with the time | against `em2` / `em3` `SupplyHCTemp` and `SupplyHCSetTemp` (4 `display`) |
 | 10 | a boiler, burner firing | boiler display → menu "Info" → **i 23** "Vitesse du ventilateur" (1/min x 10), and i 22 | the value shown, with the time | against `bc1` / `bc2` `FanOperation` (set, actual, PWM) read at the same minute: which field i23 is, and on which scale (2 `display`) |
 | 11 | system manager WCM-KA | Installer → "Mise en service" → **513 "Conf WCM-KA"** | every option shown (casse-pression / échangeur, ECS KA / ECS #A, tampon 1 / 2, 4–20 mA / 2–10 V) | against the value 76 of `ka/ConfigStatus` (1 `display`) |
+| 12 | `fs1`, `fs2`, `fs3` | User → "Réglage#1" → **P111 "Mode Fct Chauf"** (read only: leave with **Fin**); if the operator puts a unit in standby or reduced for another reason, tell the session at that moment | the mode shown and the number in the title line, with the time | against `OperatingMode` (register `12 01`) read at the same minute: "Progr chauff. 1" should read `HeatingProgram1` (11); a unit in standby or reduced should read 1 or 4. Confirms the tie of the gateway's value list to `12 01` and the code P111 (record `evidence/operating-mode.md`; 5 `display`) |
 
-Items 8 to 11 need a bus read at the same minute: do them with a session and the adapter up.
+Items 8 to 12 need a bus read at the same minute: do them with a session and the adapter up.
 `ka/DHWLoadingPriority` stays open whatever the display shows: the manual's 571 is another
 setting (record, conflict 1).

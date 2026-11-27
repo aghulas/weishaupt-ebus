@@ -2302,3 +2302,49 @@ where = "text"
 readings = [
   { message = "H1Status", master = "32 29 0a", slave = "00 00", expect = { value = "off" } },
 ]
+
+# operating-mode: room units and heating modules, register 12 01
+[[block]]
+evidence = "operating-mode"
+date = "2026-11-17"
+circuit = "fs1"
+where = "row"
+readings = [
+  { message = "OperatingMode", master = "09 12 01", slave = "0b 00", expect = { value = "HeatingProgram1" } },
+]
+
+[[block]]
+evidence = "operating-mode"
+date = "2026-11-17"
+circuit = "fs2"
+where = "row"
+readings = [
+  { message = "OperatingMode", master = "09 12 01", slave = "0b 00", expect = { value = "HeatingProgram1" } },
+]
+
+[[block]]
+evidence = "operating-mode"
+date = "2026-11-17"
+circuit = "fs3"
+where = "row"
+readings = [
+  { message = "OperatingMode", master = "09 12 01", slave = "0b 00", expect = { value = "HeatingProgram1" } },
+]
+
+[[block]]
+evidence = "operating-mode"
+date = "2026-11-17"
+circuit = "em2"
+where = "row"
+readings = [
+  { message = "OperatingMode", master = "09 12 01", slave = "0c 00", expect = { value = "HeatingProgram2" } },
+]
+
+[[block]]
+evidence = "operating-mode"
+date = "2026-11-17"
+circuit = "em3"
+where = "row"
+readings = [
+  { message = "OperatingMode", master = "09 12 01", slave = "0c 00", expect = { value = "HeatingProgram2" } },
+]

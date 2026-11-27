@@ -329,7 +329,9 @@ seen at the other two (a write, rule 7: the operator's), or the wiring.
   already defined by lot A at `50` (`DHWProgram…`, `CircProgram…` in `50.w.em1`), identical
   on 42 of 42 slots. Defining them again at `15` would be a copy of the same messages.
 - **Selector `12 01`**: one value of its list is proven (11); a read-only number with one
-  known value is left out until a second value is seen.
+  known value is left out until a second value is seen. *Defined 2026-11-27* on the room units and the modules as
+  `OperatingMode`, read only, with the value list of the vendor's gateway manual
+  ([operating-mode.md](operating-mode.md)).
 
 ## Equipment
 
