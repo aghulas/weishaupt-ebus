@@ -43,7 +43,10 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
 5. **Low priority, next vendor service-tool pass:** program selector `12 01`, `e6fd` lower bound,
    the installer parameters left out of `InstallerParameters1`–`5`.
 6. **Housekeeping:** the GitHub support request to purge pre-rewrite commits
-   (`out/github-support-request.md`, to be sent by the owner).
+   (`out/github-support-request.md`, to be sent by the owner). *Done (2026-11-27, owner's word):* merged
+   branches of `aghulas/ha-weishaupt` deleted on the fork and locally (three remote, five local;
+   each commit already in `main`); kept: `maint-0.1`, the branches behind #717, #1825 and #8, and
+   the proposal branches of the ebusd fork.
 
 ## Direction
 
