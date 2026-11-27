@@ -276,6 +276,50 @@ published for any of them.
 | 1497 | `d9 05` | no |
 | 2419, 2572, 2586 | `73 09`, `0c 0a`, `1a 0a` | yes, defined (section 1); 2572 is not in `register-candidates.csv` |
 
+## 7. Data given by its author on request (2026-11-27)
+
+Asked on aghulas/weishaupt-ebus#1 for what the repository does not hold, the author of that
+project answered the same day. Third-party data as the rest; decoded here by hand calculation,
+not through ebusd.
+
+**Identification.** Scan result of the WTC 25-A bus: slave `08` answers `Kromschroeder`, `W`,
+software `0315`, hardware `0301`; slave `f6` answers `Kromschroeder`, `WWST1`, software `0315`,
+hardware `0301` (`f6 07 04 00` → `0a 50 57 57 53 54 31 03 15 03 01`). Masters seen: `03`, `30`,
+`f1`, and ebusd. The room unit `35` is listed without an identification.
+
+So on that bus `f1` / `f6` carries the software and hardware versions of the boiler automat
+itself, under another identification (`WWST1`). Here `f6` answers with the software of the
+system manager. This supports the reading of section 3: the address of the heat generation
+manager, held by the boiler when it is alone and by the system manager when there is one. Two
+installations, still an observation.
+
+**Heat demand.** One raw telegram, `30 f1 05 07 09 bb ff ce 02 00 80 ff ff ff`, CRC `d0`,
+acknowledged. With the layout of `PowerDemand` (`heat-demand.md`): status `bb` (requesting),
+second byte `ff`, requested temperature `ce 02` = 718 / 16 = 44.9 °C, `00 80` no value,
+modulation `ff`, hot-water setpoint `ff`, last byte `ff`. Same length, same split, and the
+values a room unit sends here (`bb`, `ff` in the second and eighth bytes).
+
+**Memory read.** Request `31 08 50 00 03 df b2 1b`, answer `0d 00 82 51 51 99 83 3c 46 60 14 ff
+04 00`: first byte `00`, then 12 bytes of EEPROM from `0x1b`. The requests `e3 b2 27`, `f7 b2 33`
+and `fb b2 3f` were answered too. The four check bytes are those of the routine of
+`docs/ebus-protocol.md` (section 3) over the two bytes that follow.
+
+| Address | WTC 25-A | Reading there | WTC-GB here (`bc-installer-parameters.md`) |
+|---|---|---|---|
+| `0x1b` | `82` | not assigned | `50`, maximum flow temperature 80 °C |
+| `0x20` | `3c` | pump rating minimum, 60 % (their P42) | `0a`, a byte of `InstallerParameters1` with no field |
+| `0x21` | `46` | pump rating maximum, 70 % (their P43) | `02`, a byte of `InstallerParameters1` with no field |
+
+The request of `InstallerParameters1` is accepted and answered with the same shape; the bytes
+mean something else. The definitions of the boiler memory hold for the WTC-GB only.
+
+**A wrong check byte on a memory read.** The author also sent `a8 b2 1b` once (the value a
+CRC-8 that folds the byte in before shifting gives) and got no answer (read timeout); he had not
+isolated the cause. If it is the check byte, the automat of a WTC 25-A checks it on a `50 00`
+read, where the system manager, room units and heating modules here take a `50 23` with a wrong
+one (`write-methods.md`). One attempt, not repeated: an indication for open question 2 of
+`docs/ebus-protocol.md`, not an answer.
+
 ## What this changes
 
 **Confirmed on a second installation** (another boiler series, a room unit of the same family,
@@ -346,9 +390,10 @@ Their captures: 2026-11-23 (one reading 2026-11-27). Comparison: 2026-11-27.
 
 - Everything in this record about the other installation rests on what its repository
   publishes. The rebuilt telegrams (N) carry their numbers, not their bytes.
-- No telegram `05 07` and no memory block of the WTC 25-A is published: neither could be
-  decoded.
+- The repository publishes no telegram `05 07` and no memory block; one of each came from its
+  author afterwards (section 7) and was decoded by hand, not through ebusd.
 - Whether the WTC-GB automats answer `50 03`, and with the same slot numbers.
-- Who `f1` is on their bus.
+- Whether the automat of the WTC 25-A checks the check byte of a `50 00` read: one unanswered
+  request, cause not isolated (section 7).
 - Their slot and register candidates carry no values; their own 24-hour comparison is not in the
   repository.

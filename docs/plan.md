@@ -41,7 +41,9 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    depend on #1825 or #8, a second installation, release 1.3.2), and a reply on
    `aghulas/weishaupt-ebus#1` asking the author of `ebus2mqtt` for a scan result, the
    identification of `f6`, and raw `05 07` / `50 00` samples; that issue stays open for the
-   `50 03` probe on site. No capture yet on `ha-weishaupt#1`. Earlier text of this item:
+   `50 03` probe on site. Answered the same day with all three (record, section 7): `f6`
+   identifies as `WWST1` with the automat's versions, the `05 07` sample decodes with
+   `PowerDemand`, the memory block confirms the other layout; replied on the check byte. No capture yet on `ha-weishaupt#1`. Earlier text of this item:
    **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
    note on #717 that the write topics no longer depend on #1825 or #8 (`docs/upstream-topics.md`),
    on the owner's word.
