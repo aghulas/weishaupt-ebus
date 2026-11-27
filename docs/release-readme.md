@@ -295,7 +295,11 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
   automat with another software gets, at `08`, the upstream Wolf file `08..hc` (Wolf
   definitions, which decode nothing of a Weishaupt automat), at `18` no file. Renaming the file
   to drop `SW1104` loads it again, unchecked: compare each value with the boiler's display first,
-  and report it (see "Report a problem").
+  and report it (see "Report a problem"). From the vendor service tool's symbol tables (static
+  analysis, no such automat read): the tool uses one memory layout for every software 11.xx of
+  this automat generation; 10.xx differs in three live values of `Operation` and `FanOperation`;
+  earlier versions also in the first fault counters and two temperatures; a WTC 25-A uses another
+  layout altogether. Registers (`50 22`) are not covered by those tables.
 - **Device identification.** The files are named after the identification the devices answer to
   the scan: address, `W`, name (`15.w.ka`), and for the boiler automats the software
   (`08.w.bc1.SW1104`). A device that answers another identification gets no

@@ -49,6 +49,19 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    condition (`@condition(Id.Id.sw)`) was tried first and dropped: the extension build does not
    resolve `fills` to unavailable messages (`--checkconfig` error), a candidate fix for
    `aghulas/ebusd` (`MessageMap::resolveFills`).*
+   *Which automat software shares that layout (2026-11-27, vendor tables, static analysis,
+   [record](../evidence/automat-firmware-tables.md)):* the tool picks `WH<major software>928` for
+   every hardware-5 automat, so all 11.xx use `WH11928`; `WH10928` differs only in three live
+   bytes of `Operation` / `FanOperation`; 00–02.xx and 9x.xx also in `FaultCounters1`–`2` and
+   two temperatures. The WTC 25-A gets `0003362`; its third-party block decodes in range there
+   and `0x20` / `0x21` (P42 / P43) agree with its display: supported, not established. No
+   definition changed. A known-limit sentence for 1.4.0 is drafted in `docs/release-readme.md`.
+   **Owner decisions:** (a) keep that sentence in the 1.4.0 notice; (b) keep `SW1104` exact
+   (recommended) rather than one file per 11.xx version; a range condition (`1100-1199`) would
+   first need the `resolveFills` fix in `aghulas/ebusd` and one read of another 11.xx automat;
+   (c) whether to ask the author of `ebus2mqtt` (on `aghulas/weishaupt-ebus#1`) for the answers
+   to `e3 b2 27`, `f7 b2 33`, `fb b2 3f` and the display values, the evidence a WTC 25-A file
+   would need (the table predicts `0x2e` = `ff`, P20 −1 K, and `0x37` = `29`, P30 41 °C).
 4. *Done (2026-11-27, owner's word):* status note posted on #717 (the later write topics no longer
    depend on #1825 or #8, a second installation, release 1.3.2), and a reply on
    `aghulas/weishaupt-ebus#1` asking the author of `ebus2mqtt` for a scan result, the
