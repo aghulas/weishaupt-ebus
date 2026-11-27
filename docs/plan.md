@@ -19,7 +19,13 @@ Everything published is deployed and green (definitions `weishaupt-1.3.1`, bridg
    path in `docs/release-readme.md` and the front `README.md` (neither mentions the bridge), then a
    cold read as for 0.6.x. In progress; publishing on the owner's word.
 3. **Beyond one installation.** Work the captures of `ha-weishaupt#1` when they come; compare with
-   what `ebus2mqtt` established on a WTC 15-A/25-A.
+   what `ebus2mqtt` established on a WTC 15-A/25-A. *Compared offline 2026-11-27
+   ([record](../evidence/second-installation-ebus2mqtt.md)): its published room-unit registers,
+   63 program windows, status broadcast and check bytes decode with our definitions to its own
+   values, one register differs in meaning, and it questions three names of `KaStatus` and the
+   "cascade manager" wording around `f1`. Third-party data: no definition added or changed.
+   Open: the read-only probe listed at the end of the record (`50 03` on both automats, the
+   operating mode `12 01` and the clock registers on `35`), once the adapter is back.*
 4. **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
    note on #717 that the write topics no longer depend on #1825 or #8 (`docs/upstream-topics.md`),
    on the owner's word.
