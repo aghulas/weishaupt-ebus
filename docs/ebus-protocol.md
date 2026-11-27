@@ -28,6 +28,34 @@ service (two bytes), number of data bytes, data. A slave's answer follows a slas
 Circuit numbers are the vendor's: 1 = the system manager's direct circuit, 2 to 8 = heating
 modules EM #2 to EM #8.
 
+### Address classes in the vendor's documentation
+
+The installation manual of the vendor's eBUS / Modbus gateway 2.0 (83272304, edition
+1/2024-05) gives the eBUS address of every device class it reads (p. 7, maximum configuration,
+and p. 40, register list per device). No other vendor document read gives addresses.
+
+| Device class | Address (as the manual gives it) | Seen here |
+|---|---|---|
+| Boiler automats WCM-CPU, boiler address P12 = A, B, C, D, E | masters `03`, `13`, `33`, `73`, `f3` | `03`, `13` (slaves `08`, `18`) |
+| Room units WCM-FS #1 … #8 | masters `30`, `70`, `f0`, `17`, `37`, `77`, `f7`, `1f` | `30`, `70`, `f0` (slaves `35`, `75`, `f5`) |
+| Heating modules WCM-EM #2 … #8 | `51` … `57` | `51`, `52` |
+| System manager WCM-KA; solar controller WCM-SOL | `10`, `f1` (either device) | `10`, `f1` (slaves `15`, `f6`) |
+| The gateway itself | `00` or `11` with a system manager, solar controller or room unit on the bus (`00` when it sends a value to a room unit or module); `10` without them (p. 8) | — |
+
+- The manual lists slaves only for the modules; for the other classes it gives the master
+  address, the slave being the master plus 5 as usual on eBUS. Every address observed on this
+  installation fits the table; `33` … `f3` and `17` … `1f` are those a third to fifth boiler and
+  room units #4 … #8 would take.
+- `f1` is given for the system manager and the solar controller only. A master `f1` without
+  either (the second installation of section 1) is not explained by the manual.
+- The gateway's `00` is the address of our participant `00` / `05`
+  ([master-00-slave-05.md](../evidence/master-00-slave-05.md)). On the same page the manual
+  asks for a free bus address when the vendor's service tool is connected, and says that the
+  older remote control WCM-FB and the network gateway WCM-COM cannot be connected (in context,
+  together with the gateway; p. 8).
+- The source address the gateway uses to send a value to a room unit or module (`00`) agrees
+  with "the source address decides" (section 5).
+
 ## 2. Two checksums not to confuse
 
 1. **The eBUS frame checksum**, standard (CRC-8, polynomial 0x9B), at the end of each part of
@@ -324,6 +352,25 @@ there the number of bytes asked and returns zeros for the data. The definitions 
 | `50 0a` | `f1` (the system manager on this installation) → broadcast (`fe`) | boiler status, 13 bytes | `KaStatus`, passive |
 | date and time | broadcast | the installation's clock; its first field is an outside temperature | sent by the companion at second 00 |
 | `09 02` / `09 03` | room units → modules, about every 20 s | read and write without checksum | not defined |
+
+### Cyclic telegrams in the vendor's documentation
+
+The gateway manual (83272304) states the timing of four telegrams; none of it was measured
+here except where noted.
+
+- **`07 04`** (identification): the gateway sends it at start-up to find the WCM devices on
+  the bus (p. 9).
+- **`05 07`** (heat demand to a boiler): a boiler that receives none within 10 minutes from a
+  system manager, a room unit, a solar controller or the gateway shows warning W80, locks out
+  and switches off the outputs set as fault report; its status then carries the alarm bit and
+  the code 80 in the phase value (p. 52). The gateway sends one at once when its setpoint or
+  power request changes by more than 0.9 K or 0.9 %.
+- **`50 09`** (start conditions of the installation): sent by the gateway to all boilers every
+  15 minutes without a system manager, every 40 s with one, and once after power-up (p. 52).
+  Not seen in the captures of this installation, where no gateway is fitted.
+- **`50 0a`** (boiler status, block 1): sent by the boiler every 30 s, a fixed cycle (p. 52).
+  Here the broadcast form comes from `f1` and the boilers send theirs to `10`
+  ([broadcast-kastatus.md](../evidence/broadcast-kastatus.md)).
 
 Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 %
 (`out/bus-load-2026-11-20.md`, not versioned).
