@@ -192,6 +192,10 @@ class TestVendorCodes(unittest.TestCase):
         self.assertProblem(SCHEMES + OPEN + OPEN, "listed open twice")
         self.assertProblem(SCHEMES + OPEN.replace('"circuit-pair"', '"later"'), "reason must be one of")
 
+    def test_display_and_mismatch_reasons_pass(self):
+        for reason in ("display", "mismatch", "manual"):
+            self.assertEqual(self.problems(SCHEMES + OPEN.replace('"circuit-pair"', f'"{reason}"')), [])
+
     def test_duplicate_code_fails(self):
         self.assertProblem(SCHEMES + CODE_MSG + CODE_MSG, "already has wcm-ka-3 537")
 

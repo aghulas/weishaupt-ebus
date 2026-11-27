@@ -73,8 +73,10 @@ WRITABLE_KINDS = ("setting", "program_slot")
 # Range of a write the definitions cannot carry (a fractional bound on an integer register).
 WRITE_RANGE = ("min", "max", "step")
 STATUS = ("proposed", "accepted")
-# Vendor codes: why a message a manual menu covers has no code yet.
-VENDOR_OPEN = ("circuit-pair", "manual")
+# Vendor codes: why a message a manual menu covers has no code yet. circuit-pair: two numbers,
+# one per heating circuit; display: a candidate number whose fit only the display can settle;
+# mismatch: the number the manual gives that place means another setting; manual: not read yet.
+VENDOR_OPEN = ("circuit-pair", "display", "mismatch", "manual")
 VENDOR_CODE_KEYS = {"circuits", "message", "field", "code", "scheme", "source", "evidence"}
 RANGE_RE = re.compile(r"^(-?[\d.]+)-(-?[\d.]+)(?::([\d.]+))?$")
 

@@ -19,3 +19,22 @@ WCM-EM 2.1, document 83277504). Note what you read in the right-hand column.
 
 Items 3, 4 and 5 (optional part) change a setting for a few minutes and are set back by you;
 the deployment session only reads. Prepared on 2026-11-19 (`evidence/open-findings-batch.md`).
+
+## Vendor codes: what only the displays can settle (added 2026-11-27)
+
+Display only, nothing is changed: open the parameter, read, leave with **Fin**. These settle
+the messages the metadata still lists in `open.vendor_codes` (record
+`evidence/vendor-codes.md`, "Left open" and "Still open after lot 2"; 48 messages after the
+1.4.1 draft). Note the parameter number the display prints in the title line of each screen.
+
+| # | Unit | Menu → parameter | What to note | What it settles |
+|---|---|---|---|---|
+| 7 | the unit for circuits 1 and 2 (answers at `35` and `75`) | User → "Réglage #2": its "Pente" and "Commut. Été/hiver"; Installer → "Mise en service" → "Ty chauff #2", "Ty régul#2"; Installer → "Circuit chauffage" → "Réglage #2 (pour WCM-FS#1+2)": "min départ", "Max départ", "Service ECS", "Elév. Circ mélan", "Param mélang." | the number in each title line (P123 / P124, P314 / P316, P461–P465 expected) and which circuit each screen belongs to | the 34 circuit pairs: whether `fs2` (circuit 2 of this unit) takes the second number and `fs1`, `fs3` and the modules the first |
+| 8 | same unit, then `fs3` | Installer → "Info CircuitChauf." → P526 and P527 ("Cons. circ.chauff#1 / #2": Status, Temp. Consigne, Temp Cons syst) and Installer → "Info système" → P337 "Temp Cons syst" | the three values of P526 and P527 and the value of P337, with the time | compared with the bus values `SupplyHCSetTemp` and `HeatDemandTemp` of `fs1`–`fs3` read at the same minute: which number each message carries (3 more circuit pairs, 3 `display`) |
+| 9 | the unit that shows the modules (`em2`, `em3`) | Installer → "Info CircuitChauf." → P523 "Départ#X" and P526 / P527 for module circuits 2 and 3 | the values, with the time | against `em2` / `em3` `SupplyHCTemp` and `SupplyHCSetTemp` (4 `display`) |
+| 10 | a boiler, burner firing | boiler display → menu "Info" → **i 23** "Vitesse du ventilateur" (1/min x 10), and i 22 | the value shown, with the time | against `bc1` / `bc2` `FanOperation` (set, actual, PWM) read at the same minute: which field i23 is, and on which scale (2 `display`) |
+| 11 | system manager WCM-KA | Installer → "Mise en service" → **513 "Conf WCM-KA"** | every option shown (casse-pression / échangeur, ECS KA / ECS #A, tampon 1 / 2, 4–20 mA / 2–10 V) | against the value 76 of `ka/ConfigStatus` (1 `display`) |
+
+Items 8 to 11 need a bus read at the same minute: do them with a session and the adapter up.
+`ka/DHWLoadingPriority` stays open whatever the display shows: the manual's 571 is another
+setting (record, conflict 1).

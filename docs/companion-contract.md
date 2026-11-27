@@ -248,23 +248,30 @@ for this equipment put it in their value names.
 - A scheme has `label` and `document` (the vendor document number). Schemes of 1.4.0:
   `wcm-ka-3` (system manager WCM-KA 3.0, 83258404), `wcm-fs-2` (room unit WCM-FS 2.0 and heating
   module WCM-EM 2.1, 83277504; a module has no display, its values are numbered on the room
-  unit), `wtc-gb` (boiler automat of the WTC-GB, 83251704).
+  unit), `wtc-gb` (boiler automat of the WTC-GB, 83251704). The direct circuit of the system
+  manager (`em1`, from 1.4.1) is numbered in `wcm-ka-3`: its levels are in the same manual, and
+  they number some settings differently from a room unit (116 slope, 117 frost protection, 118
+  changeover, where a room unit has P117, P118, P119).
 - **Level.** A message of one value carries its codes on the message; a message that carries
   several numbered values carries them on its fields, and the message has none. Never both on
   one message. A consumer looks at the field first.
 - **Many to one.** One code may sit on several messages: P141 (holiday) on the six holiday-date
   registers of a room unit, 593 on the day and the month of the start of summer time, i31 on
-  `FlueGasTemp` and on the field `fluegastemp` of `Temperatures`. A code is not a key: map
+  `FlueGasTemp` and on the field `fluegastemp` of `Temperatures`; from 1.4.1 also 608 / P338
+  (fault history) on the eight registers of one fault-log entry, 609 / P339 / P341 (version) on
+  its two parts. A code is not a key: map
   `(scheme, code)` to a list of messages and fields.
-- `vendor_codes` is a list: one value may have codes in several schemes or menus; in 1.4.0 each
-  coded value has one.
+- `vendor_codes` is a list: one value may have codes in several schemes or menus; in 1.4.0 and
+  1.4.1 each coded value has one.
 - The evidence record of the codes (`vendor-codes`) is added to the message's `evidence`.
 - Numberings known only from a third party (a vendor gateway, another boiler series) are not
   published.
 - In the sidecar: `[vendor_schemes.<id>]` (`label`, `document`, `pattern`: the spelling of the
   scheme, checked, not published), `[[vendor_code]]` (`circuits`, `message`, optional `field`,
   `code`, `scheme`, `source`, `evidence`) and `[[vendor_open]]` (`circuits`, `messages`,
-  `reason`: `circuit-pair` or `manual`). `scripts/metadata.py check` fails when a code names a
+  `reason`: `circuit-pair`, `display` (from 1.4.1: a candidate number only the display can
+  confirm), `mismatch` (from 1.4.1: the number the manual prints at that place means another
+  setting) or `manual`, and a `note`; the reason is not published). `scripts/metadata.py check` fails when a code names a
   scheme, circuit, message or field that does not exist, has no source or no evidence record,
   is not spelled as its scheme's pattern says, or its record does not name the message, the
   field and the code; when a message carries codes on itself and on a field, or a single-field
@@ -283,10 +290,12 @@ Where no record establishes a value, the metadata has none; `open` lists the key
   service-hours counter of the boilers without a class. No interval is given anywhere: the
   load a bus accepts has not been measured, and choosing intervals is the consumer's.
 - **Vendor code** (from 1.4.0). `open.vendor_codes` lists the messages a manual menu covers
-  whose code is not established yet: 34 messages of the room units and modules with one number
-  per heating circuit (P117 / P123 …), until the display of a unit for circuits 1 and 2 shows
-  which it uses, and 107 more whose manual pages are not read yet. A message neither coded nor
-  listed open has no vendor code (status broadcasts, heat-demand telegrams, pointers, program
+  whose code is not established yet. In 1.4.1: 37 messages of the room units and modules with
+  one number per heating circuit (P117 / P123 …, P526 / P527), until the display of a unit for
+  circuits 1 and 2 shows which it uses, 10 whose candidate number only a display can confirm,
+  and 1 whose manual number means another setting (in 1.4.0: 34 pairs and 107 messages whose
+  manual pages were not read yet). A message neither coded nor listed open has no vendor code
+  (status broadcasts, heat-demand telegrams, pointers, values no manual menu numbers, program
   slots, fault counters and history).
 - **Step** of the integer registers whose range has no step (`BlockingTime`,
   `ChangeOverTime`, `RegulationP`, `RegulationI`, `SwitchOnRuntime`): one unit of the

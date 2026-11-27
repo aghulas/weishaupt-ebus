@@ -383,6 +383,8 @@ compare, stop at the first refusal or odd answer, as for the memory areas in
    1497 `39 d9 05`.
 4. `KaStatus` over a burner start: byte 1 (a phase above 9) and bit `02` of byte 3 against the
    burner state.
+5. With the same visit, the display looks for the vendor codes still open, items 7 to 11 of
+   `docs/owner-checklist-room-units.md` (items 8 to 11 with a bus read at the same minute).
 
 ## Date
 

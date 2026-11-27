@@ -94,8 +94,19 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    lot 2). `scripts/integrate.sh` green, `scripts/release.sh 1.4.0` built locally, nothing
    published. Goes out with the boiler-file change in the next release (draft in `CHANGELOG.md`),
    on the owner's word. Next: `ha-weishaupt` shows the code as an attribute and a panel column
-   (decision 5, its own session after the release); lot 2 (a manual pass, pages listed in section
-   6 of the study, and one look at the display of the unit for circuits 1 and 2).
+   (decision 5, its own session after the release). *Lot 1 released in `weishaupt-1.4.0`.
+   Lot 2 prepared locally on 2026-11-27 from the manuals alone (83258404 pp. 33–71, 82–86,
+   92–98, 105–110; 83277504 pp. 35–39, 52–53, 99–100; 83251704 pp. 46–47), not released:* 79
+   codes on 77 messages and 2 fields (`ka` 16, `em1` 15 in scheme `wcm-ka-3`, `fs1`–`fs3` 14
+   each, `em2`, `em3` 2 each, i22 on `Operation.pumpspeed`), `open.vendor_codes` 141 → 48 (37
+   circuit pairs, 10 `display`, 1 `mismatch`: `ka/DHWLoadingPriority`, where the manual's 571 is
+   another register), 16 messages with no number in any menu no longer listed open; two new
+   sidecar reasons in `scripts/metadata.py`. Record: "Codes of lot 2" of
+   [vendor-codes.md](../evidence/vendor-codes.md). `scripts/integrate.sh` green (1 099 / 687,
+   vendor codes on 213 messages, 48 open), `scripts/release.sh 1.4.1` built locally, nothing
+   published; draft "Unreleased (1.4.1 proposed)" in `CHANGELOG.md`. Release on the owner's
+   word. What remains needs the displays, with the adapter up: items 7 to 11 of
+   [owner-checklist-room-units.md](owner-checklist-room-units.md).
 
 ## Direction
 

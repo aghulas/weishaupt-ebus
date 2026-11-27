@@ -1,8 +1,13 @@
 # Design note: vendor codes in the metadata
 
-Status: **lot 1 approved by the owner on 2026-11-27** with the six choices of section 7, and
-built the same day (contract, schema, generator, record `evidence/vendor-codes.md`, data on
-`weishaupt`); not released yet. Lot 2 open.
+Status: **lot 1 approved by the owner on 2026-11-27** with the six choices of section 7, built
+the same day and released in `weishaupt-1.4.0`. **Lot 2 prepared from the manuals on
+2026-11-27**, not released (1.4.1 proposed): 77 messages and 2 fields coded, 48 messages still
+open (37 circuit pairs, 10 for a display, 1 mismatch), 16 found to have no number in any menu.
+Record: `evidence/vendor-codes.md`, "Codes of lot 2". Where it differs from section 6: the
+cascade orders are on pp. 82–83, not 92–98; 571 is not `ka/DHWLoadingPriority` (another
+register); the direct circuit `em1` needs no scheme of its own; the room-unit flow setpoint is
+one more circuit pair (P526 / P527).
 
 ## The question
 

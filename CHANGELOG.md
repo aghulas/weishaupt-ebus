@@ -3,6 +3,31 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## Unreleased (draft; 1.4.1 proposed)
+
+Compatible release on top of 1.4.0 (no breaking changes, same 1 099 messages and 687 in metadata;
+definitions and CSV unchanged, only the metadata sidecar):
+
+- **Metadata, vendor codes (lot 2).** 79 more codes, from the manuals alone: 77 messages and the
+  field `Operation.pumpspeed` of each boiler (i22). System manager `ka` (16): the system info
+  601–605 and 609, the cascade orders 533 / 534, and 112, 113, 342 of its direct circuit, whose
+  registers it answers. Its direct circuit `em1` (15): 112, 113, 116–118, 341, 342 of the
+  direct-circuit levels and 608, the manager's fault history, on the eight fault-log registers,
+  in scheme `wcm-ka-3` (the direct circuit numbers slope, frost protection and changeover 116,
+  117, 118, unlike a room unit). Room units `fs1`–`fs3` (14 each): P331 on the three outside
+  values, P522 room temperature, P338 on the fault log, P339 on the version. Modules `em2`,
+  `em3`: P341 on the version. 213 messages and 46 fields now carry codes.
+- **`open.vendor_codes`: 141 → 48 messages.** 37 circuit pairs (the 34 of 1.4.0 and the flow
+  setpoint of the three room units, P526 / P527); 10 whose candidate number only a display can
+  confirm (room-unit heat demand, module flow values, the boiler fan speeds against i23, the
+  manager's configuration status against 513); `ka/DHWLoadingPriority`, where the manual's 571 is
+  the hot-water tank position, another register. 16 messages have no number in any menu of the
+  manuals and are no longer listed open (no vendor code). In the sidecar, `[[vendor_open]]`
+  takes two more reasons, `display` and `mismatch` (not published).
+- The record `vendor-codes` is added to the `evidence` of the 77 newly coded messages; nothing
+  else in the metadata changes. Source: `evidence/vendor-codes.md`, "Codes of lot 2"; what the
+  displays still have to show: `docs/owner-checklist-room-units.md`, items 7 to 11.
+
 ## 1.4.0 (2026-11-27)
 
 Compatible release on top of 1.3.2 (no breaking changes, same 1 099 messages and 687 in metadata;
