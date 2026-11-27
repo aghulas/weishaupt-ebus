@@ -3,7 +3,7 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
-## Unreleased (draft; 1.4.0 proposed)
+## 1.4.0 (2026-11-27)
 
 Compatible release on top of 1.3.2 (no breaking changes, same 1 099 messages and 687 in metadata;
 circuit, message and field names, types, IDs and CSV contents unchanged):
@@ -32,7 +32,11 @@ circuit, message and field names, types, IDs and CSV contents unchanged):
   `evidence/vendor-codes.md`; format: `docs/companion-contract.md`, "Vendor codes"; schema:
   `schemas/metadata.schema.json`. A consumer that ignores unknown keys is not affected.
 - **Installation notice (`docs/release-readme.md`):** the known limit on `InstallerParameters1`–`5`
-  becomes "boiler automats: software 1104 only", with what another software gets.
+  becomes "boiler automats: software 1104 only", with what another software gets. It adds what the
+  vendor service tool's symbol tables say of other software versions (static analysis, no such
+  automat read; `evidence/automat-firmware-tables.md`): one memory layout for every 11.xx of this
+  automat generation, 10.xx differing in three live values, earlier versions in more, a WTC 25-A
+  in another layout altogether.
 
 ## 1.3.2 (2026-11-27)
 
