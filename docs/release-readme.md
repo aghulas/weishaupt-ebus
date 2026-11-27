@@ -321,8 +321,9 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
 - **`DHWLoadingPriority`:** `0` (`Priority`) and `2` (`Parallel`) are established; `1`
   (`Sliding`) follows by elimination. Read only.
 - **`DHWExcessTemp`:** which vendor parameter it is, is not established.
-- **`ForcedVenting` (operating phase 9):** in no manual at hand and never seen on the bus; what the
-  phase is, is not established. Its label keeps the name, not a confirmed meaning.
+- **`ForcedVenting` (operating phase 9):** never seen on the bus. The name is the phase 9 of the
+  oil boiler WTC-OB (its manual, 83314005); a WTC-GB lists phases 0 to 8 only, and a WTC 15-A …
+  32-A uses 9 for its post-purge.
 - **Participant at master `00` / slave `05`:** answers the scan as Kromschröder with an empty ID
   (software `0120`) and scans the bus from master `00`. On the test installation it is the bus
   interface of the vendor's service tool, left connected (its version registers hold the version

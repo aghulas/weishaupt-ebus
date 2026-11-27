@@ -62,23 +62,60 @@ f1 fe 500a : 01 00 40 00 ff 50 ff 33 00 0b cd 0c 24
 | OutsideWeightedTemp (D2B) | `cd 0c` | 12.8 °C |
 | SupplySetTemp | `24` | 36 °C |
 
+## Phase list: sources (2026-11-27)
+
+Vendor manuals read on the partner portal ([vendor-documentation.md](../docs/vendor-documentation.md),
+sections 2 and 5); meanings in our words.
+
+| value | name | WTC-GB (83251704, 1/2025-01, p. 44) | gateway (83272304, 1/2024-05, p. 45) | WTC 15-A … 32-A (83053005, 07/2005, p. 41) | WTC-OB (83314005, 1/2024-06, p. 45) |
+|---|---|---|---|---|---|
+| 0 | `BurnerOff` | burner off | burner off | burner off | – |
+| 1 | `StandbyCheckFan` | fan standstill check | fan standstill check | fan standstill check | fan standstill |
+| 2 | `PrepurgeSpeedAchieved` | reach pre-purge speed | reach pre-purge speed | pre-purge speed reached | oil preheating |
+| 3 | `Prepurge` | pre-purge | pre-purge | pre-purge countdown | pre-purge / pre-ignition |
+| 4 | `IgnitionSpeedAchieved` | reach ignition speed | reach ignition speed | ignition speed reached | safety time |
+| 5 | `Ignition` | ignition | ignition | safety time | post-ignition |
+| 6 | `BurnerInOperation` | burner in operation | burner in operation | burner in operation | flame stabilisation |
+| 7 | `GasValveCheck` | gas valve check | gas valve check | gas valve V1 check | controller released |
+| 8 | `PostPurge` | reach post-purge speed, post-purge | reach post-purge speed, post-purge | gas valve V2 check | post-purge |
+| 9 | `ForcedVenting` | – | – | post-purge speed reached, post-purge | forced ventilation |
+
+- **Phases 0 to 8** follow the WTC-GB, the boilers of this installation, and the gateway's list
+  for its register 110 (the operating phase of each WTC it reads), which is the same list. The
+  English edition of the WTC-GB manual cited before (83251702, p. 39) agrees.
+- **Phase 9** is in two manuals with two meanings: forced ventilation on the oil boiler WTC-OB,
+  the post-purge on the WTC 15-A … 32-A (whose 7 and 8 are the two gas-valve checks). A WTC-GB
+  stops at 8. So the name `ForcedVenting` is right for a WTC-OB only; on a WTC-GB the value is
+  not expected, and on a WTC-A it would mean post-purge. The list is not split per boiler
+  series: the definitions are established on WTC-GB automats, and the other series' phases 2 to
+  8 differ as well.
+- **Fault codes in the same byte.** The gateway page gives, after the phases, that fault codes
+  start at the value 11 and mean what the boiler's manual says (the W / F codes, 11 to 89,
+  [vendor-documentation.md](../docs/vendor-documentation.md), section 4). Our reading: while
+  the boiler shows a fault or warning (bit 15, "alarm", of the gateway's status register,
+  which corresponds to `Error` in the second bit byte here), this byte carries its number in
+  place of the phase. The phase page does not state that condition in so many words; the
+  page on missing heat-demand telegrams does for one case: warning W80 sets the alarm bit and
+  puts 80 in the phase register (83272304, p. 52). No fault was seen on the bus. The value 19 seen with the alarm bit clear on a WTC 25-A of another
+  installation ([second-installation-ebus2mqtt.md](second-installation-ebus2mqtt.md)) is in
+  no document read.
+
 ## Equipment
 
 Kromschröder WCM/WTC condensing boiler on eBUS, scanning as `MF=Kromschröder`.
 
 ## Date
 
-2026-11-16.
+2026-11-16 and 2026-11-18 (bus); manual pages 2026-11-27.
 
 ## Not verified
 
-- Only `_operatingPhase` values 0x00–0x09 (the normal operating phases) are enumerated; the
-  fault/warning codes (0x0B+) the manual lists are not yet in the enum, and no fault state was
-  observed on the live bus to confirm them.
-- `ForcedVenting` (0x09) has no source (noted 2026-11-18): the manual of the boiler lists the
-  phases 0 to 8 only (83251704, pages 46 and 89; English edition 83251702, page 39), the value
-  9 was never seen on the bus, and where the name comes from is not recorded. The entry is
-  kept in the list as it is, not established; the phases seen on the bus are 0 and 6.
+- Only the phases 0 to 9 are enumerated. The fault and warning codes from 11 (`0x0b`) are not
+  in the list, and no fault state was seen on the bus to confirm that the byte carries them
+  (section "Phase list: sources").
+- Phase 9 (`ForcedVenting`) was never seen on the bus. Its name has a source since 2026-11-27,
+  for the oil boiler WTC-OB only (83314005, p. 45); the WTC-GB lists 0 to 8 and the WTC-A gives
+  9 another meaning (same section). Noted without a source on 2026-11-18.
 - The two bit bytes: only the named flags are interpreted; the `Ukn` bits are left unnamed.
 - The non-broadcast variant of this telegram (boiler master → another master) was also seen on
   the bus but is not shipped here; only the unambiguous broadcast form is.
