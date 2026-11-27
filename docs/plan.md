@@ -107,6 +107,10 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    published; draft "Unreleased (1.4.1 proposed)" in `CHANGELOG.md`. Release on the owner's
    word. What remains needs the displays, with the adapter up: items 7 to 11 of
    [owner-checklist-room-units.md](owner-checklist-room-units.md).
+8. **Vendor documentation survey (2026-11-27).** Inventory of the partner portal and what each
+   document unlocks, with seven follow-up tasks in order (program selector value list,
+   `KaStatus` bits, phase sources, fault codes for lot 3, address table, WTC 25-A ranges,
+   scheme notes): [vendor-documentation.md](vendor-documentation.md). No definition changed.
 
 ## Direction
 
