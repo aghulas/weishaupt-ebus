@@ -50,6 +50,24 @@ Spelling: as the manual prints it, without the space (`P31`, `i35`); consumers c
 case and spaces (owner's decision 4). A module has no display: its values are set and numbered
 on the room unit, so modules and room units share one scheme.
 
+**Other editions (survey of the vendor's portal, 2026-11-27,
+[vendor-documentation.md](../docs/vendor-documentation.md), sections 1 and 3).**
+
+- `wcm-ka-3` also holds for a **WCM-KA 2.0**: in its manual (83258405, 03/2009) the four numbers
+  checked have the same meaning as in the 3.0 manual: 513 *Conf WCM-KA* (p. 63), 535 *Modul Min*
+  (pp. 63, 80), 571 *Variante ECS* (pp. 64, 89), 604 *Info KA* (p. 65). Four of the 3.0 numbers
+  were compared, not the whole table; a consumer may show a `wcm-ka-3` code on a WCM-KA 2.0 with
+  that reserve. The portal lists one edition of the 3.0 manual, the one used.
+- `wcm-fs-2` does **not** hold for a **WCM-FS 1.x**: its manual (83251205, WCM-FS and WCM-EM 2.0,
+  05/2009) prints the numbers without the `P` and partly shifted (p. 28: 114 and 115 the flow
+  setpoints, 116 the slope, 117 the frost protection, 118 the summer / winter changeover, where
+  83277504 p. 32 has P115, P116, P117, P118, P119; no 111 and no 114 acceptance; the second
+  circuit's 121–124 and 132, 133, 141, 151–154 keep their numbers). A `wcm-fs-2` code must not
+  be shown for a 1.x room unit; such a unit would need its own scheme, which this project has
+  no unit to check against.
+- The boiler scheme `wtc-gb` does not hold for a WTC 15-A … 32-A (83053005), whose P42–P45
+  mean other settings ([automat-firmware-tables.md](automat-firmware-tables.md), section 5).
+
 ## How the codes were established
 
 - **Manual pages, read on 2026-11-27** through the document store, French editions, text of
@@ -332,6 +350,7 @@ shows them once, so `fs2` takes the same number as `fs1` (unlike the circuit pai
 | `bc1`, `bc2` | FanOperation | display | i23 *Vitesse du ventilateur*, 1/min x 10 (p. 46): one speed, where the message carries set speed, actual speed and PWM; the raw value (23 while firing) is on no stated scale. Compare i23 with the fields while a boiler fires |
 | `ka` | ConfigStatus | display | candidate 513 *Conf WCM-KA* (p. 70), a view of the cascade configuration (separator or exchanger, hot water by the cascade or one boiler, buffer with one or two sensors, N1 as 4–20 mA or 2–10 V); the read value 76 is not compared with that view |
 | `ka` | DHWLoadingPriority | mismatch | conflict 1 above |
+| `fs1`, `fs2`, `fs3`, `em2`, `em3` | OperatingMode | display | added 2026-11-27 with the definition: candidate P111 *Mode Fct Chauf* (83277504 p. 32; the second circuit's heating function also shows 111, p. 98); the tie of register `12 01` to that setting rests on the value 11 ([operating-mode.md](operating-mode.md)). Compare at the display (item 12 of the owner's checklist) |
 
 ### No number in any menu (no longer open)
 
@@ -350,7 +369,6 @@ The study listed these as covered by a manual menu. The full menu tables of the 
 - `fs1/RoomSetpointTemp`, `fs2/RoomSetpointTemp`, `fs3/RoomSetpointTemp` (the room setpoint
   in effect), `fs1/FloorDryingTemp`, `em2/FloorDryingTemp` (P442 shows the floor-drying day and
   its setpoint, not a measured temperature, p. 72), `fs1/RoomThermostatTemp`,
-| `fs1`, `fs2`, `fs3`, `em2`, `em3` | OperatingMode | display | added 2026-11-27 with the definition: candidate P111 *Mode Fct Chauf* (83277504 p. 32; the second circuit's heating function also shows 111, p. 98); the tie of register `12 01` to that setting rests on the value 11 ([operating-mode.md](operating-mode.md)). Compare at the display (item 12 of the owner's checklist) |
   `em2/RoomThermostatTemp` (P505 / P506 are switching differentials), `em2/MixerPump`,
   `em3/MixerPump` (the pump state appears only on the output test screen P403 and on the
   module's LEDs) and `em2/H1Status`, `em3/H1Status` (P401 sets the function of H1; its state is
