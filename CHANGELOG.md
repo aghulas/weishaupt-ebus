@@ -3,6 +3,21 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## 1.3.2 (2026-11-27)
+
+Compatible maintenance release on top of 1.3.1 (no breaking changes, same 1 099 messages and 687 in
+metadata; names, types, IDs and fields unchanged). Wording only, after the comparison with the
+captures a second installation publishes (`evidence/second-installation-ebus2mqtt.md`, a WTC 25-A
+with one room unit):
+
+- **Comment of `PowerDemand`** of the three room units (`fs1`, `fs2`, `fs3`), in English and in
+  French: the heat demand is sent to master `0xf1`, which is the cascade manager where one is
+  fitted; the same telegram is reported on an installation without one.
+- **Installation notice (`docs/release-readme.md`), known limits:** `InstallerParameters1`–`5` of
+  the boiler automats were established on a WTC-GB, and a WTC 25-A answers the same requests with
+  other contents; the room-unit registers and weekly programs were compared on a second
+  installation.
+
 ## 1.3.1 (2026-11-24)
 
 Compatible maintenance release on top of 1.3.0 (no breaking changes, same 1 099 messages and 687 in

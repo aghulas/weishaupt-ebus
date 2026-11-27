@@ -5,8 +5,9 @@ the repository is right: correct this file. Release history is in `CHANGELOG.md`
 
 ## Roadmap (2026-11-27)
 
-Everything published is deployed and green (definitions `weishaupt-1.3.1`, bridge `weishaupt2mqtt`
-`v0.1.3`, companion `ha-weishaupt` `v1.4.1`). What is left is about other people, in this order:
+Everything deployed is green (definitions `weishaupt-1.3.1` inside the bridge `weishaupt2mqtt`
+`v0.1.3`, companion `ha-weishaupt` `v1.4.1`). `weishaupt-1.3.2` (wording only) is published and not
+deployed: the bridge is not rebuilt for three comment lines. What is left is about other people, in this order:
 
 1. *Done (2026-11-27):* **Answer the two outside issues.** `aghulas/ha-weishaupt#1` (a WTC-OB with
    a WCM-FS 2.0, room-unit software `2726`, asking how to trigger the hot-water push: its `05 07`
@@ -182,7 +183,14 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
     (regulation class, 0–50 bound enforced; `DeCoupleMaxTemp` stays read-only) and `copy-in-use`
     shown independent in both directions (`open = ["copy-in-use"]` kept).
 
-- **`weishaupt-1.3.1`** (`84fe069`, Latest, 1 099 messages / 687 in metadata / 210 entries / 1 025
+- **`weishaupt-1.3.2`** (`388889e`, Latest, 1 099 messages / 687 in metadata / 210 entries / 1 029
+  fixtures of 686 messages; published 2026-11-27 on the owner's word, re-downloaded, checksums
+  verified, both archives loaded by the stock `john30/ebusd:v26.1`: 1 099 messages): comment of
+  `PowerDemand` of the three room units (master `0xf1`, the cascade manager where one is fitted)
+  and two known limits in the notice, after the comparison with a second installation
+  (`evidence/second-installation-ebus2mqtt.md`). Not verified on site (adapter down).
+
+- **`weishaupt-1.3.1`** (`84fe069`, 1 099 messages / 687 in metadata / 210 entries / 1 025
   fixtures of 683 messages; published 2026-11-24):
   - `84fe069` — cleared all 50 `open = ["copy-in-use"]` markers in `metadata/weishaupt.toml`
     following the 2026-11-23 active-heating resolution (`evidence/settings-writes.md`).
@@ -207,7 +215,7 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` (tip `84fe069`; released `weishaupt-1.3.1`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries, `copy-in-use` cleared), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. On the test installation at `1.3.1`, bundled in the `weishaupt2mqtt` add-on (`out/ha-deploy-log.md`) |
+| `aghulas/ebusd-configuration` | `weishaupt` (tip `388889e`; released `weishaupt-1.3.2`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries, `copy-in-use` cleared), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. On the test installation at `1.3.1`, bundled in the `weishaupt2mqtt` add-on (`out/ha-deploy-log.md`) |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
 | `aghulas/weishaupt2mqtt` | `main` (tagged `v0.1.3`, 2026-11-25; no GitHub release yet, see Roadmap item 2) | All-in-one functional MQTT bridge (pure Python 3.11+, bundles ebusd with CRC and definitions 1.3.1, guarded level-1/level-2 writes under Option B, program diffs, hourly on-demand settings/counters poll, native clock sync, HA Supervisor MQTT auto-auth). Deployed on the test installation as add-on `09e0ce7c_weishaupt2mqtt` |
