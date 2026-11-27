@@ -18,14 +18,55 @@ your heating installer.
 
 ## Use
 
-What you need: an eBUS adapter connected to the bus of the WCM controllers, and ebusd (any 26.1
-build both reads and writes the settings here — see "Write"; the fork build only adds the
-composite-read distribution). In Home Assistant that is the add-on **eBUSd** (stock) or **eBUSd
-(Weishaupt CRC)** (the fork build); either writes these settings.
+Two ways. In Home Assistant, the MQTT bridge described first below, which needs nothing from this
+archive. Anywhere, ebusd with the files of this archive, described after it.
+
+What you need for the second: an eBUS adapter connected to the bus of the WCM controllers, and
+ebusd (any 26.1 build both reads and writes the settings here — see "Write"; the fork build only
+adds the composite-read distribution). In Home Assistant that is the add-on **eBUSd** (stock) or
+**eBUSd (Weishaupt CRC)** (the fork build); either writes these settings.
 
 The files are installed by pointing ebusd at the unpacked folder with `--configpath`. ebusd then
 uses these files instead of the definitions it would fetch online: message and entity names
 change for an installation that used other definitions before (MQTT topics, automations).
+
+### Home Assistant: the MQTT bridge (recommended)
+
+For Home Assistant the recommended way is the add-on **Weishaupt2MQTT**
+([aghulas/weishaupt2mqtt](https://github.com/aghulas/weishaupt2mqtt)): one add-on with ebusd, these
+definitions and a bridge that publishes the heating system as JSON on MQTT (`weishaupt/…`) and
+takes guarded write commands, off by default. For MQTT alone (your own MQTT sensors, another
+tool) you then need **nothing from this archive**: the add-on downloads the definitions itself
+when it is built, and no `--configpath`, no `ebusctl` and no copy into an add-on folder is
+involved. **For entities through the integration ha-weishaupt, read step 5 first**: today its
+entry must be created with an ebusd add-on and these files before the bridge takes over.
+
+1. An eBUS adapter reachable over the network, and the **Mosquitto broker** add-on with the MQTT
+   integration. Stop any ebusd add-on that uses the adapter.
+2. In the add-on store, ⋮ → Repositories, add `https://github.com/aghulas/ha-addons#weishaupt`
+   (see "Write" below for what that address is) and install **Weishaupt2MQTT**; it is built on your
+   machine, which takes several minutes.
+3. Set its option `ebus_device` to your adapter (ebusd's form, for example `ens:<address>:9999`)
+   and start it.
+4. Check: *Settings → Devices & services → MQTT → Configure → Listen to a topic*, `weishaupt/#`.
+   `weishaupt/bridge/state` reads `online`, `weishaupt/bridge/info` lists the devices found, and
+   one `weishaupt/<device code>/state` per device follows.
+5. For entities, the panel and confirmed writes, the integration
+   [ha-weishaupt](https://github.com/aghulas/ha-weishaupt) 1.4.0 or later in its mode
+   *Weishaupt2MQTT (MQTT bridge)*. Its version 1.4.1 cannot create its entry over MQTT alone. So,
+   if you want the integration, do it in this order: first "Read with the Home Assistant ebusd
+   add-on" below and the entry of the integration against that add-on; then steps 1 to 4 here,
+   the ebusd add-on stopped; then, on the entry, *⋮ → Reconfigure → Weishaupt2MQTT (MQTT
+   bridge)*. Its README, "With Weishaupt2MQTT (MQTT)", says what differs in that mode.
+
+The bridge's README is the manual: the options, the first start, the topics, how to write a
+setting or a program over MQTT, how to undo, and its own limits (read them: among others, its
+`online` does not prove that values are fresh, and its clock function is not usable in 0.1.3). The
+bundled definitions are those of the add-on's version, which may be older than this archive:
+`weishaupt/bridge/info` gives `definitions_version`. Checked on the same single installation.
+
+The rest of "Use" is the other way: ebusd alone, with these files, for use without Home Assistant
+or with ebusd's own MQTT or `ebusctl`.
 
 ### Read with a plain ebusd
 
@@ -136,7 +177,7 @@ it anyway (for the composite reads, or by preference):
   /path/to/ebusd-amd64:/ebusd-weishaupt:ro … john30/ebusd:v26.1 <your options>`.
 
 **Which ebusd runs.** The first line of `ebusctl info` is the version of the running ebusd: the
-build shows `version: ebusd 26.1.p20261029`; a stock 26.1 shows another string (for example
+build shows `version: ebusd 26.1.p20261120`; a stock 26.1 shows another string (for example
 `26.1.26.1`). Which one you started: in Home Assistant, the add-on's Info page names **eBUSd
 (Weishaupt CRC)** with a version matching `@EBUSD@`; on a plain install, the executable
 you start is the one whose checksum matches the release's `sha256sums.txt`
@@ -179,9 +220,9 @@ itself, without sending anything: the attribute `run_time_checksum` of its write
   automats are never written; whether one would check the checksum is untested, so do not write a
   boiler with a stock ebusd.
 
-The Home Assistant integration [ha-weishaupt](https://github.com/aghulas/ha-weishaupt) does all
-this for you (build check, source address, read-back, a confirmation for the settings that act
-on the regulation).
+The MQTT bridge (see "Home Assistant: the MQTT bridge" above) and the Home Assistant integration
+[ha-weishaupt](https://github.com/aghulas/ha-weishaupt) do all this for you (build check, source
+address, read-back, a confirmation for the settings that act on the regulation).
 
 ### What can be written
 
