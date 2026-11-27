@@ -1,7 +1,32 @@
 # Plan
 
-State verified against the repositories on 2026-11-24. When this file and a repository disagree,
+State verified against the repositories on 2026-11-27. When this file and a repository disagree,
 the repository is right: correct this file. Release history is in `CHANGELOG.md`.
+
+## Roadmap (2026-11-27)
+
+Everything published is deployed and green (definitions `weishaupt-1.3.1`, bridge `weishaupt2mqtt`
+`v0.1.3`, companion `ha-weishaupt` `v1.4.1`). What is left is about other people, in this order:
+
+1. *Done (2026-11-27):* **Answer the two outside issues.** `aghulas/ha-weishaupt#1` (a WTC-OB with
+   a WCM-FS 2.0, room-unit software `2726`, asking how to trigger the hot-water push: its `05 07`
+   telegram decoded with `PowerDemand`, a read-only capture method proposed) and
+   `aghulas/weishaupt-ebus#1` (the author of `ebus2mqtt` reusing the check byte and the write
+   format). Both stay open; close `weishaupt-ebus#1` after a few days. Captures on
+   `ha-weishaupt#1` would be the first evidence from a second installation.
+2. **Make the MQTT architecture installable by an outsider.** First GitHub release of
+   `weishaupt2mqtt` with notes (only tags so far), a bridge README a newcomer can follow, the MQTT
+   path in `docs/release-readme.md` and the front `README.md` (neither mentions the bridge), then a
+   cold read as for 0.6.x. In progress; publishing on the owner's word.
+3. **Beyond one installation.** Work the captures of `ha-weishaupt#1` when they come; compare with
+   what `ebus2mqtt` established on a WTC 15-A/25-A.
+4. **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
+   note on #717 that the write topics no longer depend on #1825 or #8 (`docs/upstream-topics.md`),
+   on the owner's word.
+5. **Low priority, next vendor service-tool pass:** program selector `12 01`, `e6fd` lower bound,
+   the installer parameters left out of `InstallerParameters1`–`5`.
+6. **Housekeeping:** the GitHub support request to purge pre-rewrite commits
+   (`out/github-support-request.md`, to be sent by the owner).
 
 ## Direction
 
@@ -166,11 +191,11 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 
 | Repository | Branch / tag | Content |
 |---|---|---|
-| `aghulas/ebusd-configuration` | `weishaupt` (tip `84fe069`; released `weishaupt-1.3.1`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries, `copy-in-use` cleared), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. Deployed at `1.3.0` on the test installation (`out/ha-deploy-log.md`) |
+| `aghulas/ebusd-configuration` | `weishaupt` (tip `84fe069`; released `weishaupt-1.3.1`, Latest, 1 099 messages) | 140 commits on `upstream/master` (`9c3ed3a`): unified `src/wolf/` definitions (`src/main.tsp`) — 1 099 messages (including 10 composite-read carriers with 7-byte IDs that load on both stock `ebusd 26.1` and `v26.1-weishaupt.2`: `HolidayStart` / `HolidayEnd` on `fs1`–`fs3`, `InfoTemperatures` / `FanOperation` on `bc1`–`bc2`); 687 in metadata (210 entries, `copy-in-use` cleared), 92 writable settings, 252 writable program slots; `src/fr.yaml`, `metadata/weishaupt.toml` (with linked bounds `write.below`/`write.above`, `stored_only` on room-unit DHW/circulation programs, `pointer` on `fault_history`, `specialist` menu for `InstallerParameters1`–`5`, and `shared_with` on all five `fs2` program stores), library pin on `v0.31.0-weishaupt.2`. On the test installation at `1.3.1`, bundled in the `weishaupt2mqtt` add-on (`out/ha-deploy-log.md`) |
 | `aghulas/ebus-typespec` | `typespec-ext` (`v0.31.0-weishaupt.2`, pre-release); `wcrc-decorator` `75c7d58` (`v0.31.0-weishaupt.1`) | `@crc`, `@wcrc`, and `@fills` + message-level attributes (the `crc`/`fills` columns) |
 | `aghulas/ebusd` | `v26.1-weishaupt.2` (extension: computed checksum `crc`, composite reads `fills`, IDs > 7 bytes); `crc` `492867d9` (`v26.1-weishaupt.1`) | Run-time `[WCRC]` register checksum + the extension |
-| `aghulas/weishaupt2mqtt` | `main` (released `v0.1.3`, Latest, 2026-11-25) | All-in-one functional MQTT bridge (pure Python 3.11+, bundles ebusd with CRC and definitions 1.3.1, guarded level-1/level-2 writes under Option B, program diffs, hourly on-demand settings/counters poll, native clock sync, HA Supervisor MQTT auto-auth). Deployed on the test installation as add-on `09e0ce7c_weishaupt2mqtt` |
-| `aghulas/ha-weishaupt` | `v1.4.0` (Latest, 2026-11-25: MQTT transport mode consuming `weishaupt2mqtt` over HA MQTT with guarded Level 1/Level 2 writes and seamless migration from ebusd TCP; deployed and write-verified on site). `v1.3.0` (opt-in **Allow writes on a stock ebusd**), `v1.2.0` (definitions 1.3.0), `v1.1.0` (UI), `v1.0.0`, `v0.13.0` kept | Home Assistant companion (consumes `weishaupt2mqtt` MQTT or `ebusd` TCP + `weishaupt-metadata-<version>.json`) |
+| `aghulas/weishaupt2mqtt` | `main` (tagged `v0.1.3`, 2026-11-25; no GitHub release yet, see Roadmap item 2) | All-in-one functional MQTT bridge (pure Python 3.11+, bundles ebusd with CRC and definitions 1.3.1, guarded level-1/level-2 writes under Option B, program diffs, hourly on-demand settings/counters poll, native clock sync, HA Supervisor MQTT auto-auth). Deployed on the test installation as add-on `09e0ce7c_weishaupt2mqtt` |
+| `aghulas/ha-weishaupt` | `v1.4.1` (Latest, 2026-11-25: fix of the clock-offset sensor in MQTT mode; on the test installation, 319 tests pass). `v1.4.0` (MQTT transport mode consuming `weishaupt2mqtt` over HA MQTT with guarded Level 1/Level 2 writes and seamless migration from ebusd TCP; deployed and write-verified on site), `v1.3.0` (opt-in **Allow writes on a stock ebusd**), `v1.2.0` (definitions 1.3.0), `v1.1.0` (UI), `v1.0.0`, `v0.13.0` kept | Home Assistant companion (consumes `weishaupt2mqtt` MQTT or `ebusd` TCP + `weishaupt-metadata-<version>.json`) |
 
 ### Open pull requests
 
@@ -179,6 +204,8 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 | [john30/ebusd-configuration#717](https://github.com/john30/ebusd-configuration/pull/717) | `aghulas:weishaupt-pr` `4cd5a54` | Open, mergeable, no review yet |
 | [john30/ebusd#1825](https://github.com/john30/ebusd/pull/1825) | `aghulas:crc` `492867d9` | Open, mergeable, no review yet |
 | [john30/ebus-typespec#8](https://github.com/john30/ebus-typespec/pull/8) | `aghulas:wcrc-decorator` `75c7d58` | Open, mergeable, no review yet |
+
+Checked 2026-11-27: no review on any of the three, last activity 2026-11-17/18.
 
 Also posted: john30/ebusd#1814 (arbitration data point) and john30/ebusd-configuration#616
 (coordination with another contributor converting `J0EK3R/ebusd-configuration-weishaupt`).
@@ -196,7 +223,8 @@ responds to #717; their prepared titles and bodies are in `docs/upstream-topics.
   deployed as Home Assistant add-on `09e0ce7c_weishaupt2mqtt` v0.1.2. Legacy `09e0ce7c_ebusd` uninstalled.
   Option B level separation applied: level 1 user writes on `weishaupt/<circuit>/set`, level 2
   installer writes on `weishaupt/<circuit>/installer/set` with confirmation, minimal program diffs
-  on `weishaupt/<circuit>/program/<id>/set`. Next: refactor `ha-weishaupt` to consume MQTT directly.
+  on `weishaupt/<circuit>/program/<id>/set`. `ha-weishaupt` consumes MQTT directly since `v1.4.0`
+  (2026-11-25); the add-on is at `v0.1.3`.
 - *Done (2026-11-23):* **Writes with a stock ebusd.** The two remaining end-to-end checks ran on
   site (operator present, vendor service tool disconnected, no `ff` telegram in the prior 15 min)
   with the stock `ebusd 26.1.26.1` (no `-weishaupt` build) and the 1.3.0 definitions: room unit
