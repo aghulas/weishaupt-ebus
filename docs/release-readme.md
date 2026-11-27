@@ -284,6 +284,14 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
 ## Known limits
 
 - **One installation checked** (see the top). Other models and software versions may differ.
+  Compared since with the captures another project publishes from a second installation (one
+  WTC 25-A, one room unit at `35`; third-party data, not a read of this project): the room-unit
+  registers it reads and the three heating programs of `35.w.fs1` decode to its own values.
+- **`InstallerParameters1` to `InstallerParameters5`** of the two boiler automats (`08.w.bc1`,
+  `18.w.bc2`) were established on a WTC-GB. A WTC 25-A is reported to answer the same five
+  requests with other contents (its pump ratings are at other bytes and carry other parameter
+  numbers): on another boiler series, do not trust these five messages before comparing them
+  with the boiler's display.
 - **Device identification.** The files are named after the identification the devices answer to
   the scan: address, `W`, name (`15.w.ka`). A device that answers another identification gets no
   file from this folder, or the upstream Wolf file of the same address (`08..hc`, `50..mc`): its

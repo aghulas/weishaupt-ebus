@@ -26,6 +26,16 @@ Everything published is deployed and green (definitions `weishaupt-1.3.1`, bridg
    "cascade manager" wording around `f1`. Third-party data: no definition added or changed.
    Open: the read-only probe listed at the end of the record (`50 03` on both automats, the
    operating mode `12 01` and the clock registers on `35`), once the adapter is back.*
+   *Wording corrected the same day on the owner's word, nothing else: `f1` / `f6` described as
+   held by the system manager here and seen without one elsewhere (`docs/ebus-protocol.md`,
+   `evidence/broadcast-kastatus.md`); two known limits in the notice (`InstallerParameters1`–`5`
+   established on a WTC-GB, room-unit registers and programs compared on a second
+   installation); the comment of `PowerDemand` of the three room units and its French key on
+   `weishaupt` (`388889e`, local, `scripts/integrate.sh` green). That comment is in the
+   compiled CSV (three lines, English and French): it goes out with the next definitions
+   release, which the owner decides. Left as it is: the label "Heat demand to the cascade
+   manager" of `metadata/weishaupt.toml`, a string accepted by the owner. The names of
+   `KaStatus` wait for a bus read on site.*
 4. **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
    note on #717 that the write topics no longer depend on #1825 or #8 (`docs/upstream-topics.md`),
    on the owner's word.

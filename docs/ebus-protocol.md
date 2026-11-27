@@ -17,7 +17,7 @@ service (two bytes), number of data bytes, data. A slave's answer follows a slas
 |---|---|---|---|
 | Boiler 1 (automat) | `03` | `08` | |
 | Boiler 2 (automat) | `13` | `18` | |
-| System manager WCM-KA (cascade manager) | `10`, `f1` | `15`, `f6` | the same software (66.18) at both slave addresses; `15` is also read at `50`, its direct circuit (circuit 1); `f6` has no definition |
+| System manager WCM-KA (cascade manager) | `10`, `f1` | `15`, `f6` | the same software (66.18) at both slave addresses; `15` is also read at `50`, its direct circuit (circuit 1); `f6` has no definition. `f1` / `f6` is held by the system manager on this installation; a master `f1` is also seen on a second installation without a system manager (`second-installation-ebus2mqtt.md`): an observation, not a rule |
 | Room unit for circuits 1 and 2 | `30`, `70` | `35`, `75` | one physical unit, two bus identities |
 | Room unit for circuit 3 | `f0` | `f5` | |
 | Heating modules EM #2 and EM #3 | — | `51`, `52` | slaves only |
@@ -320,8 +320,8 @@ there the number of bytes asked and returns zeros for the data. The definitions 
 |---|---|---|---|
 | `07 04` | ebusd → each device | standard eBUS identification (manufacturer, `W`, software, hardware) | by ebusd, at the scan |
 | `50 14` | room unit ↔ module (`30`→`50`, `70`→`51`, `f0`→`52`) | requested flow setpoint, room temperature; answer: mode, pump, valves, flow, outside | `HcMode`, passive |
-| `05 07` | system manager (`10`) → boilers (`03`, `13`); room units → system manager (`f1`) | heat demand, modulation, hot-water setpoint, state | `PowerDemand`, passive |
-| `50 0a` | `f1` → broadcast (`fe`) | boiler status, 13 bytes | `KaStatus`, passive |
+| `05 07` | system manager (`10`) → boilers (`03`, `13`); room units → master `f1` (the system manager on this installation) | heat demand, modulation, hot-water setpoint, state | `PowerDemand`, passive |
+| `50 0a` | `f1` (the system manager on this installation) → broadcast (`fe`) | boiler status, 13 bytes | `KaStatus`, passive |
 | date and time | broadcast | the installation's clock; its first field is an outside temperature | sent by the companion at second 00 |
 | `09 02` / `09 03` | room units → modules, about every 20 s | read and write without checksum | not defined |
 
@@ -356,4 +356,5 @@ Bus load measured on 2026-11-20: about 13 % of the bus time; ebusd takes 2 to 3 
 `evidence/register-crc.md`, `register-write-crc.md`, `write-methods.md`, `grouped-reads.md`,
 `bc-fault-history.md`, `bc-live-values.md`, `bc-counters.md`, `service-tool-log.md`,
 `vendor-software-analysis.md`, `em-hcmode.md`, `heat-demand.md`, `broadcast-kastatus.md`,
-`room-units-shared-store.md`, `settings-writes.md`; `docs/discoveries.md`.
+`room-units-shared-store.md`, `settings-writes.md`, `second-installation-ebus2mqtt.md`;
+`docs/discoveries.md`.

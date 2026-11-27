@@ -41,8 +41,12 @@ Toolchain: `tsp compile` clean, `tsp format --check` clean, `ebusd --checkconfig
 
 The capture of 2026-11-16 did not keep the source address of the broadcast. Passive capture of
 2026-11-18, 10:25 (ebusd `grab result all`, nothing sent): the status broadcast comes from
-`f1`, the master address of the system manager's cascade function, not from a boiler
-(`03` and `13` send theirs to `10`, see [bc1-boiler-status.md](bc1-boiler-status.md)).
+`f1`, not from a boiler (`03` and `13` send theirs to `10`, see
+[bc1-boiler-status.md](bc1-boiler-status.md)). On this installation `f1` is a master address
+of the system manager: its slave side `f6` identifies with the manager's software. A second
+installation, one boiler without a system manager, is reported to broadcast the same telegram
+from `f1` ([second-installation-ebus2mqtt.md](second-installation-ebus2mqtt.md), third-party
+data): who holds `f1` is an observation per installation, not a rule.
 
 ```
 f1 fe 500a : 01 00 40 00 ff 50 ff 33 00 0b cd 0c 24
