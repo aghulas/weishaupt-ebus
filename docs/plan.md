@@ -37,7 +37,12 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    release, which the owner decides. Left as it is: the label "Heat demand to the cascade
    manager" of `metadata/weishaupt.toml`, a string accepted by the owner. The names of
    `KaStatus` wait for a bus read on site.*
-4. **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
+4. *Done (2026-11-27, owner's word):* status note posted on #717 (the later write topics no longer
+   depend on #1825 or #8, a second installation, release 1.3.2), and a reply on
+   `aghulas/weishaupt-ebus#1` asking the author of `ebus2mqtt` for a scan result, the
+   identification of `f6`, and raw `05 07` / `50 00` samples; that issue stays open for the
+   `50 03` probe on site. No capture yet on `ha-weishaupt#1`. Earlier text of this item:
+   **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
    note on #717 that the write topics no longer depend on #1825 or #8 (`docs/upstream-topics.md`),
    on the owner's word.
 5. **Low priority, next vendor service-tool pass:** program selector `12 01`, `e6fd` lower bound,
