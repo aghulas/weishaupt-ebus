@@ -36,7 +36,7 @@ TYPE = {"08": "boiler", "18": "boiler", "15": "manager", "51": "module", "52": "
         "35": "room", "75": "room", "f5": "room"}
 PASS1 = {"08": "boiler", "15": "manager", "51": "module", "35": "room"}
 PASS2 = {"18": "08", "52": "51", "75": "35", "f5": "35"}  # device: the device of pass 1 it follows
-FILES = {"08": "08.w.bc1", "18": "18.w.bc2", "15": "15.w.ka", "50": "50.w.em1", "51": "51.w.em2",
+FILES = {"08": "08.w.bc1.SW1104", "18": "18.w.bc2.SW1104", "15": "15.w.ka", "50": "50.w.em1", "51": "51.w.em2",
          "52": "52.w.em3", "35": "35.w.fs1", "75": "75.w.fs2", "f5": "f5.w.fs3"}
 
 

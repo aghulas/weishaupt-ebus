@@ -37,6 +37,18 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    release, which the owner decides. Left as it is: the label "Heat demand to the cascade
    manager" of `metadata/weishaupt.toml`, a string accepted by the owner. The names of
    `KaStatus` wait for a bus read on site.*
+   *Boiler automat files limited to software 1104 (2026-11-27, prepared locally, not
+   released):* `08.w.bc1` / `18.w.bc2` renamed `08.w.bc1.SW1104` / `18.w.bc2.SW1104` on
+   `weishaupt` (`c47596b`), so `--scanconfig` loads them only for automats scanned with software
+   `1104`; another software gets `08..hc` at `08`, no file at `18`. Same 1 099 messages and CSV
+   contents, circuits `bc1` / `bc2`; the metadata changes only in `circuits[].file`
+   ([record](../evidence/bc-automat-software.md)). `scripts/integrate.sh` green. Draft in
+   `CHANGELOG.md` and the notice. Waits for the owner: version (1.4.0 proposed, 1.3.3 possible)
+   and release; then the bridge rebuild (`DEFS_VERSION`) and the metadata copies of the
+   companion and the bridge follow by their own sessions, no code change needed there. A scan
+   condition (`@condition(Id.Id.sw)`) was tried first and dropped: the extension build does not
+   resolve `fills` to unavailable messages (`--checkconfig` error), a candidate fix for
+   `aghulas/ebusd` (`MessageMap::resolveFills`).*
 4. *Done (2026-11-27, owner's word):* status note posted on #717 (the later write topics no longer
    depend on #1825 or #8, a second installation, release 1.3.2), and a reply on
    `aghulas/weishaupt-ebus#1` asking the author of `ebus2mqtt` for a scan result, the

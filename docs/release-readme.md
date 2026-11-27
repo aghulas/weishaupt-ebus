@@ -287,13 +287,18 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
   Compared since with the captures another project publishes from a second installation (one
   WTC 25-A, one room unit at `35`; third-party data, not a read of this project): the room-unit
   registers it reads and the three heating programs of `35.w.fs1` decode to its own values.
-- **`InstallerParameters1` to `InstallerParameters5`** of the two boiler automats (`08.w.bc1`,
-  `18.w.bc2`) were established on a WTC-GB. A WTC 25-A is reported to answer the same five
-  requests with other contents (its pump ratings are at other bytes and carry other parameter
-  numbers): on another boiler series, do not trust these five messages before comparing them
-  with the boiler's display.
+- **Boiler automats: software 1104 only.** The files of the two boiler automats
+  (`08.w.bc1.SW1104`, `18.w.bc2.SW1104`) were established on WTC-GB automats that answer the
+  scan with software `1104`; `SW1104` in the name makes ebusd load them for that software only.
+  A WTC 25-A (software `0315`) is reported to answer the memory reads of `InstallerParameters1`
+  to `5` with other contents, and the registers of other software are not established. An
+  automat with another software gets, at `08`, the upstream Wolf file `08..hc` (Wolf
+  definitions, which decode nothing of a Weishaupt automat), at `18` no file. Renaming the file
+  to drop `SW1104` loads it again, unchecked: compare each value with the boiler's display first,
+  and report it (see "Report a problem").
 - **Device identification.** The files are named after the identification the devices answer to
-  the scan: address, `W`, name (`15.w.ka`). A device that answers another identification gets no
+  the scan: address, `W`, name (`15.w.ka`), and for the boiler automats the software
+  (`08.w.bc1.SW1104`). A device that answers another identification gets no
   file from this folder, or the upstream Wolf file of the same address (`08..hc`, `50..mc`): its
   values are then decoded with another manufacturer's definitions. `ebusctl info` shows which file
   each address got.
@@ -327,8 +332,8 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
 
 ## Content and counts
 
-- `kromschroeder/` — one file per device address: `08.w.bc1`, `18.w.bc2` (boiler automats 1 and
-  2), `15.w.ka` (system manager), `50.w.em1` (heating circuit 1, the system manager's own direct
+- `kromschroeder/` — one file per device address: `08.w.bc1.SW1104`, `18.w.bc2.SW1104` (boiler
+  automats 1 and 2, software 1104), `15.w.ka` (system manager), `50.w.em1` (heating circuit 1, the system manager's own direct
   circuit), `51.w.em2`, `52.w.em3` (heating modules EM#2 and EM#3, circuits 2 and 3), `35.w.fs1`,
   `75.w.fs2`, `f5.w.fs3` (the room-unit addresses of circuits 1, 2 and 3), and `broadcast.csv`.
   The numbers are the vendor's circuit numbers. The folder also holds the upstream Wolf files that
@@ -395,14 +400,15 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 The history of every release is in
 [`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- Compatible maintenance release on top of `1.3.0`, no breaking change (@COUNT@ messages,
-  @META_COUNT@ in metadata).
-- **Metadata (`copy-in-use` resolved):** removed the 50 `open = ["copy-in-use"]` markers after the
-  active-heating test on circuit 2 established that the regulation loop follows the room-unit
-  (`fs`) copy while the heating module (`em`) keeps an independent local store.
-- **Installation notice:** updated *Use*, *Write* and *Known limits* to reflect that a stock
-  `ebusd 26.1` writes the non-boiler settings end to end, that `75.w.fs2` heating program 3 is
-  shared with `35.w.fs1`, and that the metadata count is now rendered automatically.
+- Compatible release on top of `1.3.2`, no breaking change (@COUNT@ messages, @META_COUNT@ in
+  metadata; circuit, message and field names, types and IDs unchanged).
+- **Boiler automat files renamed** `08.w.bc1.SW1104` and `18.w.bc2.SW1104` (contents unchanged):
+  ebusd loads them only for an automat that answers the scan with software `1104`, the software
+  they were established on. Until 1.3.2 a boiler automat with another software at `08` / `18` got
+  them too and was read with the memory layout of another firmware; it now gets the upstream Wolf
+  file `08..hc` at `08` and no file at `18` (see *Known limits*). On an installation with software
+  `1104` nothing changes but the file names `ebusctl info` shows; the metadata file names them in
+  `devices.<device>.circuits[].file`.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established:

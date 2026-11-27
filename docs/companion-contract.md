@@ -37,8 +37,9 @@ CSV parser; nothing is retyped by hand.
 ## Keys
 
 A message is identified by `<circuit>/<name>`, for example `ka/BlockingTime`: the circuit is
-the last part of the CSV file name (`15.w.ka` gives `ka`; `broadcast` for the broadcast file),
-the name is the ebusd message name. These are the names `read -c <circuit> <name>` and
+the part of the CSV file name after the identification (`15.w.ka` gives `ka`; `08.w.bc1.SW1104`
+gives `bc1`, as ebusd ignores the software qualifier `SW1104` for the circuit; `broadcast` for
+the broadcast file), the name is the ebusd message name. These are the names `read -c <circuit> <name>` and
 `write -c <circuit> <name>` take. The read line and the write line of a setting are one
 message. A field is identified by its ebusd field name inside the message.
 
@@ -56,7 +57,8 @@ languages      ["en", "fr"]
 status         { menus, labels, values }: "proposed" or "accepted", and the date of the
                acceptance (all three accepted by the owner of the project on 2026-11-18;
                `values`, the labels of the value-list entries, from release 0.5.0 on)
-devices        <id>: type, label, circuits [{circuit, address, file}]
+devices        <id>: type, label, circuits [{circuit, address, file}]; file: the CSV file name
+               without `.csv` (`08.w.bc1.SW1104`; `08.w.bc1` up to 1.3.2)
 menus          <device type>: [{id, parent, label, source}]
 messages       <circuit>/<name>: see below
 groups         [{family, circuit, device, id, label, members}]

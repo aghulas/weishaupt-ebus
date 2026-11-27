@@ -342,7 +342,9 @@ is not taken" for a `50 23` from `31`.
   and the paragraph on the source address in `broadcast-kastatus.md`.
 - `InstallerParameters1`–`5` of `08.w.bc1` / `18.w.bc2`: the request is accepted by a WTC 25-A
   but the bytes mean something else there (`0x20` / `0x21` pump rating). The notice should say
-  these five messages hold for the WTC-GB only (already in `docs/discoveries.md`).
+  these five messages hold for the WTC-GB only (already in `docs/discoveries.md`). Done later
+  the same day by limiting both boiler files to scanned software `1104`
+  ([bc-automat-software.md](bc-automat-software.md)).
 - `HolidayTempLevel`: they read the register as a temperature; our reading stands.
 - `SummerWinterChangeOverTemp`: a lower bound of -4 °C in the gateway bridge against our 8 °C,
   unsigned.

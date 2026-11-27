@@ -3,6 +3,24 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## Unreleased (draft; 1.4.0 proposed)
+
+Compatible release on top of 1.3.2 (no breaking changes, same 1 099 messages and 687 in metadata;
+circuit, message and field names, types, IDs and CSV contents unchanged):
+
+- **Boiler automat files for software 1104 only.** `08.w.bc1` and `18.w.bc2` are renamed
+  `08.w.bc1.SW1104` and `18.w.bc2.SW1104`. With `--scanconfig` ebusd now loads them only for an
+  automat that answers the scan with identification `W` and software `1104`, the software every
+  message of them was established on; the circuit names stay `bc1` and `bc2`. An automat with
+  another software (a WTC 25-A scans as `W`, `0315`, and answers the memory reads of
+  `InstallerParameters1`–`5` with other contents) gets the upstream Wolf file `08..hc` at `08`
+  and no file at `18`, instead of definitions of another firmware's memory layout
+  (`evidence/bc-automat-software.md`, checked with injected scan answers).
+- **Metadata:** `devices.boiler1` / `boiler2`, `circuits[].file` name the new files; nothing else
+  changes.
+- **Installation notice (`docs/release-readme.md`):** the known limit on `InstallerParameters1`–`5`
+  becomes "boiler automats: software 1104 only", with what another software gets.
+
 ## 1.3.2 (2026-11-27)
 
 Compatible maintenance release on top of 1.3.1 (no breaking changes, same 1 099 messages and 687 in

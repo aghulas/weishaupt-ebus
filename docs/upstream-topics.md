@@ -30,8 +30,8 @@ and their decoding) is kept with the fork and available on request.
 
 Builds on the register reads of #717.
 
-- **Fault history of the WTC boiler automats** (`08.w.bc1`, `18.w.bc2`, new files named with the
-  identification the boilers answer, `W`): the six last faults, each an 8-byte slot of EEPROM
+- **Fault history of the WTC boiler automats** (`08.w.bc1.SW1104`, `18.w.bc2.SW1104`, new files
+  named with the identification the boilers answer, `W`, and their software, `1104`): the six last faults, each an 8-byte slot of EEPROM
   (fault number with a warning bit, operating phase, load, boiler, flue gas and return
   temperatures, ionisation), and the pointer to the most recent slot. Read with the memory read
   `PBSB 50 00`, whose ID is a precomputed CRC-8 followed by items "code, address" (high nibble of
@@ -91,7 +91,7 @@ pull request adds too: the one merged second drops its copy.
 Passive telegrams, builds on the boiler files of the chain before it. The cascade manager (master
 `0x10`) sends each boiler automat (master addresses `0x03`, `0x13`) a heat demand about every 20 s,
 without an answer: request state, requested flow temperature, modulation demand, hot-water setpoint.
-Defined passive in `08.w.bc1` and `18.w.bc2` with a shared model `PowerDemand` in `wtc_inc`.
+Defined passive in `08.w.bc1.SW1104` and `18.w.bc2.SW1104` with a shared model `PowerDemand` in `wtc_inc`.
 
 Verified on a live bus: the modulation demand and the hot-water setpoint equal what the automat
 holds in RAM (read with `50 00` in the same minutes); over ten days of telegrams the request state
