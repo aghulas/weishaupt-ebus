@@ -3,6 +3,33 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## Unreleased (1.5.0 proposed)
+
+Compatible release on top of 1.4.1 (no breaking changes; 1 104 messages, 692 in metadata; no
+existing name, type or ID changes). Prepared locally on `weishaupt`, not released:
+
+- **New: `OperatingMode` (register `12 01`, read only)** on the three room units `fs1`–`fs3` and
+  the modules `em2`, `em3`: the operating mode, with the value list of the vendor's eBUS /
+  Modbus gateway manual (83272304, p. 46): `Standby` 1, `HeatingOperation` 3,
+  `SetbackOperation` 4, `HolidaySummer` 5, `HeatingProgram1`–`3` 11–13. Read 11 on the room
+  units (heating program 1, shown on the bus) and 12 on the modules (the mode a module would
+  apply without a room unit). That the gateway's list is the list of this register rests on the
+  value 11; one read of a unit in standby or setback confirms it. Not defined on `ka` and
+  `em1`. Metadata: menu `settings`, label "Operating mode" / "Mode de fonctionnement", labels of
+  the seven entries (the gateway manual's words; new labels, put to the owner), five readings in
+  the fixtures. Record: `evidence/operating-mode.md`.
+- **`open.vendor_codes`: 48 → 53 messages.** The five `OperatingMode` messages, reason
+  `display`: candidate P111 *Mode Fct Chauf* (83277504, p. 32), not published until a display
+  shows it (`docs/owner-checklist-room-units.md`, item 12).
+- **`ForcedVenting` (operating phase 9) has a source**: phase 9 of the oil boiler WTC-OB
+  (83314005, p. 45); a WTC-GB lists 0 to 8, a WTC 15-A … 32-A uses 9 for its post-purge.
+  Comments of the value list and of the label, the notice's known limit, and
+  `evidence/broadcast-kastatus.md` (sources for phases 0–9, fault codes from 11 in the same
+  byte). The compiled value list is unchanged.
+- Workbench only: vendor address classes and cyclic telegrams in `docs/ebus-protocol.md`; the
+  WTC 15-A … 32-A parameter ranges in `evidence/automat-firmware-tables.md`; scheme notes
+  (WCM-KA 2.0, WCM-FS 1.x) in `evidence/vendor-codes.md`.
+
 ## 1.4.1 (2026-11-27)
 
 Compatible release on top of 1.4.0 (no breaking changes, same 1 099 messages and 687 in metadata;

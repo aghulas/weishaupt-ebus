@@ -72,7 +72,8 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    **Upstream.** #717, #1825 and #8 have had no review and no activity since 2026-11-18. A short
    note on #717 that the write topics no longer depend on #1825 or #8 (`docs/upstream-topics.md`),
    on the owner's word.
-5. **Low priority, next vendor service-tool pass:** program selector `12 01`, `e6fd` lower bound,
+5. **Low priority, next vendor service-tool pass:** program selector `12 01` (*defined read only
+   2026-11-27, item 8; one read of a unit in standby or setback left*), `e6fd` lower bound,
    the installer parameters left out of `InstallerParameters1`–`5`.
 6. **Housekeeping:** the GitHub support request to purge pre-rewrite commits
    (`out/github-support-request.md`, to be sent by the owner). *Done (2026-11-27, owner's word):* merged
@@ -111,6 +112,20 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    document unlocks, with seven follow-up tasks in order (program selector value list,
    `KaStatus` bits, phase sources, fault codes for lot 3, address table, WTC 25-A ranges,
    scheme notes): [vendor-documentation.md](vendor-documentation.md). No definition changed.
+   *Tasks 1, 3, 5, 6, 7 done on 2026-11-27, prepared locally, nothing pushed:* on `weishaupt`
+   `OperatingMode` (`12 01`, read only) on `fs1`–`fs3`, `em2`, `em3` with the gateway's value
+   list, five messages open for P111 (`display`), and the source of phase 9 in the comments
+   (WTC-OB only); records [operating-mode.md](../evidence/operating-mode.md),
+   [broadcast-kastatus.md](../evidence/broadcast-kastatus.md), address classes and cyclic
+   telegrams in [ebus-protocol.md](ebus-protocol.md), WTC 15-A … 32-A ranges in
+   [automat-firmware-tables.md](../evidence/automat-firmware-tables.md) (section 5), scheme
+   notes in [vendor-codes.md](../evidence/vendor-codes.md). `scripts/integrate.sh` green
+   (1 104 messages, 692 in metadata, 53 open vendor codes). Draft "Unreleased (1.5.0 proposed)"
+   in `CHANGELOG.md`; the notice's "Changes in" section still describes 1.4.0 and is rewritten
+   at release. **Owner:** the new labels ("Operating mode" and the seven value labels,
+   `evidence/terms.md`) and the release. On site, with the adapter: item 12 of
+   [owner-checklist-room-units.md](owner-checklist-room-units.md) (a unit in standby or setback
+   reads 1 or 4) confirms the value list's tie to `12 01`. Left: tasks 2 and 4.
 
 ## Direction
 
@@ -281,8 +296,8 @@ to `weishaupt-1.3.0` on the test installation (`out/ha-deploy-log.md`):
 
 ### Remaining 1.x candidates (low priority, no release blocked)
 
-- Program selector `12 01` values 12/13 — not reachable through the companion / Pi ebusd (register
-  undefined and unpolled, no entity); owner action via the service tool.
+- Program selector `12 01` — *defined read only as `OperatingMode` on 2026-11-27 (roadmap item 8),
+  value list from the gateway manual; values other than 11 not yet seen on this installation.*
 - `e6fd` de-couple maximum lower value — `DeCoupleMaxTemp` stays read-only (no `[WCRC]`); requires
   a raw `ff` write below 78.0 °C via the service tool / operator.
 - `copy-in-use` (`fs` vs `em` copies) — resolved 2026-11-23 on circuit 2 during active heating:
