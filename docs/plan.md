@@ -55,6 +55,12 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    each commit already in `main`); kept: `maint-0.1`, the branches behind #717, #1825 and #8, and
    the proposal branches of the ebusd fork.
 
+7. **Vendor codes in the metadata (study, 2026-11-27).** Proposal in
+   [design-vendor-codes.md](design-vendor-codes.md): an optional `vendor_codes` list (code, numbering
+   scheme, source) on messages and fields under schema 1; lot 1 covers 136 messages from existing
+   records, lot 2 needs a manual pass and one look at a room-unit display. Waiting for the owner's
+   decisions (section 7 of the proposal); nothing built.
+
 ## Direction
 
 Two tracks (`AGENTS.md`, "Goal"):
