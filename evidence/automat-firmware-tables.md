@@ -184,6 +184,49 @@ Two more bytes are already predicted. The third party also read `e3 b2 27` and `
 the table is right, `0x2e` (`TAUSSEN_KORR`, signed) holds `ff` = −1 K, their P20 by the `50 03`
 slot read, and `0x37` (`MINTVSOLL`) holds `29` = 41 °C, their P30 by the slot read.
 
+### 5. Parameter ranges of the WTC 15-A … 32-A manual
+
+Installation manual of the WTC 15-A … 32-A, 83053005, edition 07/2005, pp. 42–44 (automat
+generation 3.x; the addenda 83172004 describe it; software `0315` is likely in it, not
+established). Read on the vendor's partner portal on 2026-11-27
+([vendor-documentation.md](../docs/vendor-documentation.md), sections 1 and 6). The manual gives
+numbers, ranges and factory values, no EEPROM address. Against the form ranges and the decoded
+third-party block of section 4, and against the WTC-GB numbering of our files:
+
+| Number | Meaning on a WTC 15-A … 32-A | Range, factory value (83053005) | Decoded on the WTC 25-A (section 4) | WTC-GB (our files) |
+|---|---|---|---|---|
+| P20 | outside temperature correction | −4 … +4 K, factory 0 (p. 42) | predicted `0x2e` = `ff`, −1 K: in range | same role |
+| P21 | building type (light / heavy) | 0 / 1, factory 0 (p. 42) | 0 | – |
+| P30 | minimum flow setpoint | 8 … (P31 − P32) °C, factory 8 (p. 43) | predicted `0x37` = `29`, 41 °C: in range | same role |
+| P36 | minimum boiler rating | 33 … 100 %, on the WTC 25 32 … 100 %, factory 32 (p. 43, note 2 on p. 44) | 32 %: the WTC 25 factory value | other numbering |
+| P37 | maximum boiler rating, heating | 33 … 100 % (WTC 25: 32 … 100 %), factory 100 | 60 %: in range, set on site | other numbering |
+| P38 | maximum boiler rating, hot water | same range, factory 100 | 100 %: factory | other numbering |
+| P39 | O2 correction | −0.5 … +1 %-points, factory 0 | 0.4: in range | other numbering |
+| P40 | boiler pump in heating: run-on 0, continuous 1 | 0 / 1, factory 0 | 1 | other numbering |
+| P41 | pump run-on, heating | 1 … 60 min, factory 3 | 3 min: factory | other numbering |
+| P42 | minimum pump speed (PWM pump) | 20 … P43 %, factory 30 | 60 %, the display's value | hot-water pump run-on |
+| P43 | maximum pump speed (PWM pump) | P42 … 100 %, factory 60 (WTC 25: 70, note 3 on p. 44) | 70 %: the WTC 25 factory value | other meaning |
+| P44 | flow adjustment with a hydraulic separator (PWM pump) | 0 … 7 K or off, factory 4 | – | `IP2.pumploadmin` (pump rating minimum) |
+| P45 | pump rating, hot water (PWM pump) | 20 … 100 %, factory 60 | 60 %: factory | pump rating maximum |
+| P50 | flow excess for a hot-water load | 10 … 30 K, factory 20 | 20 K: factory | other numbering |
+| P51 | hot-water switching difference | −1 … −10 K, factory −3 | −3 K: factory | other numbering |
+
+Also listed with range and factory value, not compared: P10–P18, P22, P23, P31–P35, P52, P53,
+P60–P62, P70–P72 (pp. 42–44).
+
+- **Every compared byte is inside the manual's range**, and seven of them hold the factory value
+  of a WTC 25 (P36, P38, P41, P43, P45, P50, P51). That is a second, independent support for
+  the layout of `0003362` on that automat, from a vendor page rather than the program's forms.
+- **Where the manual and the form differ**: P51 is −1 … −10 K in the manual and −10 … −3 K in
+  the form (its scale stores −3 − value); P36 starts at 32 % on a WTC 25 in the manual, at 19.9 % in
+  the form. A file for that boiler declares the manual's ranges, not the
+  form's.
+- **The false match**: P42 is the minimum pump speed here and the hot-water pump run-on on a
+  WTC-GB (the false match of `docs/design-vendor-codes.md`), P44 / P45 are other settings again. This
+  page is the vendor source for that warning.
+- This is the range source a future WTC 25-A file (`08.w.<circuit>.SW0315`) would cite. It does
+  not replace the evidence that file still needs (Recommendation).
+
 ## Equipment
 
 - Here: two WTC-GB automats, scan `W`, software `1104`, hardware `0501` (table `WH11928`).
