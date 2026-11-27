@@ -12,8 +12,8 @@ archives:
 
 The CSV says how to read and decode a message. The metadata says what the CSV cannot: which
 device a message belongs to, where it sits in a menu, a short label in English and French,
-a label for each entry of a value list, what kind of value it is, how the vendor tool polls it, and under which conditions a setting
-may be written. Everything the CSV says is copied into the JSON, so that a consumer needs no
+a label for each entry of a value list, what kind of value it is, how the vendor tool polls it, under which conditions a setting
+may be written, and the number a vendor manual prints for it (vendor code, from 1.4.0). Everything the CSV says is copied into the JSON, so that a consumer needs no
 CSV parser; nothing is retyped by hand.
 
 ## Where it comes from
@@ -31,7 +31,8 @@ CSV parser; nothing is retyped by hand.
   multi-field message has no metadata, when a written setting has no write conditions or its
   evidence records do not name it, when a label lacks a language, when a menu or an evidence
   record does not exist, when an entry of a value list has no label in every language or a
-  label names an entry no value list has. A renamed, removed or added message therefore stops the check until
+  label names an entry no value list has, or when a vendor code breaks one of the rules of
+  "Vendor codes" below. A renamed, removed or added message therefore stops the check until
   the sidecar follows.
 
 ## Keys
@@ -60,10 +61,13 @@ status         { menus, labels, values }: "proposed" or "accepted", and the date
 devices        <id>: type, label, circuits [{circuit, address, file}]; file: the CSV file name
                without `.csv` (`08.w.bc1.SW1104`; `08.w.bc1` up to 1.3.2)
 menus          <device type>: [{id, parent, label, source}]
+vendor_schemes (from 1.4.0) <scheme>: {label, document}, the numberings of the vendor codes
 messages       <circuit>/<name>: see below
 groups         [{family, circuit, device, id, label, members}]
 open           { poll, range, step }: keys of the messages that lack one (see "Left empty");
-               value_labels: names of the value-list entries whose label is provisional
+               value_labels: names of the value-list entries whose label is provisional;
+               vendor_codes (from 1.4.0): keys of the messages whose vendor code is not
+               established yet
 ```
 
 `label` and `description` are always `{ "en": …, "fr": … }`.
@@ -98,6 +102,7 @@ menu of the vendor manual or the tab of the vendor service tool the grouping fol
 | `shared_with` | (from 0.5.15) key (`<circuit>/<name>`) of the message on another device that keeps the value: this device answers the message from that device's store, a write there is read here within seconds and a write here is not kept. Set on each member of a family, not on the group; only where an evidence record shows a write on the other device read back here with no telegram in between. A message carrying it has no `write`: the value is written on the message it names, even where the CSV keeps a write line for it (the device accepts that write; an interface does not offer it). Cases: `fs2/HCProgram1<day><slot>`, `fs2/HCProgram2<day><slot>`, `fs2/DHWProgram<day><slot>` and `fs2/CircProgram<day><slot>` → the same names on `fs1` (84 slots, no write line); `fs2/RoomSetbackTemp`, `fs2/RoomFrostProtectionTemp` → the same names on `fs1` (write line kept in the CSV). Seen on one installation; a consumer may check that both read the same before relying on it |
 | `family`, `group`, `position` | for a message of a family, see "Families" |
 | `compose` | for a message with several fields, see "Fields" |
+| `vendor_codes` | (from 1.4.0) the numbers a vendor manual prints for this value, see "Vendor codes". Absent where none is established, and on a message whose codes sit on its fields |
 | `renamed_from` | former key (`<circuit>/<name>`), when a release renames a message. Kept in later releases. First case: `ka/DHWLoadingPriority`, `ka/DHWOperationMode` up to 0.4.3; second: `ka/DHWExcessTemp`, `ka/DHWExceeded` up to 0.5.15 |
 | `fields` | list, in the order of the telegram |
 
@@ -126,6 +131,9 @@ value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, 
   states that value for that read.
 - A field matched by a pattern carries `group`, the numbers of its name (`code57` gives
   `{ "n": 57 }`).
+- `vendor_codes` (from 1.4.0) on a field: the numbers a vendor manual prints for this field,
+  on a message that carries several numbered values (`bc1/InstallerParameters1` holds P31,
+  P30, P18, P70 and P35). See "Vendor codes".
 - `renamed_from` (from 0.6.0) on a field: its former name, when a release renames a field and
   keeps the message. Kept in later releases. A consumer that identifies an entity by circuit,
   message and field moves the entity of the former field name to the new one. In the sidecar
@@ -207,6 +215,62 @@ From 0.8.0, a group object in `groups` may carry two optional family-specific ke
   (on `fault_history` groups, `bc1` and `bc2`): how to resolve which ring-buffer slot holds the
   most recent fault from the pointer message on the same circuit (`slot = ((value - base) / step) + 1`).
 
+### Vendor codes
+
+From 1.4.0. The number a vendor document prints for a value: parameter 535 on the system
+manager, P112 on a room unit, P31 or i35 on a boiler. Installers search by it, and other tools
+for this equipment put it in their value names.
+
+```
+"vendor_schemes": {
+  "wcm-ka-3": { "label": { "en": "WCM-KA 3.0 system manager", "fr": "Manager de cascade WCM-KA 3.0" },
+                "document": "83258404" }
+},
+"messages": {
+  "ka/ModulationMin": { …, "vendor_codes": [ { "code": "535", "scheme": "wcm-ka-3",
+      "source": "system manager manual 83258404, p. 65, menu Cascade; service tool form, register 65003" } ] },
+  "bc1/InstallerParameters1": { …, "fields": [ …, { "name": "supplymaxtemp", …,
+      "vendor_codes": [ { "code": "P31", "scheme": "wtc-gb", "source": "boiler manual 83251704, p. 49, menu Parameters" } ] } ] }
+},
+"open": { …, "vendor_codes": [ "fs1/GradientCurve", … ] }
+```
+
+| Key | Meaning |
+|---|---|
+| `code` | as the manual's parameter table prints it, without a space: `535`, `P112`, `P31`, `i35` (the boiler manual prints `P 31`, `i 35`). Compare without case and spaces: other tools write `113` for P113 or `I33` for i33 |
+| `scheme` | key of `vendor_schemes`: the numbering the code belongs to |
+| `source` | document and page, and the vendor service tool's form where it prints the number too |
+
+- **A code is meaningful only with its scheme.** The vendor numbers parameters per product and
+  per manual: 601 is the outside temperature info on the system manager and the hot-water
+  maximum on a room unit; P42 is the hot-water pump run-on on a WTC-GB and the minimum pump
+  rating on a WTC 25-A. Match a code from another source only within one scheme.
+- A scheme has `label` and `document` (the vendor document number). Schemes of 1.4.0:
+  `wcm-ka-3` (system manager WCM-KA 3.0, 83258404), `wcm-fs-2` (room unit WCM-FS 2.0 and heating
+  module WCM-EM 2.1, 83277504; a module has no display, its values are numbered on the room
+  unit), `wtc-gb` (boiler automat of the WTC-GB, 83251704).
+- **Level.** A message of one value carries its codes on the message; a message that carries
+  several numbered values carries them on its fields, and the message has none. Never both on
+  one message. A consumer looks at the field first.
+- **Many to one.** One code may sit on several messages: P141 (holiday) on the six holiday-date
+  registers of a room unit, 593 on the day and the month of the start of summer time, i31 on
+  `FlueGasTemp` and on the field `fluegastemp` of `Temperatures`. A code is not a key: map
+  `(scheme, code)` to a list of messages and fields.
+- `vendor_codes` is a list: one value may have codes in several schemes or menus; in 1.4.0 each
+  coded value has one.
+- The evidence record of the codes (`vendor-codes`) is added to the message's `evidence`.
+- Numberings known only from a third party (a vendor gateway, another boiler series) are not
+  published.
+- In the sidecar: `[vendor_schemes.<id>]` (`label`, `document`, `pattern`: the spelling of the
+  scheme, checked, not published), `[[vendor_code]]` (`circuits`, `message`, optional `field`,
+  `code`, `scheme`, `source`, `evidence`) and `[[vendor_open]]` (`circuits`, `messages`,
+  `reason`: `circuit-pair` or `manual`). `scripts/metadata.py check` fails when a code names a
+  scheme, circuit, message or field that does not exist, has no source or no evidence record,
+  is not spelled as its scheme's pattern says, or its record does not name the message, the
+  field and the code; when a message carries codes on itself and on a field, or a single-field
+  message a field code; when a code sits on a message listed open.
+- A consumer that ignores unknown keys is not affected (schema 1 unchanged).
+
 ## Left empty
 
 Where no record establishes a value, the metadata has none; `open` lists the keys.
@@ -218,6 +282,12 @@ Where no record establishes a value, the metadata has none; `open` lists the key
   slots and diagnostics `on_demand`. Counters and states have no default, which leaves the
   service-hours counter of the boilers without a class. No interval is given anywhere: the
   load a bus accepts has not been measured, and choosing intervals is the consumer's.
+- **Vendor code** (from 1.4.0). `open.vendor_codes` lists the messages a manual menu covers
+  whose code is not established yet: 34 messages of the room units and modules with one number
+  per heating circuit (P117 / P123 …), until the display of a unit for circuits 1 and 2 shows
+  which it uses, and 107 more whose manual pages are not read yet. A message neither coded nor
+  listed open has no vendor code (status broadcasts, heat-demand telegrams, pointers, program
+  slots, fault counters and history).
 - **Step** of the integer registers whose range has no step (`BlockingTime`,
   `ChangeOverTime`, `RegulationP`, `RegulationI`, `SwitchOnRuntime`): one unit of the
   register.

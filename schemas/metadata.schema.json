@@ -63,6 +63,11 @@
         "items": { "$ref": "#/$defs/menuItem" }
       }
     },
+    "vendor_schemes": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z0-9][a-z0-9-]*$" },
+      "additionalProperties": { "$ref": "#/$defs/vendorScheme" }
+    },
     "messages": {
       "type": "object",
       "minProperties": 1,
@@ -81,7 +86,12 @@
         "poll": { "type": "array", "items": { "type": "string" } },
         "range": { "type": "array", "items": { "type": "string" } },
         "step": { "type": "array", "items": { "type": "string" } },
-        "value_labels": { "type": "array", "items": { "type": "string" } }
+        "value_labels": { "type": "array", "items": { "type": "string" } },
+        "vendor_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9_]+/[A-Za-z0-9_]+$" }
+        }
       }
     }
   },
@@ -90,6 +100,29 @@
       "type": "object",
       "required": ["en"],
       "additionalProperties": { "type": "string" }
+    },
+    "vendorScheme": {
+      "type": "object",
+      "required": ["label", "document"],
+      "additionalProperties": false,
+      "properties": {
+        "label": { "$ref": "#/$defs/localizedString" },
+        "document": { "type": "string", "minLength": 1 }
+      }
+    },
+    "vendorCodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["code", "scheme", "source"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "pattern": "^[A-Za-z]?[0-9]+$" },
+          "scheme": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "source": { "type": "string", "minLength": 1 }
+        }
+      }
     },
     "kind": {
       "enum": ["live", "state", "counter", "diagnostic", "setting", "program_slot"]
@@ -180,7 +213,8 @@
           "type": "object",
           "additionalProperties": { "type": ["integer", "string"] }
         },
-        "renamed_from": { "type": "string", "minLength": 1 }
+        "renamed_from": { "type": "string", "minLength": 1 },
+        "vendor_codes": { "$ref": "#/$defs/vendorCodes" }
       }
     },
     "message": {
@@ -231,6 +265,7 @@
           "additionalProperties": { "type": ["integer", "string"] }
         },
         "compose": { "type": "boolean" },
+        "vendor_codes": { "$ref": "#/$defs/vendorCodes" },
         "fields": {
           "type": "array",
           "minItems": 1,

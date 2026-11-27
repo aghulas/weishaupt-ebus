@@ -16,8 +16,21 @@ circuit, message and field names, types, IDs and CSV contents unchanged):
   `InstallerParameters1`–`5` with other contents) gets the upstream Wolf file `08..hc` at `08`
   and no file at `18`, instead of definitions of another firmware's memory layout
   (`evidence/bc-automat-software.md`, checked with injected scan answers).
-- **Metadata:** `devices.boiler1` / `boiler2`, `circuits[].file` name the new files; nothing else
-  changes.
+- **Metadata:** `devices.boiler1` / `boiler2`, `circuits[].file` name the new files.
+- **Metadata, vendor codes (lot 1).** New optional keys under schema 1: `vendor_schemes` (the
+  numbering of a vendor document: label, document number), `vendor_codes` on a message or on a
+  field (code as the manual prints it, scheme, source) and `open.vendor_codes`. 164 codes on 136
+  messages, 44 fields among them: the boilers' i-codes and P-parameters (`wtc-gb`, 17 messages
+  each), the system manager's parameters 532–594 (`wcm-ka-3`, 26), the room units' and modules'
+  P112–P610 (`wcm-fs-2`, 23 on `fs1` and `fs3`, 22 on `fs2`, 4 on `em2` and `em3`). The
+  14 manager registers for which the service tool prints a 3xx and a 5xx take the manual's 5xx;
+  the three legionella parameters the tool numbers one off take the manual's 581–583. 141
+  messages are listed open: 34 with one number per heating circuit, until the display of the unit
+  for circuits 1 and 2 shows which it uses, and 107 whose manual pages are not read yet.
+  Numberings known only from third parties are left out. The record `vendor-codes` is added to
+  the `evidence` of the coded messages; nothing else changes. Source:
+  `evidence/vendor-codes.md`; format: `docs/companion-contract.md`, "Vendor codes"; schema:
+  `schemas/metadata.schema.json`. A consumer that ignores unknown keys is not affected.
 - **Installation notice (`docs/release-readme.md`):** the known limit on `InstallerParameters1`–`5`
   becomes "boiler automats: software 1104 only", with what another software gets.
 

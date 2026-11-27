@@ -70,8 +70,19 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
 7. **Vendor codes in the metadata (study, 2026-11-27).** Proposal in
    [design-vendor-codes.md](design-vendor-codes.md): an optional `vendor_codes` list (code, numbering
    scheme, source) on messages and fields under schema 1; lot 1 covers 136 messages from existing
-   records, lot 2 needs a manual pass and one look at a room-unit display. Waiting for the owner's
-   decisions (section 7 of the proposal); nothing built.
+   records, lot 2 needs a manual pass and one look at a room-unit display. *Lot 1 approved by the
+   owner on 2026-11-27 with the six choices of section 7, and prepared locally the same day, not
+   released:* contract section "Vendor codes", `vendor_schemes` / `vendor_codes` /
+   `open.vendor_codes` in `schemas/metadata.schema.json` (schema 1), the checks and the output in
+   `scripts/metadata.py` with `tests/test_vendor_codes.py`, the record
+   [vendor-codes.md](../evidence/vendor-codes.md) (manual pages re-read: 83258404 pp. 65–67,
+   83277504 pp. 31–39, 83251704 pp. 46–51), and the data on `weishaupt` (`metadata: vendor codes,
+   lot 1`): 164 codes on 136 messages (44 fields), 141 messages open (34 circuit pairs, 107 of
+   lot 2). `scripts/integrate.sh` green, `scripts/release.sh 1.4.0` built locally, nothing
+   published. Goes out with the boiler-file change in the next release (draft in `CHANGELOG.md`),
+   on the owner's word. Next: `ha-weishaupt` shows the code as an attribute and a panel column
+   (decision 5, its own session after the release); lot 2 (a manual pass, pages listed in section
+   6 of the study, and one look at the display of the unit for circuits 1 and 2).
 
 ## Direction
 

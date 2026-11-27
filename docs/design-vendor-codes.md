@@ -1,7 +1,8 @@
 # Design note: vendor codes in the metadata
 
-Status: **proposal, 2026-11-27, waiting for the owner's decision.** Nothing is built: the sidecar,
-the contract, the schemas and the generator are unchanged.
+Status: **lot 1 approved by the owner on 2026-11-27** with the six choices of section 7, and
+built the same day (contract, schema, generator, record `evidence/vendor-codes.md`, data on
+`weishaupt`); not released yet. Lot 2 open.
 
 ## The question
 
@@ -260,6 +261,22 @@ Pages for lot 2:
 | — | the display of the room unit that drives circuits 1 and 2: open Réglage #2 and note whether its slope is P123 | the 34 circuit pairs |
 
 ## 7. Decisions for the owner
+
+**Decided 2026-11-27 by the owner: each of the six as proposed.** (1) go, under schema 1, lot 1
+first; (2) the code on the message, or on the field where a message carries several numbered
+values, never both; (3) the 34 paired messages stay empty (`open.vendor_codes`) until the display
+of the unit for circuits 1 and 2 is checked; (4) the code as the manual prints it, consumers
+compare without case and spaces; (5) `ha-weishaupt`: attribute and panel column, no change of
+entity names (a later change in that repository); (6) third-party numberings left out.
+
+As built, differences from sections 4 and 6: the source strings name the service tool's form
+register but not the numbers it prints (a 3xx or a one-off number in the published source would
+mislead; they are in the record); the source pages are those of the parameter tables (P31 on
+p. 49, not 48); a scheme carries `pattern`, its spelling, checked and not published; open messages
+are listed in the sidecar as `[[vendor_open]]` with a reason (`circuit-pair`, `manual`). Every
+code names `vendor-codes` as its record, which cites the earlier records per message.
+
+The questions as they were put:
 
 1. **Go or no go**: add `vendor_codes` (code + scheme + source) under schema 1, lot 1 first?
 2. **Level**: message, or field where a message carries several numbered values, never both,
