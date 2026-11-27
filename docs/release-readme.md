@@ -38,8 +38,7 @@ definitions and a bridge that publishes the heating system as JSON on MQTT (`wei
 takes guarded write commands, off by default. For MQTT alone (your own MQTT sensors, another
 tool) you then need **nothing from this archive**: the add-on downloads the definitions itself
 when it is built, and no `--configpath`, no `ebusctl` and no copy into an add-on folder is
-involved. **For entities through the integration ha-weishaupt, read step 5 first**: today its
-entry must be created with an ebusd add-on and these files before the bridge takes over.
+involved. The same holds with the integration ha-weishaupt from its version 1.5.0 (step 5).
 
 1. An eBUS adapter reachable over the network, and the **Mosquitto broker** add-on with the MQTT
    integration. Stop any ebusd add-on that uses the adapter.
@@ -52,16 +51,16 @@ entry must be created with an ebusd add-on and these files before the bridge tak
    `weishaupt/bridge/state` reads `online`, `weishaupt/bridge/info` lists the devices found, and
    one `weishaupt/<device code>/state` per device follows.
 5. For entities, the panel and confirmed writes, the integration
-   [ha-weishaupt](https://github.com/aghulas/ha-weishaupt) 1.4.0 or later in its mode
-   *Weishaupt2MQTT (MQTT bridge)*. Its version 1.4.1 cannot create its entry over MQTT alone. So,
-   if you want the integration, do it in this order: first "Read with the Home Assistant ebusd
-   add-on" below and the entry of the integration against that add-on; then steps 1 to 4 here,
-   the ebusd add-on stopped; then, on the entry, *⋮ → Reconfigure → Weishaupt2MQTT (MQTT
-   bridge)*. Its README, "With Weishaupt2MQTT (MQTT)", says what differs in that mode.
+   [ha-weishaupt](https://github.com/aghulas/ha-weishaupt), **1.5.0 or later**: *Settings →
+   Devices & services → Add integration → Weishaupt → Weishaupt2MQTT (MQTT bridge)*, with the
+   base topic `weishaupt`. Earlier versions cannot create their entry with the bridge alone; an
+   entry that already exists against an ebusd add-on is switched from its *⋮ → Reconfigure* menu
+   (1.4.0 or later). Its README, "With Weishaupt2MQTT (MQTT)", says what differs in that mode.
 
 The bridge's README is the manual: the options, the first start, the topics, how to write a
-setting or a program over MQTT, how to undo, and its own limits (read them: among others, its
-`online` does not prove that values are fresh, and its clock function is not usable in 0.1.3). The
+setting or a program over MQTT, how to undo, and its own limits (read them; take the bridge
+0.1.4 or later: in 0.1.3 the clock option stopped all reading and `online` did not follow the
+bus). The
 bundled definitions are those of the add-on's version, which may be older than this archive:
 `weishaupt/bridge/info` gives `definitions_version`. Checked on the same single installation.
 
