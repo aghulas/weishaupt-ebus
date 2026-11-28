@@ -429,6 +429,106 @@ p. 45); on the WTC-GB of this installation the value is not expected (finding be
 the bits that are outputs; an interface should word the bits that are facts (flame, fault,
 service) itself rather than through this label.
 
+## Labels of the fault codes (lot 3, proposed)
+
+Proposed to the owner on 2026-11-28 with lot 3 of the vendor codes
+([vendor-codes.md](vendor-codes.md), "Codes of lot 3 (fault codes)"); not accepted yet. In the
+metadata the two lists carry `status = "proposed"` until the owner accepts them. The labels
+are our own short wording of the manual's cause column; the French keeps the manual's terms
+where it has one ("sonde", "pressostat", "multibloc gaz", "bouteille casse-pression" on the
+WCM side, "bouteille de découplage" on the boiler side, "commande à distance", "module
+d'extension", "manager de cascade"). Pages: WTC = 83251704 edition 1/2025-01 (warnings
+pp. 84–85, faults pp. 86–87); KA = 83258404 p. 119; FS = 83277504 pp. 106–108. A number
+printed in a range (181 … 188, 191 … 199) takes the range's label.
+
+Choices to check: "Flamme parasite" (F23) is the manual's term, the English says what it is;
+"Écart" for the two temperature differences (W/F15, W/F18); the boiler's "tableau de commande"
+for the control panel (W/F57); "Pas de communication avec …" for every communication code, where
+the manuals say "Problème de communication" (boiler) and "Défaut de communication" (WCM).
+
+| Codes | English | French | Source | Status |
+|---|---|---|---|---|
+| F11 | Safety limiter above 105 °C | Limiteur de sécurité au-dessus de 105 °C | WTC p. 84–87 (1/2025-01) | proposed |
+| W12 | Limiter, flow or return above 95 °C | Limiteur, départ ou retour au-dessus de 95 °C | WTC p. 84–87 (1/2025-01) | proposed |
+| W14 | Limiter temperature rising too fast | Température du limiteur en hausse trop rapide | WTC p. 84–87 (1/2025-01) | proposed |
+| W15, F15 | Flow/return difference too large | Écart départ/retour trop élevé | WTC p. 84–87 (1/2025-01) | proposed |
+| W16 | Flue gas temperature too high | Température des fumées trop élevée | WTC p. 84–87 (1/2025-01) | proposed |
+| W18, F18 | Limiter/flow difference too large | Écart limiteur/départ trop élevé | WTC p. 84–87 (1/2025-01) | proposed |
+| W21, F21 | No flame at burner start | Pas de flamme au démarrage du brûleur | WTC p. 84–87 (1/2025-01) | proposed |
+| W22 | Flame lost in operation | Perte de flamme en fonctionnement | WTC p. 84–87 (1/2025-01) | proposed |
+| F23 | Flame signal without a flame | Flamme parasite | WTC p. 84–87 (1/2025-01) | proposed |
+| W24 | Input H2 closed, burner lockout | Entrée H2 fermée, verrouillage du brûleur | WTC p. 84–87 (1/2025-01) | proposed |
+| F30 | Safety limiter sensor fault | Défaut de la sonde du limiteur de sécurité | WTC p. 84–87 (1/2025-01) | proposed |
+| F31 | Flue gas sensor fault | Défaut de la sonde fumées | WTC p. 84–87 (1/2025-01) | proposed |
+| F32 | Air pressure switch not at rest | Pressostat d'air pas en position de repos | WTC p. 84–87 (1/2025-01) | proposed |
+| W33 | Outside sensor fault | Défaut de la sonde extérieure | WTC p. 84–87 (1/2025-01) | proposed |
+| W34 | Hot-water sensor fault | Défaut de la sonde ECS | WTC p. 84–87 (1/2025-01) | proposed |
+| F35 | Flow sensor fault | Défaut de la sonde de départ | WTC p. 84–87 (1/2025-01) | proposed |
+| F36 | System water pressure too low | Pression de l'installation trop faible | WTC p. 84–87 (1/2025-01) | proposed |
+| F37 | Return sensor fault | Défaut de la sonde de retour | WTC p. 84–87 (1/2025-01) | proposed |
+| F38 | Flue gas pressure switch does not switch at fan check | Pressostat fumées sans commutation au contrôle du ventilateur | WTC p. 84–87 (1/2025-01) | proposed |
+| W39 | Hydraulic separator sensor fault | Défaut de la sonde de bouteille de découplage | WTC p. 84–87 (1/2025-01) | proposed |
+| F41 | Gas valve leaking | Multibloc gaz non étanche | WTC p. 84–87 (1/2025-01) | proposed |
+| F43 | Fan speed not reached | Vitesse du ventilateur non atteinte | WTC p. 84–87 (1/2025-01) | proposed |
+| F44 | Fan rest position faulty | Position de repos du ventilateur défectueuse | WTC p. 84–87 (1/2025-01) | proposed |
+| F45 | Air pressure switch does not switch on | Pressostat d'air ne s'enclenche pas | WTC p. 84–87 (1/2025-01) | proposed |
+| F46 | Flue gas side pressure too high | Pression trop élevée côté fumées | WTC p. 84–87 (1/2025-01) | proposed |
+| W47 | Gas pressure too low | Pression gaz trop faible | WTC p. 84–87 (1/2025-01) | proposed |
+| W48, F48 | Flue gas damper run time exceeded | Durée d'enclenchement du clapet de fumées dépassée | WTC p. 84–87 (1/2025-01) | proposed |
+| F49 | Input H2 closed, condensate lifting unit | Entrée H2 fermée, relevage des condensats | WTC p. 84–87 (1/2025-01) | proposed |
+| F51 | Boiler data error | Erreur de données de la chaudière | WTC p. 84–87 (1/2025-01) | proposed |
+| F52 | Burner data error | Erreur de données du brûleur | WTC p. 84–87 (1/2025-01) | proposed |
+| F53 | Supply voltage out of tolerance | Alimentation électrique hors tolérances | WTC p. 84–87 (1/2025-01) | proposed |
+| F54 | Electronic fault | Défaut électronique | WTC p. 84–87 (1/2025-01) | proposed |
+| F55 | Reset too often | Déverrouillages trop fréquents | WTC p. 84–87 (1/2025-01) | proposed |
+| W57, F57 | Automat/control panel communication | Communication automate/tableau de commande | WTC p. 84–87 (1/2025-01) | proposed |
+| W80 | No communication with the system manager | Pas de communication avec le manager de cascade | WTC p. 84–87 (1/2025-01) | proposed |
+| W81 | No communication with the room unit | Pas de communication avec la commande à distance | WTC p. 84–87 (1/2025-01) | proposed |
+| W82 | No communication with module EM#2 | Pas de communication avec le module EM#2 | WTC p. 84–87 (1/2025-01) | proposed |
+| W83 | No communication with module EM#3 | Pas de communication avec le module EM#3 | WTC p. 84–87 (1/2025-01) | proposed |
+| W84 | No communication with module EM#4 | Pas de communication avec le module EM#4 | WTC p. 84–87 (1/2025-01) | proposed |
+| W85 | No communication with module EM#5 | Pas de communication avec le module EM#5 | WTC p. 84–87 (1/2025-01) | proposed |
+| W86 | No communication with module EM#6 | Pas de communication avec le module EM#6 | WTC p. 84–87 (1/2025-01) | proposed |
+| W87 | No communication with module EM#7 | Pas de communication avec le module EM#7 | WTC p. 84–87 (1/2025-01) | proposed |
+| W88 | No communication with module EM#8 | Pas de communication avec le module EM#8 | WTC p. 84–87 (1/2025-01) | proposed |
+| W89 | Remote setpoint (input N1) failed | Consigne à distance (entrée N1) défaillante | WTC p. 84–87 (1/2025-01) | proposed |
+| 130 | Flow sensor fault | Défaut de la sonde de départ | KA p. 119, FS pp. 106–108 | proposed |
+| 131 | Plate exchanger primary sensor fault | Défaut de la sonde primaire de l'échangeur à plaques | KA p. 119, FS pp. 106–108 | proposed |
+| 132 | Hydraulic separator sensor fault | Défaut de la sonde de bouteille casse-pression | KA p. 119, FS pp. 106–108 | proposed |
+| 133 | Outside sensor fault | Défaut de la sonde extérieure | KA p. 119, FS pp. 106–108 | proposed |
+| 134 | Hot-water sensor fault | Défaut de la sonde ECS | KA p. 119, FS pp. 106–108 | proposed |
+| 135 | Hot-water circulation sensor fault | Défaut de la sonde de circulation ECS | KA p. 119, FS pp. 106–108 | proposed |
+| 136 | External room sensor fault | Défaut de la sonde d'ambiance externe | KA p. 119, FS pp. 106–108 | proposed |
+| 137 | Internal room sensor fault | Défaut de la sonde d'ambiance interne | KA p. 119, FS pp. 106–108 | proposed |
+| 138 | Buffer sensor top fault | Défaut de la sonde haute du tampon | KA p. 119, FS pp. 106–108 | proposed |
+| 139 | Buffer sensor bottom fault | Défaut de la sonde basse du tampon | KA p. 119, FS pp. 106–108 | proposed |
+| 142 | PWM pump fault | Défaut de la pompe PWM | KA p. 119, FS pp. 106–108 | proposed |
+| 149 | Condensate lifting unit safety switch (input H1) | Sécurité du relevage des condensats (entrée H1) | KA p. 119, FS pp. 106–108 | proposed |
+| 154 | Internal EEPROM fault | Défaut interne EEPROM | KA p. 119, FS pp. 106–108 | proposed |
+| 180 | No communication with the system manager | Pas de communication avec le manager de cascade | KA p. 119, FS pp. 106–108 | proposed |
+| 181 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 182 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 183 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 184 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 185 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 186 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 187 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 188 | No communication with a room unit | Pas de communication avec une commande à distance | KA p. 119, FS pp. 106–108 | proposed |
+| 189 | Input N1 fault | Défaut de l'entrée N1 | KA p. 119, FS pp. 106–108 | proposed |
+| 190 | No communication with a heating module | Pas de communication avec un module d'extension | KA p. 119, FS pp. 106–108 | proposed |
+| 191 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 192 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 193 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 194 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 195 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 196 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 197 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 198 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 199 | No communication with a boiler automat | Pas de communication avec un automate de chaudière | KA p. 119, FS pp. 106–108 | proposed |
+| 200 | Bus address already taken | Adresse eBUS déjà occupée | KA p. 119, FS pp. 106–108 | proposed |
+| 201 | Device address inside the cascade system | Adresse de l'appareil dans le système de cascade | KA p. 119, FS pp. 106–108 | proposed |
+| 202 | Room unit address assigned to a hot-water loading circuit | Adresse de commande à distance affectée à un circuit de charge ECS | KA p. 119, FS pp. 106–108 | proposed |
+
 ## Findings: English wording of the lots and of the vendor
 
 Where the lots word a thing differently from the vendor's English manuals. Nothing was changed

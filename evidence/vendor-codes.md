@@ -30,6 +30,9 @@ section "Codes of lot 2":
 | room units | `fs1`, `fs2`, `fs3` | 14 each | 14 each | — |
 | heating modules | `em2`, `em3` | 2 each | 2 each | — |
 
+Lot 3 (fault codes, prepared 2026-11-28): two code lists, `wtc-gb-faults` (44 numbers) and
+`wcm-faults` (36), on 17 fields of 17 messages, in section "Codes of lot 3 (fault codes)".
+
 ## Schemes
 
 The vendor numbers parameters per product and per manual, not across the range: the same
@@ -44,7 +47,8 @@ is copied from.
 |---|---|---|---|---|
 | `wcm-ka-3` | system manager WCM-KA 3.0 | 83258404, 1/2013-04 (French) | three digits, no letter: `535` | `[0-9]{3}` |
 | `wcm-fs-2` | room unit WCM-FS 2.0 and heating module WCM-EM 2.1 | 83277504, 3/2012-10 (French) | `P` and three digits: `P112` | `P[0-9]{3}` |
-| `wtc-gb` | boiler automat of the WTC-GB 120 … 300-A | 83251704, 1/2020-08 (French) | `P` and two digits (parameters), `i` and two digits (info values), printed with a space: `P 31`, `i 35` | `[Pi][0-9]{2}` |
+| `wtc-gb` | boiler automat of the WTC-GB 120 … 300-A | 83251704, 1/2020-08 (French); fault codes 1/2025-01 | `P` and two digits (parameters), `i` and two digits (info values), printed with a space: `P 31`, `i 35`; `W` or `F` and two digits (warning and fault codes, from lot 3): `W12`, `F36` | `[PiWF][0-9]{2}` |
+| `wcm` | fault codes of the WCM controllers: system manager, room unit, heating module (lot 3) | 83277504, 3/2012-10, and 83258404, 1/2013-04 (French) | three digits: `181` | `[0-9]{3}` |
 
 Spelling: as the manual prints it, without the space (`P31`, `i35`); consumers compare without
 case and spaces (owner's decision 4). A module has no display: its values are set and numbered
@@ -374,6 +378,162 @@ The study listed these as covered by a manual menu. The full menu tables of the 
   module's LEDs) and `em2/H1Status`, `em3/H1Status` (P401 sets the function of H1; its state is
   not shown).
 
+## Codes of lot 3 (fault codes)
+
+Prepared 2026-11-28 from the manuals, through the vendor's partner portal (read only), French
+editions; no bus was read for it. Design: `docs/design-vendor-codes.md`, "Lot 3". Two code
+lists in the metadata, `wtc-gb-faults` (scheme `wtc-gb`, whose spelling widens to the letters
+W and F) and `wcm-faults` (new scheme `wcm`), and the fields that carry a fault number. Labels
+are our own words, proposed to the owner (`terms.md`, "Labels of the fault codes"); the lists
+carry `status = "proposed"` until the owner accepts them.
+
+### Boiler codes, W / F 11–89 (`wtc-gb-faults`, scheme `wtc-gb`)
+
+WTC-GB 210 … 300-A, 83251704 edition 1/2025-01: alarm (warning) codes pp. 84–85, fault codes
+pp. 86–87. One number space: a number is a W, an F or both (the warning that locks the boiler
+out as the fault of the same number after repeated occurrences). The earlier editions cited by
+`bc-fault-counters.md` (83251702 1/2011-02, 83251704 1/2020-08) give the same numbers and
+meanings, the 2011 edition without W48 and F49.
+
+| Number | Codes | Page | Meaning (our words) |
+|---|---|---|---|
+| 11 | F11 | 86 | safety limiter above 105 °C |
+| 12 | W12 | 84 | limiter, flow or return sensor above 95 °C |
+| 14 | W14 | 84 | limiter temperature rising too fast |
+| 15 | W15, F15 | 84, 86 | flow / return difference too large (F after 30 warnings) |
+| 16 | W16 | 84 | flue gas temperature too high |
+| 18 | W18, F18 | 84, 86 | limiter / flow difference too large (F after 30 warnings) |
+| 21 | W21, F21 | 84, 86 | no flame at burner start (F after 5 starts) |
+| 22 | W22 | 84 | flame lost in operation (F21 after a second failed start) |
+| 23 | F23 | 86 | flame signal without a flame |
+| 24 | W24 | 84 | input H2 closed, set as burner lockout |
+| 30 | F30 | 86 | safety limiter sensor |
+| 31 | F31 | 86 | flue gas sensor |
+| 32 | F32 | 86 | air pressure switch not at rest |
+| 33 | W33 | 84 | outside sensor |
+| 34 | W34 | 84 | hot-water sensor |
+| 35 | F35 | 86 | flow sensor |
+| 36 | F36 | 86 | system water pressure too low |
+| 37 | F37 | 86 | return sensor |
+| 38 | F38 | 86 | flue gas pressure switch does not switch during the fan standstill check |
+| 39 | W39 | 84 | hydraulic separator sensor |
+| 41 | F41 | 86 | gas valve leaking |
+| 43 | F43 | 86 | fan speed not reached |
+| 44 | F44 | 87 | fan rest position faulty |
+| 45 | F45 | 87 | air pressure switch does not switch on |
+| 46 | F46 | 87 | pressure on the flue gas side too high |
+| 47 | W47 | 84 | gas pressure too low |
+| 48 | W48, F48 | 84, 87 | run time of the flue gas damper exceeded (F after 5 tries) |
+| 49 | F49 | 87 | input H2 closed, set for a condensate lifting unit |
+| 51 | F51 | 87 | boiler data error |
+| 52 | F52 | 87 | burner data error |
+| 53 | F53 | 87 | supply voltage out of tolerance |
+| 54 | F54 | 87 | electronic fault |
+| 55 | F55 | 87 | reset too often |
+| 57 | W57, F57 | 84, 87 | communication between the automat and the boiler control panel |
+| 80 | W80 | 85 | communication with the system manager |
+| 81 | W81 | 85 | communication with the room unit |
+| 82 | W82 | 85 | communication with module EM#2 |
+| 83 | W83 | 85 | communication with module EM#3 |
+| 84 | W84 | 85 | communication with module EM#4 |
+| 85 | W85 | 85 | communication with module EM#5 |
+| 86 | W86 | 85 | communication with module EM#6 |
+| 87 | W87 | 85 | communication with module EM#7 |
+| 88 | W88 | 85 | communication with module EM#8 |
+| 89 | W89 | 85 | remote setpoint (input N1) failed |
+
+44 numbers, 49 codes (24 W, 25 F; five numbers are both). Every number of the fault counters
+(`bc-fault-counters.md`, 33 counters) is in the list; 54 and 80–89 have no counter.
+
+### WCM device codes, 130–202 (`wcm-faults`, scheme `wcm`)
+
+System manager WCM-KA 3.0, 83258404 1/2013-04, p. 119; room unit WCM-FS 2.0 and module
+WCM-EM 2.1, 83277504 3/2012-10, pp. 106–108, which also names the device that raises each
+code. Where both manuals list a number they agree in meaning; the sensor letter of a code
+depends on the device (134 is B23 on the system manager, B3 on a hot-water module).
+
+| Number | Code | Manual (page) | Raised by (83277504) | Meaning (our words) |
+|---|---|---|---|---|
+| 130 | 130 | 83277504 p. 106 | heating module | flow sensor (B6) |
+| 131 | 131 | 83258404 p. 119 | — | plate exchanger primary sensor (B24) |
+| 132 | 132 | both (p. 119, p. 106) | system manager / automat | hydraulic separator sensor (B22) |
+| 133 | 133 | 83277504 p. 106 | heating module | outside sensor (B1) |
+| 134 | 134 | both (p. 119, p. 106) | hot-water module | hot-water sensor (B23 on the manager, B3 on a module) |
+| 135 | 135 | 83277504 p. 106 | hot-water module | hot-water circulation sensor |
+| 136 | 136 | 83277504 p. 106 | heating module | external room sensor |
+| 137 | 137 | 83277504 p. 106 | heating module | internal room sensor |
+| 138 | 138 | 83258404 p. 119 | — | buffer sensor, top (B20) |
+| 139 | 139 | 83258404 p. 119 | — | buffer sensor, bottom (B21) |
+| 142 | 142 | 83277504 p. 106 | module / automat | PWM pump |
+| 149 | 149 | 83258404 p. 119 (also p. 75) | — | safety switch of the condensate lifting unit at input H1 |
+| 154 | 154 | both (p. 119, p. 106) | — | internal EEPROM fault |
+| 180 | 180 | both (p. 119, p. 107) | room unit | no communication with the system manager |
+| 181 … 188 | 181, 182, 183, 184, 185, 186, 187, 188 | both (p. 119, p. 107) | system manager | no communication with a room unit |
+| 189 | 189 | both (p. 119, p. 107) | system manager | input N1 fault |
+| 190 | 190 | both (p. 119, p. 107) | room unit | no communication with a heating module |
+| 191 … 199 | 191, 192, 193, 194, 195, 196, 197, 198, 199 | 83258404 p. 119 (191 … 199); 83277504 p. 107 (191 … 198) | room unit | no communication with a boiler automat (WCM-CPU) |
+| 200 | 200 | both (p. 119, p. 108) | — | bus address already taken |
+| 201 | 201 | both (p. 119, p. 108) | — | device address inside the cascade system |
+| 202 | 202 | both (p. 119, p. 108) | — | room unit address assigned to a hot-water loading circuit |
+
+36 codes. The ranges 181 … 188 and 191 … 199 are printed as ranges, one meaning for the whole
+range; which number stands for which unit or automat is not printed, so each number of a range
+takes the range's label. The room-unit manual stops 191 … 198; the system manager's 199 is kept.
+
+### The fields, and how a value is read
+
+| Circuits | Message | Field | Lists | Why |
+|---|---|---|---|---|
+| `bc1`, `bc2` | FaultHistorySlot1, FaultHistorySlot2, FaultHistorySlot3, FaultHistorySlot4, FaultHistorySlot5, FaultHistorySlot6 | number | `wtc-gb-faults` | the boiler's own history: 7 bits of number, the letter in the field `kind` (`bc-fault-history.md`) |
+| `em1` | ErrorCode | value | `wtc-gb-faults`, `wcm-faults` | the system manager's fault history (608): origin, code, date, time (83258404 p. 110; `em1-fault-log.md`) |
+| `fs1`, `fs2`, `fs3` | ErrorCode | value | `wtc-gb-faults`, `wcm-faults` | the room unit's fault history (P338): the same entry, the manual's example a boiler code 15 with origin *WTC-G#1* (83277504 p. 53) |
+| `ka` | ErrorStatus | value | `wtc-gb-faults`, `wcm-faults` | the pending fault; the vendor service tool's form captions register `01 00` of the system manager "fault code", 0 shown blank (`register-candidates.csv`, row 2); the manager's display shows the faults of the boilers as well as its own (83258404 pp. 31, 33) |
+
+- **The two ranges are disjoint** (11–89, 130–202), so a fault-log code is looked up in both
+  lists and lands in one at most; the origin field of the entry is not needed for that. The
+  manuals support it: the room-unit history shows a boiler code with the boiler as origin
+  (p. 53), the system-manager history a WCM code with the manager as origin (p. 110).
+- **On the bus, through the vendor service tool** (`service-tool-ui-exploration.md`, "Second
+  visit", 2026-11-20): the history of the system manager shows code 80 with origin *WTC 1* and
+  *WTC 2*, and 181, 191, 192 with origin *KA*; the histories of the room units `35` and `f5`
+  show 191 and 181. 80 is W80 (a boiler lost the system manager), 181 … 199 the manager's or a
+  unit's lost partners: each code fits its origin. The tool read them with its own service
+  (`09 02`), not with the reads of the definitions, so they are not fixtures.
+- **Code 0** is the end of a fault in a history (83258404 p. 110, 83277504 p. 53) and "none
+  pending" in `ErrorStatus`; it is in neither list. Through ebusd only 0 was read (entry 0 of
+  `em1`, `fs1`, `fs3`; `ErrorStatus` of `ka`), so no fixture shows a coded value.
+- **The letter.** The boiler history stores it (field `kind`); a WCM fault log stores the bare
+  number (the tool shows 80, not W80), so a consumer shows both codes of a number that has two
+  (W15 / F15) or the number with the label. Of the boiler-history values read, W12, F11
+  (`bc1`) and F36 (`bc2`) match the letters the manual gives those numbers.
+
+### Left open in lot 3
+
+- **`ErrorDevice`**: no value list. The tool shows device 0 as *KA* in the window of `35` and
+  as *WTC* in the window of `f5` for the same register value, and device 1 on `em1` beside its
+  *WTC 1* / *WTC 2* rows; the text is not derived from the register alone. One fault on the bus,
+  read through ebusd with the tool's text beside it, settles the pairing.
+- **`ErrorType`** (3, 9, 10 read): no manual names it.
+- **The status broadcast's phase byte** (fault number when the alarm bit is set, gateway
+  manual 83272304 p. 45, `broadcast-kastatus.md`): the field keeps its phase value list; a code
+  list beside a value list on one field is not in the format, and the tie of the gateway's
+  register to the byte is inferred.
+- **Fault counters** (`Code11` … `Code57`): their `group.n` is a number of `wtc-gb-faults`; no
+  field carries a code (a counter is not a code). A consumer may join them.
+- **WTC 15-A … 32-A**: not in `wtc-gb-faults` (below).
+
+### WTC-A: codes that moved between automat generations
+
+The WTC 15-A … 32-A (83053005 pp. 55–58) uses the same W / F 11–89 space with partly other
+meanings (13, 38, 39, 42, 56, 61–67, section 4 of `docs/vendor-documentation.md`), and its
+sensor codes moved between automat generations. The addenda 83172004 (WCM-CPU version 3.x,
+edition 1/2006, p. 4; version 12.0, edition 1/2012, p. 4) give the old and the new table: up to
+version 2.x, 30 boiler sensor, 31 flue gas sensor, 33 outside sensor, 34 hot-water sensor,
+37 flow meter; from version 3.x, 31 boiler sensor, 32 flue gas sensor, 33 hot-water sensor,
+34 outside sensor, 35 flow meter. So 33 and 34 are swapped against the WTC-GB, and 31 means
+another sensor in each generation. A WTC-A boiler needs its own scheme and list, per automat
+generation; `wtc-gb-faults` must not be shown for it.
+
 ## Left open
 
 `open.vendor_codes` of the metadata lists the messages a manual menu covers but whose code is
@@ -395,7 +555,8 @@ not established. No code may sit on them (the check fails).
 - Not open, no vendor code (27): status broadcasts, the standard heat demand `05 07`, the
   boiler status telegrams of the manager, the mode bit fields, the fault-log pointers and the
   clock registers of `em1`: `bc1/PowerDemand`, `bc1/FaultHistoryPointer`, `ka/Boiler1Status`, `ka/Boiler1Power`, `ka/Boiler2Status`, `ka/Boiler2Power`, `bc2/PowerDemand`, `bc2/FaultHistoryPointer`, `fs1/PowerDemand`, `fs1/ErrorId`, `em1/HcMode`, `em1/SystemWeekday`, `em1/SystemDay`, `em1/SystemMonth`, `em1/SystemYear`, `em1/SystemHour`, `em1/SystemMinute`, `em1/SystemSecond`, `em1/ErrorId`, `em2/HcMode`, `em3/HcMode`, `fs2/PowerDemand`, `fs2/ErrorId`, `fs3/PowerDemand`, `fs3/ErrorId`, `broadcast/KaStatus`, `broadcast/Datetime`. Program slots, fault counters and fault history
-  are outside lots 1 and 2 (fault numbers are another numbering). Lot 2 adds 16 messages
+  are outside lots 1 and 2 (fault numbers are another numbering; lot 3 gives the fault
+  numbers their code lists, not vendor codes). Lot 2 adds 16 messages
   with no number in any menu ("No number in any menu" above), 43 in all.
 
 ## Left out
@@ -411,9 +572,15 @@ Two WTC-GB boilers in cascade (automat software 1104), a system manager WCM-KA 3
 modules WCM-EM 2.1 and two room units WCM-FS 2.0 (one of them for circuits 1 and 2, so three
 room-unit addresses). The codes come from documents and the service tool's form, not from a
 bus read; the bus reads that established each message are in the records of the last column.
-Manual pages read 2026-11-27.
+Manual pages read 2026-11-27; for lot 3, 83251704 pp. 83–87, 83258404 pp. 31, 33, 110, 119,
+83277504 pp. 53, 106–108 and the addenda 83172004 (1/2006 and 1/2012, pp. 3–4), read
+2026-11-28.
 
 ## Not verified
+
+- Lot 3: no coded fault value was read through ebusd; the codes 80, 181, 191 and 192 were seen
+  only through the vendor tool. Which `ErrorDevice` value means which device is not known.
+  The labels of the two lists are proposed, not accepted.
 
 - Which of the two numbers of a circuit pair a unit for circuits 1 and 2 shows (open, above).
 - The ten `display` messages of lot 2: which candidate number the display shows for them

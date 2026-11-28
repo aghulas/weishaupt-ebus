@@ -7,7 +7,8 @@ open (37 circuit pairs, 10 for a display, 1 mismatch), 16 found to have no numbe
 Record: `evidence/vendor-codes.md`, "Codes of lot 2". Where it differs from section 6: the
 cascade orders are on pp. 82–83, not 92–98; 571 is not `ka/DHWLoadingPriority` (another
 register); the direct circuit `em1` needs no scheme of its own; the room-unit flow setpoint is
-one more circuit pair (P526 / P527).
+one more circuit pair (P526 / P527). **Lot 3 (fault codes) designed and prepared from the
+manuals on 2026-11-28**, not released (1.6.0 proposed), labels proposed to the owner: section 8.
 
 ## The question
 
@@ -252,7 +253,7 @@ or second number, not a new first number. What changes:
 |---|---|---|---|
 | **1** | Generator, schema, contract, tests; `evidence/vendor-codes.md`; **136 messages**: 17 boiler messages × 2 (i-codes on the registers, P- and i-codes on 44 fields), 26 messages of the system manager (5xx, conflicts above settled), 23 per room unit except `fs2/ControlVariation` (P112, P113, P118, P132, P133, P141, P142, P153, P154, P315, P502, P503, P601, P605, P606, P609), 4 per module (P112, P113, P118, P610) | one session, then a definitions release on the owner's word | none left: the pages read for this study are enough |
 | **2** | **141 messages**: the circuit pairs of room units and modules (34); `em1` (8); the info values of the manager (601–609) and of the room units (P331, P337, P338, P339, P341, P521–P527); the cascade orders 533 / 534; the direct-circuit settings of `ka` (`SupplyMaxTemp`, `RoomNormalTemp`, `RoomSetbackTemp`); `DHWLoadingPriority` of `ka`; boiler fan and pump speeds (i22, i23) | a second session | see below |
-| (3) | Fault numbers of the fault counters and history (66 fields), as their own scheme | not proposed now | — |
+| (3) | Fault numbers of the fault counters and history (66 fields), as their own scheme | designed 2026-11-28, section 8 | — |
 
 Pages for lot 2:
 
@@ -295,3 +296,95 @@ The questions as they were put:
 5. **`ha-weishaupt`**: attribute and panel column only (no change of entity names), as proposed?
 6. **Third-party numberings** (the WcmToMqtt gateway's 413, 416, 412; the WTC 25-A's P42 / P43):
    leave them out, as proposed, since only a third party documents them?
+
+## 8. Lot 3: fault codes
+
+Prepared 2026-11-28 (follow-up task 4 of `docs/vendor-documentation.md`, section 9). Record:
+`evidence/vendor-codes.md`, "Codes of lot 3 (fault codes)". Only what the manuals support; the
+pairing of the device-number field with real devices waits for a fault on the bus.
+
+### What a fault code is, and why it is not a vendor code
+
+A vendor code (sections 1–7) says which number the manual prints for a **value**: 535 is the
+modulation minimum. A fault code is a **value**: the field `ErrorCode` reads 181, and the
+manual says what 181 means. So lot 3 does not add `vendor_codes`; it gives the fields that
+carry a fault number a **code list**: raw value → the codes the manual prints for it and a
+label, numbered in a scheme.
+
+### Two schemes, two lists, disjoint ranges
+
+| List | Scheme | Numbers | Source | Raised by |
+|---|---|---|---|---|
+| `wtc-gb-faults` | `wtc-gb` (its spelling widens to `[PiWF][0-9]{2}`) | 11–89, 44 numbers, 49 codes: W (warning), F (fault) or both on one number | WTC-GB 83251704 1/2025-01, pp. 84–87 | the boiler automat |
+| `wcm-faults` | `wcm` (new, `[0-9]{3}`, document 83277504) | 130–202, 36 numbers | WCM-KA 3.0 83258404 p. 119; WCM-FS 2.0 / WCM-EM 2.1 83277504 pp. 106–108 | system manager, room unit, heating module |
+
+- **One number space per family.** The boiler's W and F share the numbers (W15 locks out as
+  F15); the boiler history stores 7 bits of number and the letter in bit 7. So an entry is
+  keyed by the number and lists every code of it (`15: [W15, F15]`).
+- **The WCM codes form one scheme**, not one per device: the two WCM manuals agree on every
+  number both list, and the room-unit manual lists codes the system manager raises (181–189)
+  and the reverse. The sensor letter in a meaning depends on the device; the label leaves it out.
+- **Ranges** printed as ranges (181 … 188 room units, 191 … 199 boiler automats) give each
+  number the range's label: the manuals do not say which number is which unit.
+- **0** is "end of fault" in a history and "none pending" in `ErrorStatus`: in neither list.
+
+### Which fields, and how the source device decides the scheme
+
+| Field | Lists | Rule |
+|---|---|---|
+| `bc1`, `bc2` `FaultHistorySlot1`–`6`.`number` | `wtc-gb-faults` | the boiler's own history: always a boiler code; the letter is the field `kind` |
+| `em1/ErrorCode` (the manager's history, 608), `fs1`–`fs3` `ErrorCode` (a room unit's history, P338) | both | the entry's origin decides the scheme: a boiler code when the origin is a boiler (83277504 p. 53: code 15 from *WTC-G#1*), a WCM code otherwise (83258404 p. 110: 181 from *KA#*). The ranges are disjoint, so the number alone picks the list; `ErrorDevice` is not needed for it |
+| `ka/ErrorStatus` (the pending fault) | both | the vendor form captions the register "fault code"; the manager shows the boilers' faults as well as its own (83258404 pp. 31, 33). Not read with a fault pending |
+
+A consumer looks the raw value up in the field's lists in order and shows the codes and the
+label of the entry it finds; a number in no list is shown as the number. In a WCM history the
+letter of a boiler code is not stored (the tool shows 80, not W80): show both codes of a number
+that has two, or the number with the label.
+
+### Format (schema 1, compatible)
+
+Sidecar: `[vendor_code_lists.<id>]` (`scheme`, `label`, `source`, `evidence`, `status`,
+`entries` keyed by the raw value, each `codes` and `label`) and `[[vendor_code_list_use]]`
+(`circuits`, `messages`, `field`, `lists`, `evidence`). Published: a top-level
+`vendor_code_lists` `{id: {scheme, label, source, status, entries}}` and on each field that
+uses them `code_lists: [ids]`; the record joins the message's `evidence`. `status` says whether
+the owner accepted the labels; `proposed` labels may change in a release of the third number.
+`scripts/metadata.py check` fails on an unknown scheme, a code not spelled as its scheme or not
+carrying its key's number, a missing label, source, status or record, a record that does not
+name the list and each code, a use on a field with a CSV value list, two lists on one field
+that share a number, and a field given lists twice.
+
+**Why not a TypeSpec value list.** A value list in the CSV makes ebusd print a name instead of
+the number: the field changes type for every consumer (MQTT payload, Home Assistant state), a
+breaking change under the frozen names and types since 0.6.0. It also cannot carry two
+languages, two codes per number, or the choice of a list by the entry's origin. The CSV is
+unchanged.
+
+### WTC-A note
+
+A WTC 15-A … 32-A (83053005 pp. 55–58) uses W / F 11–89 too, with other meanings for some
+numbers (13, 38, 39, 42, 56, 61–67), and its sensor codes moved between automat generations
+(addenda 83172004, editions 1/2006 and 1/2012, p. 4: up to WCM-CPU 2.x 30 boiler, 31 flue gas,
+33 outside, 34 hot water, 37 flow meter; from 3.x 31 boiler, 32 flue gas, 33 hot water,
+34 outside, 35 flow meter). 33 and 34 are swapped against the WTC-GB. A WTC-A file would need
+its own list, per automat generation; `wtc-gb-faults` must not be applied to it. Nothing for it
+is published now (no installation to check against).
+
+### Left open
+
+- **`ErrorDevice` pairing**: no value list. The tool showed device value 0 as *KA* on `35` and
+  as *WTC* on `f5`, so the text is not derived from the register alone; one fault on the bus,
+  read through ebusd beside the display or the tool, settles it.
+- **`ErrorType`** (3, 9, 10 read): not in any manual.
+- **The status broadcast's phase byte** carries the fault number when the alarm bit is set
+  (gateway 83272304 p. 45): the field has a phase value list, and the tie is inferred; not done.
+- **Fault counters**: `group.n` of `Code11` … `Code57` is a number of `wtc-gb-faults`; a
+  consumer may join them. No field carries a code.
+- **Fixtures**: only 0 was read through ebusd on the code fields; the coded values seen (80, 181,
+  191, 192) came through the vendor tool's own service, not the definitions' reads.
+
+### Decisions for the owner
+
+1. The labels of the 80 entries (`evidence/terms.md`, "Labels of the fault codes"), proposed.
+2. The version: a minor (1.6.0, as 1.4.0 for the first vendor codes: new metadata keys) or a
+   patch (1.5.1: metadata only, CSV unchanged). Proposed: 1.6.0.
