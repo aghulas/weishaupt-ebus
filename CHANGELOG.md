@@ -17,7 +17,7 @@ metadata; definitions and CSV unchanged, only the metadata sidecar):
   83277504 pp. 106–108). Used on `number` of `FaultHistorySlot1`–`6` (`bc1`, `bc2`, boiler list
   only) and on `ErrorCode` of `em1`, `fs1`–`fs3` and `ErrorStatus` of `ka` (both lists; the
   ranges are disjoint). Scheme `wtc-gb` now also spells `W12`, `F36`; new scheme `wcm`. The
-  lists carry `status: "proposed"` until the owner accepts their labels. The record
+  labels of the 80 entries were accepted by the owner (`status: "accepted"`). The record
   `vendor-codes` joins the `evidence` of the 12 history slots and `ka/ErrorStatus`.
 - Not given: the meaning of `ErrorDevice` and `ErrorType` (one fault on the bus is needed), and
   any list for a WTC 15-A … 32-A, whose codes partly differ and moved between automat

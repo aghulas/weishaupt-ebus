@@ -8,7 +8,7 @@ Record: `evidence/vendor-codes.md`, "Codes of lot 2". Where it differs from sect
 cascade orders are on pp. 82–83, not 92–98; 571 is not `ka/DHWLoadingPriority` (another
 register); the direct circuit `em1` needs no scheme of its own; the room-unit flow setpoint is
 one more circuit pair (P526 / P527). **Lot 3 (fault codes) designed and prepared from the
-manuals on 2026-11-28**, not released (1.6.0 proposed), labels proposed to the owner: section 8.
+manuals on 2026-11-28**, not released (1.6.0 proposed), labels accepted by the owner on the same day: section 8.
 
 ## The question
 
@@ -385,6 +385,6 @@ is published now (no installation to check against).
 
 ### Decisions for the owner
 
-1. The labels of the 80 entries (`evidence/terms.md`, "Labels of the fault codes"), proposed.
+1. The labels of the 80 entries (`evidence/terms.md`, "Labels of the fault codes"): accepted on 2026-11-28.
 2. The version: a minor (1.6.0, as 1.4.0 for the first vendor codes: new metadata keys) or a
    patch (1.5.1: metadata only, CSV unchanged). Proposed: 1.6.0.

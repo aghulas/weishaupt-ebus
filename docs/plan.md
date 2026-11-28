@@ -134,8 +134,8 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    `ErrorStatus` of `ka`); scheme `wtc-gb` takes W / F, new scheme `wcm`; new keys
    `vendor_code_lists` and `code_lists` (schema 1, compatible), checks and
    `tests/test_code_lists.py`. CSV unchanged. `scripts/integrate.sh` green (1 104 / 692, code
-   lists on 17 fields). **Owner decisions:** the 80 labels, proposed in
-   [terms.md](../evidence/terms.md), "Labels of the fault codes"; the version (1.6.0 proposed,
+   lists on 17 fields). 80 labels accepted by the owner (2026-11-28,
+   [terms.md](../evidence/terms.md), "Labels of the fault codes"). **Owner decisions:** the version (1.6.0 proposed,
    1.5.1 possible); release. Left open: what `ErrorDevice` and `ErrorType` mean (one fault on
    the bus), the phase byte of the status broadcast. Left: task 2.
 

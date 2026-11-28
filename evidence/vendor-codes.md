@@ -384,8 +384,8 @@ Prepared 2026-11-28 from the manuals, through the vendor's partner portal (read 
 editions; no bus was read for it. Design: `docs/design-vendor-codes.md`, "Lot 3". Two code
 lists in the metadata, `wtc-gb-faults` (scheme `wtc-gb`, whose spelling widens to the letters
 W and F) and `wcm-faults` (new scheme `wcm`), and the fields that carry a fault number. Labels
-are our own words, proposed to the owner (`terms.md`, "Labels of the fault codes"); the lists
-carry `status = "proposed"` until the owner accepts them.
+are our own words, accepted by the owner on 2026-11-28 (`terms.md`, "Labels of the fault codes");
+the lists carry `status = "accepted"`.
 
 ### Boiler codes, W / F 11–89 (`wtc-gb-faults`, scheme `wtc-gb`)
 
@@ -580,7 +580,6 @@ Manual pages read 2026-11-27; for lot 3, 83251704 pp. 83–87, 83258404 pp. 31, 
 
 - Lot 3: no coded fault value was read through ebusd; the codes 80, 181, 191 and 192 were seen
   only through the vendor tool. Which `ErrorDevice` value means which device is not known.
-  The labels of the two lists are proposed, not accepted.
 
 - Which of the two numbers of a circuit pair a unit for circuits 1 and 2 shows (open, above).
 - The ten `display` messages of lot 2: which candidate number the display shows for them
