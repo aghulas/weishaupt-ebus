@@ -418,8 +418,8 @@ written the same day, with the form recommended for each choice. Status as in th
 
 22 `vendor`, 16 `owner`, none `provisional`. Added on 2026-11-27 with `OperatingMode`
 ([operating-mode.md](operating-mode.md)): the eighth list, operating mode, 7 entries, all
-`vendor` (the gateway manual's words); proposed to the owner with the definition, not yet
-accepted. The forms chosen where the vendor prints two: the
+`vendor` (the gateway manual's words); proposed to the owner with the definition and
+accepted as written on 2026-11-28. The forms chosen where the vendor prints two: the
 short "Contrôle vannes gaz" for phase 7, phases 2 and 4 as printed, "Marche" / "Arrêt" for
 on and off, the months and every label with a capital. The label of `ForcedVenting` was
 `provisional` until 2026-11-20, when the owner chose to keep "Ventilation forcée" rather than a

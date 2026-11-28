@@ -316,8 +316,11 @@ above, or gets no file, is worth a report: it is how the definitions reach anoth
   installation (active-heating test on circuit 2), the regulation loop follows the room-unit
   (`fs`) copy, while changing the heating-module (`em`) copy does not move the flow setpoint.
 - **Room-unit hot-water and circulation programs** are stored only: on the test installation hot
-  water follows the system manager's program (`50.w.em1`). The program selector register (`12 01`)
-  is not defined.
+  water follows the system manager's program (`50.w.em1`).
+- **`OperatingMode` (`12 01`), read only:** the value list is the one the vendor's eBUS /
+  Modbus gateway manual gives for the operating mode (83272304, p. 46). That it is the list of
+  this register rests on the value 11 (heating program 1), seen on the bus; the other values
+  have not been read. Not defined on `15.w.ka` and `50.w.em1`.
 - **`DHWLoadingPriority`:** `0` (`Priority`) and `2` (`Parallel`) are established; `1`
   (`Sliding`) follows by elimination. Read only.
 - **`DHWExcessTemp`:** which vendor parameter it is, is not established.
@@ -405,15 +408,15 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 The history of every release is in
 [`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- Compatible release on top of `1.3.2`, no breaking change (@COUNT@ messages, @META_COUNT@ in
-  metadata; circuit, message and field names, types and IDs unchanged).
-- **Boiler automat files renamed** `08.w.bc1.SW1104` and `18.w.bc2.SW1104` (contents unchanged):
-  ebusd loads them only for an automat that answers the scan with software `1104`, the software
-  they were established on. Until 1.3.2 a boiler automat with another software at `08` / `18` got
-  them too and was read with the memory layout of another firmware; it now gets the upstream Wolf
-  file `08..hc` at `08` and no file at `18` (see *Known limits*). On an installation with software
-  `1104` nothing changes but the file names `ebusctl info` shows; the metadata file names them in
-  `devices.<device>.circuits[].file`.
+- Compatible release on top of `1.4.1`, no breaking change (@COUNT@ messages, @META_COUNT@ in
+  metadata; existing circuit, message and field names, types and IDs unchanged).
+- **New: `OperatingMode`** (register `12 01`, read only) on `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
+  `51.w.em2` and `52.w.em3`: the operating mode, `Standby` 1, `HeatingOperation` 3,
+  `SetbackOperation` 4, `HolidaySummer` 5, `HeatingProgram1` … `HeatingProgram3` 11 … 13 (see
+  *Known limits*). In the metadata: menu `settings`, labels in English and French, and listed
+  in `open.vendor_codes` until a display shows its vendor number.
+- **`ForcedVenting` (operating phase 9)** now has a source, the oil boiler WTC-OB manual; the
+  comments say the name holds for that boiler only. The compiled value list is unchanged.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established:

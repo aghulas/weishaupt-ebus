@@ -3,10 +3,10 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
-## Unreleased (1.5.0 proposed)
+## 1.5.0 (2026-11-28)
 
 Compatible release on top of 1.4.1 (no breaking changes; 1 104 messages, 692 in metadata; no
-existing name, type or ID changes). Prepared locally on `weishaupt`, not released:
+existing name, type or ID changes):
 
 - **New: `OperatingMode` (register `12 01`, read only)** on the three room units `fs1`–`fs3` and
   the modules `em2`, `em3`: the operating mode, with the value list of the vendor's eBUS /
@@ -16,7 +16,7 @@ existing name, type or ID changes). Prepared locally on `weishaupt`, not release
   apply without a room unit). That the gateway's list is the list of this register rests on the
   value 11; one read of a unit in standby or setback confirms it. Not defined on `ka` and
   `em1`. Metadata: menu `settings`, label "Operating mode" / "Mode de fonctionnement", labels of
-  the seven entries (the gateway manual's words; new labels, put to the owner), five readings in
+  the seven entries (the gateway manual's words), five readings in
   the fixtures. Record: `evidence/operating-mode.md`.
 - **`open.vendor_codes`: 48 → 53 messages.** The five `OperatingMode` messages, reason
   `display`: candidate P111 *Mode Fct Chauf* (83277504, p. 32), not published until a display

@@ -120,10 +120,9 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    telegrams in [ebus-protocol.md](ebus-protocol.md), WTC 15-A … 32-A ranges in
    [automat-firmware-tables.md](../evidence/automat-firmware-tables.md) (section 5), scheme
    notes in [vendor-codes.md](../evidence/vendor-codes.md). `scripts/integrate.sh` green
-   (1 104 messages, 692 in metadata, 53 open vendor codes). Draft "Unreleased (1.5.0 proposed)"
-   in `CHANGELOG.md`; the notice's "Changes in" section still describes 1.4.0 and is rewritten
-   at release. **Owner:** the new labels ("Operating mode" and the seven value labels,
-   `evidence/terms.md`) and the release. On site, with the adapter: item 12 of
+   (1 104 messages, 692 in metadata, 53 open vendor codes). Labels accepted by the owner
+   (2026-11-28); notice and `CHANGELOG.md` written for 1.5.0, `scripts/release.sh 1.5.0` built
+   locally, nothing published. **Owner:** the release. On site, with the adapter: item 12 of
    [owner-checklist-room-units.md](owner-checklist-room-units.md) (a unit in standby or setback
    reads 1 or 4) confirms the value list's tie to `12 01`. Left: tasks 2 and 4.
 
