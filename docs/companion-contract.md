@@ -13,7 +13,8 @@ archives:
 The CSV says how to read and decode a message. The metadata says what the CSV cannot: which
 device a message belongs to, where it sits in a menu, a short label in English and French,
 a label for each entry of a value list, what kind of value it is, how the vendor tool polls it, under which conditions a setting
-may be written, and the number a vendor manual prints for it (vendor code, from 1.4.0). Everything the CSV says is copied into the JSON, so that a consumer needs no
+may be written, the number a vendor manual prints for it (vendor code, from 1.4.0), and what a
+fault number a field reads means (code lists, from 1.6.0). Everything the CSV says is copied into the JSON, so that a consumer needs no
 CSV parser; nothing is retyped by hand.
 
 ## Where it comes from
@@ -62,6 +63,8 @@ devices        <id>: type, label, circuits [{circuit, address, file}]; file: the
                without `.csv` (`08.w.bc1.SW1104`; `08.w.bc1` up to 1.3.2)
 menus          <device type>: [{id, parent, label, source}]
 vendor_schemes (from 1.4.0) <scheme>: {label, document}, the numberings of the vendor codes
+vendor_code_lists (from 1.6.0) <list>: {scheme, label, source, status, entries}, the fault
+               codes a field may read, see "Code lists"
 messages       <circuit>/<name>: see below
 groups         [{family, circuit, device, id, label, members}]
 open           { poll, range, step }: keys of the messages that lack one (see "Left empty");
@@ -134,6 +137,8 @@ value list, raw value to ebusd name), `value_labels` (see below), `min`, `max`, 
 - `vendor_codes` (from 1.4.0) on a field: the numbers a vendor manual prints for this field,
   on a message that carries several numbered values (`bc1/InstallerParameters1` holds P31,
   P30, P18, P70 and P35). See "Vendor codes".
+- `code_lists` (from 1.6.0) on a field: ids of `vendor_code_lists` in which its raw value is
+  read (a fault number), see "Code lists".
 - `renamed_from` (from 0.6.0) on a field: its former name, when a release renames a field and
   keeps the message. Kept in later releases. A consumer that identifies an entity by circuit,
   message and field moves the entity of the former field name to the new one. In the sidecar
@@ -248,7 +253,9 @@ for this equipment put it in their value names.
 - A scheme has `label` and `document` (the vendor document number). Schemes of 1.4.0:
   `wcm-ka-3` (system manager WCM-KA 3.0, 83258404), `wcm-fs-2` (room unit WCM-FS 2.0 and heating
   module WCM-EM 2.1, 83277504; a module has no display, its values are numbered on the room
-  unit), `wtc-gb` (boiler automat of the WTC-GB, 83251704). The direct circuit of the system
+  unit), `wtc-gb` (boiler automat of the WTC-GB, 83251704; from 1.6.0 also its warning and
+  fault codes, `W12`, `F36`). From 1.6.0, `wcm` (fault codes 130–202 of the WCM devices,
+  83277504 and 83258404), used by a code list only. The direct circuit of the system
   manager (`em1`, from 1.4.1) is numbered in `wcm-ka-3`: its levels are in the same manual, and
   they number some settings differently from a room unit (116 slope, 117 frost protection, 118
   changeover, where a room unit has P117, P118, P119).
@@ -276,6 +283,57 @@ for this equipment put it in their value names.
   is not spelled as its scheme's pattern says, or its record does not name the message, the
   field and the code; when a message carries codes on itself and on a field, or a single-field
   message a field code; when a code sits on a message listed open.
+- A consumer that ignores unknown keys is not affected (schema 1 unchanged).
+
+### Code lists
+
+From 1.6.0. Some fields read a **fault number**: the code field of a fault-log entry, the
+pending fault of the system manager, the number of a boiler fault-history slot. The vendor
+manuals list what each number means. A code list maps the raw value to the codes the manual
+prints for it and a label; the field names the lists its value is read in.
+
+```
+"vendor_code_lists": {
+  "wtc-gb-faults": { "scheme": "wtc-gb", "label": { "en": "WTC-GB boiler warning and fault codes", … },
+    "source": "boiler manual 83251704 (1/2025-01), pp. 84-85 (warnings W), pp. 86-87 (faults F)",
+    "status": "proposed",
+    "entries": { "11": { "codes": ["F11"], "label": { "en": "Safety limiter above 105 °C", … } },
+                 "15": { "codes": ["W15", "F15"], "label": { "en": "Flow/return difference too large", … } }, … } },
+  "wcm-faults": { "scheme": "wcm", …, "entries": { "181": { "codes": ["181"], … }, … } }
+},
+"messages": {
+  "em1/ErrorCode": { …, "fields": [ { "name": "value", "type": "UIN", …,
+      "code_lists": ["wtc-gb-faults", "wcm-faults"] } ] }
+}
+```
+
+| Key | Meaning |
+|---|---|
+| `scheme` | key of `vendor_schemes`: the numbering of the codes |
+| `label`, `source` | what the list is, and the document and pages it is taken from |
+| `status` | `proposed`: the labels of the entries have not been accepted by the owner of the project yet and may change in a release of the third number; `accepted` |
+| `entries` | keyed by the raw value as a decimal string; `codes` lists every code the manual prints for that number (a boiler number may be both a warning W and a fault F: `["W15", "F15"]`), `label` says what it means |
+
+- **Lookup.** Look the raw value up in each list of the field's `code_lists`, in order; the
+  lists of one field share no number (checked). A number in no list is shown as the number.
+- **0** is in no list: in a fault history it marks the end of a fault, in `ErrorStatus` that
+  none is pending.
+- **Lists of 1.6.0.** `wtc-gb-faults` (scheme `wtc-gb`, 44 numbers 11–89: the WTC-GB boiler's
+  warnings and faults) and `wcm-faults` (scheme `wcm`, 36 numbers 130–202: the system
+  manager's, room units' and heating modules' codes). Fields: `number` of
+  `FaultHistorySlot1`–`6` on `bc1`, `bc2` (boiler list only; the letter is the slot's field
+  `kind`); `value` of `ErrorCode` on `em1`, `fs1`, `fs2`, `fs3` and of `ErrorStatus` on `ka`
+  (both lists: a history entry from a boiler carries a boiler number, one from a WCM device a
+  WCM number). A WCM fault log does not store the letter of a boiler code: show both codes of a
+  number that has two, or the number and the label.
+- Not given: what the origin field `ErrorDevice` and the field `ErrorType` mean, and which unit
+  or automat a number of a range (181 … 188, 191 … 199) stands for. The fault counters'
+  `group.n` (`Code36`: 36) is a number of `wtc-gb-faults`; a consumer may join them.
+- `wtc-gb-faults` holds for a WTC-GB only: a WTC 15-A … 32-A gives some numbers other meanings.
+- In the sidecar: `[vendor_code_lists.<id>]` (`scheme`, `label`, `source`, `evidence`,
+  `status`, `entries`) and `[[vendor_code_list_use]]` (`circuits`, `messages`, `field`,
+  `lists`, `evidence`); the record is added to the message's `evidence`. The CSV is not
+  changed: the fields stay numbers in ebusd and MQTT.
 - A consumer that ignores unknown keys is not affected (schema 1 unchanged).
 
 ## Left empty

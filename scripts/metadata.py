@@ -41,7 +41,13 @@ check fails (exit 1) when
     scheme's pattern, no space), or its evidence record does not name the message, the field
     and the code; a message carries codes on the message and on a field, or a code on the
     field of a message of one field; a code sits on a message listed as open
-    ([[vendor_open]], the circuit pairs among them), or a message is listed open twice.
+    ([[vendor_open]], the circuit pairs among them), or a message is listed open twice;
+  - a code list ([vendor_code_lists], from 1.6.0) names an unknown scheme, lacks a label,
+    source, status or evidence record, has an entry whose key is not the number of its codes
+    or whose codes are not spelled as the scheme prints them, or its record does not name the
+    list and each code; a use ([[vendor_code_list_use]]) names a message or field that does
+    not exist, a field with a value list of the CSV, an unknown list, two lists that share a
+    number, or a record that does not name the message, the field and the list.
 
 The polling class of a message is the one a record establishes (`poll` on its entry); failing
 that, the default the owner decided for its kind (`[poll_default]`); failing that, none.
@@ -78,6 +84,9 @@ STATUS = ("proposed", "accepted")
 # mismatch: the number the manual gives that place means another setting; manual: not read yet.
 VENDOR_OPEN = ("circuit-pair", "display", "mismatch", "manual")
 VENDOR_CODE_KEYS = {"circuits", "message", "field", "code", "scheme", "source", "evidence"}
+# Code lists (from 1.6.0): the fault codes a field carries, numbered in a vendor scheme.
+CODE_LIST_KEYS = {"scheme", "label", "source", "evidence", "status", "entries"}
+CODE_LIST_USE_KEYS = {"circuits", "messages", "field", "lists", "evidence"}
 RANGE_RE = re.compile(r"^(-?[\d.]+)-(-?[\d.]+)(?::([\d.]+))?$")
 
 
@@ -311,10 +320,7 @@ def vendor_codes(side, msgs):
             bad.append(f"{where}: no source (document and page, or record and form row)"); continue
         if not isinstance(rec, str) or not rec:
             bad.append(f"{where}: no evidence record"); continue
-        if rec not in texts:
-            p = os.path.join(EVIDENCE, rec + ".md")
-            texts[rec] = open(p, encoding="utf-8").read() if os.path.exists(p) else None
-        if texts[rec] is None:
+        if record_text(rec, texts) is None:
             bad.append(f"{where}: evidence record '{rec}' is not under {os.path.relpath(EVIDENCE, ROOT)}/"); continue
         if not v.get("circuits") or not isinstance(v.get("message"), str):
             bad.append(f"{where}: needs circuits and message"); continue
@@ -368,6 +374,130 @@ def vendor_codes(side, msgs):
     order = list(msgs)
     opened.sort(key=order.index)
     return on_msg, on_field, opened, records, bad
+
+
+def record_text(rec, texts):
+    """Text of an evidence record (cached in texts), or None when it is not under EVIDENCE."""
+    if rec not in texts:
+        p = os.path.join(EVIDENCE, rec + ".md")
+        texts[rec] = None
+        if os.path.exists(p):
+            with open(p, encoding="utf-8") as f:
+                texts[rec] = f.read()
+    return texts[rec]
+
+
+def names_all(text, names):
+    """The names a record does not contain as whole words."""
+    return [x for x in names if not re.search(rf"(?<![\w-]){re.escape(x)}(?![\w-])", text)]
+
+
+def code_lists(side, msgs):
+    """The code lists of the sidecar ([vendor_code_lists], [[vendor_code_list_use]]).
+    Returns ({id: published list}, {key: {field: [ids]}}, {key: [records]}, problems).
+    A code list maps the raw value of a field to the codes a vendor document prints for it
+    (11 -> F11, 15 -> W15 and F15) and a label; a field that carries a fault number points at
+    the lists its values are read in. Lists used on one field share no number."""
+    bad, texts = [], {}
+    schemes = side.get("vendor_schemes", {})
+    lists, published = side.get("vendor_code_lists", {}), {}
+    for lid, cl in lists.items():
+        where = f"vendor_code_lists.{lid}"
+        if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", lid):
+            bad.append(f"{where}: an id of lower-case letters, digits and hyphens")
+        extra = set(cl) - CODE_LIST_KEYS
+        if extra:
+            bad.append(f"{where}: unknown keys {', '.join(sorted(extra))}")
+        sid = cl.get("scheme")
+        if sid not in schemes:
+            bad.append(f"{where}: scheme '{sid}' is not in [vendor_schemes]"); continue
+        try:
+            pat = re.compile(schemes[sid].get("pattern", ""))
+        except re.error:
+            continue  # reported by vendor_codes
+        if not has_langs(cl.get("label")):
+            bad.append(f"{where}: label needs {' and '.join(LANGS)}")
+        if not isinstance(cl.get("source"), str) or not cl["source"].strip():
+            bad.append(f"{where}: no source (document and pages)")
+        if cl.get("status") not in STATUS:
+            bad.append(f"{where}: status must be one of {', '.join(STATUS)}")
+        rec = cl.get("evidence")
+        text = record_text(rec, texts) if isinstance(rec, str) and rec else None
+        if text is None:
+            bad.append(f"{where}: evidence record '{rec}' is not under {os.path.relpath(EVIDENCE, ROOT)}/")
+        entries = cl.get("entries") or {}
+        if not entries:
+            bad.append(f"{where}: no entries")
+        out, every = {}, []
+        for raw in sorted(entries, key=lambda k: int(k) if str(k).isdigit() else -1):
+            e = entries[raw]
+            ew = f"{where}.entries.{raw}"
+            if not re.fullmatch(r"0|[1-9][0-9]*", str(raw)):
+                bad.append(f"{ew}: the key is the raw value, a decimal number"); continue
+            if set(e) - {"codes", "label"}:
+                bad.append(f"{ew}: unknown keys {', '.join(sorted(set(e) - {'codes', 'label'}))}")
+            codes = e.get("codes")
+            if not isinstance(codes, list) or not codes or len(set(codes)) != len(codes):
+                bad.append(f"{ew}: codes, a list of distinct strings"); continue
+            for c in codes:
+                if not isinstance(c, str) or re.search(r"\s", c) or not pat.fullmatch(c):
+                    bad.append(f"{ew}: code '{c}' is not spelled as scheme {sid} prints it "
+                               f"({schemes[sid].get('pattern')}, no space)")
+                elif int(re.sub(r"\D", "", c)) != int(raw):
+                    bad.append(f"{ew}: code '{c}' does not carry the number {raw}")
+            if not has_langs(e.get("label")):
+                bad.append(f"{ew}: label needs {' and '.join(LANGS)}")
+            every += codes
+            out[str(raw)] = {"codes": codes, "label": e.get("label")}
+        if text is not None:
+            missing = names_all(text, [lid] + every)
+            if missing:
+                bad.append(f"{where}: evidence record '{rec}' does not name {', '.join(missing)}")
+        published[lid] = {"scheme": sid, "label": cl.get("label"), "source": cl.get("source"),
+                          "status": cl.get("status"), "entries": out}
+    on_field, records = {}, {}
+    for n, u in enumerate(side.get("vendor_code_list_use", []), 1):
+        where = f"vendor_code_list_use {n} ({u.get('field')})"
+        extra = set(u) - CODE_LIST_USE_KEYS
+        if extra:
+            bad.append(f"{where}: unknown keys {', '.join(sorted(extra))}")
+        ids = u.get("lists") or []
+        unknown = [x for x in ids if x not in lists]
+        if not ids or unknown:
+            bad.append(f"{where}: lists, ids of [vendor_code_lists] ({', '.join(unknown) or 'none given'})"); continue
+        seen_raw = {}
+        for lid in ids:
+            for raw in (lists[lid].get("entries") or {}):
+                if str(raw) in seen_raw:
+                    bad.append(f"{where}: {lid} and {seen_raw[str(raw)]} both have {raw}")
+                seen_raw[str(raw)] = lid
+        rec, fld = u.get("evidence"), u.get("field")
+        text = record_text(rec, texts) if isinstance(rec, str) and rec else None
+        if text is None:
+            bad.append(f"{where}: evidence record '{rec}' is not under {os.path.relpath(EVIDENCE, ROOT)}/"); continue
+        if not u.get("circuits") or not u.get("messages") or not isinstance(fld, str):
+            bad.append(f"{where}: needs circuits, messages and field"); continue
+        missing = names_all(text, list(u["messages"]) + [fld] + ids)
+        if missing:
+            bad.append(f"{where}: evidence record '{rec}' does not name {', '.join(missing)}")
+        for c in u["circuits"]:
+            for name in u["messages"]:
+                key = f"{c}/{name}"
+                if key not in msgs:
+                    bad.append(f"{where}: no message {name} in circuit {c}"); continue
+                f = next((f for f in msgs[key]["fields"] if f["name"] == fld and not f["type"].startswith("IGN")), None)
+                if f is None:
+                    bad.append(f"{where}: {key} has no field '{fld}'"); continue
+                if "values" in f:
+                    bad.append(f"{where}: {key} {fld} has a value list in the CSV"); continue
+                if fld in on_field.get(key, {}):
+                    bad.append(f"{where}: {key} {fld} already has code lists"); continue
+                on_field.setdefault(key, {})[fld] = list(ids)
+                if rec not in records.setdefault(key, []):
+                    records[key].append(rec)
+    if lists and not schemes:
+        bad.append("code lists without [vendor_schemes]")
+    return published, on_field, records, bad
 
 
 def resolve(side, msgs):
@@ -605,6 +735,7 @@ def resolve(side, msgs):
                 bad.append(f"menus.{typ}.{mid}: no message and no sub-menu")
     bad += value_labels(side, msgs)[2]
     bad += vendor_codes(side, msgs)[4]
+    bad += code_lists(side, msgs)[3]
     return resolved, bad
 
 
@@ -614,6 +745,7 @@ def assemble(side, msgs, resolved, langs):
     fieldsets = side.get("fields", {})
     vlabels, vprovisional, _ = value_labels(side, msgs)
     vmsg, vfield, vopen, vrecords, _ = vendor_codes(side, msgs)
+    clists, clfield, clrecords, _ = code_lists(side, msgs)
     out_msgs, groups, open_poll, open_range, open_step = {}, {}, [], [], []
     for key, m in msgs.items():
         r = resolved[key]
@@ -665,12 +797,15 @@ def assemble(side, msgs, resolved, langs):
                 o["step"] = e["step"]
             if f["name"] in vfield.get(key, {}):
                 o["vendor_codes"] = vfield[key][f["name"]]
+            if f["name"] in clfield.get(key, {}):
+                o["code_lists"] = clfield[key][f["name"]]
             fields.append(o)
         o = {
             "circuit": m["circuit"], "name": m["name"], "address": m["address"], "device": r["device"],
             "menu": e["menu"], "kind": e["kind"], "label": r["label"], "description": description,
             "read": m["read"], "passive": m["passive"], "poll": poll, "poll_basis": basis,
-            "evidence": e["evidence"] + [x for x in vrecords.get(key, []) if x not in e["evidence"]],
+            "evidence": e["evidence"] + [x for x in dict.fromkeys(vrecords.get(key, []) + clrecords.get(key, []))
+                                         if x not in e["evidence"]],
         }
         if e.get("fields"):
             o["compose"] = bool(e.get("compose", False))
@@ -734,6 +869,8 @@ def assemble(side, msgs, resolved, langs):
     if side.get("vendor_schemes"):
         out["vendor_schemes"] = {sid: {"label": s["label"], "document": s["document"]}
                                  for sid, s in side["vendor_schemes"].items()}
+    if clists:
+        out["vendor_code_lists"] = clists
     out.update({
         "messages": out_msgs, "groups": list(groups.values()),
         "open": {"poll": open_poll, "range": open_range, "step": open_step, "value_labels": vprovisional},
@@ -794,6 +931,11 @@ def main():
     by_kind, by_device, by_poll = counts(data)
     written = sum(1 for m in data["messages"].values() if "write" in m)
     st = side["status"]
+    cl_summary = ""
+    if "vendor_code_lists" in data:
+        lists = ", ".join(f"{k} ({len(v['entries'])})" for k, v in data["vendor_code_lists"].items())
+        used = sum(1 for m in data["messages"].values() for f in m["fields"] if "code_lists" in f)
+        cl_summary = f"; code lists {lists} on {used} fields"
     print(f"{name}: ok, {len(msgs)} messages ({lines} CSV lines, {written} written) in "
           f"{len(side.get('entry', []))} entries, {len(data['devices'])} devices; "
           f"menus {st['menus']}, labels {st['labels']}; "
@@ -802,7 +944,8 @@ def main():
           + (f" ({', '.join(data['open']['value_labels'])} provisional)" if data["open"]["value_labels"] else "")
           + (f"; vendor codes on {sum(1 for m in data['messages'].values() if 'vendor_codes' in m or any('vendor_codes' in f for f in m['fields']))} messages "
              f"({sum(1 for m in data['messages'].values() for f in m['fields'] if 'vendor_codes' in f)} fields), "
-             f"{len(data['open']['vendor_codes'])} open" if "vendor_codes" in data["open"] else ""))
+             f"{len(data['open']['vendor_codes'])} open" if "vendor_codes" in data["open"] else "")
+          + cl_summary)
     if pos[0] == "check":
         return
     if pos[0] == "summary":
