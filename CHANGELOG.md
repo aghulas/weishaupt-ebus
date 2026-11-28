@@ -3,7 +3,7 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
-## Unreleased (draft; 1.6.0 proposed)
+## 1.6.0 (2026-11-28)
 
 Compatible release on top of 1.5.0 (no breaking changes; same 1 104 messages and 692 in
 metadata; definitions and CSV unchanged, only the metadata sidecar):

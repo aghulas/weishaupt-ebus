@@ -408,15 +408,15 @@ one.@PROVISIONAL_SENTENCE@ Wolf messages and the general files keep their Englis
 The history of every release is in
 [`CHANGELOG.md`](https://github.com/aghulas/weishaupt-ebus/blob/main/CHANGELOG.md).
 
-- Compatible release on top of `1.4.1`, no breaking change (@COUNT@ messages, @META_COUNT@ in
-  metadata; existing circuit, message and field names, types and IDs unchanged).
-- **New: `OperatingMode`** (register `12 01`, read only) on `35.w.fs1`, `75.w.fs2`, `f5.w.fs3`,
-  `51.w.em2` and `52.w.em3`: the operating mode, `Standby` 1, `HeatingOperation` 3,
-  `SetbackOperation` 4, `HolidaySummer` 5, `HeatingProgram1` … `HeatingProgram3` 11 … 13 (see
-  *Known limits*). In the metadata: menu `settings`, labels in English and French, and listed
-  in `open.vendor_codes` until a display shows its vendor number.
-- **`ForcedVenting` (operating phase 9)** now has a source, the oil boiler WTC-OB manual; the
-  comments say the name holds for that boiler only. The compiled value list is unchanged.
+- Compatible release on top of `1.5.0`, no breaking change (@COUNT@ messages, @META_COUNT@ in
+  metadata; definitions and CSV unchanged, only the metadata file).
+- **Fault codes in the metadata.** A field that reads a fault number now names the code list
+  its value is looked up in, and the list gives the code the manual prints with a label in
+  English and French: the WTC-GB boiler's warning and fault codes `W` / `F` 11 to 89, and the
+  codes 130 to 202 of the system manager, room units and heating modules. Used on the six
+  fault-history slots of each boiler and on `ErrorCode` / `ErrorStatus` of `ka`, `em1` and
+  `fs1`–`fs3`. Not for a WTC 15-A … 32-A, whose codes partly differ. ebusd shows the plain
+  number as before.
 
 Source: branch `weishaupt` of https://github.com/aghulas/ebusd-configuration at @COMMIT@
 (TypeSpec, `src/wolf`). How each definition was established:
