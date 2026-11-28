@@ -14,7 +14,7 @@ undo, and its limits. Nothing has to be downloaded from here for that way (integ
 later; earlier versions create their entry against an ebusd add-on only).
 
 **To use the definitions with ebusd alone**, go to the latest release
-[weishaupt-1.4.1](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-1.4.1)
+[weishaupt-1.5.0](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-1.5.0)
 of the fork: its notice (also the `README.md` inside each archive) explains how to install them
 with ebusd or the Home Assistant ebusd add-on, how to write settings, and their limits. From 1.0.0
 the message and field names, types and the metadata structure are stable (they change only with a
@@ -51,7 +51,7 @@ releases are published and upstream pull requests are cut on demand.
 
 | Release | Content |
 |---|---|
-| [weishaupt-1.4.1](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-1.4.1) | the definitions: compiled ebusd CSV in English and in French with the installation notice, and the metadata file the Home Assistant integration reads |
+| [weishaupt-1.5.0](https://github.com/aghulas/ebusd-configuration/releases/tag/weishaupt-1.5.0) | the definitions: compiled ebusd CSV in English and in French with the installation notice, and the metadata file the Home Assistant integration reads |
 | [ebusd v26.1-weishaupt.2](https://github.com/aghulas/ebusd/releases/tag/v26.1-weishaupt.2) | ebusd with the run-time checksum (john30/ebusd#1825), composite reads and IDs longer than 7 bytes; it computes the checksum, but a stock ebusd 26.1 writes the settings here end to end, so it is not required for writing; two static executables. For Home Assistant the same build is the add-on "eBUSd (Weishaupt CRC)": add `https://github.com/aghulas/ha-addons#weishaupt` in the add-on store (that form is for the store only; to read it in a browser, open [`/tree/weishaupt`](https://github.com/aghulas/ha-addons/tree/weishaupt)) |
 | [weishaupt2mqtt](https://github.com/aghulas/weishaupt2mqtt) 0.1.4 | the MQTT bridge: ebusd v26.1-weishaupt.2, the definitions 1.3.1 and the write guards in one container; a Home Assistant add-on (**Weishaupt2MQTT**, same add-on repository as above) or a Docker image built from the repository; topics in `docs/mqtt-contract.md` |
 | [ha-weishaupt](https://github.com/aghulas/ha-weishaupt/releases) 1.5.0 | the Home Assistant integration, over the MQTT bridge (set up with the bridge alone from 1.5.0) or over ebusd |
