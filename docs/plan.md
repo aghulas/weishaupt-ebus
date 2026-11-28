@@ -125,6 +125,19 @@ deployed: the bridge is not rebuilt for three comment lines. What is left is abo
    locally; *released in `weishaupt-1.5.0` (2026-11-28).* On site, with the adapter: item 12 of
    [owner-checklist-room-units.md](owner-checklist-room-units.md) (a unit in standby or setback
    reads 1 or 4) confirms the value list's tie to `12 01`. Left: tasks 2 and 4.
+   *Task 4 (vendor codes, lot 3: fault codes) prepared locally on 2026-11-28, nothing pushed:*
+   design in section 8 of [design-vendor-codes.md](design-vendor-codes.md), record "Codes of
+   lot 3" of [vendor-codes.md](../evidence/vendor-codes.md) (83251704 1/2025-01 pp. 84–87,
+   83258404 pp. 110, 119, 83277504 pp. 53, 106–108, addenda 83172004 p. 4). Metadata only: two
+   code lists, `wtc-gb-faults` (44 numbers, W / F 11–89) and `wcm-faults` (36, 130–202), on 17
+   fields (`number` of the boilers' six history slots, `ErrorCode` of `em1` and `fs1`–`fs3`,
+   `ErrorStatus` of `ka`); scheme `wtc-gb` takes W / F, new scheme `wcm`; new keys
+   `vendor_code_lists` and `code_lists` (schema 1, compatible), checks and
+   `tests/test_code_lists.py`. CSV unchanged. `scripts/integrate.sh` green (1 104 / 692, code
+   lists on 17 fields). **Owner decisions:** the 80 labels, proposed in
+   [terms.md](../evidence/terms.md), "Labels of the fault codes"; the version (1.6.0 proposed,
+   1.5.1 possible); release. Left open: what `ErrorDevice` and `ErrorType` mean (one fault on
+   the bus), the phase byte of the status broadcast. Left: task 2.
 
 ## Direction
 

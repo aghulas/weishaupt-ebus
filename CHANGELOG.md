@@ -3,6 +3,30 @@
 Release history of the Weishaupt / Kromschröder ebusd definitions published from
 `aghulas/ebusd-configuration`.
 
+## Unreleased (draft; 1.6.0 proposed)
+
+Compatible release on top of 1.5.0 (no breaking changes; same 1 104 messages and 692 in
+metadata; definitions and CSV unchanged, only the metadata sidecar):
+
+- **Metadata, fault code lists (vendor codes, lot 3).** New top-level key `vendor_code_lists`
+  and a field key `code_lists`: a field that reads a fault number names the lists its raw value
+  is read in, and a list maps the number to the codes the manual prints and a label.
+  `wtc-gb-faults`: the 44 warning and fault numbers 11–89 of the WTC-GB boiler (83251704,
+  1/2025-01, pp. 84–87; five numbers are both W and F, `W15` / `F15`). `wcm-faults`: the 36
+  codes 130–202 of the system manager, room units and heating modules (83258404 p. 119,
+  83277504 pp. 106–108). Used on `number` of `FaultHistorySlot1`–`6` (`bc1`, `bc2`, boiler list
+  only) and on `ErrorCode` of `em1`, `fs1`–`fs3` and `ErrorStatus` of `ka` (both lists; the
+  ranges are disjoint). Scheme `wtc-gb` now also spells `W12`, `F36`; new scheme `wcm`. The
+  lists carry `status: "proposed"` until the owner accepts their labels. The record
+  `vendor-codes` joins the `evidence` of the 12 history slots and `ka/ErrorStatus`.
+- Not given: the meaning of `ErrorDevice` and `ErrorType` (one fault on the bus is needed), and
+  any list for a WTC 15-A … 32-A, whose codes partly differ and moved between automat
+  generations (addenda 83172004).
+- Workbench: contract section "Code lists", `schemas/metadata.schema.json`, checks in
+  `scripts/metadata.py`, `tests/test_code_lists.py`; record `evidence/vendor-codes.md`,
+  "Codes of lot 3"; labels in `evidence/terms.md`; design section 8 of
+  `docs/design-vendor-codes.md`.
+
 ## 1.5.0 (2026-11-28)
 
 Compatible release on top of 1.4.1 (no breaking changes; 1 104 messages, 692 in metadata; no
